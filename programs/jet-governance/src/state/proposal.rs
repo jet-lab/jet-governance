@@ -23,6 +23,14 @@ pub struct ProposalState {
 }
 
 impl ProposalState {
+    pub fn new(activate: Option<Slot>, finalize: Option<Slot>) -> ProposalState {
+        ProposalState {
+            count: VoteCount::new(),
+            activate,
+            finalize,
+        }
+    }
+
     pub fn activate(&mut self, slot: Option<Slot>) {
         // todo restrictions?
         self.activate = slot;
@@ -94,6 +102,16 @@ pub struct VoteCount {
     pub yes: u64,
     pub no: u64,
     pub abstain: u64,
+}
+
+impl VoteCount {
+    pub fn new() -> VoteCount {
+        VoteCount {
+            yes: 0,
+            no: 0,
+            abstain: 0,
+        }
+    }
 }
 
 #[derive(Eq, PartialEq)]

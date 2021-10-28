@@ -32,8 +32,8 @@ mod jet_governance {
         withdraw::handler(ctx, amount)
     }
 
-    pub fn propose(ctx: Context<Propose>) -> ProgramResult {
-        propose::handler(ctx)
+    pub fn propose(ctx: Context<Propose>, name: String, description: String, activate: Time, finalize: Time) -> ProgramResult {
+        propose::handler(ctx, name, description, activate, finalize)
     }
 
     pub fn vote(ctx: Context<VoteAccounts>, vote: Vote2) -> ProgramResult {

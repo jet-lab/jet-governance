@@ -32,14 +32,9 @@ pub fn handler(
     when: Time
 ) -> ProgramResult {
     let proposal = ctx.accounts.proposal.deref_mut();
-    let time = match when {
-        Time::Now => Some(Clock::get().unwrap().slot),
-        Time::At(slot) => Some(slot),
-        Time::Never => None,
-    };
     match event {
-        ProposalEvent::Activate => proposal.state.activate(time),
-        ProposalEvent::Finalize => proposal.state.finalize(time),
+        ProposalEvent::Activate => proposal.state.activate(when.resolve()),
+        ProposalEvent::Finalize => proposal.state.finalize(when.resolve()),
     }
     Ok(())
 }
@@ -49,4 +44,14 @@ pub enum Time {
     Now,
     At(Slot),
     Never
+}
+
+impl Time {
+    pub fn resolve(&self) -> Option<Slot> {
+        match self {
+            Time::Now => Some(Clock::get().unwrap().slot),
+            Time::At(slot) => Some(*slot),
+            Time::Never => None,
+        }
+    }
 }

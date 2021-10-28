@@ -1,6 +1,10 @@
+use std::ops::DerefMut;
+
 use anchor_lang::prelude::*;
 use crate::state::voter::Voter;
-use crate::state::proposal::Proposal;
+use crate::state::proposal::{Proposal, ProposalState, VoteCount};
+
+use super::Time;
 
 
 #[derive(Accounts)]
@@ -26,18 +30,20 @@ pub struct Propose<'info> {
     pub system_program: AccountInfo<'info>,
 }
 
-pub fn handler(ctx: Context<Propose>) -> ProgramResult {
+pub fn handler(
+    ctx: Context<Propose>,
+    name: String,
+    description: String,
+    activate: Time,
+    finalize: Time,
+) -> ProgramResult {
+    *ctx.accounts.proposal.deref_mut() = Proposal {
+        realm: ctx.accounts.realm.key(),
+        owner: ctx.accounts.owner.key(),
+        name,
+        description,
+        created_slot: Clock::get()?.slot,
+        state: ProposalState::new(activate.resolve(), finalize.resolve()),
+    };
     Ok(())
-}
-
-struct JobResult {
-    success: bool,
-    jobs_complete: u64,
-}
-
-fn aggregate(results: &[JobResult]) -> JobResult {
-    JobResult {
-        success: results.iter().all(|r| r.success),
-        jobs_complete: results.iter().map(|r| r.jobs_complete).sum(),
-    }
 }
