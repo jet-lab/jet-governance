@@ -1,6 +1,7 @@
 use anchor_lang::prelude::*;
 
 
+
 #[account]
 pub struct Voter {
     pub realm: Pubkey,
@@ -15,12 +16,12 @@ pub struct VoteRecord {
     pub proposal: Pubkey,
     pub owner: Pubkey,
     pub weight: u64,
-    pub vote: Vote,
+    pub vote: Vote2,
 }
 
 
 #[derive(AnchorDeserialize, AnchorSerialize, Eq, PartialEq, Debug, Clone, Copy)]
-pub enum Vote {
+pub enum Vote2 { // anchor bug: cannot call this Vote
     Yes,
     No,
     Abstain,

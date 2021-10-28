@@ -1,5 +1,5 @@
 use anchor_lang::prelude::*;
-use crate::{state::proposal::Proposal, state::{Vote, voter::VoteRecord}, state::voter::Voter};
+use crate::{state::proposal::Proposal, state::{Vote2, voter::VoteRecord}, state::voter::Voter};
 
 
 #[derive(Accounts)]
@@ -34,7 +34,7 @@ pub struct VoteAccounts<'info> {
     pub system_program: AccountInfo<'info>,
 }
 
-pub fn handler(ctx: Context<VoteAccounts>, vote: Vote) -> ProgramResult {
+pub fn handler(ctx: Context<VoteAccounts>, vote: Vote2) -> ProgramResult {
     let vote_record = &mut ctx.accounts.vote_record;
     let proposal = &mut ctx.accounts.proposal;
     let voter = &mut ctx.accounts.voter;

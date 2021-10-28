@@ -1,5 +1,5 @@
 use anchor_lang::{AccountsClose, prelude::*};
-use crate::{Vote, state::voter::Voter, state::voter::VoteRecord, state::proposal::Proposal};
+use crate::{state::voter::Voter, state::voter::VoteRecord, state::proposal::Proposal};
 
 
 #[derive(Accounts)]

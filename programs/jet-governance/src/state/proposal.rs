@@ -2,8 +2,8 @@ use std::ops::{AddAssign, SubAssign};
 
 use anchor_lang::prelude::*;
 use solana_program::clock::Slot;
+use super::Vote2;
 
-use super::Vote;
 
 #[account]
 pub struct Proposal {
@@ -33,22 +33,22 @@ impl ProposalState {
         self.finalize = slot;
     }
 
-    pub fn vote(&mut self, vote: Vote, weight: u64) {
+    pub fn vote(&mut self, vote: Vote2, weight: u64) {
         self.edit(vote, weight, u64::checked_add)
     }
 
-    pub fn rescind(&mut self, vote: Vote, weight: u64) {
+    pub fn rescind(&mut self, vote: Vote2, weight: u64) {
         self.edit(vote, weight, u64::checked_sub)
     }
 
     fn edit<F: Fn(u64, u64) -> Option<u64>>(
-        &mut self, vote: Vote, weight: u64, op: F
+        &mut self, vote: Vote2, weight: u64, op: F
     ) {
         if self.votable() {
             match vote {
-                Vote::Yes => self.count.yes = op(self.count.yes, weight).unwrap(),
-                Vote::No => self.count.no = op(self.count.no, weight).unwrap(),
-                Vote::Abstain => self.count.abstain = op(self.count.abstain, weight).unwrap(),
+                Vote2::Yes => self.count.yes = op(self.count.yes, weight).unwrap(),
+                Vote2::No => self.count.no = op(self.count.no, weight).unwrap(),
+                Vote2::Abstain => self.count.abstain = op(self.count.abstain, weight).unwrap(),
             }
         }
     }

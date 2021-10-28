@@ -1,6 +1,7 @@
 use std::ops::DerefMut;
 
 use anchor_lang::prelude::*;
+use solana_program::clock::Slot;
 use crate::state::voter::Voter;
 use crate::state::proposal::{Proposal, ProposalEvent};
 
@@ -25,20 +26,27 @@ pub struct TransitionProposal<'info> {
     pub proposal: ProgramAccount<'info, Proposal>,
 }
 
-pub fn handler(ctx: Context<TransitionProposal>, event: ProposalEvent, slot: Option<u64>) -> ProgramResult {
+pub fn handler(
+    ctx: Context<TransitionProposal>,
+    event: ProposalEvent,
+    when: Time
+) -> ProgramResult {
     let proposal = ctx.accounts.proposal.deref_mut();
-    let slot = if let Some(actual_slot) = slot {
-        if actual_slot == 0 { // todo better way to say "now"
-            Some(Clock::get().unwrap().slot)
-        } else {
-            slot
-        }
-    } else {
-        slot
+    let time = match when {
+        Time::Now => Some(Clock::get().unwrap().slot),
+        Time::At(slot) => Some(slot),
+        Time::Never => None,
     };
     match event {
-        ProposalEvent::Activate => proposal.state.activate(slot),
-        ProposalEvent::Finalize => proposal.state.finalize(slot),
+        ProposalEvent::Activate => proposal.state.activate(time),
+        ProposalEvent::Finalize => proposal.state.finalize(time),
     }
     Ok(())
+}
+
+#[derive(AnchorDeserialize, AnchorSerialize, Eq, PartialEq, Debug, Clone, Copy)]
+pub enum Time {
+    Now,
+    At(Slot),
+    Never
 }

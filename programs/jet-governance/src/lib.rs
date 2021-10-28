@@ -6,6 +6,9 @@ pub mod state;
 use anchor_lang::prelude::*;
 use instructions::*;
 
+use state::proposal::ProposalEvent;
+use state::voter::Vote2;
+
 declare_id!("Fg6PaFpoGXkYsidMpWTK6W2BeZ7FEfcYkg476zPFsLnS");
 
 
@@ -33,16 +36,16 @@ mod jet_governance {
         propose::handler(ctx)
     }
 
-    pub fn vote(ctx: Context<VoteAccounts>, vote: ProposalEvent) -> ProgramResult {
-        vote::handler(ctx, Vote::Abstain)
+    pub fn vote(ctx: Context<VoteAccounts>, vote: Vote2) -> ProgramResult {
+        vote::handler(ctx, vote)
     }
 
     pub fn rescind(ctx: Context<Rescind>) -> ProgramResult {
         rescind::handler(ctx)
     }
 
-    pub fn transition_proposal(ctx: Context<TransitionProposal>, event: ProposalEvent, slot: Slot) -> ProgramResult {
-        transition_proposal::handler(ctx, event, Some(slot))
+    pub fn transition_proposal(ctx: Context<TransitionProposal>, event: ProposalEvent, when: Time) -> ProgramResult {
+        transition_proposal::handler(ctx, event, when)
     }
 }
 
@@ -78,13 +81,3 @@ mod jet_governance {
 //         finalize(Finalize)
 //     }
 // }
-
-
-    use state::proposal::ProposalEvent;
-
-
-    use solana_program::clock::Slot;
-
-
-    use state::Vote;
-
