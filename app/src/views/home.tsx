@@ -1,13 +1,13 @@
 import { WalletMultiButton } from "@solana/wallet-adapter-ant-design";
 import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
-import { TokenIcon } from "../../components/TokenIcon";
-import { useConnectionConfig } from "../../contexts/connection";
-import { useMarkets } from "../../contexts/market";
-import { useUserBalance, useUserTotalBalance } from "../../hooks";
-import { WRAPPED_SOL_MINT, JET_TOKEN_MINT } from "../../utils/ids";
-import { ProposalCard } from "../../components/ProposalCard";
-import { formatUSD } from "../../utils/utils";
+import { TokenIcon } from "../components/TokenIcon";
+import { useConnectionConfig } from "../contexts/connection";
+import { useMarkets } from "../contexts/market";
+import { useUserBalance, useUserTotalBalance } from "../hooks";
+import { WRAPPED_SOL_MINT, JET_TOKEN_MINT } from "../utils/ids";
+import { ProposalCard } from "../components/ProposalCard";
+import { formatUSD } from "../utils/utils";
 
 export const HomeView = (props: any) => {
   const { marketEmitter, midPriceInUSD } = useMarkets();
@@ -45,6 +45,7 @@ export const HomeView = (props: any) => {
             <ProposalCard
               headline={proposal.headline}
               number={proposal.id}
+              id={proposal.id}
               active={proposal.active}
               end={proposal.end ?? null}
               result={proposal.result ?? null}

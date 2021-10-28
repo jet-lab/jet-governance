@@ -26,7 +26,6 @@ a, i {
 span {
   opacity: 0.85;
   font-size: 14px;
-  text-align: center;
   max-width: 400px;
 }
 *:focus-visible {
@@ -51,6 +50,9 @@ span {
 .jet-icons {
   font-family: 'Jet-Icons';
   font-size: 27px;
+}
+.flex {
+  display: flex;
 }
 
 .app-title {
@@ -88,19 +90,6 @@ h3 {
   font-size: 18px;
   line-height: 17px;
   text-align: left;
-}
-
-h1.ant-typography, h2.ant-typography, h3.ant-typography, h4.ant-typography, h5.ant-typography {
-  position: relative;
-	margin: unset;
-	text-decoration: none;
-  opacity: 0.9;
-  font-family: 'Bicyclette-Bold', sans-serif;
-
-  .ant-typography-secondary {
-    margin: 0 0 -12px 0;
-    opacity: var(--disabled-opacity) !important;
-  }
 }
 
 .nav-bar {
@@ -239,7 +228,6 @@ em {
     align-items: flex-start;
     justify-content: space-between;
     font-size: 10px;
-    text-align: left !important;
 
     .header {
       line-height: 12px;
@@ -256,38 +244,6 @@ em {
       font-size: 22px;
       line-height: 27px;
     }
-
-    .details {
-      display: flex;
-      .status {
-        font-family: "Bicyclette", sans-serif;
-        text-transform: uppercase;
-        margin-bottom: -3px;
-      }
-      .active {
-        color: var(--status-active);
-      }
-      .inactive {
-        color: var(--status-inactive);
-      }
-      .rejected {
-        color: var(--status-rejected);
-      }
-      .passed {
-        color: var(--status-passed);
-      }
-      div {
-        padding-right: 9px;
-        display: flex;
-        align-items: center;
-        i {
-          margin: 0;
-          padding-right: 7px;
-          font-size: 6px;
-          margin-bottom: 3px;
-        }
-      }
-    }
   }
 
   .proposal-card.active {
@@ -296,55 +252,96 @@ em {
   }
 }
 
-.proposal {
-  span {
-    margin-top: 35px;
-
+.details {
+  display: flex;
+  .status {
+    font-family: "Bicyclette", sans-serif;
+    text-transform: uppercase;
+    margin-bottom: -3px;
+  }
+  .active {
+    color: var(--status-active);
+  }
+  .inactive {
+    color: var(--status-inactive);
+  }
+  .rejected {
+    color: var(--status-rejected);
+  }
+  .passed {
+    color: var(--status-passed);
+  }
+  div {
+    padding-right: 9px;
+    display: flex;
+    align-items: center;
+    i {
+      margin: 0;
+      padding-right: 7px;
+      font-size: 6px;
+      margin-bottom: 3px;
+    }
   }
 }
 
-.flexColumn {
+.proposal {
   display: flex;
   flex-direction: column;
-  flex: 1;
-}
+  align-content: start;
 
-.card-fill {
-  height: 100%;
-}
-
-.card-row {
-  box-sizing: border-box;
-  margin: 5px 0px;
-  min-width: 0px;
-  width: 100%;
-  display: flex;
-  flex-direction: row;
-  padding: 0px;
-  -webkit-box-align: center;
-  align-items: center;
-  -webkit-box-pack: justify;
-  justify-content: space-between;
-
-  .card-cell {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    box-sizing: border-box;
+  span {
     text-align: left;
-    margin: 0px;
-    min-width: 0px;
-    font-size: 14px;
+    margin-bottom: 13px;
   }
 
-  .left {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
+  .divider {
+    box-shadow: inset 2px 2px 2px rgba(0, 0, 0, 0.15), inset 2px 2px 2px rgba(255, 255, 255, 0.9);
+    border-radius: 20px;
+    width: 100%;
+    padding: 0 6%;
+    height: 3px;
+    margin-bottom: 28px;
   }
 
-  .small {
-    font-size: 11px;
+  .info {
+    grid-template-columns: repeat(24, 1fr);
+    display: grid;
+    .description {
+      padding: 39px 36px;
+      box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.25);
+      border-radius: 10px;
+      grid-column: 1 e("/") 16;
+      display: flex;
+      flex-direction: column;
+      h1.headline {
+        font-family: "Helvetica Neue", sans-serif;
+        font-style: normal;
+        font-weight: bold;
+        font-size: 33px;
+        line-height: 40px;
+        padding-bottom: 20px;
+        letter-spacing: unset;
+      }
+      p {
+        font-size: 15px;
+        line-height: 26px;
+        margin-bottom: 26px;
+      }
+
+    }
+    .cast-vote {
+      padding: 39px 27px;
+      grid-column: 17 e("/") 25;
+      box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.15), 0px -4px 20px rgba(255, 255, 255, 0.5);
+      border-radius: 10px;
+      display: flex;
+      flex-direction: column;
+
+      #in-favour, #against {
+        border-radius: 24px 0px 0px 24px;
+        border: 2px solid var(--gradient);
+      }
+    }
   }
 }
 

@@ -4,7 +4,7 @@ import { combineReducers } from 'redux';
 import { persistReducer } from 'redux-persist';
 import thunk from 'redux-thunk';
 
-import proposalReducer from '../views/home/homeSlice';
+import proposalReducer from '../views/homeSlice';
 
 const reducers = combineReducers({
   proposal: proposalReducer,

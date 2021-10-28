@@ -59,6 +59,7 @@ export function Routes() {
                   {proposals.map((proposal) => <Route exact path={`/proposal/${proposal.id}/${proposal.headline.substring(0,7)}`}>
                     <ProposalView
                       id={proposal.id}
+                      result={proposal.result}
                       headline={proposal.headline}
                       active={proposal.active}
                       end={proposal.end}
