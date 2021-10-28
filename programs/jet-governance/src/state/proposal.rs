@@ -7,79 +7,80 @@ use super::Vote2;
 pub struct Proposal {
     pub realm: Pubkey,
     pub owner: Pubkey,
-    pub name: String,
-    pub description: String,
-    pub created_slot: u64,
-    pub state: ProposalState,
+    created_slot: u64,
+    content: ProposalContent,
+    pub lifecycle: ProposalLifecycle,
+    count: VoteCount,
 }
 
+impl Proposal {
+    pub fn new(
+        realm: Pubkey,
+        owner: Pubkey,
+        name: String,
+        description: String,
+        activate: Option<Slot>,
+        finalize: Option<Slot>
+    ) -> Proposal {
+        Proposal {
+            realm,
+            owner,
+            created_slot: Clock::get().unwrap().slot,
+            content: ProposalContent {
+                name,
+                description,
+            },
+            lifecycle: ProposalLifecycle {
+                activate,
+                finalize,
+            },
+            count: VoteCount::new(),
+        }
+    }
+
+    pub fn content(&mut self) -> &mut ProposalContent {
+        if !self.lifecycle.activated(Clock::get().unwrap().slot) {
+            panic!("Proposal is not editable.")
+        }
+        &mut self.content
+    }
+
+    pub fn vote(&mut self) -> &mut VoteCount {
+        let current_slot = Clock::get().unwrap().slot;
+        if !self.lifecycle.activated(current_slot) || self.lifecycle.finalized(current_slot) {
+            panic!("Proposal is not votable");
+        }
+        &mut self.count
+    }
+}
+
+
 #[derive(AnchorDeserialize, AnchorSerialize, Clone)]
-pub struct ProposalState {
-    count: VoteCount,
+pub struct ProposalContent {
+    pub name: String,
+    pub description: String,
+}
+
+
+#[derive(AnchorDeserialize, AnchorSerialize, Clone)]
+pub struct ProposalLifecycle {
     activate: Option<Slot>,
     finalize: Option<Slot>,
 }
 
-impl ProposalState {
-    pub fn new(activate: Option<Slot>, finalize: Option<Slot>) -> ProposalState {
-        ProposalState {
-            count: VoteCount::new(),
-            activate,
-            finalize,
-        }
-    }
-
+impl ProposalLifecycle {
     pub fn activate(&mut self, slot: Option<Slot>) {
-        if let Some(activation_time) = self.activate { 
-            if activation_time <= Clock::get().unwrap().slot {
-                panic!("Cannot modify the activation time of a proposal that was already activated.");
-            }
+        if self.activated(Clock::get().unwrap().slot) {
+            panic!("Cannot modify the activation time of a proposal that was already activated.");
         }
         self.activate = slot;
     }
 
     pub fn finalize(&mut self, slot: Option<Slot>) {
-        // todo restrictions?
+        if self.finalized(Clock::get().unwrap().slot) {
+            panic!("Cannot modify the finalization time of a proposal that was already finalized.");
+        }
         self.finalize = slot;
-    }
-
-    pub fn vote(&mut self, vote: Vote2, weight: u64) {
-        self.edit(vote, weight, u64::checked_add)
-    }
-
-    pub fn rescind(&mut self, vote: Vote2, weight: u64) {
-        self.edit(vote, weight, u64::checked_sub)
-    }
-
-    fn edit<F: Fn(u64, u64) -> Option<u64>>(
-        &mut self, vote: Vote2, weight: u64, op: F
-    ) {
-        if self.votable() {
-            match vote {
-                Vote2::Yes => self.count.yes = op(self.count.yes, weight).unwrap(),
-                Vote2::No => self.count.no = op(self.count.no, weight).unwrap(),
-                Vote2::Abstain => self.count.abstain = op(self.count.abstain, weight).unwrap(),
-            }
-        }
-    }
-
-    fn votable(&self) -> bool {
-        self.status() == ProposalStatus::Active
-    }
-
-    fn status(&self) -> ProposalStatus {
-        let current_slot = Clock::get().unwrap().slot;
-        let activated = self.activated(current_slot);
-        let finalized = self.finalized(current_slot);
-        if !activated && !finalized {
-            ProposalStatus::Draft
-        } else if activated && !finalized {
-            ProposalStatus::Active
-        } else if activated && finalized {
-            ProposalStatus::Closed
-        } else {
-            panic!("no status found for activated {} and finalized {}", activated, finalized);
-        }
     }
 
     fn activated(&self, current_slot: Slot) -> bool {
@@ -98,12 +99,11 @@ impl ProposalState {
     }
 }
 
-
 #[derive(AnchorDeserialize, AnchorSerialize, Clone)]
 pub struct VoteCount {
-    pub yes: u64,
-    pub no: u64,
-    pub abstain: u64,
+    yes: u64,
+    no: u64,
+    abstain: u64,
 }
 
 impl VoteCount {
@@ -114,30 +114,28 @@ impl VoteCount {
             abstain: 0,
         }
     }
-}
 
-#[derive(Eq, PartialEq)]
-pub enum ProposalStatus {
-    Draft,
-    Active,
-    Closed,
-}
+    pub fn add(&mut self, vote: Vote2, weight: u64) {
+        self.edit(vote, weight, u64::checked_add)
+    }
 
-// // pub enum ProposalStateTransition
+    pub fn rescind(&mut self, vote: Vote2, weight: u64) {
+        self.edit(vote, weight, u64::checked_sub)
+    }
+
+    fn edit<F: Fn(u64, u64) -> Option<u64>>(
+        &mut self, vote: Vote2, weight: u64, op: F
+    ) {
+        match vote {
+            Vote2::Yes => self.yes = op(self.yes, weight).unwrap(),
+            Vote2::No => self.no = op(self.no, weight).unwrap(),
+            Vote2::Abstain => self.abstain = op(self.abstain, weight).unwrap(),
+        }
+    }
+}
 
 #[derive(AnchorDeserialize, AnchorSerialize, Eq, PartialEq, Debug, Clone, Copy)]
 pub enum ProposalEvent {
     Activate,
     Finalize,
 }
-
-
-// pub struct ProposalState {
-//     editable: bool,
-//     votable: bool,
-//     events: [(ProposalStatus, u64); 2]
-// }
-
-// fn transition(previous_state: ProposalStatus, next_state: ProposalStatus) {
-//     Transition {}
-// }

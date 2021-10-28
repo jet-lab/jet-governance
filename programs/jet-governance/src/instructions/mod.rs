@@ -1,3 +1,5 @@
+pub mod change_vote;
+pub mod edit_draft;
 pub mod deposit;
 pub mod transition_proposal;
 pub mod init_realm;
@@ -7,6 +9,8 @@ pub mod rescind;
 pub mod vote;
 pub mod withdraw;
 
+pub use change_vote::*;
+pub use edit_draft::*;
 pub use deposit::*;
 pub use transition_proposal::*;
 pub use init_realm::*;

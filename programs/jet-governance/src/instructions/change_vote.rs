@@ -1,10 +1,12 @@
-use anchor_lang::{AccountsClose, prelude::*};
-use crate::{state::voter::Voter, state::voter::VoteRecord, state::proposal::Proposal};
+use std::ops::DerefMut;
+
+use anchor_lang::prelude::*;
+use crate::{state::proposal::Proposal, state::voter::{Vote2, VoteRecord}, state::voter::Voter};
 
 
 #[derive(Accounts)]
 #[instruction(bump: u8)]
-pub struct Rescind<'info> {
+pub struct ChangeVote<'info> {
     /// The user with authority over the voter account.
     #[account(signer)]
     pub owner: AccountInfo<'info>,
@@ -35,12 +37,12 @@ pub struct Rescind<'info> {
     pub vote_record: ProgramAccount<'info, VoteRecord>,
 }
 
-pub fn handler(ctx: Context<Rescind>) -> ProgramResult {
-    let vote_record = &ctx.accounts.vote_record;
-    let proposal = &mut ctx.accounts.proposal;
-    let voter = &mut ctx.accounts.voter;
+pub fn handler(ctx: Context<ChangeVote>, vote: Vote2) -> ProgramResult {
+    let vote_record = ctx.accounts.vote_record.deref_mut();
+    let proposal = ctx.accounts.proposal.deref_mut();
+    let voter = ctx.accounts.voter.deref_mut();
     proposal.vote().rescind(vote_record.vote, vote_record.weight);
-    voter.active_votes -= 1;
-    vote_record.close(ctx.accounts.owner.to_account_info())?;
+    proposal.vote().add(vote, voter.deposited);
+    vote_record.weight = voter.deposited;
     Ok(())
 }

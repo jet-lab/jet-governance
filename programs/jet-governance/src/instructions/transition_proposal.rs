@@ -26,6 +26,7 @@ pub struct TransitionProposal<'info> {
     pub proposal: ProgramAccount<'info, Proposal>,
 }
 
+
 pub fn handler(
     ctx: Context<TransitionProposal>,
     event: ProposalEvent,
@@ -33,8 +34,8 @@ pub fn handler(
 ) -> ProgramResult {
     let proposal = ctx.accounts.proposal.deref_mut();
     match event {
-        ProposalEvent::Activate => proposal.state.activate(when.resolve()),
-        ProposalEvent::Finalize => proposal.state.finalize(when.resolve()),
+        ProposalEvent::Activate => proposal.lifecycle.activate(when.resolve()),
+        ProposalEvent::Finalize => proposal.lifecycle.finalize(when.resolve()),
     }
     Ok(())
 }

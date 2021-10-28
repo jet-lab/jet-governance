@@ -4,3 +4,4 @@ pub mod proposal;
 
 pub use realm::*;
 pub use voter::*;
+pub use proposal::*;

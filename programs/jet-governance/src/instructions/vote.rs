@@ -1,3 +1,5 @@
+use std::ops::DerefMut;
+
 use anchor_lang::prelude::*;
 use crate::{state::proposal::Proposal, state::{Vote2, voter::VoteRecord}, state::voter::Voter};
 
@@ -35,13 +37,15 @@ pub struct VoteAccounts<'info> {
 }
 
 pub fn handler(ctx: Context<VoteAccounts>, vote: Vote2) -> ProgramResult {
-    let vote_record = &mut ctx.accounts.vote_record;
     let proposal = &mut ctx.accounts.proposal;
     let voter = &mut ctx.accounts.voter;
-    vote_record.proposal = proposal.key();
-    vote_record.owner = ctx.accounts.owner.key();
-    vote_record.vote = vote;
-    proposal.state.vote(vote, voter.deposited);
+    *ctx.accounts.vote_record.deref_mut() = VoteRecord {
+        proposal: proposal.key(),
+        owner: ctx.accounts.owner.key(),
+        vote: vote,
+        weight: voter.deposited,
+    };
+    proposal.vote().add(vote, voter.deposited);
     voter.active_votes += 1;
     Ok(())
 }

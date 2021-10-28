@@ -2,9 +2,10 @@ use std::ops::DerefMut;
 
 use anchor_lang::prelude::*;
 use crate::state::voter::Voter;
-use crate::state::proposal::{Proposal, ProposalState, VoteCount};
+use crate::state::proposal::Proposal;
 
-use super::Time;
+use super::transition_proposal::Time;
+
 
 
 #[derive(Accounts)]
@@ -37,13 +38,13 @@ pub fn handler(
     activate: Time,
     finalize: Time,
 ) -> ProgramResult {
-    *ctx.accounts.proposal.deref_mut() = Proposal {
-        realm: ctx.accounts.realm.key(),
-        owner: ctx.accounts.owner.key(),
+    *ctx.accounts.proposal.deref_mut() = Proposal::new(
+        ctx.accounts.realm.key(),
+        ctx.accounts.owner.key(),
         name,
         description,
-        created_slot: Clock::get()?.slot,
-        state: ProposalState::new(activate.resolve(), finalize.resolve()),
-    };
+        activate.resolve(),
+        finalize.resolve(),
+    );
     Ok(())
 }
