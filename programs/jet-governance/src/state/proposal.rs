@@ -1,5 +1,5 @@
 use anchor_lang::prelude::*;
-use solana_program::clock::Slot;
+use solana_program::clock::UnixTimestamp;
 use super::Vote2;
 
 
@@ -7,7 +7,7 @@ use super::Vote2;
 pub struct Proposal {
     pub realm: Pubkey,
     pub owner: Pubkey,
-    created_slot: u64,
+    created_timestamp: UnixTimestamp,
     content: ProposalContent,
     pub lifecycle: ProposalLifecycle,
     count: VoteCount,
@@ -19,13 +19,13 @@ impl Proposal {
         owner: Pubkey,
         name: String,
         description: String,
-        activate: Option<Slot>,
-        finalize: Option<Slot>
+        activate: Option<UnixTimestamp>,
+        finalize: Option<UnixTimestamp>
     ) -> Proposal {
         Proposal {
             realm,
             owner,
-            created_slot: Clock::get().unwrap().slot,
+            created_timestamp: Clock::get().unwrap().unix_timestamp,
             content: ProposalContent {
                 name,
                 description,
@@ -39,15 +39,15 @@ impl Proposal {
     }
 
     pub fn content(&mut self) -> &mut ProposalContent {
-        if !self.lifecycle.activated(Clock::get().unwrap().slot) {
+        if !self.lifecycle.activated(Clock::get().unwrap().unix_timestamp) {
             panic!("Proposal is not editable.")
         }
         &mut self.content
     }
 
     pub fn vote(&mut self) -> &mut VoteCount {
-        let current_slot = Clock::get().unwrap().slot;
-        if !self.lifecycle.activated(current_slot) || self.lifecycle.finalized(current_slot) {
+        let current_timestamp = Clock::get().unwrap().unix_timestamp;
+        if !self.lifecycle.activated(current_timestamp) || self.lifecycle.finalized(current_timestamp) {
             panic!("Proposal is not votable");
         }
         &mut self.count
@@ -64,36 +64,36 @@ pub struct ProposalContent {
 
 #[derive(AnchorDeserialize, AnchorSerialize, Clone)]
 pub struct ProposalLifecycle {
-    activate: Option<Slot>,
-    finalize: Option<Slot>,
+    activate: Option<UnixTimestamp>,
+    finalize: Option<UnixTimestamp>,
 }
 
 impl ProposalLifecycle {
-    pub fn activate(&mut self, slot: Option<Slot>) {
-        if self.activated(Clock::get().unwrap().slot) {
+    pub fn activate(&mut self, timestamp: Option<UnixTimestamp>) {
+        if self.activated(Clock::get().unwrap().unix_timestamp) {
             panic!("Cannot modify the activation time of a proposal that was already activated.");
         }
-        self.activate = slot;
+        self.activate = timestamp;
     }
 
-    pub fn finalize(&mut self, slot: Option<Slot>) {
-        if self.finalized(Clock::get().unwrap().slot) {
+    pub fn finalize(&mut self, timestamp: Option<UnixTimestamp>) {
+        if self.finalized(Clock::get().unwrap().unix_timestamp) {
             panic!("Cannot modify the finalization time of a proposal that was already finalized.");
         }
-        self.finalize = slot;
+        self.finalize = timestamp;
     }
 
-    fn activated(&self, current_slot: Slot) -> bool {
-        self.done(self.activate, current_slot)
+    fn activated(&self, current_timestamp: UnixTimestamp) -> bool {
+        self.done(self.activate, current_timestamp)
     }
 
-    fn finalized(&self, current_slot: Slot) -> bool {
-        self.done(self.finalize, current_slot)
+    fn finalized(&self, current_timestamp: UnixTimestamp) -> bool {
+        self.done(self.finalize, current_timestamp)
     }
     
-    fn done(&self, it: Option<Slot>, current_slot: Slot) -> bool {
+    fn done(&self, it: Option<UnixTimestamp>, current_timestamp: UnixTimestamp) -> bool {
         match it {
-            Some(slot) => current_slot >= slot,
+            Some(timestamp) => current_timestamp >= timestamp,
             None => false,
         }
     }

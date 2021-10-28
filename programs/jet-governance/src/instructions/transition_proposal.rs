@@ -1,7 +1,7 @@
 use std::ops::DerefMut;
 
 use anchor_lang::prelude::*;
-use solana_program::clock::Slot;
+use solana_program::clock::UnixTimestamp;
 use crate::state::voter::Voter;
 use crate::state::proposal::{Proposal, ProposalEvent};
 
@@ -43,15 +43,15 @@ pub fn handler(
 #[derive(AnchorDeserialize, AnchorSerialize, Eq, PartialEq, Debug, Clone, Copy)]
 pub enum Time {
     Now,
-    At(Slot),
+    At(UnixTimestamp),
     Never
 }
 
 impl Time {
-    pub fn resolve(&self) -> Option<Slot> {
+    pub fn resolve(&self) -> Option<UnixTimestamp> {
         match self {
-            Time::Now => Some(Clock::get().unwrap().slot),
-            Time::At(slot) => Some(*slot),
+            Time::Now => Some(Clock::get().unwrap().unix_timestamp),
+            Time::At(timestamp) => Some(*timestamp),
             Time::Never => None,
         }
     }
