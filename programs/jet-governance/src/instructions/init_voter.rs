@@ -1,3 +1,5 @@
+use std::ops::DerefMut;
+
 use anchor_lang::prelude::*;
 use crate::state::voter::Voter;
 use crate::state::realm::Realm;
@@ -12,7 +14,6 @@ pub struct InitializeVoter<'info> {
 
     /// Realm that voter account exists within
     pub realm: ProgramAccount<'info, Realm>,
-
 
     #[account(init,
               seeds = [
@@ -30,7 +31,11 @@ pub struct InitializeVoter<'info> {
 }
 
 pub fn handler(ctx: Context<InitializeVoter>) -> ProgramResult {
-    ctx.accounts.voter.owner = ctx.accounts.owner.key();
-    ctx.accounts.voter.realm = ctx.accounts.realm.key();
+    *ctx.accounts.voter.deref_mut() = Voter {
+        realm: ctx.accounts.realm.key(),
+        owner: ctx.accounts.owner.key(),
+        deposited: 0,
+        active_votes: 0,
+    };
     Ok(())
 }
