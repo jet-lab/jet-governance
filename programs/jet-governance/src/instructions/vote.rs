@@ -13,7 +13,7 @@ pub struct VoteAccounts<'info> {
 
     pub realm: AccountInfo<'info>,
 
-    #[account(
+    #[account(mut,
         has_one = owner,
         has_one = realm)]
     pub voter: ProgramAccount<'info, Voter>,
@@ -21,15 +21,9 @@ pub struct VoteAccounts<'info> {
     #[account(mut)]
     pub proposal: ProgramAccount<'info, Proposal>,
 
-    #[account(init,
-        seeds = [
-            b"vote-record".as_ref(),
-            owner.key().as_ref(),
-            proposal.key().as_ref()
-        ],
-        bump = bump,
-        space = 8 + std::mem::size_of::<VoteRecord>(),
-        payer = owner)]
+    #[account(mut,
+        has_one = owner,
+        has_one = proposal)]
     pub vote_record: ProgramAccount<'info, VoteRecord>,
     
     /// Required to init account

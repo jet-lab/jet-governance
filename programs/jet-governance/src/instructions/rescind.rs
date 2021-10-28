@@ -12,26 +12,16 @@ pub struct Rescind<'info> {
     pub realm: AccountInfo<'info>,
 
     #[account(mut,
-        has_one=owner,
-        has_one=realm,
-        seeds = [
-            b"voter".as_ref(),
-            owner.key().as_ref(),
-            realm.key().as_ref()
-        ],
-        bump = bump)]
+        has_one = owner,
+        has_one = realm)]
     pub voter: ProgramAccount<'info, Voter>,
 
     #[account(mut)]
     pub proposal: ProgramAccount<'info, Proposal>,
 
     #[account(mut,
-        seeds = [
-            b"vote-record".as_ref(),
-            owner.key().as_ref(),
-            proposal.key().as_ref()
-        ],
-        bump = bump)]
+        has_one = owner,
+        has_one = proposal)]
     pub vote_record: ProgramAccount<'info, VoteRecord>,
 }
 
