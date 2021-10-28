@@ -70,35 +70,23 @@ export const ProposalView = (props: any) => {
           <h3>Cast Your Vote</h3>
           <div style={{ textAlign: "center" }}>
             <div className="flex">
-              <div className={`text-gradient ${abstain ? "" : "abstain"}`} id="in-favour">In favor <i className="fas fa-thumbs-up"></i></div>
-              <div className={`text-gradient ${abstain ? "" : "abstain"}`} id="against">Against <i className="fas fa-thumbs-down"></i></div>
+              <span className={!abstain ? "button-gradient" : "abstain"} id="in-favour">
+                <span className="text-gradient button-text">In favor <i className="fas fa-thumbs-up"></i></span>
+              </span>
+              <span className={!abstain ? "button-gradient" : "abstain"} id="against">
+                <span className="text-gradient button-text">Against <i className="fas fa-thumbs-down"></i></span>
+              </span>
             </div>
-            <div className="abstain">Abstain From Voting</div>
-            </div>
-            
+            <div className="no-vote">Abstain From Voting</div>
           </div>
 
-          <div className="divider"></div>
+          <div className="divider" />
+        
           <h3>Vote summary</h3>
           <div>Your stake</div>
         </div>
+        
       </div>
     </div>
-    // <Row gutter={[16, 16]} align="middle">
-    //   <Col span={24}>
-    //     <h2>Your Deposited Tokens ({formatUSD.format(totalBalanceInUSD)}):</h2>
-    //     <h2>
-    //       JET: {SOL.balance} ({formatUSD.format(SOL.balanceInUSD)})
-    //     </h2>
-    //     <h2 style={{ display: "inline-flex", alignItems: "center" }}>
-    //       <TokenIcon mintAddress={SRM_ADDRESS} /> SRM: {SRM?.balance} (
-    //       {formatUSD.format(SRM?.balanceInUSD)})
-    //     </h2>
-    //   </Col>
-
-    //   <Col span={8}>
-    //     <Countdown title="Countdown" value={deadline} onFinish={onFinish} />
-    //   </Col>
-    // </Row>
   );
 };
