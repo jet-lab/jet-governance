@@ -1,5 +1,3 @@
-use std::ops::{AddAssign, SubAssign};
-
 use anchor_lang::prelude::*;
 use solana_program::clock::Slot;
 use super::Vote2;
@@ -32,7 +30,11 @@ impl ProposalState {
     }
 
     pub fn activate(&mut self, slot: Option<Slot>) {
-        // todo restrictions?
+        if let Some(activation_time) = self.activate { 
+            if activation_time <= Clock::get().unwrap().slot {
+                panic!("Cannot modify the activation time of a proposal that was already activated.");
+            }
+        }
         self.activate = slot;
     }
 
