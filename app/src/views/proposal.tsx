@@ -8,6 +8,7 @@ import { useMarkets } from "../contexts/market";
 import { useUserBalance, useUserTotalBalance } from "../hooks";
 import { WRAPPED_SOL_MINT } from "../utils/ids";
 import { formatUSD } from "../utils/utils";
+import { ResultProgressBar } from "../components/ResultProgressBar";
 
 export const ProposalView = (props: any) => {
   const { marketEmitter, midPriceInUSD } = useMarkets();
@@ -18,7 +19,17 @@ export const ProposalView = (props: any) => {
   const { balanceInUSD: totalBalanceInUSD } = useUserTotalBalance();
 
   const { id, headline, active, end, result } = props;
-  const [abstain, setAbstain] = useState(false);
+  const [approve, setApprove] = useState(null)
+  const [abstainProposal, setAbstainProposal] = useState(false);
+  const [stake, setStake] = useState(32344)
+  const inFavor = 73;
+  const against = 22;
+  const abstain = 5;
+  const topStakeholders = [{
+    address: "0x4dtest",
+    amount: 17200000,
+    vote: true
+  }]
 
   const now = new Date().getTime();
   const timeleft = end - now;
@@ -70,11 +81,11 @@ export const ProposalView = (props: any) => {
           <h3>Cast Your Vote</h3>
           <div style={{ textAlign: "center" }}>
             <div className="flex">
-              <span className={!abstain ? "button-gradient" : "abstain"} id="in-favour">
-                <span className="text-gradient button-text">In favor <i className="fas fa-thumbs-up"></i></span>
+              <span className={!abstainProposal ? approve ? "active" : "button-gradient" : "abstain"} id="in-favour">
+                <div className="text-gradient button-text">In favor <i className="fas fa-thumbs-up"></i></div>
               </span>
-              <span className={!abstain ? "button-gradient" : "abstain"} id="against">
-                <span className="text-gradient button-text">Against <i className="fas fa-thumbs-down"></i></span>
+              <span className={!abstainProposal ? approve ? "button-gradient" : "active" : "abstain"} id="against">
+                <div className="text-gradient button-text">Against <i className="fas fa-thumbs-down"></i></div>
               </span>
             </div>
             <div className="no-vote">Abstain From Voting</div>
@@ -83,7 +94,20 @@ export const ProposalView = (props: any) => {
           <div className="divider" />
         
           <h3>Vote summary</h3>
-          <div>Your stake</div>
+          <h5>Your stake</h5>
+          <div className="stake text-gradient">
+            {stake} JET
+          </div>
+          <h5>Current results</h5>
+          <div className="results">
+            <ResultProgressBar type="inFavor" amount={inFavor} total={inFavor+against+abstain} />
+            <ResultProgressBar type="against" amount={against} total={inFavor+against+abstain} />
+            <ResultProgressBar type="abstain" amount={inFavor} total={inFavor+against+abstain} />
+          </div>
+          <h5>Top stakeholders</h5>
+          <div className="stakeholders">
+            {stake} JET
+          </div>
         </div>
         
       </div>

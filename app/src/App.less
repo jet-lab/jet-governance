@@ -90,6 +90,16 @@ h3 {
   font-size: 18px;
   line-height: 17px;
   text-align: left;
+  margin-bottom: 23px;
+}
+
+h5 {
+  font-size: 10px;
+  line-height: 12px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  font-weight: bold;
+  color: var(--black);
 }
 
 .nav-bar {
@@ -337,26 +347,32 @@ em {
       display: flex;
       flex-direction: column;
       #in-favour, #against {
-        padding: 9px 20px 9px 20px;
-        font-family: "Bicyclette", sans-serif;
-        font-weight: 700;
-        font-size: 14px;
-        line-height: 14px;
-        letter-spacing: 0.1em;
-        text-transform: uppercase;
+        width: 50%;
+
+        .button-text {
+          padding: 7px 20px 7px 20px;
+          text-align: center;
+          width: 100%;
+          font-family: "Bicyclette", sans-serif;
+          font-weight: 700;
+          font-size: 14px;
+          line-height: 14px;
+          letter-spacing: 0.1em;
+          text-transform: uppercase;
+        }
       }
       #in-favour {
         border-radius: 24px 0px 0px 24px;
       }
       #against {
         border-radius: 0px 24px 24px 0px;
+        
       }
       .abstain {
         cursor: not-allowed;
         border: 2px solid var(--light-grey);
         color: var(--light-grey);
       }
-      
 
       .button-gradient {
         box-sizing: border-box;
@@ -372,15 +388,30 @@ em {
         box-shadow: 800px 0 0 0 var(--white) inset;
       }
 
-      .button-gradient:hover .button-text {
-        box-shadow: none;
-        color: var(--white);
-        background-image: linear-gradient( 
-          0.25turn, hsla(162, 46%, 54%, 1), hsla(197, 65%, 51%, 1) ), linear-gradient(
-          0.25turn, hsla(162, 46%, 54%, 1), hsla(197, 65%, 51%, 1));
+      .button-gradient:hover, .active {
+        .button-text {
+        box-shadow: none !important;
+        color: var(--white) !important;
+        background-image: var(--gradient) !important;
         background-origin: border-box;
-        background-clip: content-box, border-box;
+        background-clip: content-box, border-box !important;
       }
+    }
+    .stake {
+      display: flex;
+      font-family: "Bicyclette-Bold";
+      font-style: normal;
+      font-size: 30px;
+      line-height: 29px;
+      margin-bottom: 30px;
+    }
+    .results {
+      margin-bottom: 37px;
+    }
+    .stakeholders {
+      margin-bottom: 26px;
+    }
+
     }
   }
 }
