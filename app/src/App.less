@@ -407,9 +407,30 @@ em {
     }
     .results {
       margin-bottom: 37px;
+      .results-header, .results-header .text-gradient {
+        font-family: "Bicyclette-Bold", sans-serif;
+        font-size: 10px;
+        line-height: 23px;
+        span {
+          font-family: "Helvetica Neue";
+          color: var(--black);
+          font-size: 8px;
+          line-height: 23px;
+        }
+      }
     }
     .stakeholders {
       margin-bottom: 26px;
+      display: flex;
+      .address {
+        width: 30%;
+      }
+      .amount {
+        width: 30%;
+      }
+      .vote {
+        width: 30%;
+      }
     }
 
     }

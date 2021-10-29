@@ -7,7 +7,7 @@ import { useConnectionConfig } from "../contexts/connection";
 import { useMarkets } from "../contexts/market";
 import { useUserBalance, useUserTotalBalance } from "../hooks";
 import { WRAPPED_SOL_MINT } from "../utils/ids";
-import { formatUSD } from "../utils/utils";
+import { formatUSD, numberFormatter } from "../utils/utils";
 import { ResultProgressBar } from "../components/ResultProgressBar";
 
 export const ProposalView = (props: any) => {
@@ -22,9 +22,9 @@ export const ProposalView = (props: any) => {
   const [approve, setApprove] = useState(null)
   const [abstainProposal, setAbstainProposal] = useState(false);
   const [stake, setStake] = useState(32344)
-  const inFavor = 73;
-  const against = 22;
-  const abstain = 5;
+  const inFavor = 722300;
+  const against = 220700;
+  const abstain = 70200;
   const topStakeholders = [{
     address: "0x4dtest",
     amount: 17200000,
@@ -102,10 +102,17 @@ export const ProposalView = (props: any) => {
           <div className="results">
             <ResultProgressBar type="inFavor" amount={inFavor} total={inFavor+against+abstain} />
             <ResultProgressBar type="against" amount={against} total={inFavor+against+abstain} />
-            <ResultProgressBar type="abstain" amount={inFavor} total={inFavor+against+abstain} />
+            <ResultProgressBar type="abstain" amount={abstain} total={inFavor+against+abstain} />
           </div>
           <h5>Top stakeholders</h5>
           <div className="stakeholders">
+            {topStakeholders.map((address) => (
+              <div>
+                <div className="address">{address.address}</div>
+                <div className="amount">{address.amount}</div>
+                <div className="vote">{address.vote}</div>
+              </div>
+            ))}
             {stake} JET
           </div>
         </div>
