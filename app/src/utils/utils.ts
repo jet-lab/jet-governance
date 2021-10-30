@@ -147,7 +147,7 @@ export function fromLamports(
 
 var SI_SYMBOL = ["", "k", "M", "G", "T", "P", "E"];
 
-const abbreviateNumber = (number: number, precision: number) => {
+export const abbreviateNumber = (number: number, precision: number) => {
   let tier = (Math.log10(number) / 3) | 0;
   let scaled = number;
   let suffix = SI_SYMBOL[tier];
@@ -192,8 +192,8 @@ export const formatUSD = new Intl.NumberFormat("en-US", {
 
 export const numberFormatter = new Intl.NumberFormat("en-US", {
   style: "decimal",
-  minimumFractionDigits: 2,
-  maximumFractionDigits: 2,
+  minimumFractionDigits: 0,
+  maximumFractionDigits: 0,
 });
 
 export const isSmallNumber = (val: number) => {

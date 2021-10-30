@@ -9,6 +9,8 @@ import { useUserBalance, useUserTotalBalance } from "../hooks";
 import { WRAPPED_SOL_MINT } from "../utils/ids";
 import { formatUSD, numberFormatter } from "../utils/utils";
 import { ResultProgressBar } from "../components/ResultProgressBar";
+import { Stakeholders } from "../components/Stakeholders";
+import { TOP_STAKEHOLDERS } from "../models/TOP_STAKEHOLDERS"
 
 export const ProposalView = (props: any) => {
   const { marketEmitter, midPriceInUSD } = useMarkets();
@@ -25,11 +27,6 @@ export const ProposalView = (props: any) => {
   const inFavor = 722300;
   const against = 220700;
   const abstain = 70200;
-  const topStakeholders = [{
-    address: "0x4dtest",
-    amount: 17200000,
-    vote: true
-  }]
 
   const now = new Date().getTime();
   const timeleft = end - now;
@@ -77,6 +74,13 @@ export const ProposalView = (props: any) => {
           </div>
         </div>
 
+        <div className="show-tokens">
+          <h3>Governance Tokens</h3>
+          <div className="stake text-gradient">
+            {numberFormatter.format(stake)} JET
+          </div>
+        </div>
+
         <div className="cast-vote">
           <h3>Cast Your Vote</h3>
           <div style={{ textAlign: "center" }}>
@@ -93,28 +97,16 @@ export const ProposalView = (props: any) => {
 
           <div className="divider" />
         
-          <h3>Vote summary</h3>
-          <h5>Your stake</h5>
-          <div className="stake text-gradient">
-            {stake} JET
-          </div>
-          <h5>Current results</h5>
+          <h3>Results</h3>
           <div className="results">
             <ResultProgressBar type="inFavor" amount={inFavor} total={inFavor+against+abstain} />
             <ResultProgressBar type="against" amount={against} total={inFavor+against+abstain} />
             <ResultProgressBar type="abstain" amount={abstain} total={inFavor+against+abstain} />
           </div>
           <h5>Top stakeholders</h5>
-          <div className="stakeholders">
-            {topStakeholders.map((address) => (
-              <div>
-                <div className="address">{address.address}</div>
-                <div className="amount">{address.amount}</div>
-                <div className="vote">{address.vote}</div>
-              </div>
+            {TOP_STAKEHOLDERS.map((address) => (
+            <Stakeholders address={address.address} amount={address.amount} type={address.vote} />
             ))}
-            {stake} JET
-          </div>
         </div>
         
       </div>

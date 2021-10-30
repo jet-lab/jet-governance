@@ -337,8 +337,24 @@ em {
         line-height: 26px;
         margin-bottom: 26px;
       }
-
     }
+
+    .show-tokens {
+      box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.15), 0px -4px 20px rgba(255, 255, 255, 0.5);
+      border-radius: 10px;
+      padding: 39px 27px;
+      grid-column: 17 e("/") 25;
+      margin-bottom: 32px;
+      .stake {
+        display: flex;
+        font-family: "Bicyclette-Bold";
+        font-style: normal;
+        font-size: 30px;
+        line-height: 29px;
+        margin-bottom: 30px;
+      }
+    }
+
     .cast-vote {
       padding: 39px 27px;
       grid-column: 17 e("/") 25;
@@ -348,7 +364,6 @@ em {
       flex-direction: column;
       #in-favour, #against {
         width: 50%;
-
         .button-text {
           padding: 7px 20px 7px 20px;
           text-align: center;
@@ -396,40 +411,55 @@ em {
         background-origin: border-box;
         background-clip: content-box, border-box !important;
       }
-    }
-    .stake {
-      display: flex;
-      font-family: "Bicyclette-Bold";
-      font-style: normal;
-      font-size: 30px;
-      line-height: 29px;
-      margin-bottom: 30px;
+      .text-gradient {
+          -webkit-text-fill-color: none;
+      }
     }
     .results {
       margin-bottom: 37px;
       .results-header, .results-header .text-gradient {
         font-family: "Bicyclette-Bold", sans-serif;
         font-size: 10px;
-        line-height: 23px;
+        line-height: 10px;
+        margin-top: 6px;
         span {
           font-family: "Helvetica Neue";
           color: var(--black);
           font-size: 8px;
-          line-height: 23px;
         }
+      }
+      .ant-progress-inner {
+        position: relative;
+        display: inline-block;
+        width: 100%;
+        overflow: hidden;
+        vertical-align: middle;
+        background-color: var(--white);
+    box-shadow: inset -2px 0px 2px rgba(97, 95, 95, 0.5), inset 1px 1px 2px rgba(0, 0, 0, 0.3);
       }
     }
     .stakeholders {
-      margin-bottom: 26px;
       display: flex;
+      font-size: 12px;
+      line-height: 23px;
+      letter-spacing: 0.05em;
+      width: 100%;
+      margin-bottom: 0;
       .address {
-        width: 30%;
+        width: 33%;
       }
       .amount {
-        width: 30%;
+        width: 33%;
+        text-align: right;
+        margin-right: 21px;
       }
       .vote {
-        width: 30%;
+        width: 33%;
+        text-align: right;
+        text-transform: uppercase;
+        font-family: "Bicyclette-Bold", sans-serif;
+        font-size: 10px;
+        line-height: 23px;
       }
     }
 

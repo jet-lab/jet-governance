@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import { Progress } from 'antd';
+import { abbreviateNumber } from "../utils/utils";
 
 export const ResultProgressBar = (props: any) => {
   const { type, amount, total } = props;
@@ -18,14 +20,16 @@ export const ResultProgressBar = (props: any) => {
     setColor("var(--rejected)")
     setSymbol("fas fa-thumbs-down")
   }
-})
+}, [type])
+
+  const percent = (amount / total) * 100
 
   return (
     <div style={{color: color}} className={`results-header ${gradient ? "text-gradient" : ""}`}>
-      {((amount / total) * 100).toFixed(0)}% {" "}
+      {percent.toFixed(0)}% {" "}
       {vote.toUpperCase()} <i className={symbol}></i>
-      <span>{amount} JET</span>
-      
+      <span>{abbreviateNumber(amount, 1)} JET</span>
+      <Progress percent={percent} status="active" showInfo={false} strokeColor={color} />
     </div>
   );
 };
