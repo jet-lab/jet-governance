@@ -10,7 +10,8 @@ import { WRAPPED_SOL_MINT } from "../utils/ids";
 import { formatUSD, numberFormatter } from "../utils/utils";
 import { ResultProgressBar } from "../components/ResultProgressBar";
 import { Stakeholders } from "../components/Stakeholders";
-import { TOP_STAKEHOLDERS } from "../models/TOP_STAKEHOLDERS"
+import { TOP_STAKEHOLDERS } from "../models/TOP_STAKEHOLDERS";
+import { Checkbox } from 'antd';
 
 export const ProposalView = (props: any) => {
   const { marketEmitter, midPriceInUSD } = useMarkets();
@@ -34,9 +35,9 @@ export const ProposalView = (props: any) => {
 
   return (
     <div className="main-content proposal">
-      <span>
+      <Link to="/">
         <i className="fas fa-arrow-left"></i> All Proposals
-      </span>
+      </Link>
 
       <div className="info">
         <div className="description">
@@ -86,13 +87,13 @@ export const ProposalView = (props: any) => {
           <div style={{ textAlign: "center" }}>
             <div className="flex">
               <span className={!abstainProposal ? approve ? "active" : "button-gradient" : "abstain"} id="in-favour">
-                <div className="text-gradient button-text">In favor <i className="fas fa-thumbs-up"></i></div>
+                <div className={`button-text ${!abstainProposal ? "text-gradient" : "abstain"}`}>In favor <i className="fas fa-thumbs-up"></i></div>
               </span>
               <span className={!abstainProposal ? approve ? "button-gradient" : "active" : "abstain"} id="against">
-                <div className="text-gradient button-text">Against <i className="fas fa-thumbs-down"></i></div>
+                <div className={`button-text ${!abstainProposal ? "text-gradient" : "abstain"}`}>Against <i className="fas fa-thumbs-down"></i></div>
               </span>
             </div>
-            <div className="no-vote">Abstain From Voting</div>
+            <div className="no-vote"><Checkbox onChange={() => setAbstainProposal(!abstainProposal)}/>Abstain From Voting</div>
           </div>
 
           <div className="divider" />
