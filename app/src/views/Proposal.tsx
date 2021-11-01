@@ -28,7 +28,8 @@ export const ProposalView = (props: any) => {
   const inFavor = 722300;
   const against = 220700;
   const abstain = 70200;
-
+  const startDate = new Date("Jan 5, 2022 15:37:25");
+  const endDate = new Date("Jan 5, 2022 15:37:25");
   const now = new Date().getTime();
   const timeleft = end - now;
   const days = Math.floor(timeleft / (1000 * 60 * 60 * 24));
@@ -39,7 +40,7 @@ export const ProposalView = (props: any) => {
         <i className="fas fa-arrow-left"></i> All Proposals
       </Link>
 
-      <div className="info">
+      <div className="flex info">
         <div className="description">
           <div className="flex">
             <h3>Proposal {id}</h3>
@@ -70,11 +71,15 @@ export const ProposalView = (props: any) => {
             quam viverra orci.
           </p>
           <div className="divider"></div>
-          <div className="details">
-
+          <div className="details flex column">
+            <div><h5>Proposal ID:</h5><span>test</span></div>
+            <div><h5>Start date:</h5><span>{startDate.toString()}</span></div>
+            <div><h5>End date:</h5><span>{endDate.toString()}</span></div>
+            <div><h5>Block height:</h5><span>test</span></div>
           </div>
         </div>
 
+        <div className="flex column">
         <div className="show-tokens">
           <h3>Governance Tokens</h3>
           <div className="stake text-gradient">
@@ -108,6 +113,7 @@ export const ProposalView = (props: any) => {
             {TOP_STAKEHOLDERS.map((address) => (
             <Stakeholders address={address.address} amount={address.amount} type={address.vote} />
             ))}
+          </div>
         </div>
         
       </div>

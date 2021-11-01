@@ -2,19 +2,24 @@
 @import "./ant-custom.less";
 
 /* Text */
-h1, h2, p, th, td {
+h1,
+h2,
+p,
+th,
+td {
   position: relative;
-	margin: unset;
-	text-decoration: none;
-	color: var(--black) !important;
+  margin: unset;
+  text-decoration: none;
+  color: var(--black) !important;
   opacity: 0.9;
   font-size: 16px;
 }
 
-a, i {
+a,
+i {
   text-decoration: none;
   margin: var(--spacing-xs);
-  -webkit-tap-highlight-color: rgba(0,0,0,0);
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
   -webkit-touch-callout: none;
   -moz-user-select: none;
   -khtml-user-select: none;
@@ -34,25 +39,28 @@ span {
 .text-gradient {
   opacity: 1 !important;
   background-image: var(--gradient) !important;
-	-webkit-background-clip: text !important;
-	-webkit-text-fill-color: transparent !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
 }
 .disabled {
   cursor: not-allowed !important;
   opacity: var(--disabled-opacity) !important;
 }
 .bicyclette {
-  font-family: 'Bicyclette', 'Roboto', sans-serif;
+  font-family: "Bicyclette", "Roboto", sans-serif;
 }
 .bicyclette-bold {
-  font-family: 'Bicyclette-Bold', 'Roboto', sans-serif;
+  font-family: "Bicyclette-Bold", "Roboto", sans-serif;
 }
 .jet-icons {
-  font-family: 'Jet-Icons';
+  font-family: "Jet-Icons";
   font-size: 27px;
 }
 .flex {
   display: flex;
+}
+.column {
+  flex-direction: column;
 }
 
 .app-title {
@@ -78,8 +86,11 @@ span {
   }
 }
 
-h1, h2, h3, h4 {
-  font-family: 'Bicyclette', sans-serif;
+h1,
+h2,
+h3,
+h4 {
+  font-family: "Bicyclette", sans-serif;
   font-weight: 700;
   color: hsla(0, 0%, 0%, 1);
   letter-spacing: 0.1em;
@@ -211,8 +222,9 @@ em {
 
   .stake-inset {
     height: 144px;
-    background: #E0E7F2;
-    box-shadow: inset 0px -1px 2px rgba(255, 255, 255, 0.75), inset 0px 1px 2px rgba(0, 0, 0, 0.1);
+    background: #e0e7f2;
+    box-shadow: inset 0px -1px 2px rgba(255, 255, 255, 0.75),
+      inset 0px 1px 2px rgba(0, 0, 0, 0.1);
     border-radius: 15px;
     margin-bottom: 82px;
     width: 100%;
@@ -245,7 +257,6 @@ em {
       font-weight: bold;
       padding-bottom: 7px;
     }
-
 
     .headline {
       font-family: Helvetica Neue;
@@ -301,11 +312,11 @@ em {
 
   span {
     text-align: left;
-    margin-bottom: 13px;
   }
 
   .divider {
-    box-shadow: inset 2px 2px 2px rgba(0, 0, 0, 0.15), inset 2px 2px 2px rgba(255, 255, 255, 0.9);
+    box-shadow: inset 2px 2px 2px rgba(0, 0, 0, 0.15),
+      inset 2px 2px 2px rgba(255, 255, 255, 0.9);
     border-radius: 20px;
     width: 100%;
     padding: 0 6%;
@@ -314,15 +325,13 @@ em {
   }
 
   .info {
-    grid-template-columns: repeat(24, 1fr);
-    display: grid;
     .description {
       padding: 39px 36px;
       box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.25);
       border-radius: 10px;
-      grid-column: 1 e("/") 16;
       display: flex;
       flex-direction: column;
+      margin-right: 36px;
       h1.headline {
         font-family: "Helvetica Neue", sans-serif;
         font-style: normal;
@@ -337,8 +346,16 @@ em {
         font-size: 10px;
         line-height: 10px;
         letter-spacing: 0.1em;
-        text-transform: uppercase;
-        font-family: "Bicyclette-Bold", sans-serif;
+        div {
+          align-items: flex-end;
+          h5 {
+            width: 105px;
+          }
+          span {
+            font-size: 12px;
+            line-height: 23px;
+          }
+        }
       }
       p {
         font-size: 15px;
@@ -348,7 +365,8 @@ em {
     }
 
     .show-tokens {
-      box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.15), 0px -4px 20px rgba(255, 255, 255, 0.5);
+      box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.15),
+        0px -4px 20px rgba(255, 255, 255, 0.5);
       border-radius: 10px;
       padding: 39px 27px;
       grid-column: 17 e("/") 25;
@@ -366,16 +384,24 @@ em {
     .cast-vote {
       padding: 39px 27px;
       grid-column: 17 e("/") 25;
-      box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.15), 0px -4px 20px rgba(255, 255, 255, 0.5);
+      box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.15),
+        0px -4px 20px rgba(255, 255, 255, 0.5);
       border-radius: 10px;
       display: flex;
       flex-direction: column;
-      #in-favour, #against {
+      span {
+        margin-bottom: 13px;
+      }
+      #in-favour,
+      #against {
         width: 50%;
         .button-text {
+          box-sizing: border-box;
+          display: inline-block;
           padding: 7px 20px 7px 20px;
           text-align: center;
           width: 100%;
+          height: 100%;
           font-family: "Bicyclette", sans-serif;
           font-weight: 700;
           font-size: 14px;
@@ -386,10 +412,15 @@ em {
       }
       #in-favour {
         border-radius: 24px 0px 0px 24px;
+        .button-text {
+          border-radius: 22px 0px 0px 22px;
+        }
       }
       #against {
         border-radius: 0px 24px 24px 0px;
-        
+        .button-text {
+        border-radius: 0px 22px 22px 0px;
+        }
       }
       .abstain {
         cursor: not-allowed;
@@ -397,80 +428,82 @@ em {
         color: var(--light-grey);
       }
 
-      .button-gradient {
+      .button-gradient,
+      .active {
         box-sizing: border-box;
         -moz-box-sizing: border-box;
         -webkit-box-sizing: border-box;
         cursor: pointer;
         border: 2px solid transparent;
-        background-image: linear-gradient( 
-    0.25turn, hsla(162, 46%, 54%, 1), hsla(197, 65%, 51%, 1) ), linear-gradient(
-    0.25turn, hsla(162, 46%, 54%, 1), hsla(197, 65%, 51%, 1));
+        background-image: var(--gradient),
+        var(--gradient);
         background-origin: border-box;
         background-clip: content-box, border-box;
         box-shadow: 800px 0 0 0 var(--white) inset;
       }
 
-      .button-gradient:hover, .active {
+      .button-gradient:hover,
+      .active {
         .button-text {
-        box-shadow: none !important;
-        color: var(--white) !important;
-        background-image: var(--gradient) !important;
-        background-origin: border-box;
-        background-clip: content-box, border-box !important;
-      }
-      .text-gradient {
-          -webkit-text-fill-color: none;
-      }
-    }
-    .results {
-      margin-bottom: 37px;
-      .results-header, .results-header .text-gradient {
-        font-family: "Bicyclette-Bold", sans-serif;
-        font-size: 10px;
-        line-height: 10px;
-        margin-top: 6px;
-        span {
-          font-family: "Helvetica Neue";
-          color: var(--black);
-          font-size: 8px;
+          box-shadow: 0px 0px 0px 0px #fff inset;
+          color: var(--white) !important;
+          background-image: var(--gradient), var(--gradient) !important;
+          background-origin: border-box;
+          background-clip: content-box, border-box !important;
+          box-shadow: none;
+        }
+        .text-gradient {
+          -webkit-text-fill-color: var(--white) !important;
         }
       }
-      .ant-progress-inner {
-        position: relative;
-        display: inline-block;
-        width: 100%;
-        overflow: hidden;
-        vertical-align: middle;
-        background-color: var(--white);
-    box-shadow: inset -2px 0px 2px rgba(97, 95, 95, 0.5), inset 1px 1px 2px rgba(0, 0, 0, 0.3);
+      .results {
+        margin-bottom: 37px;
+        .results-header {
+          font-family: "Bicyclette-Bold", sans-serif;
+          font-size: 10px;
+          line-height: 10px;
+          margin-top: 6px;
+          span {
+            font-family: "Helvetica Neue";
+            color: var(--black);
+            font-size: 8px;
+          }
+        }
+        .ant-progress-inner {
+          position: relative;
+          display: inline-block;
+          width: 100%;
+          overflow: hidden;
+          vertical-align: middle;
+          background-color: var(--white);
+          box-shadow: inset -2px 0px 2px rgba(97, 95, 95, 0.5),
+            inset 1px 1px 2px rgba(0, 0, 0, 0.3);
+        }
       }
-    }
-    .stakeholders {
-      display: flex;
-      font-size: 12px;
-      line-height: 23px;
-      letter-spacing: 0.05em;
-      width: 100%;
-      margin-bottom: 0;
-      .address {
-        width: 33%;
-      }
-      .amount {
-        width: 33%;
-        text-align: right;
-        margin-right: 21px;
-      }
-      .vote {
-        width: 33%;
-        text-align: right;
-        text-transform: uppercase;
-        font-family: "Bicyclette-Bold", sans-serif;
-        font-size: 10px;
+      .stakeholders {
+        display: flex;
+        font-size: 12px;
         line-height: 23px;
+        letter-spacing: 0.05em;
+        width: 100%;
+        margin-bottom: 0;
+        .address {
+          width: 33%;
+        }
+        .amount {
+          width: 33%;
+          text-align: right;
+          margin-right: 21px;
+        }
+        .vote {
+          width: 33%;
+          text-align: right;
+          text-transform: uppercase;
+          font-family: "Bicyclette-Bold", sans-serif;
+          font-size: 10px;
+          line-height: 23px;
+        }
       }
-    }
-
     }
   }
 }
