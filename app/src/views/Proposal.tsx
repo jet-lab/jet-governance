@@ -22,8 +22,10 @@ export const ProposalView = (props: any) => {
   const { balanceInUSD: totalBalanceInUSD } = useUserTotalBalance();
 
   const { id, headline, active, end, result } = props;
-  const [approve, setApprove] = useState(null)
+  const [hasVoted, setHasVoted] = useState(false);
+  const [approve, setApprove] = useState();
   const [abstainProposal, setAbstainProposal] = useState(false);
+// TODO: Fetch user's stake from blockchain
   const [stake, setStake] = useState(32344)
   const inFavor = 722300;
   const against = 220700;
@@ -33,6 +35,11 @@ export const ProposalView = (props: any) => {
   const now = new Date().getTime();
   const timeleft = end - now;
   const days = Math.floor(timeleft / (1000 * 60 * 60 * 24));
+
+  const votingHandle = (vote: boolean) => {
+    setHasVoted(true);
+    // setApprove(vote);
+  }
 
   return (
     <div className="main-content proposal">
@@ -91,10 +98,10 @@ export const ProposalView = (props: any) => {
           <h3>Cast Your Vote</h3>
           <div style={{ textAlign: "center" }}>
             <div className="flex">
-              <span className={!abstainProposal ? approve ? "active" : "button-gradient" : "abstain"} id="in-favour">
+                <span className={!abstainProposal ? approve && hasVoted ? "active" : "button-gradient" : "abstain"} onClick={() => votingHandle(true)} id="in-favour">
                 <div className={`button-text ${!abstainProposal ? "text-gradient" : "abstain"}`}>In favor <i className="fas fa-thumbs-up"></i></div>
               </span>
-              <span className={!abstainProposal ? approve ? "button-gradient" : "active" : "abstain"} id="against">
+              <span className={!abstainProposal ? approve && hasVoted ? "button-gradient" : "active" : "abstain"} onClick={() => votingHandle(false)} id="against">
                 <div className={`button-text ${!abstainProposal ? "text-gradient" : "abstain"}`}>Against <i className="fas fa-thumbs-down"></i></div>
               </span>
             </div>
@@ -105,7 +112,7 @@ export const ProposalView = (props: any) => {
         
           <h3>Results</h3>
           <div className="results">
-            <ResultProgressBar type="inFavor" amount={inFavor} total={inFavor+against+abstain} />
+            <ResultProgressBar type="inFavor" amount={inFavor} total={inFavor + against + abstain} />
             <ResultProgressBar type="against" amount={against} total={inFavor+against+abstain} />
             <ResultProgressBar type="abstain" amount={abstain} total={inFavor+against+abstain} />
           </div>
