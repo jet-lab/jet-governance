@@ -51,7 +51,7 @@ export const ProposalView = (props: any) => {
         <div className="description">
           <div className="flex">
             <h3>Proposal {id}</h3>
-            <div className="details">
+            <div className="status-details">
               <div className={`status ${active ? "active" : result}`}>
                 <i className="fas fa-circle"></i>
                 {active ? "ACTIVE" : result}
@@ -105,7 +105,7 @@ export const ProposalView = (props: any) => {
                 <div className={`button-text ${!abstainProposal ? "text-gradient" : "abstain"}`}>Against <i className="fas fa-thumbs-down"></i></div>
               </span>
             </div>
-            <div className="no-vote"><Checkbox onChange={() => setAbstainProposal(!abstainProposal)}/>Abstain From Voting</div>
+            <div className="no-vote"><Checkbox onChange={() => setAbstainProposal(!abstainProposal)}>Abstain From Voting</Checkbox></div>
           </div>
 
           <div className="divider" />

@@ -273,8 +273,7 @@ em {
   }
 }
 
-.details {
-  display: flex;
+.details, .status-details {
   .status {
     font-family: "Bicyclette", sans-serif;
     text-transform: uppercase;
@@ -305,10 +304,14 @@ em {
   }
 }
 
+.details {
+  display: flex;
+}
+
 .proposal {
   display: flex;
   flex-direction: column;
-  align-content: start;
+  align-content: flex-start;
 
   span {
     text-align: left;
@@ -332,6 +335,7 @@ em {
       display: flex;
       flex-direction: column;
       margin-right: 36px;
+      width: 70%;
       h1.headline {
         font-family: "Helvetica Neue", sans-serif;
         font-style: normal;
@@ -341,7 +345,8 @@ em {
         padding-bottom: 20px;
         letter-spacing: unset;
       }
-      .details {
+      .status-details {
+        margin-top: 6px;
         margin-left: 20px;
         font-size: 10px;
         line-height: 10px;
@@ -392,6 +397,12 @@ em {
       span {
         margin-bottom: 13px;
       }
+      .ant-checkbox-wrapper {
+        margin-bottom: 13px;
+        span {
+        margin-bottom: 0 !important;
+        color: var(--black);
+      }}
       #in-favour,
       #against {
         width: 50%;
@@ -489,6 +500,7 @@ em {
         margin-bottom: 0;
         .address {
           width: 33%;
+          overflow-x: auto;
         }
         .amount {
           width: 33%;
