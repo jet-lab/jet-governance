@@ -17,7 +17,7 @@ export const AppLayout = React.memo(({ children }) => {
   return (
     <WalletModalProvider>
       <div className="App wormhole-bg">
-      <Layout title={LABELS.APP_TITLE}>
+      <Layout>
           <Header className="nav-bar">
           <img src={Logo} alt="logo" />
             <AppBar />

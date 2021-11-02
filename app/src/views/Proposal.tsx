@@ -11,7 +11,7 @@ import { formatUSD, numberFormatter } from "../utils/utils";
 import { ResultProgressBar } from "../components/ResultProgressBar";
 import { Stakeholders } from "../components/Stakeholders";
 import { TOP_STAKEHOLDERS } from "../models/TOP_STAKEHOLDERS";
-import { Checkbox } from 'antd';
+import { Checkbox, Button } from 'antd';
 
 export const ProposalView = (props: any) => {
   const { marketEmitter, midPriceInUSD } = useMarkets();
@@ -91,20 +91,25 @@ export const ProposalView = (props: any) => {
           <h3>Governance Tokens</h3>
           <div className="stake text-gradient">
             {numberFormatter.format(stake)} JET
-          </div>
+            </div>
+            <Button>Deposit</Button>
+            <Button>Withdraw</Button>
         </div>
 
         <div className="cast-vote">
           <h3>Cast Your Vote</h3>
           <div style={{ textAlign: "center" }}>
-            <div className="flex">
-                <span className={!abstainProposal ? approve && hasVoted ? "active" : "button-gradient" : "abstain"} onClick={() => votingHandle(true)} id="in-favour">
-                <div className={`button-text ${!abstainProposal ? "text-gradient" : "abstain"}`}>In favor <i className="fas fa-thumbs-up"></i></div>
-              </span>
-              <span className={!abstainProposal ? approve && hasVoted ? "button-gradient" : "active" : "abstain"} onClick={() => votingHandle(false)} id="against">
-                <div className={`button-text ${!abstainProposal ? "text-gradient" : "abstain"}`}>Against <i className="fas fa-thumbs-down"></i></div>
-              </span>
-            </div>
+    {/* <Button id="in-favour" onClick={() => votingHandle(true)}>In favor <i className="fas fa-thumbs-up" /></Button>
+    <Button id="against" onClick={() => votingHandle(false)}>Against <i className="fas fa-thumbs-down" /></Button> */}
+              
+    <div className="flex">
+      <button className={!abstainProposal ? approve && hasVoted ? "active" : "ant-btn" : "abstain"} id="in-favour">
+        <span className={!abstainProposal ? "" : "abstain"}>In favor <i className="fas fa-thumbs-up"></i></span>
+      </button>
+      <button className={!abstainProposal ? approve && hasVoted ? "ant-btn" : "active" : "abstain"}  id="against">
+        <span className={!abstainProposal ? "text-gradient" : "abstain"}>Against <i className="fas fa-thumbs-down"></i></span>
+      </button>
+    </div>
             <div className="no-vote"><Checkbox onChange={() => setAbstainProposal(!abstainProposal)}>Abstain From Voting</Checkbox></div>
           </div>
 

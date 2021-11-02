@@ -12,8 +12,8 @@ import { useWallet } from "@solana/wallet-adapter-react";
 export const AppBar = (props: { left?: JSX.Element; right?: JSX.Element }) => {
   const { connected } = useWallet();
   const TopBar = (
-    <div className="nav-bar-right">
-      <WalletMultiButton type="primary" />
+    <div className="nav-bar-right connect-wallet">
+      <WalletMultiButton />
       <div style={{ margin: 5 }} />
       {connected ? <WalletDisconnectButton type="ghost" /> : null}
       <Popover
@@ -22,12 +22,12 @@ export const AppBar = (props: { left?: JSX.Element; right?: JSX.Element }) => {
         content={<Settings />}
         trigger="click"
       >
-        <Button
+        {/* <Button
           shape="circle"
           size="large"
           type="text"
           icon={<SettingOutlined />}
-        />
+        /> */}
       </Popover>
       {props.right}
     </div>

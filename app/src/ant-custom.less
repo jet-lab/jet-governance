@@ -1,18 +1,18 @@
-@import '~antd/es/style/themes/dark.less';
+@import "~antd/es/style/themes/dark.less";
 @import "~antd/dist/antd.dark.less";
 
-@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@500;700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@500;700&display=swap");
 @font-face {
-  font-family: 'Bicyclette';
-  src: url("./fonts/Bicyclette-Regular.woff") format('woff');
+  font-family: "Bicyclette";
+  src: url("./fonts/Bicyclette-Regular.woff") format("woff");
 }
 @font-face {
-  font-family: 'Bicyclette-Bold';
-  src: url("./fonts/Bicyclette-Bold.woff") format('woff');
+  font-family: "Bicyclette-Bold";
+  src: url("./fonts/Bicyclette-Bold.woff") format("woff");
 }
 @font-face {
-  font-family: 'Jet-Icons';
-  src: url("./fonts/JetIcons-Regular.woff") format('woff');
+  font-family: "Jet-Icons";
+  src: url("./fonts/JetIcons-Regular.woff") format("woff");
 }
 
 // @primary-color: #ff00a8; // primary color for all components
@@ -31,72 +31,166 @@
 // @box-shadow-base: 0 3px 6px -4px rgba(0, 0, 0, 0.12), 0 6px 16px 0 rgba(0, 0, 0, 0.08),
 //   0 9px 28px 8px rgba(0, 0, 0, 0.05); // major shadow for layers
 
-  body {
-    --row-highlight: @background-color-base;
-  }
-  
-  /* General styling & root variables */
-  :root {
-    --black: #444444;
-    --dark-grey: #949494;
-    --grey: #d8dfec;
-    --light-grey: #CCCFD2;
-    --white: #e5ebf4;
-    --jet-green: #3d9e83; /* brand: 53bd9f */
-    --jet-blue: #278db6; /* brand: 32a5d3 */
-    --rejected: hsla(0, 49%, 67%, 1);
-  
-    --input-color: rgba(26, 73, 94, 0.7);
-    --gradient: linear-gradient(135deg, var(--jet-green) 25%, var(--jet-blue) 85%);
- 
-    --status-active: hsla(140, 84%, 84%, 1);
-    --status-inactive: hsla(0, 4%, 71%, 1);
-    --status-rejected: hsla(0, 73%, 75%, 1);
-    --status-passed: hsla(163, 44%, 43%, 1);
+body {
+  --row-highlight: @background-color-base;
+}
 
-    
-    --light-shadow: rgba(255, 255, 255, 0.8);
-    --dark-shadow: rgba(175, 186, 214, 0.8);
-    --neu-shadow: -1.75px -1.75px 3.5px var(--light-shadow), 1.75px 1.75px 3.5px var(--dark-shadow);
-    --neu-shadow-inset: inset -1.5px -1.5px 2px var(--light-shadow), inset 1.5px 1.5px 2px var(--dark-shadow);
-    --neu-shadow-inset-low: inset -1px -1px 1.5px var(--light-shadow), inset 1px 1px 1.5px var(--dark-shadow);
-    --neu--datatable-top-shadow: -1.5px -2px 3.5px var(--light-shadow), 1.5px 1.5px 3.5px var(--dark-shadow);
-    --neu--datatable-bottom-shadow: -3px 0px 2px var(--light-shadow), 1.5px 2.5px 3.5px var(--dark-shadow);
-    --neu-datatable-inset-shadow: inset -1px -1px 1px var(--light-shadow), inset 1px 1px 1px var(--dark-shadow) !important;
-    --neu-datatable-shadow: inset -1px -1px 1px var(--dark-shadow), inset 1px 1px 1px var(--light-shadow) !important;
-    --neu-shadow-inset-success: inset -2px -2px 2px #78d6bb, inset 2px 2px 2px #28866c;
-    --neu-shadow-inset-failure: inset -2px -2px 2px #f58d8d, inset 2px 2px 2px #c94646;
-    --neu-shadow-inset-gradient: inset -2px -2px 2.5px #36a3ce, inset 2px 2px 2.5px #28866c;
-    --neu-shadow-inset-gradient-low: inset -1.5px -1.5px 2px #36a3ce, inset 1.5px 1.5px 2px #28866c;
-  
-    --disabled-opacity: 0.85;
-  
-    --nav-height: 89px;
-    --mobile-nav-height: 60px;
-  
-    --spacing-xs: 4px;
-    --spacing-sm: 8px;
-    --spacing-md: 12px;
-    --spacing-lg: 18px;
-    --spacing-xl: 24px;
-  
-    --border-radius: 20px;
-    --round-radius: 50px;
-    --btn-radius: 7px;
-    --btn-padding: 7px 20px 5px 20px;
-    --secondary-btn-padding: 7px 10px 5px 10px;
+/* General styling & root variables */
+:root {
+  --black: #444444;
+  --dark-grey: #949494;
+  --grey: #d8dfec;
+  --light-grey: #cccfd2;
+  --white: #e5ebf4;
+  --jet-green: #3d9e83; /* brand: 53bd9f */
+  --jet-blue: #278db6; /* brand: 32a5d3 */
+  --rejected: hsla(0, 49%, 67%, 1);
+
+  --input-color: rgba(26, 73, 94, 0.7);
+  --gradient: linear-gradient(
+    135deg,
+    var(--jet-green) 25%,
+    var(--jet-blue) 85%
+  );
+
+  --status-active: hsla(140, 84%, 84%, 1);
+  --status-inactive: hsla(0, 4%, 71%, 1);
+  --status-rejected: hsla(0, 73%, 75%, 1);
+  --status-passed: hsla(163, 44%, 43%, 1);
+
+  --light-shadow: rgba(255, 255, 255, 0.8);
+  --dark-shadow: rgba(175, 186, 214, 0.8);
+  --neu-shadow: -1.75px -1.75px 3.5px var(--light-shadow),
+    1.75px 1.75px 3.5px var(--dark-shadow);
+  --neu-shadow-inset: inset -1.5px -1.5px 2px var(--light-shadow),
+    inset 1.5px 1.5px 2px var(--dark-shadow);
+  --neu-shadow-inset-low: inset -1px -1px 1.5px var(--light-shadow),
+    inset 1px 1px 1.5px var(--dark-shadow);
+  --neu--datatable-top-shadow: -1.5px -2px 3.5px var(--light-shadow),
+    1.5px 1.5px 3.5px var(--dark-shadow);
+  --neu--datatable-bottom-shadow: -3px 0px 2px var(--light-shadow),
+    1.5px 2.5px 3.5px var(--dark-shadow);
+  --neu-datatable-inset-shadow: inset -1px -1px 1px var(--light-shadow),
+    inset 1px 1px 1px var(--dark-shadow) !important;
+  --neu-datatable-shadow: inset -1px -1px 1px var(--dark-shadow),
+    inset 1px 1px 1px var(--light-shadow) !important;
+  --neu-shadow-inset-success: inset -2px -2px 2px #78d6bb,
+    inset 2px 2px 2px #28866c;
+  --neu-shadow-inset-failure: inset -2px -2px 2px #f58d8d,
+    inset 2px 2px 2px #c94646;
+  --neu-shadow-inset-gradient: inset -2px -2px 2.5px #36a3ce,
+    inset 2px 2px 2.5px #28866c;
+  --neu-shadow-inset-gradient-low: inset -1.5px -1.5px 2px #36a3ce,
+    inset 1.5px 1.5px 2px #28866c;
+
+  --disabled-opacity: 0.85;
+
+  --nav-height: 89px;
+  --mobile-nav-height: 60px;
+
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 12px;
+  --spacing-lg: 18px;
+  --spacing-xl: 24px;
+
+  --border-radius: 20px;
+  --round-radius: 50px;
+  --btn-radius: 7px;
+  --btn-padding: 7px 20px 5px 20px;
+  --secondary-btn-padding: 7px 10px 5px 10px;
+}
+::-webkit-scrollbar {
+  display: none !important;
+}
+body {
+  position: relative;
+  margin: 0;
+  font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
+  background: var(--white);
+  color: var(--black);
+  overflow-x: hidden;
+  letter-spacing: 0.25px;
+  width: calc(100% - var(--nav-width));
+  margin-left: var(--nav-width);
+}
+
+button.ant-btn-primary {
+  background: transparent;
+  font-family: "Bicyclette-Bold";
+  text-transform: uppercase;
+  font-size: 14px;
+  line-height: 14px;
+  letter-spacing: 0.1em;
+  border: 1px solid #ffffff;
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  border-radius: 4px;
+  padding: 0;
+  background: transparent;
+  cursor: pointer;
+  transition: 0.2s;
+  span {
+    padding: 9px 15px 6px 15px !important;
   }
-  ::-webkit-scrollbar {
-    display: none !important;
+}
+button.ant-btn-primary:hover,
+button.ant-btn-primary:focus {
+  border-color: #ffffff;
+  background: #ffffff;
+  span {
+    background: var(--gradient);
+    color: transparent;
+    -webkit-background-clip: text;
+    background-clip: text;
   }
-  body {
-    position: relative;
-    margin: 0;
-    font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
-    background: var(--white);
-    color: var(--black);
-    overflow-x: hidden;
-    letter-spacing: 0.25px;
-    width: calc(100% - var(--nav-width));
-    margin-left: var(--nav-width);
+}
+
+.ant-btn {
+	box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+	border-radius: 4px;
+	margin: 8px;
+	padding: 0;
+	cursor: pointer;
+	border: 2px solid transparent;
+	background-image: var(--gradient), var(--gradient);
+	background-origin: border-box;
+	background-clip: content-box, border-box;
+	box-shadow: 800px 0 0 0 var(--white) inset;
+  span {
+    font-family: 'Bicyclette-Bold', sans-serif;
+    font-style: normal;
+    text-transform: uppercase;
+    align-items: center;
+    text-align: center;
+    letter-spacing: 0.1em;
+    background: var(--gradient);
+    color: transparent;
+    -webkit-background-clip: text;
+    background-clip: text;
+    display: inline-block;
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    transition: 0.2s;
+    padding: 4px 10px 3px 10px !important
   }
+}
+
+.ant-btn:hover, .ant-btn:focus, button.active {
+  border-color: transparent;
+  background-image: var(--gradient), var(--gradient);
+  background-origin: border-box;
+  span {
+    box-shadow: 0px 0px 0px 0px #fff inset;
+    color: #ffffff;
+    background-image: var(--gradient),
+    var(--gradient);
+    background-origin: border-box;
+    background-clip: content-box, border-box;
+    box-shadow: none;
+  }
+}

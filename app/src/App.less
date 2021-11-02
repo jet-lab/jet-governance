@@ -121,6 +121,8 @@ h5 {
   width: 100%;
   background: var(--gradient);
   z-index: 1000;
+  .connect-wallet {
+  }
 
   img {
     height: 62px;
@@ -280,7 +282,7 @@ em {
     margin-bottom: -3px;
   }
   .active {
-    color: var(--status-active);
+    color: var(--jet-green);
   }
   .inactive {
     color: var(--status-inactive);
@@ -380,8 +382,8 @@ em {
         display: flex;
         font-family: "Bicyclette-Bold";
         font-style: normal;
-        font-size: 30px;
-        line-height: 29px;
+        font-size: 50px;
+        line-height: 50px;
         margin-bottom: 30px;
       }
     }
@@ -406,67 +408,54 @@ em {
       #in-favour,
       #against {
         width: 50%;
-        .button-text {
-          box-sizing: border-box;
-          display: inline-block;
-          padding: 7px 20px 7px 20px;
-          text-align: center;
-          width: 100%;
-          height: 100%;
-          font-family: "Bicyclette", sans-serif;
-          font-weight: 700;
-          font-size: 14px;
-          line-height: 14px;
-          letter-spacing: 0.1em;
-          text-transform: uppercase;
-        }
       }
       #in-favour {
         border-radius: 24px 0px 0px 24px;
-        .button-text {
+        span {
           border-radius: 22px 0px 0px 22px;
         }
       }
       #against {
         border-radius: 0px 24px 24px 0px;
-        .button-text {
+        span {
         border-radius: 0px 22px 22px 0px;
         }
       }
-      .abstain {
+      span.abstain {
         cursor: not-allowed;
         border: 2px solid var(--light-grey);
+        div.abstain{
         color: var(--light-grey);
-      }
-
-      .button-gradient,
-      .active {
-        box-sizing: border-box;
-        -moz-box-sizing: border-box;
-        -webkit-box-sizing: border-box;
-        cursor: pointer;
-        border: 2px solid transparent;
-        background-image: var(--gradient),
-        var(--gradient);
-        background-origin: border-box;
-        background-clip: content-box, border-box;
-        box-shadow: 800px 0 0 0 var(--white) inset;
-      }
-
-      .button-gradient:hover,
-      .active {
-        .button-text {
-          box-shadow: 0px 0px 0px 0px #fff inset;
-          color: var(--white) !important;
-          background-image: var(--gradient), var(--gradient) !important;
-          background-origin: border-box;
-          background-clip: content-box, border-box !important;
-          box-shadow: none;
-        }
-        .text-gradient {
-          -webkit-text-fill-color: var(--white) !important;
         }
       }
+    // .button-gradient,
+    //   .active {
+    //     box-sizing: border-box;
+    //     -moz-box-sizing: border-box;
+    //     -webkit-box-sizing: border-box;
+    //     cursor: pointer;
+    //     border: 2px solid transparent;
+    //     background-image: var(--gradient),
+    //     var(--gradient);
+    //     background-origin: border-box;
+    //     background-clip: content-box, border-box;
+    //     box-shadow: 800px 0 0 0 var(--white) inset;
+    //   }
+
+    //   .button-gradient:hover,
+    //   .active {
+    //     .button-text {
+    //       box-shadow: 0px 0px 0px 0px #fff inset;
+    //       color: var(--white) !important;
+    //       background-image: var(--gradient), var(--gradient) !important;
+    //       background-origin: border-box;
+    //       background-clip: content-box, border-box !important;
+    //       box-shadow: none;
+    //     }
+    //     .text-gradient {
+    //       -webkit-text-fill-color: var(--white) !important;
+    //     }
+    //   }
       .results {
         margin-bottom: 37px;
         .results-header {
