@@ -1,5 +1,4 @@
-use anchor_lang::prelude::*;
-use solana_program::clock::UnixTimestamp;
+use anchor_lang::{prelude::*, solana_program::clock::UnixTimestamp};
 use super::Vote2;
 
 

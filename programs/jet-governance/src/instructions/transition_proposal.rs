@@ -1,7 +1,7 @@
 use std::ops::DerefMut;
 
 use anchor_lang::prelude::*;
-use solana_program::clock::UnixTimestamp;
+use anchor_lang::solana_program::clock::UnixTimestamp;
 use crate::state::voter::Voter;
 use crate::state::proposal::{Proposal, ProposalEvent};
 

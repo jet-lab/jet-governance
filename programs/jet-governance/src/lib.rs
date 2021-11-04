@@ -7,14 +7,17 @@ use anchor_lang::prelude::*;
 use instructions::*;
 use state::*;
 
-declare_id!("Fg6PaFpoGXkYsidMpWTK6W2BeZ7FEfcYkg476zPFsLnS");
+declare_id!("5TBwvU5xoA13fzmZgWVgFBUmBz1YCdiq2AshDZpPn3AL");
 
 
 #[program]
 mod jet_governance {
     use super::*;
 
-    pub fn init_realm(ctx: Context<InitializeRealm>) -> ProgramResult {
+    pub fn init_realm(
+        ctx: Context<InitializeRealm>,
+        _bump: InitRealmBumpSeeds,
+    ) -> ProgramResult {
         init_realm::handler(ctx)
     }
 

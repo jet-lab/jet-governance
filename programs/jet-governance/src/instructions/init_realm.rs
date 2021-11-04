@@ -5,7 +5,7 @@ use crate::state::realm::Realm;
 
 
 #[derive(Accounts)]
-#[instruction(bump: u8)]
+#[instruction(bump: InitRealmBumpSeeds)]
 pub struct InitializeRealm<'info> {
     // newly created realm - key provided by initializer: not a PDA
     #[account(init,
@@ -22,7 +22,7 @@ pub struct InitializeRealm<'info> {
             b"realm-authority".as_ref(),
             realm.key().as_ref()
         ],
-        bump = bump,
+        bump = bump.authority,
         space = 8,
         payer = owner)]
     pub authority: AccountInfo<'info>,
@@ -33,7 +33,7 @@ pub struct InitializeRealm<'info> {
             b"vault".as_ref(),
             realm.key().as_ref()
         ],
-        bump = bump,
+        bump = bump.vault,
         token::mint = governance_token_mint,
         token::authority = authority,
         payer = owner)]
@@ -50,6 +50,14 @@ pub struct InitializeRealm<'info> {
 
     pub rent: Sysvar<'info, Rent>,
 }
+
+
+#[derive(AnchorDeserialize, AnchorSerialize)]
+pub struct InitRealmBumpSeeds {
+    pub authority: u8,
+    pub vault: u8,
+}
+
 
 pub fn handler(ctx: Context<InitializeRealm>) -> ProgramResult {
     let realm = ctx.accounts.realm.deref_mut();
