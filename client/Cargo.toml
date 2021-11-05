@@ -7,7 +7,7 @@ edition = "2018"
 
 [dependencies]
 jet-governance = { path = "../programs/jet-governance", features = ["no-entrypoint"]  }
-anchor-client = { git = "https://github.com/jet-lab/anchor", branch = "combined" }
+anchor-client = { git = "https://github.com/jet-lab/anchor", branch = "signer-rc" }
 anyhow = "1.0.32"
 spl-token = "3.2.0"
 

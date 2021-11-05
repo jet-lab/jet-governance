@@ -17,5 +17,5 @@ cpi = ["no-entrypoint"]
 default = []
 
 [dependencies]
-anchor-lang = { git = "https://github.com/jet-lab/anchor", branch = "combined" }
-anchor-spl = { git = "https://github.com/jet-lab/anchor", branch = "combined" }
+anchor-lang = { git = "https://github.com/jet-lab/anchor", branch = "signer-rc" }
+anchor-spl = { git = "https://github.com/jet-lab/anchor", branch = "signer-rc" }
