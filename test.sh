@@ -1,4 +1,4 @@
-solana-test-validator &
+solana-test-validator -r &
 validator_pid=$!
 anchor build
 anchor deploy

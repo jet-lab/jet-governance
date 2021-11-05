@@ -6,7 +6,7 @@ use crate::state::realm::Realm;
 
 #[derive(Accounts)]
 #[instruction(bump: InitRealmBumpSeeds)]
-pub struct InitializeRealm<'info> {
+pub struct InitRealm<'info> {
     // newly created realm - key provided by initializer: not a PDA
     #[account(init,
         space = 8 + std::mem::size_of::<Realm>(),
@@ -59,7 +59,7 @@ pub struct InitRealmBumpSeeds {
 }
 
 
-pub fn handler(ctx: Context<InitializeRealm>) -> ProgramResult {
+pub fn handler(ctx: Context<InitRealm>) -> ProgramResult {
     let realm = ctx.accounts.realm.deref_mut();
     realm.owner = ctx.accounts.owner.key();
     realm.authority = ctx.accounts.authority.key();

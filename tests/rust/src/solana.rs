@@ -5,8 +5,8 @@ use solana_client::{rpc_client::RpcClient, rpc_config::RpcSendTransactionConfig}
 use solana_sdk::{commitment_config::{CommitmentConfig, CommitmentLevel}, instruction::Instruction, signature::Keypair, signer::Signer, transaction::Transaction};
 
 
-pub struct PayingClient<'a> {
-    pub rpc_client: &'a RpcClient,
+pub struct PayingClient {
+    pub rpc_client: Rc<RpcClient>,
     pub payer: Rc<dyn Signer>, // todo use multisig Signer code
 }
 

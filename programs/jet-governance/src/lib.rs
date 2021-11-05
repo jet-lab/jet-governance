@@ -15,13 +15,16 @@ mod jet_governance {
     use super::*;
 
     pub fn init_realm(
-        ctx: Context<InitializeRealm>,
+        ctx: Context<InitRealm>,
         _bump: InitRealmBumpSeeds,
     ) -> ProgramResult {
         init_realm::handler(ctx)
     }
 
-    pub fn init_voter(ctx: Context<InitializeVoter>) -> ProgramResult {
+    pub fn init_voter(
+        ctx: Context<InitVoter>,
+        _bump: u8,
+    ) -> ProgramResult {
         init_voter::handler(ctx)
     }
 

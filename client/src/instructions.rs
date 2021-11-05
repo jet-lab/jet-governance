@@ -19,7 +19,7 @@ pub fn init_realm(
     );
     anchor_program
         .request()
-        .accounts(jet_governance::accounts::InitializeRealm {
+        .accounts(jet_governance::accounts::InitRealm {
             realm: realm_acct.pubkey(),
             owner,
             authority,
@@ -38,4 +38,29 @@ pub fn init_realm(
         .signer(&realm_acct)
         .send()?;
     Ok(realm_acct.pubkey())
+}
+
+
+pub fn init_voter(
+    anchor_program: &Program,
+    realm: Pubkey,
+    owner: Pubkey,
+) -> Result<Pubkey> {
+    let (voter, voter_bump) = Pubkey::find_program_address(
+        &[b"voter", &owner.to_bytes(), &realm.to_bytes()],
+        &anchor_program.id()
+    );
+    anchor_program
+        .request()
+        .accounts(jet_governance::accounts::InitVoter {
+            realm,
+            owner,
+            voter,
+            system_program: system_program::id(),
+        })
+        .args(jet_governance::instruction::InitVoter {
+            _bump: voter_bump
+        })
+        .send()?;
+    Ok(voter)
 }

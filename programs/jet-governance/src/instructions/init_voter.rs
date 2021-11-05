@@ -7,7 +7,7 @@ use crate::state::realm::Realm;
 
 #[derive(Accounts)]
 #[instruction(bump: u8)]
-pub struct InitializeVoter<'info> {
+pub struct InitVoter<'info> {
     /// The user with authority over the voter account.
     #[account(signer)]
     pub owner: AccountInfo<'info>,
@@ -30,7 +30,7 @@ pub struct InitializeVoter<'info> {
     pub system_program: AccountInfo<'info>,
 }
 
-pub fn handler(ctx: Context<InitializeVoter>) -> ProgramResult {
+pub fn handler(ctx: Context<InitVoter>) -> ProgramResult {
     *ctx.accounts.voter.deref_mut() = Voter {
         realm: ctx.accounts.realm.key(),
         owner: ctx.accounts.owner.key(),
