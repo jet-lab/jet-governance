@@ -21,7 +21,7 @@ export const ProposalView = (props: any) => {
   const SOL = useUserBalance(WRAPPED_SOL_MINT);
   const { balanceInUSD: totalBalanceInUSD } = useUserTotalBalance();
 
-  const { id, headline, active, end, result } = props;
+  const { id, headline, active, end, result, hash } = props;
   const [hasVoted, setHasVoted] = useState(false);
   const [approve, setApprove] = useState();
   const [abstainProposal, setAbstainProposal] = useState(false);
@@ -79,7 +79,7 @@ export const ProposalView = (props: any) => {
           </p>
           <div className="divider"></div>
           <div className="details flex column">
-            <div><h5>Proposal ID:</h5><span>test</span></div>
+            <div><h5>Proposal ID:</h5><span>{hash}</span></div>
             <div><h5>Start date:</h5><span>{startDate.toString()}</span></div>
             <div><h5>End date:</h5><span>{endDate.toString()}</span></div>
             <div><h5>Block height:</h5><span>test</span></div>

@@ -1,9 +1,9 @@
 import React, { useCallback } from "react";
-import { useConnection } from "../../contexts/connection";
+import { useConnection } from "../contexts/connection";
 import { LAMPORTS_PER_SOL } from "@solana/web3.js";
-import { notify } from "../../utils/notifications";
-import { ConnectButton } from "./../../components/ConnectButton";
-import { LABELS } from "../../constants";
+import { notify } from "../utils/notifications";
+import { ConnectButton } from "../components/ConnectButton";
+import { LABELS } from "../constants";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { Link } from "react-router-dom";
 
