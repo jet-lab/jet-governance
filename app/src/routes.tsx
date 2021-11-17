@@ -6,8 +6,7 @@ import { AccountsProvider } from "./contexts/accounts";
 import { MarketProvider } from "./contexts/market";
 import { AppLayout } from "./components/Layout";
 
-import { RootState } from "./app/store";
-import { useSelector } from "react-redux";
+import { INITIAL_STATE } from "./models/INITIAL_PROPOSALS";
 
 import { FaucetView, HomeView, ProposalView } from "./views";
 import {
@@ -40,8 +39,6 @@ export function Routes() {
     []
   );
 
-    const proposals = useSelector((state: RootState) => state.proposal);
-
   return (
     <HashRouter basename={"/"}>
       <ConnectionProvider>
@@ -51,18 +48,19 @@ export function Routes() {
               <AppLayout>
                 <Switch>
                   <Route exact path="/">
-                    <HomeView proposals={proposals} />
+                    <HomeView proposals={INITIAL_STATE} />
                   </Route>
                   {/* <Route exact path="/faucet">
                     <FaucetView />
                   </Route> */}
-                  {proposals.map((proposal) => <Route exact path={`/proposal/${proposal.id}/${proposal.headline.substring(0,7)}`}>
+                  {INITIAL_STATE.map((proposal) => <Route exact path={`/proposal/${proposal.id}/${proposal.headline.substring(0,7)}`}>
                     <ProposalView
                       id={proposal.id}
                       result={proposal.result}
                       headline={proposal.headline}
                       active={proposal.active}
                       end={proposal.end}
+                      hash={proposal.hash}
                     />
                   </Route>)}
                 </Switch>

@@ -1,3 +1,3 @@
 export { HomeView } from "./Home";
-export { FaucetView } from "./faucet";
+export { FaucetView } from "./Faucet";
 export { ProposalView } from "./Proposal";

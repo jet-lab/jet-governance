@@ -1,6 +1,6 @@
 import React from "react";
 import { Button, Select } from "antd";
-import { ENDPOINTS, useConnectionConfig } from "../../contexts/connection";
+import { ENDPOINTS, useConnectionConfig } from "../contexts/connection";
 import { useWallet } from "@solana/wallet-adapter-react";
 
 export const Settings = () => {

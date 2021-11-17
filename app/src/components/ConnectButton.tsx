@@ -3,7 +3,7 @@ import { useWallet } from "@solana/wallet-adapter-react";
 import { Button, Dropdown, Menu } from "antd";
 import { ButtonProps } from "antd/lib/button";
 import React, { useCallback } from "react";
-import { LABELS } from "../../constants";
+import { LABELS } from "../constants";
 
 export interface ConnectButtonProps
   extends ButtonProps,
