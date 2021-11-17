@@ -1,8 +1,18 @@
 [package]
-name = "client"
+name = "jet-governance-client"
 version = "0.1.0"
 edition = "2018"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+jet-governance = { path = "../programs/jet-governance", features = ["no-entrypoint"]  }
+anchor-client = { git = "https://github.com/jet-lab/anchor", branch = "signer-rc" }
+anyhow = "1.0.32"
+spl-token = "3.2.0"
+
+# wallet
+solana-remote-wallet = "1.7.11"
+solana-clap-utils = "1.7.11"
+clap2 = { package = "clap", version = "2.33.0" }
+shellexpand = "2.1.0"

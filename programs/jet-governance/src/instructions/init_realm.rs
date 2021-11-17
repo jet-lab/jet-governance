@@ -5,8 +5,8 @@ use crate::state::realm::Realm;
 
 
 #[derive(Accounts)]
-#[instruction(bump: u8)]
-pub struct InitializeRealm<'info> {
+#[instruction(bump: InitRealmBumpSeeds)]
+pub struct InitRealm<'info> {
     // newly created realm - key provided by initializer: not a PDA
     #[account(init,
         space = 8 + std::mem::size_of::<Realm>(),
@@ -22,7 +22,7 @@ pub struct InitializeRealm<'info> {
             b"realm-authority".as_ref(),
             realm.key().as_ref()
         ],
-        bump = bump,
+        bump = bump.authority,
         space = 8,
         payer = owner)]
     pub authority: AccountInfo<'info>,
@@ -33,7 +33,7 @@ pub struct InitializeRealm<'info> {
             b"vault".as_ref(),
             realm.key().as_ref()
         ],
-        bump = bump,
+        bump = bump.vault,
         token::mint = governance_token_mint,
         token::authority = authority,
         payer = owner)]
@@ -51,7 +51,15 @@ pub struct InitializeRealm<'info> {
     pub rent: Sysvar<'info, Rent>,
 }
 
-pub fn handler(ctx: Context<InitializeRealm>) -> ProgramResult {
+
+#[derive(AnchorDeserialize, AnchorSerialize)]
+pub struct InitRealmBumpSeeds {
+    pub authority: u8,
+    pub vault: u8,
+}
+
+
+pub fn handler(ctx: Context<InitRealm>) -> ProgramResult {
     let realm = ctx.accounts.realm.deref_mut();
     realm.owner = ctx.accounts.owner.key();
     realm.authority = ctx.accounts.authority.key();

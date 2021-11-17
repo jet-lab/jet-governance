@@ -7,18 +7,24 @@ use anchor_lang::prelude::*;
 use instructions::*;
 use state::*;
 
-declare_id!("Fg6PaFpoGXkYsidMpWTK6W2BeZ7FEfcYkg476zPFsLnS");
+declare_id!("5TBwvU5xoA13fzmZgWVgFBUmBz1YCdiq2AshDZpPn3AL");
 
 
 #[program]
 mod jet_governance {
     use super::*;
 
-    pub fn init_realm(ctx: Context<InitializeRealm>) -> ProgramResult {
+    pub fn init_realm(
+        ctx: Context<InitRealm>,
+        _bump: InitRealmBumpSeeds,
+    ) -> ProgramResult {
         init_realm::handler(ctx)
     }
 
-    pub fn init_voter(ctx: Context<InitializeVoter>) -> ProgramResult {
+    pub fn init_voter(
+        ctx: Context<InitVoter>,
+        _bump: u8,
+    ) -> ProgramResult {
         init_voter::handler(ctx)
     }
 

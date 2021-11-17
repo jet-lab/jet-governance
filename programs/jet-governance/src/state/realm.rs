@@ -2,6 +2,7 @@ use anchor_lang::prelude::*;
 
 
 #[account]
+#[derive(Debug)]
 pub struct Realm {
     // external account with permission to modify realm
     pub owner: Pubkey,
