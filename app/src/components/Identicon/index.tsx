@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from "react";
-
+//@ts-ignore
 import Jazzicon from "jazzicon";
 import bs58 from "bs58";
 import "./style.less";
