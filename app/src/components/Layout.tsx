@@ -1,13 +1,13 @@
 import React, { useState } from "react";
-import "./../../App.less";
+import "../App.less";
 import { Layout } from "antd";
-import Logo from "../../images/jetgovern_white.png";
+import Logo from "../images/jetgovern_white.png";
 import { Link, useLocation } from "react-router-dom";
 import { WalletModalProvider } from "@solana/wallet-adapter-ant-design";
 
-import { NavLink } from "../Icons/navLink";
-import { LABELS } from "../../constants";
-import { AppBar } from "../AppBar";
+import { NavLink } from "./Icons/navLink";
+import { LABELS } from "../constants";
+import { AppBar } from "./AppBar";
 
 const { Header, Content } = Layout;
 
@@ -16,14 +16,16 @@ export const AppLayout = React.memo(({ children }) => {
 
   return (
     <WalletModalProvider>
-      <div className="App wormhole-bg">
+      <div className="App">
       <Layout>
-          <Header className="nav-bar">
+        <Header className="nav-bar">
           <img src={Logo} alt="logo" />
-            <AppBar />
-          </Header>
-          <Content>{children}</Content>
-        </Layout>
+          <AppBar />
+        </Header>
+        <Content>
+          {children}
+        </Content>
+    </Layout>
       </div>
     </WalletModalProvider>
   );

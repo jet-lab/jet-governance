@@ -1,8 +1,8 @@
 import React from "react";
 import { Button, Popover } from "antd";
 import { SettingOutlined } from "@ant-design/icons";
-import { Settings } from "../Settings";
-import { LABELS } from "../../constants";
+import { Settings } from "./Settings";
+import { LABELS } from "../constants";
 import {
   WalletDisconnectButton,
   WalletMultiButton,

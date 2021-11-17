@@ -1,7 +1,7 @@
 import React from "react";
-import { formatNumber, shortenAddress } from "../../utils/utils";
-import { Identicon } from "../Identicon";
-import { useNativeAccount } from "../../contexts/accounts";
+import { formatNumber, shortenAddress } from "../utils/utils";
+import { Identicon } from "./Identicon";
+import { useNativeAccount } from "../contexts/accounts";
 import { LAMPORTS_PER_SOL } from "@solana/web3.js";
 import { useWallet } from "@solana/wallet-adapter-react";
 
