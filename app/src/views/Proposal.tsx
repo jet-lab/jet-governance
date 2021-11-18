@@ -42,7 +42,7 @@ export const ProposalView = (props: any) => {
   }
 
   return (
-    <div className="main-content proposal">
+    <div className="content-body proposal">
       <Link to="/">
         <i className="fas fa-arrow-left"></i> All Proposals
       </Link>
@@ -87,33 +87,15 @@ export const ProposalView = (props: any) => {
         </div>
 
         <div className="flex column">
-        <div className="show-tokens">
-          <h3>Governance Tokens</h3>
-          <div className="stake text-gradient">
-            {numberFormatter.format(stake)} JET
-            </div>
-            <Button>Deposit</Button>
-            <Button>Withdraw</Button>
+        <h3>Your Vote</h3>
+          <div className="show-tokens flex column">
+            <Button>In favor</Button>
+            <Button>Against</Button>
+            <Button>Abstain</Button>
+            <Button type='primary'>Vote</Button>
         </div>
 
         <div className="cast-vote">
-          <h3>Cast Your Vote</h3>
-          <div style={{ textAlign: "center" }}>
-    {/* <Button id="in-favour" onClick={() => votingHandle(true)}>In favor <i className="fas fa-thumbs-up" /></Button>
-    <Button id="against" onClick={() => votingHandle(false)}>Against <i className="fas fa-thumbs-down" /></Button> */}
-              
-    <div className="flex">
-      <button className={!abstainProposal ? approve && hasVoted ? "active" : "ant-btn" : "abstain"} id="in-favour">
-        <span className={!abstainProposal ? "" : "abstain"}>In favor <i className="fas fa-thumbs-up"></i></span>
-      </button>
-      <button className={!abstainProposal ? approve && hasVoted ? "ant-btn" : "active" : "abstain"}  id="against">
-        <span className={!abstainProposal ? "text-gradient" : "abstain"}>Against <i className="fas fa-thumbs-down"></i></span>
-      </button>
-    </div>
-            <div className="no-vote"><Checkbox onChange={() => setAbstainProposal(!abstainProposal)}>Abstain From Voting</Checkbox></div>
-          </div>
-
-          <div className="divider" />
         
           <h3>Results</h3>
           <div className="results">

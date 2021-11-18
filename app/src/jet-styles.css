@@ -78,17 +78,54 @@
   font-family: "Jet-Icons";
   font-size: 27px;
 }
-.flex {
-  display: flex;
-}
-.column {
-  flex-direction: column;
-}
 .text-gradient {
   opacity: 1 !important;
   background-image: var(--gradient) !important;
   -webkit-background-clip: text !important;
   -webkit-text-fill-color: transparent !important;
+}
+
+/* Flexbox */
+.flex {
+	display: flex;
+}
+.flex-centered {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.align-center {
+	align-items: center;
+}
+.align-evenly {
+	align-items: space-evenly;
+}
+.align-between {
+	align-items: space-between;
+}
+.align-start {
+  align-items: flex-start;
+}
+.align-end {
+  align-items: flex-end;
+}
+.justify-center {
+	justify-content: center;
+}
+.justify-evenly {
+	justify-content: space-evenly;
+}
+.justify-between {
+	justify-content: space-between;
+}
+.justify-start {
+  justify-content: flex-start;
+}
+.justify-end {
+  justify-content: flex-end;
+}
+.column {
+	flex-direction: column;
 }
 
 /* Inputs */
