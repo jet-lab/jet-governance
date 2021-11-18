@@ -219,26 +219,37 @@ em {
   background-color: var(--white);
   margin-top: var(--nav-height);
 
-  .main-content {
-    grid-column: 3 e("/") 23;
-    padding-top: 40px;
+  .panel {
+    margin: 0 10px;
+    width: 100%;
+    .header span {
+      padding: 0 5px;
+    }
   }
 
-  .stake-inset {
-    height: 144px;
-    background: #e0e7f2;
-    box-shadow: inset 0px -1px 2px rgba(255, 255, 255, 0.75),
-      inset 0px 1px 2px rgba(0, 0, 0, 0.1);
-    border-radius: 15px;
-    margin-bottom: 82px;
+  .content-body {
+    padding: 40px;
+    display: flex;
     width: 100%;
-  }
+
+    .stake-info {
+      background: #e0e7f2;
+      box-shadow: inset 0px -1px 2px rgba(255, 255, 255, 0.75),
+        inset 0px 1px 2px rgba(0, 0, 0, 0.1);
+      border-radius: 15px;
+      margin-bottom: 82px;
+      width: 230px;
+      display: flex;
+      flex-direction: column;
+      padding: 20px;
+    }
 
   .show-proposals {
-    display: flex;
-    justify-content: space-between;
-    flex-wrap: wrap;
-  }
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+    }
+  }  
 
   .proposal-card {
     height: 231px;
@@ -336,6 +347,16 @@ em {
   display: flex;
 }
 
+.divider {
+  box-shadow: inset 2px 2px 2px rgba(0, 0, 0, 0.15),
+    inset 2px 2px 2px rgba(255, 255, 255, 0.9);
+  border-radius: 20px;
+  width: 100%;
+  padding: 0 6%;
+  height: 3px;
+  margin-bottom: 28px;
+}
+
 .proposal {
   display: flex;
   flex-direction: column;
@@ -343,16 +364,6 @@ em {
 
   span {
     text-align: left;
-  }
-
-  .divider {
-    box-shadow: inset 2px 2px 2px rgba(0, 0, 0, 0.15),
-      inset 2px 2px 2px rgba(255, 255, 255, 0.9);
-    border-radius: 20px;
-    width: 100%;
-    padding: 0 6%;
-    height: 3px;
-    margin-bottom: 28px;
   }
 
   .info {
