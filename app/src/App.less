@@ -356,9 +356,6 @@ em {
 }
 
 .proposal {
-  span {
-    text-align: left;
-  }
 
   .info {
     .inset {
@@ -405,23 +402,10 @@ em {
         margin-bottom: 26px;
       }
     }
-
-    .show-tokens {
-      box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.15),
-        0px -4px 20px rgba(255, 255, 255, 0.5);
-      border-radius: 10px;
-      padding: 39px 27px;
-      grid-column: 17 e("/") 25;
-      margin-bottom: 32px;
-      .stake {
-        display: flex;
-        font-family: "Bicyclette-Bold";
-        font-style: normal;
-        font-size: 50px;
-        line-height: 50px;
-        margin-bottom: 30px;
-      }
-    }
+  }
+  #vote-mobile {
+    display: none;
+    margin-bottom: 40px;
   }
 }
 
@@ -511,7 +495,29 @@ em {
 }
 
 @media only screen and (max-width: 780px) {
-  .exchange-card {
-    width: 360px;
+  .content-body {
+    flex-direction: column;
+  }
+  .header {
+    flex-direction: column-reverse;
+  }
+
+  .info {
+    flex-direction: column;
+    div {
+      width: 100% !important;
+    }
+  }
+  .vote-turnout {
+    flex-direction: column;
+  }
+
+  .proposal {
+    #vote-mobile {
+      display: flex;
+    }
+    #vote-desktop {
+      display: none;
+    }
   }
 }
