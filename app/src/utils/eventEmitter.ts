@@ -20,14 +20,6 @@ export class CacheDeleteEvent {
   }
 }
 
-export class MarketUpdateEvent {
-  static type = "MarketUpdate";
-  ids: Set<string>;
-  constructor(ids: Set<string>) {
-    this.ids = ids;
-  }
-}
-
 export class CacheClearEvent {
   static type = "CacheDelete";
 }
@@ -35,20 +27,10 @@ export class CacheClearEvent {
 export class EventEmitter {
   private emitter = new Emitter();
 
-  onMarket(callback: (args: MarketUpdateEvent) => void) {
-    this.emitter.on(MarketUpdateEvent.type, callback);
-
-    return () => this.emitter.removeListener(MarketUpdateEvent.type, callback);
-  }
-
   onCache(callback: (args: CacheUpdateEvent) => void) {
     this.emitter.on(CacheUpdateEvent.type, callback);
 
     return () => this.emitter.removeListener(CacheUpdateEvent.type, callback);
-  }
-
-  raiseMarketUpdated(ids: Set<string>) {
-    this.emitter.emit(MarketUpdateEvent.type, new MarketUpdateEvent(ids));
   }
 
   raiseCacheUpdated(id: string, isNew: boolean, parser: any) {

@@ -61,7 +61,6 @@ export const LABELS = {
   TABLE_TITLE_BORROW_APY: "Borrow APY",
   TABLE_TITLE_DEPOSIT_APY: "Deposit APY",
   TABLE_TITLE_TOTAL_BORROWED: "Total Borrowed",
-  TABLE_TITLE_MARKET_SIZE: "Market Size",
   TABLE_TITLE_ACTION: "Action",
   TABLE_TITLE_DEPOSITS: "Deposits",
   TABLE_TITLE_WITHDRAWS: "Withdraws",
