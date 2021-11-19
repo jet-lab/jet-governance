@@ -1,7 +1,6 @@
 import { WalletMultiButton } from "@solana/wallet-adapter-ant-design";
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { TokenIcon } from "../components/TokenIcon";
 import { useConnectionConfig } from "../contexts/connection";
 import { useUserBalance, useUserTotalBalance } from "../hooks";
 import { WRAPPED_SOL_MINT, JET_TOKEN_MINT } from "../utils/ids";
@@ -21,7 +20,8 @@ export const HomeView = (props: {
 
   const { allProposals, activeProposals, inactiveProposals, passedProposals, rejectedProposals } = props;
 
-  if (showing === "active") {
+  useEffect(() => {
+      if (showing === "active") {
     setShownProposals(activeProposals);
   } else if (showing === "inactive") {
     setShownProposals(inactiveProposals);
@@ -31,24 +31,13 @@ export const HomeView = (props: {
     setShownProposals(rejectedProposals);
   } else if (showing === "all") {
     setShownProposals(allProposals);
-  }
+  }}, [showing])
 
-  const { tokenMap } = useConnectionConfig();
   const SRM_ADDRESS = "SRMuApVNdxXokk5GT7XD5cUUgXMBCoAz2LHeuAoKWRt";
   const SRM = useUserBalance(SRM_ADDRESS);
   const SOL = useUserBalance(WRAPPED_SOL_MINT);
   const JET = useUserBalance(JET_TOKEN_MINT);
   const { balanceInUSD: totalBalanceInUSD } = useUserTotalBalance();
-
-
-  useEffect(() => {
-    const refreshTotal = () => {};
-
-    refreshTotal();
-
-    return () => {
-    };
-  }, [tokenMap]);
 
   const inputCheck = (value: number) => {
     if (value && value < 0) {

@@ -1,8 +1,5 @@
-import { WalletMultiButton } from "@solana/wallet-adapter-ant-design";
-import { Statistic, Col, Row } from "antd";
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { TokenIcon } from "../components/TokenIcon";
 import { useConnectionConfig } from "../contexts/connection";
 import { useUserBalance, useUserTotalBalance } from "../hooks";
 import { WRAPPED_SOL_MINT } from "../utils/ids";
@@ -14,7 +11,6 @@ import { Button, Divider, Modal } from "antd";
 import { ProposalCard } from "../components/ProposalCard";
 
 export const ProposalView = (props: any) => {
-  const { tokenMap } = useConnectionConfig();
   const SRM_ADDRESS = "SRMuApVNdxXokk5GT7XD5cUUgXMBCoAz2LHeuAoKWRt";
   const SRM = useUserBalance(SRM_ADDRESS);
   const SOL = useUserBalance(WRAPPED_SOL_MINT);
