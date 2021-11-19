@@ -123,6 +123,16 @@ export const ProposalView = (props: any) => {
             </div>
           </div>
 
+          <div className="flex column" id="vote-mobile">
+          <h3>Your Vote</h3>
+          <div className="show-tokens flex column inset">
+            <Button onClick={confirmFavor}>In favor</Button>
+            <Button onClick={confirmAgainst}>Against</Button>
+            <Button onClick={confirmAbstain}>Abstain</Button>
+            <Button type="primary">Vote</Button>
+          </div>
+        </div>
+
           <h3>Vote turnout</h3>
           <div className="vote-turnout flex justify-evenly">
             <div className="results">
@@ -155,9 +165,9 @@ export const ProposalView = (props: any) => {
           </div>
         </div>
 
-        <div className="flex column" style={{ width: "30%" }}>
+        <div className="flex column" style={{ width: "30%" }} id="vote-desktop">
           <h3>Your Vote</h3>
-          <div className="show-tokens flex column">
+          <div className="show-tokens flex column inset">
             <Button onClick={confirmFavor}>In favor</Button>
             <Button onClick={confirmAgainst}>Against</Button>
             <Button onClick={confirmAbstain}>Abstain</Button>
