@@ -2,6 +2,7 @@ import { WalletMultiButton } from "@solana/wallet-adapter-ant-design";
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useConnectionConfig } from "../contexts/connection";
+import { useProposal } from "../contexts/proposal";
 import { useUserBalance, useUserTotalBalance } from "../hooks";
 import { WRAPPED_SOL_MINT, JET_TOKEN_MINT } from "../utils/ids";
 import { ProposalCard } from "../components/ProposalCard";
@@ -9,29 +10,9 @@ import { formatUSD } from "../utils/utils";
 import { Button, InputNumber, Divider } from "antd";
 import { ProposalState } from "../models/INITIAL_PROPOSALS";
 
-export const HomeView = (props: {
-  allProposals: ProposalState[],
-  activeProposals: ProposalState[],
-  inactiveProposals: ProposalState[],
-  passedProposals: ProposalState[],
-  rejectedProposals: ProposalState[] }) => {
-  const [showing, setShowing] = useState("active");
-  const [shownProposals, setShownProposals] = useState(props.allProposals);
+export const HomeView = () => {
 
-  const { allProposals, activeProposals, inactiveProposals, passedProposals, rejectedProposals } = props;
-
-  useEffect(() => {
-      if (showing === "active") {
-    setShownProposals(activeProposals);
-  } else if (showing === "inactive") {
-    setShownProposals(inactiveProposals);
-  } else if (showing === "passed") {
-    setShownProposals(passedProposals);
-  } else if (showing === "rejected") {
-    setShownProposals(rejectedProposals);
-  } else if (showing === "all") {
-    setShownProposals(allProposals);
-  }}, [showing])
+  const { showing, setShowing, shownProposals, setShownProposals } = useProposal();
 
   const SRM_ADDRESS = "SRMuApVNdxXokk5GT7XD5cUUgXMBCoAz2LHeuAoKWRt";
   const SRM = useUserBalance(SRM_ADDRESS);
