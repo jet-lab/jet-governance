@@ -244,12 +244,12 @@ em {
       padding: 20px;
     }
 
-  .show-proposals {
+    .show-proposals {
       display: flex;
       justify-content: space-between;
       flex-wrap: wrap;
     }
-  }  
+  }
 
   .proposal-card {
     height: 231px;
@@ -280,8 +280,6 @@ em {
       font-size: 22px;
       line-height: 27px;
     }
-
-
   }
 
   .proposal-card.active {
@@ -316,8 +314,8 @@ em {
   margin-bottom: -3px;
 }
 
-.default.details, .status-details {
-
+.default.details,
+.status-details {
   .active {
     color: var(--jet-green);
   }
@@ -358,23 +356,23 @@ em {
 }
 
 .proposal {
-  display: flex;
-  flex-direction: column;
-  align-content: flex-start;
-
   span {
     text-align: left;
   }
 
   .info {
-    .description {
+    .inset {
       padding: 39px 36px;
       box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.25);
       border-radius: 10px;
+    }
+
+    .description {
+      padding: 39px 36px;
+      border: 2px solid var(--black);
+      margin: 0 36px 39px 0;
       display: flex;
       flex-direction: column;
-      margin-right: 36px;
-      width: 70%;
       h1.headline {
         font-family: "Helvetica Neue", sans-serif;
         font-style: normal;
@@ -427,68 +425,20 @@ em {
   }
 }
 
-.cast-vote {
+.vote-turnout {
   padding: 39px 27px;
+  margin: 0 36px 39px 0;
   grid-column: 17 e("/") 25;
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.15),
     0px -4px 20px rgba(255, 255, 255, 0.5);
   border-radius: 10px;
-  display: flex;
-  flex-direction: column;
   span {
     margin-bottom: 13px;
   }
-  .ant-checkbox-wrapper {
-    margin-bottom: 13px;
-    span {
-    margin-bottom: 0 !important;
-    color: var(--black);
-  }}
-  #in-favour,
-  #against {
-    width: 50%;
-  }
-  #in-favour {
-    border-radius: 24px 0px 0px 24px;
-    span {
-      border-radius: 22px 0px 0px 22px;
-    }
-  }
-  #against {
-    border-radius: 0px 24px 24px 0px;
-    span {
-    border-radius: 0px 22px 22px 0px;
-    }
-  }
-  button.abstain {
-    cursor: not-allowed;
-    border: 2px solid var(--light-grey);
-    box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    -webkit-box-sizing: border-box;
-    border-radius: 4px;
-    margin: 8px;
-    padding: 0;
-    background-origin: border-box;
-    background-clip: content-box, border-box;
-    span.abstain{
-    color: var(--light-grey);
-    font-family: 'Bicyclette-Bold', sans-serif;
-    font-style: normal;
-    text-transform: uppercase;
-    align-items: center;
-    text-align: center;
-    letter-spacing: 0.1em;
-    display: inline-block;
-    width: 100%;
-    height: 100%;
-    box-sizing: border-box;
-    transition: 0.2s;
-    padding: 4px 10px 3px 10px !important
-    }
-  }
   .results {
     margin-bottom: 37px;
+    flex-grow: 1;
+    padding-right: 20px;
     .results-header {
       font-family: "Bicyclette-Bold", sans-serif;
       font-size: 10px;
@@ -510,6 +460,8 @@ em {
       box-shadow: inset -2px 0px 2px rgba(97, 95, 95, 0.5),
         inset 1px 1px 2px rgba(0, 0, 0, 0.3);
     }
+  }
+  .voters {
   }
   .stakeholders {
     display: flex;
