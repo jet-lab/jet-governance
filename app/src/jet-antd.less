@@ -2,13 +2,15 @@
 @import "~antd/dist/antd.dark.less";
 
 .ant-divider-horizontal {
-  box-shadow: inset 2px 2px 2px rgba(0, 0, 0, 0.15),
+  margin-bottom: 28px;
+}
+
+.ant-divider {
+    box-shadow: inset 2px 2px 2px rgba(0, 0, 0, 0.15),
     inset 2px 2px 2px rgba(255, 255, 255, 0.9);
   border-radius: 20px;
-  width: 100%;
   padding: 0 6%;
-  height: 3px;
-  margin-bottom: 28px;
+  min-height: 3px;
 }
 
 .ant-btn {
@@ -90,8 +92,6 @@ button.ant-btn-primary:focus {
     background-clip: text;
   }
 }
-
-
 
 .ant-btn-primary[disabled], .ant-btn-primary[disabled]:hover, .ant-btn-primary[disabled]:focus, .ant-btn-primary[disabled]:active {
     background: transparent;

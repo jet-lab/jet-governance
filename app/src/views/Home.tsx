@@ -11,8 +11,28 @@ import { formatUSD } from "../utils/utils";
 import { Button, InputNumber, Divider } from "antd";
 import { ProposalState } from "../models/INITIAL_PROPOSALS";
 
-export const HomeView = (props: { proposals: ProposalState[]}) => {
+export const HomeView = (props: {
+  allProposals: ProposalState[],
+  activeProposals: ProposalState[],
+  inactiveProposals: ProposalState[],
+  passedProposals: ProposalState[],
+  rejectedProposals: ProposalState[] }) => {
   const [showing, setShowing] = useState("active");
+  const [shownProposals, setShownProposals] = useState(props.allProposals);
+
+  const { allProposals, activeProposals, inactiveProposals, passedProposals, rejectedProposals } = props;
+
+  if (showing === "active") {
+    setShownProposals(activeProposals);
+  } else if (showing === "inactive") {
+    setShownProposals(inactiveProposals);
+  } else if (showing === "passed") {
+    setShownProposals(passedProposals);
+  } else if (showing === "rejected") {
+    setShownProposals(rejectedProposals);
+  } else if (showing === "all") {
+    setShownProposals(allProposals);
+  }
 
   const { marketEmitter, midPriceInUSD } = useMarkets();
   const { tokenMap } = useConnectionConfig();
@@ -21,21 +41,6 @@ export const HomeView = (props: { proposals: ProposalState[]}) => {
   const SOL = useUserBalance(WRAPPED_SOL_MINT);
   const JET = useUserBalance(JET_TOKEN_MINT);
   const { balanceInUSD: totalBalanceInUSD } = useUserTotalBalance();
-
-  const { proposals } = props;
-  let shownProposals: ProposalState[] = proposals;
-
-  if (showing === "active") {
-    shownProposals = proposals.filter((p) => p.active);
-  } else if (showing === "inactive") {
-    shownProposals = proposals.filter((p) => !p.active && p.result === "inactive");
-  } else if (showing === "passed") {
-    shownProposals = proposals.filter((p) => !p.active && p.result === "passed");
-  } else if (showing === "rejected") {
-    shownProposals = proposals.filter((p) => !p.active && p.result === "rejected");
-  } else if (showing === "all") {
-    shownProposals = proposals;
-  }
 
 
   useEffect(() => {
