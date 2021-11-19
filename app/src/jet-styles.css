@@ -84,6 +84,9 @@
   -webkit-background-clip: text !important;
   -webkit-text-fill-color: transparent !important;
 }
+.hidden {
+  display: none;
+}
 
 /* Flexbox */
 .flex {

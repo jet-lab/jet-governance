@@ -12,7 +12,7 @@ import { ProposalState } from "../models/INITIAL_PROPOSALS";
 
 export const HomeView = () => {
 
-  const { showing, setShowing, shownProposals, setShownProposals } = useProposal();
+  const { showing, setShowing, shownProposals } = useProposal();
 
   const SRM_ADDRESS = "SRMuApVNdxXokk5GT7XD5cUUgXMBCoAz2LHeuAoKWRt";
   const SRM = useUserBalance(SRM_ADDRESS);
