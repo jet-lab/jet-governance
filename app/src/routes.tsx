@@ -1,6 +1,7 @@
 import { HashRouter, Route, Switch } from "react-router-dom";
 import React, { useMemo, useState, useEffect } from "react";
 import { WalletProvider } from "@solana/wallet-adapter-react";
+import { ProposalProvider } from "./contexts/proposal";
 import { ConnectionProvider } from "./contexts/connection";
 import { AccountsProvider } from "./contexts/accounts";
 import { AppLayout } from "./components/Layout";
@@ -55,11 +56,11 @@ export function Routes() {
   //   getGeobanned();
   // });
   
- const allProposals = INITIAL_STATE;
-const activeProposals = INITIAL_STATE.filter((p) => p.active);
- const inactiveProposals = INITIAL_STATE.filter((p) => !p.active && p.result === "inactive");
-const passedProposals = INITIAL_STATE.filter((p) => !p.active && p.result === "passed");
- const rejectedProposals = INITIAL_STATE.filter((p) => !p.active && p.result === "rejected");
+  const allProposals = INITIAL_STATE;
+  const activeProposals = INITIAL_STATE.filter((p) => p.active);
+  const inactiveProposals = INITIAL_STATE.filter((p) => !p.active && p.result === "inactive");
+  const passedProposals = INITIAL_STATE.filter((p) => !p.active && p.result === "passed");
+  const rejectedProposals = INITIAL_STATE.filter((p) => !p.active && p.result === "rejected");
 
   
   return (
@@ -67,6 +68,7 @@ const passedProposals = INITIAL_STATE.filter((p) => !p.active && p.result === "p
       <ConnectionProvider>
         <WalletProvider wallets={wallets} autoConnect>
           <AccountsProvider>
+            <ProposalProvider>
               <AppLayout>
                 <Switch>
                   <Route exact path="/">
@@ -92,13 +94,14 @@ const passedProposals = INITIAL_STATE.filter((p) => !p.active && p.result === "p
                             headline={proposal.headline}
                             active={proposal.active}
                             end={proposal.end}
-                          hash={proposal.hash}
-                          shownProposals={activeProposals}
+                            hash={proposal.hash}
+                            shownProposals={activeProposals}
                           />
                         </Route>
                       ))}
                 </Switch>
               </AppLayout>
+            </ProposalProvider>
           </AccountsProvider>
         </WalletProvider>
       </ConnectionProvider>
