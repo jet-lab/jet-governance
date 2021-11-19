@@ -11,7 +11,7 @@ import { formatUSD, numberFormatter } from "../utils/utils";
 import { ResultProgressBar } from "../components/ResultProgressBar";
 import { Stakeholders } from "../components/Stakeholders";
 import { TOP_STAKEHOLDERS } from "../models/TOP_STAKEHOLDERS";
-import { Button, Divider } from "antd";
+import { Button, Divider, Modal } from "antd";
 import { ProposalCard } from "../components/ProposalCard";
 
 export const ProposalView = (props: any) => {
@@ -41,6 +41,44 @@ export const ProposalView = (props: any) => {
     setHasVoted(true);
     // setApprove(vote);
   };
+
+  const confirmFavor = () => {
+    Modal.success({
+      title: `You're about to vote in favor of proposal #${id}`,
+      content: (
+        <div>
+          <p>You have X.XX JET locked, and will be able to unlock these funds when voting ends on end.</p>
+        </div>
+      ),
+      okText: `Confirm vote`,
+      onOk() {},
+    });
+  }
+  
+  const confirmAgainst = () => {
+    Modal.error({
+      title: 'This is a notification message',
+      content: (
+        <div>
+          <p>some messages...some messages...</p>
+          <p>some messages...some messages...</p>
+        </div>
+      ),
+      onOk() {},
+    });
+  }
+  const confirmAbstain = () => {
+    Modal.info({
+      title: 'This is a notification message',
+      content: (
+        <div>
+          <p>some messages...some messages...</p>
+          <p>some messages...some messages...</p>
+        </div>
+      ),
+      onOk() {},
+    });
+}
 
   return (
     <div className="content-body proposal flex column flex-start">
@@ -138,9 +176,9 @@ export const ProposalView = (props: any) => {
         <div className="flex column" style={{ width: "30%" }}>
           <h3>Your Vote</h3>
           <div className="show-tokens flex column">
-            <Button>In favor</Button>
-            <Button>Against</Button>
-            <Button>Abstain</Button>
+            <Button onClick={confirmFavor}>In favor</Button>
+            <Button onClick={confirmAgainst}>Against</Button>
+            <Button onClick={confirmAbstain}>Abstain</Button>
             <Button type="primary">Vote</Button>
           </div>
         </div>
