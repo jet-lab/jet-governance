@@ -1,9 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { useConnectionConfig } from "../contexts/connection";
-import { useUserBalance, useUserTotalBalance } from "../hooks";
-import { WRAPPED_SOL_MINT } from "../utils/ids";
-import { formatUSD, numberFormatter } from "../utils/utils";
+import { useProposal } from "../contexts/proposal";
 import { ResultProgressBar } from "../components/ResultProgressBar";
 import { Stakeholders } from "../components/Stakeholders";
 import { TOP_STAKEHOLDERS } from "../models/TOP_STAKEHOLDERS";
@@ -11,16 +8,12 @@ import { Button, Divider, Modal } from "antd";
 import { ProposalCard } from "../components/ProposalCard";
 
 export const ProposalView = (props: any) => {
-  const SRM_ADDRESS = "SRMuApVNdxXokk5GT7XD5cUUgXMBCoAz2LHeuAoKWRt";
-  const SRM = useUserBalance(SRM_ADDRESS);
-  const SOL = useUserBalance(WRAPPED_SOL_MINT);
-  const { balanceInUSD: totalBalanceInUSD } = useUserTotalBalance();
 
-  const { id, headline, active, end, result, hash, shownProposals } = props;
-  const [hasVoted, setHasVoted] = useState(false);
-  const [approve, setApprove] = useState();
-  const [abstainProposal, setAbstainProposal] = useState(false);
+  const { id, headline, active, end, result, hash } = props;
   // TODO: Fetch user's stake from blockchain
+
+  const { activeProposals } = useProposal();
+
   const [stake, setStake] = useState(32344);
   const inFavor = 722300;
   const against = 220700;
@@ -178,7 +171,7 @@ export const ProposalView = (props: any) => {
       <div>
         <h3>Other active proposals</h3>
         <div className="flex">
-        {shownProposals.map((proposal: any) => (
+        {activeProposals.map((proposal: any) => (
             <ProposalCard
               headline={proposal.headline}
               number={proposal.id}
