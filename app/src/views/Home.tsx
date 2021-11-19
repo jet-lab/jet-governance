@@ -3,7 +3,6 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { TokenIcon } from "../components/TokenIcon";
 import { useConnectionConfig } from "../contexts/connection";
-import { useMarkets } from "../contexts/market";
 import { useUserBalance, useUserTotalBalance } from "../hooks";
 import { WRAPPED_SOL_MINT, JET_TOKEN_MINT } from "../utils/ids";
 import { ProposalCard } from "../components/ProposalCard";
@@ -34,7 +33,6 @@ export const HomeView = (props: {
     setShownProposals(allProposals);
   }
 
-  const { marketEmitter, midPriceInUSD } = useMarkets();
   const { tokenMap } = useConnectionConfig();
   const SRM_ADDRESS = "SRMuApVNdxXokk5GT7XD5cUUgXMBCoAz2LHeuAoKWRt";
   const SRM = useUserBalance(SRM_ADDRESS);
@@ -46,16 +44,11 @@ export const HomeView = (props: {
   useEffect(() => {
     const refreshTotal = () => {};
 
-    const dispose = marketEmitter.onMarket(() => {
-      refreshTotal();
-    });
-
     refreshTotal();
 
     return () => {
-      dispose();
     };
-  }, [marketEmitter, midPriceInUSD, tokenMap]);
+  }, [tokenMap]);
 
   const inputCheck = (value: number) => {
     if (value && value < 0) {

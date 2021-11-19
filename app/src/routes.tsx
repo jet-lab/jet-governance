@@ -3,7 +3,6 @@ import React, { useMemo, useState, useEffect } from "react";
 import { WalletProvider } from "@solana/wallet-adapter-react";
 import { ConnectionProvider } from "./contexts/connection";
 import { AccountsProvider } from "./contexts/accounts";
-import { MarketProvider } from "./contexts/market";
 import { AppLayout } from "./components/Layout";
 
 import { INITIAL_STATE } from "./models/INITIAL_PROPOSALS";
@@ -68,7 +67,6 @@ const passedProposals = INITIAL_STATE.filter((p) => !p.active && p.result === "p
       <ConnectionProvider>
         <WalletProvider wallets={wallets} autoConnect>
           <AccountsProvider>
-            <MarketProvider>
               <AppLayout>
                 <Switch>
                   <Route exact path="/">
@@ -101,7 +99,6 @@ const passedProposals = INITIAL_STATE.filter((p) => !p.active && p.result === "p
                       ))}
                 </Switch>
               </AppLayout>
-            </MarketProvider>
           </AccountsProvider>
         </WalletProvider>
       </ConnectionProvider>
