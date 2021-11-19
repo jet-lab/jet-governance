@@ -4,7 +4,6 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { TokenIcon } from "../components/TokenIcon";
 import { useConnectionConfig } from "../contexts/connection";
-import { useMarkets } from "../contexts/market";
 import { useUserBalance, useUserTotalBalance } from "../hooks";
 import { WRAPPED_SOL_MINT } from "../utils/ids";
 import { formatUSD, numberFormatter } from "../utils/utils";
@@ -15,7 +14,6 @@ import { Button, Divider, Modal } from "antd";
 import { ProposalCard } from "../components/ProposalCard";
 
 export const ProposalView = (props: any) => {
-  const { marketEmitter, midPriceInUSD } = useMarkets();
   const { tokenMap } = useConnectionConfig();
   const SRM_ADDRESS = "SRMuApVNdxXokk5GT7XD5cUUgXMBCoAz2LHeuAoKWRt";
   const SRM = useUserBalance(SRM_ADDRESS);
@@ -36,11 +34,6 @@ export const ProposalView = (props: any) => {
   const now = new Date().getTime();
   const timeleft = end - now;
   const days = Math.floor(timeleft / (1000 * 60 * 60 * 24));
-
-  const votingHandle = (vote: boolean) => {
-    setHasVoted(true);
-    // setApprove(vote);
-  };
 
   const confirmFavor = () => {
     Modal.success({
