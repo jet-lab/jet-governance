@@ -1,37 +1,14 @@
-import React from "react";
-import { Button, Popover } from "antd";
-import { SettingOutlined } from "@ant-design/icons";
-import { Settings } from "./Settings";
-import { LABELS } from "../constants";
-import {
-  WalletDisconnectButton,
-  WalletMultiButton,
-} from "@solana/wallet-adapter-ant-design";
-import { useWallet } from "@solana/wallet-adapter-react";
+import { Button } from "antd";
+import { useConnectWallet } from "../contexts/connectWallet";
 
 export const AppBar = (props: { left?: JSX.Element; right?: JSX.Element }) => {
-  const { connected } = useWallet();
-  const TopBar = (
+  const { setConnecting } = useConnectWallet();
+
+  const ConnectWalletButton = (
     <div className="nav-bar-right connect-wallet">
-      <WalletMultiButton />
-      <div style={{ margin: 5 }} />
-      {connected ? <WalletDisconnectButton type="ghost" /> : null}
-      <Popover
-        placement="topRight"
-        title={LABELS.SETTINGS_TOOLTIP}
-        content={<Settings />}
-        trigger="click"
-      >
-        {/* <Button
-          shape="circle"
-          size="large"
-          type="text"
-          icon={<SettingOutlined />}
-        /> */}
-      </Popover>
-      {props.right}
+      <Button onClick={()=>setConnecting(true)}>Test</Button>
     </div>
   );
 
-  return TopBar;
+  return ConnectWalletButton;
 };
