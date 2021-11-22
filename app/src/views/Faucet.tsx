@@ -36,12 +36,12 @@ export const FaucetView = () => {
         <div className="deposit-input-title" style={{ margin: 10 }}>
           {LABELS.FAUCET_INFO}
         </div>
-        <ConnectButton type="primary" onClick={handleRequestAirdrop}>
+        {/* <ConnectButton type="primary" onClick={handleRequestAirdrop}>
           {LABELS.GIVE_SOL}
         </ConnectButton>
         <ConnectButton type="primary" onClick={handleRequestAirdrop}>
           GIVE ME JET
-        </ConnectButton>
+        </ConnectButton> */}
       </div>
       <Link to="/">Go back home</Link>
     </div>
