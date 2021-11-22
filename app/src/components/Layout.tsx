@@ -4,6 +4,7 @@ import { Layout } from "antd";
 import Logo from "../images/jetgovern_white.png";
 import { WalletModalProvider } from "@solana/wallet-adapter-ant-design";
 import { ConnectModal } from "./ConnectModal";
+import { ConnectButton } from "./ConnectButton";
 
 import { AppBar } from "./AppBar";
 
@@ -18,7 +19,7 @@ export const AppLayout = React.memo(({ children }) => {
       <Layout>
         <Header className="nav-bar">
           <img src={Logo} alt="logo" />
-            <AppBar />
+            <ConnectButton />
             <ConnectModal />
           </Header>
           <Content>
