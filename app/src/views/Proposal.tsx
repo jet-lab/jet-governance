@@ -14,7 +14,7 @@ export const ProposalView = (props: any) => {
 
   const { activeProposals } = useProposal();
 
-  const [stake, setStake] = useState(32344);
+  const [stake, setStake] = useState(0);
   const inFavor = 722300;
   const against = 220700;
   const abstain = 70200;
@@ -24,9 +24,34 @@ export const ProposalView = (props: any) => {
   const timeleft = end - now;
   const days = Math.floor(timeleft / (1000 * 60 * 60 * 24));
 
+
+  const checkIsStaked = () => {
+    if (stake === 0) {
+      return false;
+    }
+  }
+
+  const stakeRedirect = () => {
+    Modal.error({
+        title: 'Before you can vote, you need to lock some JET tokens.',
+        centered: true,
+        content: (
+          <div>
+            <p>Info about what this means. 1 JET = 1 vote. Lock funds in order to vote. Once you lock your desired amount of JET, you will be able to vote on active proposals. Your JET will remain bonded until the proposal voting period ends. Once the period has ended, you can unbond your JET. </p>
+          </div>
+      ),
+      okText: `I understand`,
+        onOk() {},
+      });
+  }
+
+
+  
   const confirmFavor = () => {
-    Modal.success({
-      title: `You're about to vote in favor of proposal #${id}`,
+    if (checkIsStaked()) {
+      Modal.success({
+        title: `You're about to vote in favor of proposal #${id}`,
+        centered: true,
       content: (
         <div>
           <p>You have X.XX JET locked, and will be able to unlock these funds when voting ends on end.</p>
@@ -35,31 +60,44 @@ export const ProposalView = (props: any) => {
       okText: `Confirm vote`,
       onOk() {},
     });
+    } else {
+      stakeRedirect();
+    }
   }
-  
+
   const confirmAgainst = () => {
-    Modal.error({
-      title: 'This is a notification message',
-      content: (
-        <div>
-          <p>some messages...some messages...</p>
-          <p>some messages...some messages...</p>
-        </div>
-      ),
-      onOk() {},
-    });
+    if (checkIsStaked()) {
+      Modal.error({
+        title: 'This is a notification message',
+        centered: true,
+        content: (
+          <div>
+            <p>some messages...some messages...</p>
+            <p>some messages...some messages...</p>
+          </div>
+        ),
+        onOk() { },
+      });
+    } else {
+      stakeRedirect();
+    }
   }
   const confirmAbstain = () => {
-    Modal.info({
-      title: 'This is a notification message',
-      content: (
-        <div>
-          <p>some messages...some messages...</p>
-          <p>some messages...some messages...</p>
-        </div>
-      ),
-      onOk() {},
-    });
+    if (checkIsStaked()) {
+      Modal.info({
+        title: 'This is a notification message',
+        centered: true,
+        content: (
+          <div>
+            <p>some messages...some messages...</p>
+            <p>some messages...some messages...</p>
+          </div>
+        ),
+        onOk() { },
+      });
+    } else {
+      stakeRedirect();
+    }
 }
 
   return (
@@ -178,7 +216,7 @@ export const ProposalView = (props: any) => {
 
       <Divider />
 
-      <div>
+      <div className="other-proposals">
         <h3>Other active proposals</h3>
         <div className="flex">
         {activeProposals.map((proposal: any) => (
