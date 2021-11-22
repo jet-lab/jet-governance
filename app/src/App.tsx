@@ -5,6 +5,7 @@ import { WalletProvider } from "@solana/wallet-adapter-react";
 import { ProposalProvider } from "./contexts/proposal";
 import { ConnectionProvider } from "./contexts/connection";
 import { AccountsProvider } from "./contexts/accounts";
+import { ConnectWalletProvider } from "./contexts/connectWallet";
 import { AppLayout } from "./components/Layout";
 
 import { INITIAL_STATE } from "./models/INITIAL_PROPOSALS";
@@ -56,41 +57,43 @@ function App() {
   //   };
   //   getGeobanned();
   // });
-    
+
   return (
     <HashRouter basename={"/"}>
       <ConnectionProvider>
         <WalletProvider wallets={wallets} autoConnect>
-          <AccountsProvider>
-            <ProposalProvider>
-              <AppLayout>
-                <Switch>
-                  <Route exact path="/">
-                    <HomeView />
-                  </Route>
-                  {geobanned
-                    ? null
-                    : INITIAL_STATE.map((proposal) => (
-                        <Route
-                          exact
-                          path={`/proposal/${
-                            proposal.id
-                          }/${proposal.headline.substring(0, 7)}`}
-                        >
-                          <ProposalView
-                            id={proposal.id}
-                            result={proposal.result}
-                            headline={proposal.headline}
-                            active={proposal.active}
-                            end={proposal.end}
-                            hash={proposal.hash}
-                          />
-                        </Route>
-                      ))}
-                </Switch>
-              </AppLayout>
-            </ProposalProvider>
-          </AccountsProvider>
+          <ConnectWalletProvider>
+            <AccountsProvider>
+              <ProposalProvider>
+                <AppLayout>
+                  <Switch>
+                    <Route exact path="/">
+                      <HomeView />
+                    </Route>
+                    {geobanned
+                      ? null
+                      : INITIAL_STATE.map((proposal) => (
+                          <Route
+                            exact
+                            path={`/proposal/${
+                              proposal.id
+                            }/${proposal.headline.substring(0, 7)}`}
+                          >
+                            <ProposalView
+                              id={proposal.id}
+                              result={proposal.result}
+                              headline={proposal.headline}
+                              active={proposal.active}
+                              end={proposal.end}
+                              hash={proposal.hash}
+                            />
+                          </Route>
+                        ))}
+                  </Switch>
+                </AppLayout>
+              </ProposalProvider>
+            </AccountsProvider>
+          </ConnectWalletProvider>
         </WalletProvider>
       </ConnectionProvider>
     </HashRouter>
