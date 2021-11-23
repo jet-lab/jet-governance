@@ -6,8 +6,6 @@ import { WalletModalProvider } from "@solana/wallet-adapter-ant-design";
 import { ConnectModal } from "./ConnectModal";
 import { ConnectButton } from "./ConnectButton";
 
-import { AppBar } from "./AppBar";
-
 const { Header, Content } = Layout;
 
 export const AppLayout = React.memo(({ children }) => {
