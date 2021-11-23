@@ -20,18 +20,6 @@
   .ant-modal-confirm-content {
 
   }
-
-  // The following to handle wallet connection menu only
-  .ant-menu {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    li button.ant-btn-block {
-      flex-direction: row-reverse;
-      padding: 0 !important;
-      width: 100%;
-    }
-  }
 }
 
 .ant-btn {
@@ -82,7 +70,7 @@
   }
 }
 
-button.ant-btn-primary {
+.ant-btn-primary {
   background: transparent;
   font-family: "Bicyclette-Bold";
   text-transform: uppercase;
@@ -98,12 +86,14 @@ button.ant-btn-primary {
   background: transparent;
   cursor: pointer;
   transition: 0.2s;
+  box-shadow: none;
   span {
+    color: #ffffff;
     padding: 9px 15px 6px 15px !important;
   }
 }
-button.ant-btn-primary:hover,
-button.ant-btn-primary:focus {
+.ant-btn-primary:hover,
+.ant-btn-primary:focus {
   border-color: #ffffff;
   background: #ffffff;
   span {

@@ -20,21 +20,15 @@ export const ConnectButton: FunctionComponent = () => {
   const connectButtonText = useMemo(() => 
     publicKey 
       ? `${shortenAddress(publicKey.toString())} Connected` 
-        : "Connect",
+        : "Connect Wallet",
     [publicKey]
   );
 
   return (
     <Button className={connectButtonClasses}
+      type="primary"
       title={connectButtonTitle}
       onClick={() => connected ? disconnect() : setConnecting(true)}>
-      {connected && (
-        <img src={`img/wallets/${wallet?.name.toLowerCase()}.png`} 
-          width="20px"
-          height="auto"
-          alt={wallet?.name}
-        />
-      )}
       {connectButtonText}
     </Button>
   );
