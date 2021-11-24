@@ -1,5 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { Card } from "antd";
 
 export const ProposalCard = (props: any) => {
   const { active, result, headline, number, end, id } = props;
@@ -9,8 +10,8 @@ export const ProposalCard = (props: any) => {
   const days = Math.floor(timeleft / (1000 * 60 * 60 * 24));
 
   return (
-    <Link to={`/proposal/${id}/${headline.substring(0,7)}`}>
-    <div className={`proposal-card ${active ? "active" : "default"}`}>
+    <Link to={`/proposal/${id}/${headline.substring(0, 7)}`}>
+      <Card bordered={false}>
       <div>
         <div className="header">Proposal {number}</div>
         <div className="headline">{headline}</div>
@@ -22,7 +23,7 @@ export const ProposalCard = (props: any) => {
         </div>
         {active ? <div className="end">{days} days left</div> : ""}
       </div>
-    </div>
+    </Card>
   </Link>
   );
 };

@@ -8,11 +8,6 @@
   --status-inactive: hsla(0, 4%, 71%, 1);
   --status-rejected: hsla(0, 73%, 75%, 1);
   --status-passed: hsla(163, 44%, 43%, 1);
-
-  --disabled-opacity: 0.85;
-
-  --nav-height: 89px;
-  --mobile-nav-height: 60px;
 }
 ::-webkit-scrollbar {
   display: none !important;
@@ -129,8 +124,8 @@ h5 {
   .connect-wallet {
   }
 
-  img#govern-logo {
-    height: 62px;
+  img {
+    height: 42px;
   }
 
   .ant-menu-horizontal {
@@ -157,17 +152,6 @@ h5 {
       font-weight: bold;
     }
   }
-}
-
-.nav-bar-left {
-  box-sizing: border-box;
-  margin: 0px;
-  min-width: 0px;
-  display: flex;
-  padding: 0px;
-  -webkit-box-align: center;
-  align-items: center;
-  width: fit-content;
 }
 
 .wallet-wrapper {
@@ -240,62 +224,6 @@ em {
       display: flex;
       justify-content: space-between;
       flex-wrap: wrap;
-    }
-  }
-
-  .proposal-card {
-    height: 231px;
-    width: 231px;
-    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.25);
-    border-radius: 7px;
-    background: var(--white);
-    color: var(--black);
-    padding: 17px 11px 9px 19px;
-    margin: 11px 22px 11px 0;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    justify-content: space-between;
-    font-size: 10px;
-
-    .header {
-      line-height: 12px;
-      text-transform: uppercase;
-      font-weight: bold;
-      padding-bottom: 7px;
-    }
-
-    .headline {
-      font-family: Helvetica Neue;
-      font-style: normal;
-      font-weight: 500;
-      font-size: 22px;
-      line-height: 27px;
-    }
-  }
-
-  .proposal-card.active {
-    background: var(--gradient);
-    color: var(--white);
-    .details .status.active {
-      color: var(--status-active);
-    }
-  }
-
-  .proposal-card.default {
-    .details {
-      .active {
-        color: var(--jet-green);
-      }
-      .inactive {
-        color: var(--status-inactive);
-      }
-      .rejected {
-        color: var(--status-rejected);
-      }
-      .passed {
-        color: var(--status-passed);
-      }
     }
   }
 }
