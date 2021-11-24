@@ -1,0 +1,126 @@
+@import "~antd/es/style/themes/dark.less";
+@import "~antd/dist/antd.dark.less";
+
+.ant-divider-horizontal {
+  margin-bottom: 28px;
+}
+
+.ant-divider {
+    box-shadow: inset 2px 2px 2px rgba(0, 0, 0, 0.15),
+    inset 2px 2px 2px rgba(255, 255, 255, 0.9);
+  border-radius: 20px;
+  padding: 0 6%;
+  min-height: 3px;
+}
+
+.ant-modal-content {
+  .ant-modal-confirm-title {
+
+  }
+  .ant-modal-confirm-content {
+
+  }
+}
+
+.ant-btn {
+	box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+	border-radius: 4px;
+	margin: 8px;
+	padding: 0;
+	cursor: pointer;
+	border: 2px solid transparent;
+	background-image: var(--gradient), var(--gradient);
+	background-origin: border-box;
+	background-clip: content-box, border-box;
+	box-shadow: 800px 0 0 0 var(--white) inset;
+  span {
+    font-family: 'Bicyclette-Bold', sans-serif;
+    font-style: normal;
+    text-transform: uppercase;
+    align-items: center;
+    text-align: center;
+    letter-spacing: 0.1em;
+    background: var(--gradient);
+    color: transparent;
+    -webkit-background-clip: text;
+    background-clip: text;
+    display: inline-block;
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    transition: 0.2s;
+    padding: 4px 10px 3px 10px !important
+  }
+}
+
+.ant-btn:hover, .ant-btn:focus, button.active {
+  border-color: transparent;
+  background-image: var(--gradient), var(--gradient);
+  background-origin: border-box;
+  span {
+    box-shadow: 0px 0px 0px 0px #fff inset;
+    color: #ffffff;
+    background-image: var(--gradient),
+    var(--gradient);
+    background-origin: border-box;
+    background-clip: content-box, border-box;
+    box-shadow: none;
+  }
+}
+
+.ant-btn-primary {
+  background: transparent;
+  font-family: "Bicyclette-Bold";
+  text-transform: uppercase;
+  font-size: 14px;
+  line-height: 14px;
+  letter-spacing: 0.1em;
+  border: 1px solid #ffffff;
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  border-radius: 4px;
+  padding: 0;
+  background: transparent;
+  cursor: pointer;
+  transition: 0.2s;
+  box-shadow: none;
+  span {
+    color: #ffffff;
+    padding: 9px 15px 6px 15px !important;
+  }
+}
+.ant-btn-primary:hover,
+.ant-btn-primary:focus {
+  border-color: #ffffff;
+  background: #ffffff;
+  span {
+    background: var(--gradient);
+    color: transparent;
+    -webkit-background-clip: text;
+    background-clip: text;
+  }
+}
+
+.ant-btn-primary[disabled], .ant-btn-primary[disabled]:hover, .ant-btn-primary[disabled]:focus, .ant-btn-primary[disabled]:active {
+    background: transparent;
+    font-family: "Bicyclette-Bold";
+    text-transform: uppercase;
+    font-size: 14px;
+    line-height: 14px;
+    letter-spacing: 0.1em;
+    border: 1px solid #ffffff;
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    border-radius: 4px;
+    padding: 0;
+    background: transparent;
+    cursor: pointer;
+    transition: 0.2s;
+    span {
+      padding: 9px 15px 6px 15px !important;
+    }
+  }
