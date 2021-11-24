@@ -30,7 +30,7 @@ pub fn handler(
     name: String,
     description: String,
 ) -> ProgramResult {
-    let content = ctx.accounts.proposal.deref_mut().content();
+    let content = ctx.accounts.proposal.deref_mut().content_mut();
     content.name = name;
     content.description = description;
     Ok(())

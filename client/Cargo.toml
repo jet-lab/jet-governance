@@ -6,8 +6,8 @@ edition = "2018"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-jet-governance = { path = "../programs/jet-governance", features = ["no-entrypoint"]  }
-anchor-client = { git = "https://github.com/jet-lab/anchor", branch = "signer-rc" }
+jet-governance = { path = "../programs/jet-governance", features = ["no-entrypoint"] }
+anchor-client = { path = "../../jet-anchor/client" }
 anyhow = "1.0.32"
 spl-token = "3.2.0"
 

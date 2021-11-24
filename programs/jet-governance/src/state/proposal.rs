@@ -37,14 +37,22 @@ impl Proposal {
         }
     }
 
-    pub fn content(&mut self) -> &mut ProposalContent {
+    pub fn content(&self) -> &ProposalContent {
+        &self.content
+    }
+
+    pub fn vote(&self) -> &VoteCount {
+        &self.count
+    }
+
+    pub fn content_mut(&mut self) -> &mut ProposalContent {
         if !self.lifecycle.activated(Clock::get().unwrap().unix_timestamp) {
             panic!("Proposal is not editable.")
         }
         &mut self.content
     }
 
-    pub fn vote(&mut self) -> &mut VoteCount {
+    pub fn vote_mut(&mut self) -> &mut VoteCount {
         let current_timestamp = Clock::get().unwrap().unix_timestamp;
         if !self.lifecycle.activated(current_timestamp) || self.lifecycle.finalized(current_timestamp) {
             panic!("Proposal is not votable");
@@ -82,11 +90,11 @@ impl ProposalLifecycle {
         self.finalize = timestamp;
     }
 
-    fn activated(&self, current_timestamp: UnixTimestamp) -> bool {
+    pub fn activated(&self, current_timestamp: UnixTimestamp) -> bool {
         self.done(self.activate, current_timestamp)
     }
 
-    fn finalized(&self, current_timestamp: UnixTimestamp) -> bool {
+    pub fn finalized(&self, current_timestamp: UnixTimestamp) -> bool {
         self.done(self.finalize, current_timestamp)
     }
     
@@ -113,6 +121,10 @@ impl VoteCount {
             abstain: 0,
         }
     }
+
+    pub fn yes(&self) -> u64 { self.yes }
+    pub fn no(&self) -> u64 { self.no }
+    pub fn abstain(&self) -> u64 { self.abstain }
 
     pub fn add(&mut self, vote: Vote2, weight: u64) {
         self.edit(vote, weight, u64::checked_add)

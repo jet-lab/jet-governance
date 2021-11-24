@@ -1,3 +1,5 @@
+use std::ops::DerefMut;
+
 use anchor_lang::prelude::*;
 use anchor_spl::token::{self, Transfer};
 use crate::state::{voter::Voter, realm::Realm};
@@ -10,21 +12,21 @@ pub struct Deposit<'info> {
     #[account(signer)]
     pub owner: AccountInfo<'info>,
 
-    #[account(
-        has_one = vault,
-        has_one = authority)]
+    #[account(has_one = vault)]
     pub realm: ProgramAccount<'info, Realm>,
 
-    // PDA that can sign on behalf of the realm
-    pub authority: AccountInfo<'info>,
-
     // Account to store deposited governance tokens
+    #[account(mut)]
     pub vault: AccountInfo<'info>,
 
-    #[account(
+    #[account(mut,
         has_one = owner,
         has_one = realm)]
     pub voter: ProgramAccount<'info, Voter>,
+
+    /// Owner's token account containing the tokens to deposit
+    #[account(mut)]
+    pub token_account: AccountInfo<'info>,
 
     #[account(address = token::ID)]
     pub token_program: AccountInfo<'info>,
@@ -34,11 +36,11 @@ pub fn handler(
     ctx: Context<Deposit>,
     amount: u64,
 ) -> ProgramResult {
-    ctx.accounts.voter.deposited += amount;
+    (*ctx.accounts.voter.deref_mut()).deposited += amount;
     let context = CpiContext::new(
         ctx.accounts.token_program.clone(),
         Transfer {
-            from: ctx.accounts.owner.to_account_info(),
+            from: ctx.accounts.token_account.to_account_info(),
             to: ctx.accounts.vault.to_account_info(),
             authority: ctx.accounts.owner.clone(),
         },

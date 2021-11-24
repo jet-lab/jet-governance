@@ -32,8 +32,8 @@ mod jet_governance {
         deposit::handler(ctx, amount)
     }
 
-    pub fn withdraw(ctx: Context<Withdraw>, amount: u64) -> ProgramResult {
-        withdraw::handler(ctx, amount)
+    pub fn withdraw(ctx: Context<Withdraw>, bump: u8, amount: u64) -> ProgramResult {
+        withdraw::handler(ctx, bump, amount)
     }
 
     pub fn propose(ctx: Context<Propose>, name: String, description: String, activate: Time, finalize: Time) -> ProgramResult {
@@ -44,7 +44,11 @@ mod jet_governance {
         edit_draft::handler(ctx, name, description)
     }
 
-    pub fn vote(ctx: Context<VoteAccounts>, vote: Vote2) -> ProgramResult {
+    pub fn vote(
+        ctx: Context<VoteAccounts>,
+        _bump: u8,
+        vote: Vote2,
+    ) -> ProgramResult {
         vote::handler(ctx, vote)
     }
 

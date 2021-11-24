@@ -3,7 +3,6 @@ use crate::{state::voter::Voter, state::voter::VoteRecord, state::proposal::Prop
 
 
 #[derive(Accounts)]
-#[instruction(bump: u8)]
 pub struct Rescind<'info> {
     /// The user with authority over the voter account.
     #[account(signer)]
@@ -16,11 +15,11 @@ pub struct Rescind<'info> {
         has_one = realm)]
     pub voter: ProgramAccount<'info, Voter>,
 
-    #[account(mut)]
+    #[account(mut, has_one = realm)]
     pub proposal: ProgramAccount<'info, Proposal>,
 
     #[account(mut,
-        has_one = owner,
+        has_one = voter,
         has_one = proposal)]
     pub vote_record: ProgramAccount<'info, VoteRecord>,
 }
@@ -29,7 +28,7 @@ pub fn handler(ctx: Context<Rescind>) -> ProgramResult {
     let vote_record = &ctx.accounts.vote_record;
     let proposal = &mut ctx.accounts.proposal;
     let voter = &mut ctx.accounts.voter;
-    proposal.vote().rescind(vote_record.vote, vote_record.weight);
+    proposal.vote_mut().rescind(vote_record.vote, vote_record.weight);
     voter.active_votes -= 1;
     vote_record.close(ctx.accounts.owner.to_account_info())?;
     Ok(())

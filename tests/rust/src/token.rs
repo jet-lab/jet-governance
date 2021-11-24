@@ -1,8 +1,7 @@
 use anyhow::Result;
-use solana_sdk::{commitment_config::CommitmentLevel, program_pack::Pack, pubkey::Pubkey, signature::Keypair, signer::Signer, system_instruction};
-use spl_associated_token_account::get_associated_token_address;
+use solana_sdk::{program_pack::Pack, pubkey::Pubkey, signature::Keypair, signer::Signer, system_instruction};
 use spl_token::state::{Account, Mint};
-use crate::solana::{PayingClient, send_transaction, send_transaction_with_commitment};
+use crate::solana::{PayingClient, send_transaction};
 
 
 pub fn initialize_mint(paying_client: &PayingClient) -> Result<Pubkey> {
@@ -51,7 +50,8 @@ pub fn create_account(
 pub fn mint_to(
     paying_client: &PayingClient,
     mint: Pubkey,
-    recipient: Pubkey
+    recipient: Pubkey,
+    amount: u64
 ) -> Result<()> {
     // let assoc = get_associated_token_address(&recipient, &mint);
     let mint_to = spl_token::instruction::mint_to(
@@ -60,7 +60,7 @@ pub fn mint_to(
         &recipient,
         &paying_client.payer.pubkey(),
         &[],
-        100,
+        amount,
     )?;
     send_transaction(paying_client, &[mint_to], &[&*paying_client.payer])
 }
