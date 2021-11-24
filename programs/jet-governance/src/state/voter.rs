@@ -15,7 +15,7 @@ pub struct Voter {
 #[account]
 pub struct VoteRecord {
     pub proposal: Pubkey,
-    pub owner: Pubkey,
+    pub voter: Pubkey,
     pub weight: u64,
     pub vote: Vote2,
 }

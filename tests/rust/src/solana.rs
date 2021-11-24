@@ -2,7 +2,7 @@ use std::rc::Rc;
 
 use anyhow::Result;
 use solana_client::{rpc_client::RpcClient, rpc_config::RpcSendTransactionConfig};
-use solana_sdk::{commitment_config::{CommitmentConfig, CommitmentLevel}, instruction::Instruction, signature::Keypair, signer::Signer, transaction::Transaction};
+use solana_sdk::{commitment_config::{CommitmentConfig, CommitmentLevel}, instruction::Instruction, signer::Signer, transaction::Transaction};
 
 
 pub struct PayingClient {

@@ -1,15 +1,24 @@
 use std::rc::Rc;
 
-use anchor_client::{Cluster, Program, solana_sdk::signer::Signer};
+use anchor_client::{Cluster, Program, solana_sdk::{commitment_config::{CommitmentConfig, CommitmentLevel}, signer::Signer}};
 
 use clap2::ArgMatches;
 use solana_clap_utils::keypair::DefaultSigner;
 use solana_remote_wallet::remote_wallet::maybe_wallet_manager;
 
 
-pub fn program<'a>(payer: Rc<dyn Signer>) -> Program {
+pub fn program<'a>(
+    payer: Rc<dyn Signer>,
+    commitment: CommitmentLevel
+) -> Program {
     let cluster = Cluster::Localnet;
-    let connection = anchor_client::Client::new(cluster.clone(), payer.into());
+    let connection = anchor_client::Client::new_with_options(
+        cluster.clone(),
+        payer.into(),
+        CommitmentConfig {
+            commitment,
+        }
+    );
     connection.program(jet_governance::id())
 }
 

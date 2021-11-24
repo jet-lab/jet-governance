@@ -57,7 +57,6 @@ checksum = "6b2d54853319fd101b8dd81de382bcbf3e03410a64d8928bbee85a3e7dcde483"
 [[package]]
 name = "anchor-attribute-access-control"
 version = "0.18.0"
-source = "git+https://github.com/jet-lab/anchor?branch=signer-rc#0c7053c7e0952b9b832cae5c1dd9f24ab5e07cff"
 dependencies = [
  "anchor-syn",
  "anyhow",
@@ -70,7 +69,6 @@ dependencies = [
 [[package]]
 name = "anchor-attribute-account"
 version = "0.18.0"
-source = "git+https://github.com/jet-lab/anchor?branch=signer-rc#0c7053c7e0952b9b832cae5c1dd9f24ab5e07cff"
 dependencies = [
  "anchor-syn",
  "anyhow",
@@ -84,7 +82,6 @@ dependencies = [
 [[package]]
 name = "anchor-attribute-error"
 version = "0.18.0"
-source = "git+https://github.com/jet-lab/anchor?branch=signer-rc#0c7053c7e0952b9b832cae5c1dd9f24ab5e07cff"
 dependencies = [
  "anchor-syn",
  "proc-macro2 1.0.30",
@@ -95,7 +92,6 @@ dependencies = [
 [[package]]
 name = "anchor-attribute-event"
 version = "0.18.0"
-source = "git+https://github.com/jet-lab/anchor?branch=signer-rc#0c7053c7e0952b9b832cae5c1dd9f24ab5e07cff"
 dependencies = [
  "anchor-syn",
  "anyhow",
@@ -107,7 +103,6 @@ dependencies = [
 [[package]]
 name = "anchor-attribute-interface"
 version = "0.18.0"
-source = "git+https://github.com/jet-lab/anchor?branch=signer-rc#0c7053c7e0952b9b832cae5c1dd9f24ab5e07cff"
 dependencies = [
  "anchor-syn",
  "anyhow",
@@ -120,7 +115,6 @@ dependencies = [
 [[package]]
 name = "anchor-attribute-program"
 version = "0.18.0"
-source = "git+https://github.com/jet-lab/anchor?branch=signer-rc#0c7053c7e0952b9b832cae5c1dd9f24ab5e07cff"
 dependencies = [
  "anchor-syn",
  "anyhow",
@@ -132,7 +126,6 @@ dependencies = [
 [[package]]
 name = "anchor-attribute-state"
 version = "0.18.0"
-source = "git+https://github.com/jet-lab/anchor?branch=signer-rc#0c7053c7e0952b9b832cae5c1dd9f24ab5e07cff"
 dependencies = [
  "anchor-syn",
  "anyhow",
@@ -144,7 +137,6 @@ dependencies = [
 [[package]]
 name = "anchor-client"
 version = "0.18.0"
-source = "git+https://github.com/jet-lab/anchor?branch=signer-rc#0c7053c7e0952b9b832cae5c1dd9f24ab5e07cff"
 dependencies = [
  "anchor-lang",
  "anyhow",
@@ -159,7 +151,6 @@ dependencies = [
 [[package]]
 name = "anchor-derive-accounts"
 version = "0.18.0"
-source = "git+https://github.com/jet-lab/anchor?branch=signer-rc#0c7053c7e0952b9b832cae5c1dd9f24ab5e07cff"
 dependencies = [
  "anchor-syn",
  "anyhow",
@@ -171,7 +162,6 @@ dependencies = [
 [[package]]
 name = "anchor-lang"
 version = "0.18.0"
-source = "git+https://github.com/jet-lab/anchor?branch=signer-rc#0c7053c7e0952b9b832cae5c1dd9f24ab5e07cff"
 dependencies = [
  "anchor-attribute-access-control",
  "anchor-attribute-account",
@@ -191,7 +181,6 @@ dependencies = [
 [[package]]
 name = "anchor-spl"
 version = "0.18.0"
-source = "git+https://github.com/jet-lab/anchor?branch=signer-rc#0c7053c7e0952b9b832cae5c1dd9f24ab5e07cff"
 dependencies = [
  "anchor-lang",
  "lazy_static",
@@ -204,7 +193,6 @@ dependencies = [
 [[package]]
 name = "anchor-syn"
 version = "0.18.0"
-source = "git+https://github.com/jet-lab/anchor?branch=signer-rc#0c7053c7e0952b9b832cae5c1dd9f24ab5e07cff"
 dependencies = [
  "anyhow",
  "bs58 0.3.1",

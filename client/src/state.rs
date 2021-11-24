@@ -1,6 +1,6 @@
 use anchor_client::{Program, solana_sdk::pubkey::Pubkey};
 use anyhow::Result;
-use jet_governance::state::{Realm, Voter};
+use jet_governance::state::{Proposal, Realm, VoteRecord, Voter};
 
 
 pub fn get_realm(
@@ -16,4 +16,19 @@ pub fn get_voter(
     voter: Pubkey,
 ) -> Result<Voter> {
     Ok(anchor_program.account(voter)?)
+}
+
+
+pub fn get_proposal(
+    anchor_program: &Program,
+    proposal: Pubkey,
+) -> Result<Proposal> {
+    Ok(anchor_program.account(proposal)?)
+}
+
+pub fn get_vote_record(
+    anchor_program: &Program,
+    proposal: Pubkey,
+) -> Result<VoteRecord> {
+    Ok(anchor_program.account(proposal)?)
 }

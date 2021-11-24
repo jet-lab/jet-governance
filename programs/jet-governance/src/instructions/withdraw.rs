@@ -18,15 +18,26 @@ pub struct Withdraw<'info> {
     pub realm: ProgramAccount<'info, Realm>,
 
     // PDA that can sign on behalf of the realm
+    #[account(
+        seeds = [
+            b"realm-authority".as_ref(),
+            realm.key().as_ref()
+        ],
+        bump = bump)]
     pub authority: AccountInfo<'info>,
 
     // Account to store deposited governance tokens
+    #[account(mut)]
     pub vault: AccountInfo<'info>,
 
-    #[account(
+    #[account(mut,
         has_one = owner,
         has_one = realm)]
     pub voter: ProgramAccount<'info, Voter>,
+
+    /// Owner's token account containing the tokens to deposit
+    #[account(mut)]
+    pub token_account: AccountInfo<'info>,
 
     #[account(address = token::ID)]
     pub token_program: AccountInfo<'info>,
@@ -34,6 +45,7 @@ pub struct Withdraw<'info> {
 
 pub fn handler(
     ctx: Context<Withdraw>,
+    bump: u8,
     amount: u64,
 ) -> ProgramResult {
     let voter = ctx.accounts.voter.deref_mut();
@@ -43,13 +55,20 @@ pub fn handler(
     if voter.active_votes > 0 {
         panic!("Cannot withdraw when there are active votes");
     }
-    let context = CpiContext::new(
+    voter.deposited -= amount;
+    let seeds: &[&[&[u8]]] = &[&[
+        b"realm-authority".as_ref(),
+        ctx.accounts.realm.to_account_info().key.as_ref(),
+        &[bump],
+    ]];
+    let context = CpiContext::new_with_signer(
         ctx.accounts.token_program.clone(),
         Transfer {
             from: ctx.accounts.vault.to_account_info(),
-            to: ctx.accounts.owner.to_account_info(),
-            authority: ctx.accounts.owner.clone(),
+            to: ctx.accounts.token_account.to_account_info(),
+            authority: ctx.accounts.authority.clone(),
         },
+        seeds,
     );
     token::transfer(
         context,

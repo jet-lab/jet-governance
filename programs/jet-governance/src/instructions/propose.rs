@@ -1,8 +1,8 @@
 use std::ops::DerefMut;
 
 use anchor_lang::prelude::*;
-use crate::state::voter::Voter;
 use crate::state::proposal::Proposal;
+use crate::state::realm::Realm;
 
 use super::transition_proposal::Time;
 
@@ -15,12 +15,8 @@ pub struct Propose<'info> {
     #[account(signer)]
     pub owner: AccountInfo<'info>,
 
-    pub realm: AccountInfo<'info>,
-
-    #[account(
-        has_one=owner,
-        has_one=realm)]
-    pub voter: ProgramAccount<'info, Voter>,
+    #[account(has_one = owner)] // For now, only realm owner can propose
+    pub realm: ProgramAccount<'info, Realm>,
 
     #[account(init,
         space = 8 + std::mem::size_of::<Proposal>(),
