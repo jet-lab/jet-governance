@@ -109,13 +109,6 @@ export const ProposalView = (props: any) => {
           <div className="description neu-container">
             <div className="flex">
               <h3>Proposal {id}</h3>
-              <div className="status-details">
-                <div className={`status ${active ? "active" : result}`}>
-                  <i className="fas fa-circle"></i>
-                  {active ? "ACTIVE" : result}
-                </div>
-                {active ? <div className="end">{days} days left</div> : ""}
-              </div>
             </div>
             <h1 className="headline text-gradient">{headline}</h1>
             <p>
@@ -136,9 +129,7 @@ export const ProposalView = (props: any) => {
               ac. Ornare quam viverra orci.
             </p>
 
-            <Divider />
-
-            <div className="inset flex column">
+            <div className="neu-inset flex column">
               <div>
                 <h5>Proposal ID:</h5>
                 <span>{hash}</span>
@@ -169,7 +160,7 @@ export const ProposalView = (props: any) => {
         </div>
 
           <h3>Vote turnout</h3>
-          <div className="vote-turnout flex justify-evenly">
+          <div className="neu-container flex justify-evenly" id="vote-turnout">
             <div className="results">
               <ResultProgressBar
                 type="inFavor"
@@ -202,7 +193,7 @@ export const ProposalView = (props: any) => {
 
         <div className="flex column" style={{ width: "30%" }} id="vote-desktop">
           <h3>Your Vote</h3>
-          <div className="neu-container flex column inset">
+          <div className="neu-container flex column" id="your-vote">
             <Button onClick={confirmFavor}>In favor</Button>
             <Button onClick={confirmAgainst}>Against</Button>
             <Button onClick={confirmAbstain}>Abstain</Button>

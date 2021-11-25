@@ -26,6 +26,17 @@ body {
   margin-left: var(--nav-width);
 }
 
+.neu-container {
+  box-shadow: var(--neu-shadow) !important;
+  border-radius: 4px !important;
+}
+.neu-inset {
+  padding: 29px 26px;
+  mix-blend-mode: normal;
+  box-shadow: var(--neu-shadow-inset);
+  border-radius: var(--border-radius);
+}
+
 /* Text */
 h1,
 h2,
@@ -124,60 +135,11 @@ h5 {
   width: 100%;
   background: var(--gradient);
   z-index: 1000;
-  .connect-wallet {
-  }
 
   img#nav-header {
     height: auto;
     width: 140px;
   }
-
-  .ant-menu-horizontal {
-    border-bottom-color: transparent;
-    background-color: transparent;
-    line-height: inherit;
-    font-size: 16px;
-    margin: 0 10px;
-
-    .ant-menu-item {
-      margin: 0 10px;
-      color: lightgrey;
-      height: 35px;
-      line-height: 35px;
-      border-width: 0px !important;
-    }
-
-    .ant-menu-item:hover {
-      color: white;
-      border-width: 0px !important;
-    }
-
-    .ant-menu-item-selected {
-      font-weight: bold;
-    }
-  }
-}
-
-.wallet-wrapper {
-  padding-left: 0.7rem;
-  border-radius: 0.5rem;
-  display: flex;
-  align-items: center;
-  white-space: nowrap;
-}
-
-.wallet-key {
-  padding: 0.1rem 0.5rem 0.1rem 0.7rem;
-  margin-left: 0.3rem;
-  border-radius: 0.5rem;
-  display: flex;
-  align-items: center;
-}
-
-em {
-  font-weight: bold;
-  font-style: normal;
-  text-decoration: none;
 }
 
 .ant-layout-content {
@@ -188,7 +150,6 @@ em {
 
   .panel {
     margin: 0 10px;
-    width: 100%;
     .header span {
       padding: 0 5px;
     }
@@ -215,6 +176,20 @@ em {
       display: flex;
       justify-content: space-between;
       flex-wrap: wrap;
+      .ant-card .details {
+        .active {
+          color: var(--jet-green);
+        }
+        .inactive {
+          color: var(--status-inactive);
+        }
+        .rejected {
+          color: var(--status-rejected);
+        }
+        .passed {
+          color: var(--status-passed);
+        }
+      }
     }
   }
 }
@@ -266,17 +241,8 @@ em {
   margin-bottom: 28px;
 }
 
-.neu-container {
-  box-shadow: var(--neu-shadow) !important;
-  border-radius: 4px !important;
-}
-
 .proposal {
   .content {
-    .inset {
-      padding: 39px 36px;
-    }
-
     .description {
       padding: 39px 36px;
       margin: 0 36px 39px 0;
@@ -291,23 +257,23 @@ em {
         padding-bottom: 20px;
         letter-spacing: unset;
       }
-      .status-details {
-        margin-top: 6px;
-        margin-left: 20px;
-        font-size: 10px;
-        line-height: 10px;
-        letter-spacing: 0.1em;
-        div {
-          align-items: flex-end;
-          h5 {
-            width: 105px;
-          }
-          span {
-            font-size: 12px;
-            line-height: 23px;
-          }
-        }
-      }
+      // .status-details {
+      //   margin-top: 6px;
+      //   margin-left: 20px;
+      //   font-size: 10px;
+      //   line-height: 10px;
+      //   letter-spacing: 0.1em;
+      //   div {
+      //     align-items: flex-end;
+      //     h5 {
+      //       width: 105px;
+      //     }
+      //     span {
+      //       font-size: 12px;
+      //       line-height: 23px;
+      //     }
+      //   }
+      // }
       p {
         font-size: 15px;
         line-height: 26px;
@@ -325,16 +291,9 @@ em {
   }
 }
 
-.vote-turnout {
+#vote-turnout {
   padding: 39px 27px;
   margin: 0 36px 39px 0;
-  grid-column: 17 e("/") 25;
-  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.15),
-    0px -4px 20px rgba(255, 255, 255, 0.5);
-  border-radius: 10px;
-  span {
-    margin-bottom: 13px;
-  }
   .results {
     margin-bottom: 37px;
     flex-grow: 1;
@@ -350,28 +309,21 @@ em {
         -webkit-text-fill-color: var(--black) !important;
       }
     }
-    .ant-progress-inner {
-      position: relative;
-      display: inline-block;
-      width: 100%;
-      overflow: hidden;
-      vertical-align: middle;
-      background-color: var(--white);
-      box-shadow: inset -2px 0px 2px rgba(97, 95, 95, 0.5),
-        inset 1px 1px 2px rgba(0, 0, 0, 0.3);
-    }
   }
-  .voters div:first-of-type {
-    border: 2px solid var(--dark-grey);
-    border-radius: 20px;
+  .voters {
+    flex-grow: 1;
+    div:first-of-type {
+      border: 2px solid var(--dark-grey);
+      border-radius: 20px;
   }
+}
   .stakeholders {
     display: flex;
     font-size: 12px;
     line-height: 23px;
     letter-spacing: 0.05em;
     width: 100%;
-    margin-bottom: 0;
+    padding: 3px;
     .address {
       width: 33%;
       overflow-x: auto;

@@ -19,13 +19,13 @@ export const HomeView = () => {
     <div className="content-body">
       <div className="panel">
         <h3>Your Info</h3>
-        <div className="stake-info">
+        <div className="neu-inset">
           Locked Balance
           <Divider />
           Lock
           <InputNumber min={0} />
-          <Button>Lock</Button>
-          <Button>Unlock</Button>
+          <Button type="primary">Lock</Button>
+          <Button type="primary">Unlock</Button>
         </div>
       </div>
 

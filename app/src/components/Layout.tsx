@@ -16,12 +16,14 @@ export const AppLayout = React.memo(({ children }) => {
       <div className="App">
       <Layout>
         <Header className="nav-bar">
-            <img src={Logo} alt="logo" id="nav-header" />
-            <Switch checkedChildren="dark" unCheckedChildren="light" />
-            <ConnectButton />
-            <ConnectModal />
-          </Header>
-          <Content>
+          <img src={Logo} alt="logo" id="nav-header" />
+            <div>
+              <Switch checkedChildren="dark" unCheckedChildren="light" />
+              <ConnectButton />
+              <ConnectModal />
+            </div>
+        </Header>
+        <Content>
           {children}
         </Content>
     </Layout>
