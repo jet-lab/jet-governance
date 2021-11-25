@@ -26,7 +26,7 @@ export const ConnectButton: FunctionComponent = () => {
 
   return (
     <Button className={connectButtonClasses}
-      type="primary"
+      type="dashed"
       title={connectButtonTitle}
       onClick={() => connected ? disconnect() : setConnecting(true)}>
       {connectButtonText}

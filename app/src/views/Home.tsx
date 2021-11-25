@@ -1,23 +1,12 @@
-import { WalletMultiButton } from "@solana/wallet-adapter-ant-design";
-import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-import { useConnectionConfig } from "../contexts/connection";
+import React from "react";
 import { useProposal } from "../contexts/proposal";
 import { useUserBalance, useUserTotalBalance } from "../hooks";
 import { WRAPPED_SOL_MINT, JET_TOKEN_MINT } from "../utils/ids";
 import { ProposalCard } from "../components/ProposalCard";
-import { formatUSD } from "../utils/utils";
 import { Button, InputNumber, Divider } from "antd";
-import { ProposalState } from "../models/INITIAL_PROPOSALS";
 
 export const HomeView = () => {
-
   const { showing, setShowing, shownProposals } = useProposal();
-
-  const SRM_ADDRESS = "SRMuApVNdxXokk5GT7XD5cUUgXMBCoAz2LHeuAoKWRt";
-  const SRM = useUserBalance(SRM_ADDRESS);
-  const SOL = useUserBalance(WRAPPED_SOL_MINT);
-  const JET = useUserBalance(JET_TOKEN_MINT);
   const { balanceInUSD: totalBalanceInUSD } = useUserTotalBalance();
 
   const inputCheck = (value: number) => {

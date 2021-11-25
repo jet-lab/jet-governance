@@ -1,10 +1,7 @@
 @import "~antd/es/style/themes/dark.less";
 @import "~antd/dist/antd.dark.less";
 
-.ant-divider-horizontal {
-  margin-bottom: 28px;
-}
-
+// Divider
 .ant-divider {
     box-shadow: inset 2px 2px 2px rgba(0, 0, 0, 0.15),
     inset 2px 2px 2px rgba(255, 255, 255, 0.9);
@@ -12,19 +9,26 @@
   padding: 0 6%;
   min-height: 3px;
 }
+.ant-divider-horizontal {
+  margin-bottom: 28px;
+}
 
-.ant-modal-content {
-  .ant-modal-confirm-title {
-
-  }
-  .ant-modal-confirm-content {
-
+// Modal
+.ant-modal-wrap {
+  background: rgba(229, 235, 244, 0.9);
+  .ant-modal-body, .ant-modal-content {
+    min-width: 275px;
+    max-width: 700px;
+    box-shadow: var(--neu-shadow-low);
+    background: var(--white);
+    border-radius: var(--border-radius);
   }
 }
 
+// Card
 .ant-card {
-  width: 100%;
-  max-width: 250px;
+  width: 250px;
+  height: 250px;
   padding: var(--spacing-md);
   box-shadow: var(--neu-shadow);
   background: var(--light-grey);
@@ -69,6 +73,11 @@
   }
 }
 
+.ant-card:hover {
+  box-shadow: var(--neu-shadow-low);
+}
+
+// Buttons
 .ant-btn {
 	box-sizing: border-box;
 	-moz-box-sizing: border-box;
@@ -117,7 +126,24 @@
   }
 }
 
+// Primary button
 .ant-btn-primary {
+  border-color: transparent;
+  background-image: var(--gradient), var(--gradient);
+  background-origin: border-box;
+  span {
+    box-shadow: 0px 0px 0px 0px #fff inset;
+    color: #ffffff;
+    background-image: var(--gradient),
+    var(--gradient);
+    background-origin: border-box;
+    background-clip: content-box, border-box;
+    box-shadow: none;
+  }
+}
+
+// Dashed button
+.ant-btn-dashed {
   background: transparent;
   font-family: "Bicyclette-Bold";
   text-transform: uppercase;
@@ -139,8 +165,8 @@
     padding: 9px 15px 6px 15px !important;
   }
 }
-.ant-btn-primary:hover,
-.ant-btn-primary:focus {
+.ant-btn-dashed:hover,
+.ant-btn-dashed:focus {
   border-color: #ffffff;
   background: #ffffff;
   span {
@@ -150,8 +176,7 @@
     background-clip: text;
   }
 }
-
-.ant-btn-primary[disabled], .ant-btn-primary[disabled]:hover, .ant-btn-primary[disabled]:focus, .ant-btn-primary[disabled]:active {
+.ant-btn-dashed[disabled], .ant-btn-dashed[disabled]:hover, .ant-btn-dashed[disabled]:focus, .ant-btn-dashed[disabled]:active {
     background: transparent;
     font-family: "Bicyclette-Bold";
     text-transform: uppercase;

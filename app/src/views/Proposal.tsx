@@ -11,7 +11,6 @@ export const ProposalView = (props: any) => {
 
   const { id, headline, active, end, result, hash } = props;
   // TODO: Fetch user's stake from blockchain
-
   const { activeProposals } = useProposal();
 
   const [stake, setStake] = useState(0);
@@ -44,8 +43,6 @@ export const ProposalView = (props: any) => {
         onOk() {},
       });
   }
-
-
   
   const confirmFavor = () => {
     if (checkIsStaked()) {
@@ -106,10 +103,10 @@ export const ProposalView = (props: any) => {
         <i className="fas fa-arrow-left"></i> All Proposals
       </Link>
 
-      <div className="flex info">
+      <div className="flex content">
         <div className="flex column" style={{ width: "70%" }}>
           <h3>Proposal Details</h3>
-          <div className="description">
+          <div className="description neu-container">
             <div className="flex">
               <h3>Proposal {id}</h3>
               <div className="status-details">
@@ -163,7 +160,7 @@ export const ProposalView = (props: any) => {
 
           <div className="flex column" id="vote-mobile">
           <h3>Your Vote</h3>
-          <div className="show-tokens flex column inset">
+          <div className="neu-container flex column">
             <Button onClick={confirmFavor}>In favor</Button>
             <Button onClick={confirmAgainst}>Against</Button>
             <Button onClick={confirmAbstain}>Abstain</Button>
@@ -205,7 +202,7 @@ export const ProposalView = (props: any) => {
 
         <div className="flex column" style={{ width: "30%" }} id="vote-desktop">
           <h3>Your Vote</h3>
-          <div className="show-tokens flex column inset">
+          <div className="neu-container flex column inset">
             <Button onClick={confirmFavor}>In favor</Button>
             <Button onClick={confirmAgainst}>Against</Button>
             <Button onClick={confirmAbstain}>Abstain</Button>

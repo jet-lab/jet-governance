@@ -19,7 +19,7 @@
   --dark-grey: #9D9D9D;
   --grey: #d8dfec;
   --light-grey: #e1e7f1;
-	--white: #e5ebf4;
+	--white: rgba(229, 235, 244, 1);
   /* Light theme needs slightly darker brand colors for contrast
      Need to adjust brand colors in the future */
 	--jet-green: #3d9e83; /* brand: 53bd9f */
