@@ -3,6 +3,7 @@ import { useProposal } from "../contexts/proposal";
 import { ProposalCard } from "../components/ProposalCard";
 import { Button, InputNumber, Divider } from "antd";
 import { useWallet } from "@solana/wallet-adapter-react";
+import { shortenAddress, formatTokenAmount } from "../utils/utils";
 // import { user, proposals } from "../hooks/jet-client/useClient";
 
 export const HomeView = () => {
@@ -14,26 +15,39 @@ export const HomeView = () => {
     if (value && value < 0) {
       value = 0;
     }
-  }
-  
+  };
+
   return (
     <div className="content-body">
       <div className="panel">
         <h3>Your Info</h3>
+
         <div className="neu-inset">
-          Locked Balance
+          <h3>Locked Balance</h3>
+          <h1 className="text-gradient">50000 JET</h1>
+          <div className="wallet-overview flex align-center justify-between">
+            <span>{publicKey && shortenAddress(publicKey.toString())}</span>
+            <span>{connected ? 5000000 : "--"} JET available</span>
+          </div>
           <Divider />
           Lock
-          <InputNumber
-                value={inputAmount === null ? undefined : inputAmount}
-                max={connected ? 0 : 0}
-                disabled={!connected}
-                onChange={(value: number) => setInputAmount(value)}
-            onPressEnter={() => null}
+          <div className="flex column">
+            <InputNumber
+              value={inputAmount === null ? undefined : inputAmount}
+              max={connected ? 0 : 0}
+              disabled={!connected}
+              onChange={(value: number) => setInputAmount(value)}
+              onPressEnter={() => null}
               size="large"
-              />
-          <Button type="primary">Lock</Button>
-          <Button type="primary">Unlock</Button>
+              addonBefore="JET"
+            />
+            <Button type="primary" disabled={!connected}>
+              Lock
+            </Button>
+            <Button type="primary" disabled={!connected}>
+              Unlock
+            </Button>
+          </div>
         </div>
       </div>
 

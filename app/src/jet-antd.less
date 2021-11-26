@@ -47,7 +47,7 @@
 
 // Toggle switch
 .ant-switch {
-  
+
 }
 
 // Modal
@@ -151,7 +151,7 @@
 }
 
 // Primary button
-.ant-btn-primary {
+.ant-btn-primary, .ant-btn-primary[disabled], .ant-btn-primary[disabled]:hover {
   border-color: transparent;
   background-image: var(--gradient), var(--gradient);
   background-origin: border-box;
@@ -164,6 +164,9 @@
     background-clip: content-box, border-box;
     box-shadow: none;
   }
+}
+.ant-btn-primary[disabled], .ant-btn-primary[disabled]:hover {
+  opacity: var(--disabled-opacity);
 }
 
 // Dashed button
