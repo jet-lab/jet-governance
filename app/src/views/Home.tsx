@@ -1,13 +1,14 @@
-import React from "react";
+import React, { useState } from "react";
 import { useProposal } from "../contexts/proposal";
-import { useUserBalance, useUserTotalBalance } from "../hooks";
-import { WRAPPED_SOL_MINT, JET_TOKEN_MINT } from "../utils/ids";
 import { ProposalCard } from "../components/ProposalCard";
 import { Button, InputNumber, Divider } from "antd";
+import { useWallet } from "@solana/wallet-adapter-react";
+// import { user, proposals } from "../hooks/jet-client/useClient";
 
 export const HomeView = () => {
+  const { connected, publicKey } = useWallet();
   const { showing, setShowing, shownProposals } = useProposal();
-  const { balanceInUSD: totalBalanceInUSD } = useUserTotalBalance();
+  const [inputAmount, setInputAmount] = useState<number | null>(null);
 
   const inputCheck = (value: number) => {
     if (value && value < 0) {
@@ -23,7 +24,14 @@ export const HomeView = () => {
           Locked Balance
           <Divider />
           Lock
-          <InputNumber min={0} />
+          <InputNumber
+                value={inputAmount === null ? undefined : inputAmount}
+                max={connected ? 0 : 0}
+                disabled={!connected}
+                onChange={(value: number) => setInputAmount(value)}
+            onPressEnter={() => null}
+              size="large"
+              />
           <Button type="primary">Lock</Button>
           <Button type="primary">Unlock</Button>
         </div>

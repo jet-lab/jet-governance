@@ -436,7 +436,7 @@ select::after {
 }
 
 /* Buttons */
-button {
+/* button {
   background: var(--gradient);
   color: var(--white);
   border: none;
@@ -452,16 +452,16 @@ button {
   font-weight: 500;
   transition: opacity var(--transition), background-color var(--transition);
   white-space: nowrap;
-}
-button:hover, button:active {
+} */
+/* button:hover, button:active {
   opacity: var(--disabled-opacity);
 }
 button:active {
   box-shadow: var(--neu-shadow-inset-gradient);
-}
-.small-btn {
+} */
+/* .small-btn {
   font-size: 10px;
-}
+} */
 .connect-btn, .secondary-btn {
   background: transparent;
   border: 1px solid var(--grey);
