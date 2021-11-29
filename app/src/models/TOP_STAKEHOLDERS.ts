@@ -1,4 +1,10 @@
-export const TOP_STAKEHOLDERS = [{
+export interface Voter {
+  address?: string,
+  amount?: number,
+  vote?: boolean | null
+}
+
+export const TOP_STAKEHOLDERS: Voter[] = [{
   address: "0x4687431223dtest",
   amount: 17200000,
   vote: true

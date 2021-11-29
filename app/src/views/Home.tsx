@@ -26,7 +26,9 @@ export const HomeView = () => {
 
         <div className="neu-inset">
           <h3>Locked Balance</h3>
-          <h1 className="text-gradient">50000 JET</h1>
+          <div>
+            <span className="text-gradient" id="locked-balance">{connected ? user.jet.locked : 0} JET</span>
+          </div>
           <Divider />
           <div id="wallet-overview" className="flex justify-between">
             <span>{publicKey && shortenAddress(publicKey.toString())}</span>

@@ -33,6 +33,7 @@ function App() {
   );
 
   // If IP address is in US, geoban
+  // TODO: try catch
   // useEffect(() => {
   //   const getGeobanned = async () => {
   //     const resp = await fetch("https://ipinfo.io/json?token=46ceefa5641a93", {
@@ -68,7 +69,8 @@ function App() {
                               proposal.id
                             }/${proposal.headline.substring(0, 7)}`}
                           >
-                            <ProposalView
+                          <ProposalView
+                              description={proposal.description}
                               id={proposal.id}
                               result={proposal.result}
                               headline={proposal.headline}
