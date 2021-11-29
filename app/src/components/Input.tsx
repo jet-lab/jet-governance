@@ -1,4 +1,5 @@
 import React from "react";
+import { InputNumber } from 'antd';
 
 export const Input = (props: {
   type: 'text' | 'number';
@@ -11,25 +12,38 @@ export const Input = (props: {
   onChange: Function;
   submit: Function;
 }) => {
-  // Call submit fn on enter
-  const enterKeySubmit = (e: any) => {
-    if (e.code === 'Enter' && !props.disabled) {
-      props.submit();
-    }
-  };
+
+  const { value, placeholder, token, type, maxInput, error, disabled, onChange, submit } = props;
+
+    // Call submit fn on enter
+    const enterKeySubmit = (e: any) => {
+      if (e.code === 'Enter' && !props.disabled) {
+        props.submit();
+      }
+    };
 
   return (
-    <div className={`flex-centered ${props.disabled ? 'disabled-input' : ''}`}>
-      <div className={`flex-centered ${props.token ? 'token-input' : ''}`}>
-        <input type={props.type}
-          disabled={props.disabled}
-          value={props.value as string | number | readonly string[] | undefined}
-          placeholder={props.error ?? props.placeholder}
-          className={`with-btn ${props.error ? 'error' : ''}`}
-          onChange={(e) => props.onChange(e.target.value)}
+    <div className={`flex-centered ${disabled ? 'disabled-input' : ''}`}>
+      <div className={`flex-centered ${token ? 'token-input' : ''}`} id="staking-input">
+        {/* <InputNumber
+          disabled={disabled}
+          value={props.value as number | undefined}
+          placeholder={error ?? placeholder}
+          className={`${error ? 'error' : ''}`}
+          onChange={(value: number) => onChange(value)}
+          onPressEnter={() => submit()}
+          size="large"
+        />
+        */}
+        <input type={type}
+          disabled={disabled}
+          value={value as string | number | readonly string[] | undefined}
+          placeholder={error ?? placeholder}
+          className={`with-btn ${error ? 'error' : ''}`}
+          onChange={(e) => onChange(e.target.value)}
           onKeyPress={(e) => enterKeySubmit(e)}
         />
-        {props.token && (
+        {token && (
           <>
             <img src="img/jet/jet_logomark_gradient.png"
               alt="Jet Token Icon"

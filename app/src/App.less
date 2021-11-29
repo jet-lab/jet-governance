@@ -194,6 +194,50 @@ h5 {
   }
 }
 
+#wallet-overview {
+  width: 100%;
+  span {
+    color: var(--dark-grey);
+    font-size: 13px;
+  }
+}
+
+#staking-input {
+    position: relative;
+    width: 100%;
+    input {
+    position: relative;
+    font-size: 20px;
+    padding-left: 50px;
+    padding-right: 80px;
+  }
+   span {
+    font-size: 24px;
+    color: var(--dark-grey);
+  }
+   .token-abbrev {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    right: var(--spacing-md);
+    padding: unset;
+  }
+   img {
+    width: 25px;
+    height: auto;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    left: var(--spacing-md);
+  }
+}
+
+.token-balance {
+  margin-left: auto;
+  margin-right: 5px;
+  color: @text-color-secondary;
+}
+
 .status {
   font-family: "Bicyclette", sans-serif;
   text-transform: uppercase;
@@ -342,20 +386,6 @@ h5 {
       line-height: 23px;
     }
   }
-}
-
-.token-input {
-  display: flex;
-  align-items: center;
-  border: 1px solid grey;
-  padding: 0px 10px;
-  margin: 5px 0px;
-}
-
-.token-balance {
-  margin-left: auto;
-  margin-right: 5px;
-  color: @text-color-secondary;
 }
 
 [class="ant-layout-header"] {

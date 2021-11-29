@@ -372,34 +372,6 @@ input.error::placeholder {
 .disabled-input input {
   cursor: not-allowed;
 }
-.token-input {
-  position: relative;
-}
-.token-input input {
-  position: relative;
-  font-size: 20px;
-  padding-left: 50px;
-  padding-right: 80px;
-}
-.token-input span {
-  font-size: 24px;
-  color: var(--dark-grey);
-}
-.token-input .token-abbrev {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  right: var(--spacing-md);
-  padding: unset;
-}
-.token-input img {
-  width: 25px;
-  height: auto;
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  left: var(--spacing-md);
-}
 
 /* Dropdown selects */
 .dropdown {
@@ -808,23 +780,5 @@ nav .outside.active .toggle i, nav .outside.active .toggle p {
   }
   .input-btn {
     height: 41px;
-  }
-  .token-input input {
-    width: 220px;
-    padding-left: 30px !important;
-    padding-right: 40px !important;
-  }
-  .token-input .asset-abbrev-usd {
-    right: var(--spacing-sm);
-  }
-  .token-input img {
-    width: 18px;
-    left: var(--spacing-sm);
-  }
-  .token-input span {
-    font-size: 8px !important;
-  }
-  .token-input + .input-btn {
-    height: 43px;
   }
 }
