@@ -2,16 +2,18 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useProposal } from "../contexts/proposal";
 import { ResultProgressBar } from "../components/ResultProgressBar";
-import { Stakeholders } from "../components/Stakeholders";
-import { Button, Divider, Modal, List } from "antd";
+import { Button, Divider, Modal } from "antd";
 import { ProposalCard } from "../components/ProposalCard";
 import { VoterList } from "../components/VoterList";
+import { useWallet } from "@solana/wallet-adapter-react";
+import { useConnection } from "../contexts/connection";
 
 export const ProposalView = (props: any) => {
 
   const { id, headline, active, end, description, result, hash } = props;
   // TODO: Fetch user's stake from blockchain
   const { activeProposals } = useProposal();
+  const { connected } = useWallet();
 
   const [stake, setStake] = useState(0);
   const inFavor = 722300;
@@ -138,10 +140,10 @@ export const ProposalView = (props: any) => {
           <div className="flex column" id="vote-mobile">
           <h3>Your Vote</h3>
           <div className="neu-container flex column">
-            <Button onClick={confirmFavor}>In favor</Button>
-            <Button onClick={confirmAgainst}>Against</Button>
-            <Button onClick={confirmAbstain}>Abstain</Button>
-            <Button type="primary">Vote</Button>
+            <Button onClick={confirmFavor} disabled={!connected && true}>In favor</Button>
+            <Button onClick={confirmAgainst} disabled={!connected && true}>Against</Button>
+            <Button onClick={confirmAbstain} disabled={!connected && true}>Abstain</Button>
+            <Button type="primary" disabled={!connected && true}>Vote</Button>
           </div>
         </div>
 

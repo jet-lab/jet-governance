@@ -102,7 +102,7 @@
 }
 
 // Buttons, default button
-.ant-btn {
+.ant-btn, .ant-btn[disabled], .ant-btn[disabled]:hover {
 	box-sizing: border-box;
 	-moz-box-sizing: border-box;
 	-webkit-box-sizing: border-box;
@@ -135,6 +135,11 @@
   }
 }
 
+.ant-btn[disabled], .ant-btn[disabled]:hover {
+  opacity: var(--disabled-opacity);
+  cursor: not-allowed;
+}
+
 .ant-btn:hover, .ant-btn:focus, button.active {
   border-color: transparent;
   background-image: var(--gradient), var(--gradient);
@@ -149,6 +154,8 @@
     box-shadow: none;
   }
 }
+
+
 
 // Primary button
 .ant-btn-primary, .ant-btn-primary[disabled], .ant-btn-primary[disabled]:hover {
