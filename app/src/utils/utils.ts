@@ -242,3 +242,21 @@ export function convert(
 
   return result;
 }
+
+// Get remaining days, hours and minutes for a proposal
+export const getRemainingTime = (currentTime: number, endTime: number): string => {
+  let difference = Math.abs(endTime - currentTime) / 1000;
+
+  const days = Math.floor(difference / 86400);
+  difference -= days * 86400;
+
+  const hours = Math.floor(difference / 3600) % 24;
+  difference -= hours * 3600;
+
+  const minutes = Math.floor(difference / 60) % 60;
+  difference -= minutes * 60;
+
+  const seconds = Math.floor(difference % 60);
+
+  return `${days}:${hours}:${seconds}`;
+};

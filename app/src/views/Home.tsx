@@ -25,15 +25,14 @@ export const HomeView = () => {
         <h3>Your Info</h3>
 
         <div className="neu-inset">
-          <h3>Locked Balance</h3>
+          <h3>Staked Balance</h3>
           <div>
             <span className="text-gradient" id="locked-balance">{connected ? user.jet.locked : 0} JET</span>
           </div>
-          <Divider />
           <div id="wallet-overview" className="flex justify-between">
-            <span>{publicKey && shortenAddress(publicKey.toString())}</span>
-            <span>{connected ? user.jet.wallet : "--"} JET available</span>
+            <span>38.5k JET available to unstake. Visit claims for info.</span>
           </div>
+          <Divider />
           <div className="flex column">
             <Input type="number" token
                 value={inputAmount === null ? '' : inputAmount}
@@ -43,10 +42,10 @@ export const HomeView = () => {
               submit={() => null}
             />
             <Button type="primary" disabled={!connected}>
-              Lock
+              Stake
             </Button>
             <Button type="primary" disabled={!connected}>
-              Unlock
+              Unstake
             </Button>
           </div>
         </div>

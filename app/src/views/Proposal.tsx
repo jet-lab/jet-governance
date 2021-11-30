@@ -184,10 +184,10 @@ export const ProposalView = (props: any) => {
         <div className="flex column" style={{ width: "30%" }} id="vote-desktop">
           <h3>Your Vote</h3>
           <div className="neu-container flex column" id="your-vote">
-            <Button onClick={confirmFavor}>In favor</Button>
-            <Button onClick={confirmAgainst}>Against</Button>
-            <Button onClick={confirmAbstain}>Abstain</Button>
-            <Button type="primary">Vote</Button>
+            <Button onClick={confirmFavor}  disabled={!connected && true}>In favor</Button>
+            <Button onClick={confirmAgainst}  disabled={!connected && true}>Against</Button>
+            <Button onClick={confirmAbstain}  disabled={!connected && true}>Abstain</Button>
+            <Button type="primary" disabled={!connected && true}>Vote</Button>
           </div>
         </div>
       </div>
