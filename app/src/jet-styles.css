@@ -168,11 +168,6 @@ a, i {
   user-select: none;
   font-style: normal;
 }
-span {
-  font-size: 14px;
-  text-align: center;
-  max-width: 400px;
-}
 .text-gradient {
   opacity: 1;
   background-image: var(--gradient);

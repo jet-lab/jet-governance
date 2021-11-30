@@ -3,22 +3,26 @@ import { List, Avatar, Button, Skeleton } from 'antd';
 import { Voter, TOP_STAKEHOLDERS } from "../models/TOP_STAKEHOLDERS";
 import { Stakeholders } from './Stakeholders';
 
-const count = 10;
-
 export const VoterList = () => {
   const [initLoading, setInitLoading] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [page, setPage] = useState(1);
   const [data, setData] = useState([]);
   const [list, setList] = useState<Voter[]>([]);
 
+  const count = 5;
+
   useEffect(() => {
-      // setData();
-      setList(TOP_STAKEHOLDERS);
-  }, [])
+    setList(TOP_STAKEHOLDERS.slice(page, count * page));
+  }, [page])
 
   const onLoadMore = () => {
     setLoading(true);
-    setList([])
+    setList(list.concat(TOP_STAKEHOLDERS.slice(count * page, count * page+1)));
+    setPage(page + 1);
+
+    setLoading(false);
+    setInitLoading(false);
 
     // setList((prev) => prev.concat(
     //   [...new Array(count)].map(() => ({
@@ -69,7 +73,6 @@ export const VoterList = () => {
 
     return (
       <List
-        className="demo-loadmore-list"
         loading={initLoading}
         itemLayout="horizontal"
         loadMore={loadMore}
