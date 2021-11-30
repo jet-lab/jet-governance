@@ -59,7 +59,7 @@ pub struct InitRealmBumpSeeds {
 }
 
 
-pub fn handler(ctx: Context<InitRealm>, bump: InitRealmBumpSeeds) -> ProgramResult {
+pub fn handler(ctx: Context<InitRealm>, _bump: InitRealmBumpSeeds) -> ProgramResult {
     let realm = ctx.accounts.realm.deref_mut();
     realm.owner = ctx.accounts.owner.key();
     realm.authority = ctx.accounts.authority.key();

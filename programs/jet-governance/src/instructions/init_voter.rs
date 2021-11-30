@@ -29,7 +29,7 @@ pub struct InitVoter<'info> {
     pub system_program: AccountInfo<'info>,
 }
 
-pub fn handler(ctx: Context<InitVoter>, bump: u8) -> ProgramResult {
+pub fn handler(ctx: Context<InitVoter>, _bump: u8) -> ProgramResult {
     *ctx.accounts.voter.deref_mut() = Voter {
         realm: ctx.accounts.realm.key(),
         owner: ctx.accounts.owner.key(),
