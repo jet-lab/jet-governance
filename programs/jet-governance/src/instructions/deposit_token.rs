@@ -9,7 +9,8 @@ use crate::state::{voter::Voter, realm::Realm};
 #[instruction(bump: u8)]
 pub struct Deposit<'info> {
     /// The user with authority over the voter account.
-    pub owner: Signer<'info>,
+    #[account(signer)]
+    pub owner: AccountInfo<'info>,
 
     #[account(has_one = vault)]
     pub realm: Account<'info, Realm>,
