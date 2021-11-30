@@ -50,7 +50,7 @@ export const ClaimView = () => {
               Unlock
             </Button>
             <Divider />
-            <Progress />
+            <Progress percent={40} showInfo={false} />
           </div>
         </div>
       </div>
