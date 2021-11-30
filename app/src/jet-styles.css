@@ -149,7 +149,7 @@ body {
 
 
 /* Text */
-h1, h2, p, th, td, span {
+h1, p, th, td, span {
   position: relative;
 	margin: unset;
 	text-decoration: none;

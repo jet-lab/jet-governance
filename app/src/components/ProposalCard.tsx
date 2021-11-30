@@ -14,7 +14,7 @@ export const ProposalCard = (props: any) => {
       <Card bordered={false}>
       <div>
         <div className="header">Proposal {number}</div>
-        <div className="headline">{headline}</div>
+        <h2>{headline}</h2>
       </div>
       <div className="details">
         <div className={`status ${active ? "active" : result}`}>

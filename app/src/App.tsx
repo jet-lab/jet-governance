@@ -7,6 +7,7 @@ import { ConnectionProvider } from "./contexts/connection";
 import { AccountsProvider } from "./contexts/accounts";
 import { ConnectWalletProvider } from "./contexts/connectWallet";
 import { AppLayout } from "./components/Layout";
+import { ClaimView } from "./views";
 
 import { HomeView, ProposalView } from "./views";
 import {
@@ -59,6 +60,9 @@ function App() {
                   <Switch>
                     <Route exact path="/">
                       <HomeView />
+                    </Route>
+                    <Route exact path="/claim">
+                      <ClaimView />
                     </Route>
                     {geobanned
                       ? null
