@@ -16,12 +16,12 @@ pub struct Propose<'info> {
     pub owner: AccountInfo<'info>,
 
     #[account(has_one = owner)] // For now, only realm owner can propose
-    pub realm: ProgramAccount<'info, Realm>,
+    pub realm: Account<'info, Realm>,
 
     #[account(init,
         space = 8 + std::mem::size_of::<Proposal>(),
         payer = owner)]
-    pub proposal: ProgramAccount<'info, Proposal>,
+    pub proposal: Account<'info, Proposal>,
 
     //. Required to init account
     pub system_program: AccountInfo<'info>,

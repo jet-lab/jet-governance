@@ -15,7 +15,7 @@ pub struct Withdraw<'info> {
     #[account(
         has_one = vault,
         has_one = authority)]
-    pub realm: ProgramAccount<'info, Realm>,
+    pub realm: Account<'info, Realm>,
 
     // PDA that can sign on behalf of the realm
     #[account(
@@ -33,7 +33,7 @@ pub struct Withdraw<'info> {
     #[account(mut,
         has_one = owner,
         has_one = realm)]
-    pub voter: ProgramAccount<'info, Voter>,
+    pub voter: Account<'info, Voter>,
 
     /// Owner's token account containing the tokens to deposit
     #[account(mut)]

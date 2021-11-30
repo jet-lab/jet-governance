@@ -18,12 +18,12 @@ pub struct TransitionProposal<'info> {
     #[account(
         has_one = owner,
         has_one = realm)]
-    pub voter: ProgramAccount<'info, Voter>,
+    pub voter: Account<'info, Voter>,
 
     #[account(mut,
         has_one = realm,
         has_one = owner)]
-    pub proposal: ProgramAccount<'info, Proposal>,
+    pub proposal: Account<'info, Proposal>,
 }
 
 

@@ -13,7 +13,7 @@ pub struct Deposit<'info> {
     pub owner: AccountInfo<'info>,
 
     #[account(has_one = vault)]
-    pub realm: ProgramAccount<'info, Realm>,
+    pub realm: Account<'info, Realm>,
 
     // Account to store deposited governance tokens
     #[account(mut)]
@@ -22,7 +22,7 @@ pub struct Deposit<'info> {
     #[account(mut,
         has_one = owner,
         has_one = realm)]
-    pub voter: ProgramAccount<'info, Voter>,
+    pub voter: Account<'info, Voter>,
 
     /// Owner's token account containing the tokens to deposit
     #[account(mut)]

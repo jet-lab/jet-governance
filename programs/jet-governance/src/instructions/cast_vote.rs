@@ -11,15 +11,15 @@ pub struct VoteAccounts<'info> {
     #[account(signer)]
     pub owner: AccountInfo<'info>,
 
-    pub realm: ProgramAccount<'info, Realm>,
+    pub realm: Account<'info, Realm>,
 
     #[account(mut,
         has_one = owner,
         has_one = realm)]
-    pub voter: ProgramAccount<'info, Voter>,
+    pub voter: Account<'info, Voter>,
 
     #[account(mut, has_one = realm)]
-    pub proposal: ProgramAccount<'info, Proposal>,
+    pub proposal: Account<'info, Proposal>,
 
     #[account(init,
              seeds = [
@@ -30,13 +30,13 @@ pub struct VoteAccounts<'info> {
              bump = bump,
              space = 8 + std::mem::size_of::<VoteRecord>(),
              payer = owner)]
-    pub vote_record: ProgramAccount<'info, VoteRecord>,
+    pub vote_record: Account<'info, VoteRecord>,
     
     /// Required to init account
     pub system_program: AccountInfo<'info>,
 }
 
-pub fn handler(ctx: Context<VoteAccounts>, vote: Vote2) -> ProgramResult {
+pub fn handler(ctx: Context<VoteAccounts>, bump: u8, vote: Vote2) -> ProgramResult {
     let voter_key = ctx.accounts.voter.key();
     let proposal_key = ctx.accounts.proposal.key();
     let proposal = ctx.accounts.proposal.deref_mut();
