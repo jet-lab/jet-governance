@@ -9,8 +9,7 @@ use crate::state::realm::Realm;
 #[instruction(bump: u8)]
 pub struct InitVoter<'info> {
     /// The user with authority over the voter account.
-    #[account(signer)]
-    pub owner: AccountInfo<'info>,
+    pub owner: Signer<'info>,
 
     /// Realm that voter account exists within
     pub realm: Account<'info, Realm>,

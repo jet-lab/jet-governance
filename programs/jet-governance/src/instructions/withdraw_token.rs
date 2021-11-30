@@ -9,8 +9,7 @@ use anchor_spl::token::{self, Transfer};
 #[instruction(bump: u8)]
 pub struct Withdraw<'info> {
     /// The user with authority over the voter account.
-    #[account(signer)]
-    pub owner: AccountInfo<'info>,
+    pub owner: Signer<'info>,
 
     #[account(
         has_one = vault,

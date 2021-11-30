@@ -12,8 +12,7 @@ use super::transition_proposal::Time;
 #[instruction(bump: u8)]
 pub struct Propose<'info> {
     /// The user with authority over the proposal.
-    #[account(signer)]
-    pub owner: AccountInfo<'info>,
+    pub owner: Signer<'info>,
 
     #[account(has_one = owner)] // For now, only realm owner can propose
     pub realm: Account<'info, Realm>,

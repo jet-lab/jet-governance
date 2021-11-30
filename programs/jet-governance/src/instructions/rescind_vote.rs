@@ -5,8 +5,7 @@ use crate::{state::voter::Voter, state::voter::VoteRecord, state::proposal::Prop
 #[derive(Accounts)]
 pub struct Rescind<'info> {
     /// The user with authority over the voter account.
-    #[account(signer)]
-    pub owner: AccountInfo<'info>,
+    pub owner: Signer<'info>,
 
     pub realm: AccountInfo<'info>,
 

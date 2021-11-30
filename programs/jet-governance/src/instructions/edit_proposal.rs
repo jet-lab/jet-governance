@@ -9,8 +9,7 @@ use crate::state::proposal::Proposal;
 #[instruction(bump: u8)]
 pub struct EditProposal<'info> {
     /// The user with authority over the proposal.
-    #[account(signer)]
-    pub owner: AccountInfo<'info>,
+    pub owner: Signer<'info>,
 
     pub realm: AccountInfo<'info>,
 

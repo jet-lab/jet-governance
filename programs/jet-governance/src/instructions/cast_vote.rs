@@ -8,8 +8,7 @@ use crate::{state::proposal::Proposal, state::{Vote2, voter::VoteRecord}, state:
 #[instruction(bump: u8)]
 pub struct VoteAccounts<'info> {
     /// The user with authority over the voter account.
-    #[account(signer)]
-    pub owner: AccountInfo<'info>,
+    pub owner: Signer<'info>,
 
     pub realm: Account<'info, Realm>,
 

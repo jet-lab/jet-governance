@@ -10,8 +10,7 @@ use crate::state::proposal::{Proposal, ProposalEvent};
 #[instruction(bump: u8)]
 pub struct TransitionProposal<'info> {
     /// The user with authority over the proposal.
-    #[account(signer)]
-    pub owner: AccountInfo<'info>,
+    pub owner: Signer<'info>,
 
     pub realm: AccountInfo<'info>,
 
