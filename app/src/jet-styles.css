@@ -141,6 +141,16 @@ body {
   flex-wrap: nowrap;
 }
 
+.nav-link {
+  font-family: "Poppins";
+font-style: normal;
+font-weight: 500;
+font-size: 14px;
+line-height: 21px;
+letter-spacing: 0.14em;
+text-transform: uppercase;
+padding: 0 30px;
+}
 
 /* Text */
 h1, p, th, td, span {
@@ -397,32 +407,6 @@ select::after {
 }
 
 /* Buttons */
-/* button {
-  background: var(--gradient);
-  color: var(--white);
-  border: none;
-  border-radius: var(--btn-radius);
-  padding: var(--btn-padding);
-  cursor: pointer;
-  -webkit-tap-highlight-color: rgba(0,0,0,0);
-  -webkit-touch-callout: none;
-  margin: var(--spacing-xs);
-  text-transform: uppercase;
-  letter-spacing: 1.5px;
-  font-size: 12px;
-  font-weight: 500;
-  transition: opacity var(--transition), background-color var(--transition);
-  white-space: nowrap;
-} */
-/* button:hover, button:active {
-  opacity: var(--disabled-opacity);
-}
-button:active {
-  box-shadow: var(--neu-shadow-inset-gradient);
-} */
-/* .small-btn {
-  font-size: 10px;
-} */
 .connect-btn, .secondary-btn {
   background: transparent;
   border: 1px solid var(--grey);

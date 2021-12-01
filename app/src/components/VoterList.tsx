@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { List, Avatar, Button, Skeleton } from 'antd';
+import { List, Button, Skeleton } from 'antd';
 import { Voter, TOP_STAKEHOLDERS } from "../models/TOP_STAKEHOLDERS";
 import { Stakeholders } from './Stakeholders';
 
