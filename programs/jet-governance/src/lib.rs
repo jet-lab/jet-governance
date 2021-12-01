@@ -37,7 +37,7 @@ mod jet_governance {
     }
 
     pub fn propose(ctx: Context<Propose>, name: String, description: String, activate: Time, finalize: Time) -> ProgramResult {
-        make_proposal::handler(ctx, name, description, activate, finalize)
+        init_proposal::handler(ctx, name, description, activate, finalize)
     }
 
     pub fn edit_proposal(ctx: Context<EditProposal>, name: String, description: String) -> ProgramResult {
