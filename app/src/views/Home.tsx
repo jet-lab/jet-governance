@@ -26,8 +26,8 @@ export const HomeView = () => {
 
         <div className="neu-inset" style={{width: "260px"}}>
           <h3>Staked Balance</h3>
-          <div>
-            <span className="text-gradient" id="locked-balance">{connected ? user.jet.locked : 0} JET</span>
+          <div className="text-gradient" id="locked-balance">
+            {connected ? user.jet.locked : 0} JET
           </div>
           <div id="wallet-overview" className="flex justify-between">
             <span>38.5k JET available to unstake. Visit claims for info.</span>

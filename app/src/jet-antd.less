@@ -27,7 +27,7 @@
 
 // Divider
 .ant-divider {
-    box-shadow: inset 2px 2px 2px rgba(0, 0, 0, 0.15),
+  box-shadow: inset 2px 2px 2px rgba(0, 0, 0, 0.15),
     inset 2px 2px 2px rgba(255, 255, 255, 0.9);
   border-radius: 20px;
   padding: 0 6%;
@@ -41,29 +41,29 @@
 .ant-switch {
   margin-bottom: 8px;
   margin: 0;
-    padding: 0;
-    color: #000000d9;
-    font-size: 14px;
-    font-variant: tabular-nums;
-    line-height: 1.5715;
-    list-style: none;
-    font-feature-settings: "tnum";
-    position: relative;
-    display: inline-block;
-    box-sizing: border-box;
-    min-width: 44px;
-    height: 22px;
-    line-height: 22px;
-    vertical-align: middle;
-    background-color: #00000040;
-    border: 0;
-    border-radius: 100px;
-    cursor: pointer;
-    transition: all .2s;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
+  padding: 0;
+  color: #000000d9;
+  font-size: 14px;
+  font-variant: tabular-nums;
+  line-height: 1.5715;
+  list-style: none;
+  font-feature-settings: "tnum";
+  position: relative;
+  display: inline-block;
+  box-sizing: border-box;
+  min-width: 44px;
+  height: 22px;
+  line-height: 22px;
+  vertical-align: middle;
+  background-color: #00000040;
+  border: 0;
+  border-radius: 100px;
+  cursor: pointer;
+  transition: all 0.2s;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
   .ant-switch-checked {
     background-color: var(--ant-primary-color);
     .ant-switch-handle {
@@ -73,22 +73,22 @@
       left: 2px;
       width: 18px;
       height: 18px;
-      transition: all .2s ease-in-out;
+      transition: all 0.2s ease-in-out;
     }
     .ant-switch-handle:before {
       position: absolute;
-    inset: 0;
-    background-color: #fff;
-    border-radius: 9px;
-    box-shadow: 0 2px 4px #00230b33;
-    transition: all .2s ease-in-out;
-    content: "";
+      inset: 0;
+      background-color: #fff;
+      border-radius: 9px;
+      box-shadow: 0 2px 4px #00230b33;
+      transition: all 0.2s ease-in-out;
+      content: "";
     }
   }
 }
 .ant-switch:focus {
   outline: 0;
-    box-shadow: 0 0 0 2px #0000001a;
+  box-shadow: 0 0 0 2px #0000001a;
 }
 
 // Progress bar
@@ -125,13 +125,13 @@
 
 // Toggle switch
 .ant-switch {
-
 }
 
 // Modal
 .ant-modal-wrap {
   background: rgba(229, 235, 244, 0.9);
-  .ant-modal-body, .ant-modal-content {
+  .ant-modal-body,
+  .ant-modal-content {
     min-width: 275px;
     max-width: 700px;
     box-shadow: var(--neu-shadow-low);
@@ -159,8 +159,11 @@
     flex-direction: column;
     justify-content: space-between;
   }
-  .header {
-    line-height: 12px;
+  .header,
+  .details {
+    font-family: "Poppins", sans-serif;
+    font-size: 14px;
+    line-height: 21px;
     text-transform: uppercase;
     font-weight: bold;
     padding-bottom: 7px;
@@ -179,21 +182,23 @@
 }
 
 // Buttons, default button
-.ant-btn, .ant-btn[disabled], .ant-btn[disabled]:hover {
-	box-sizing: border-box;
-	-moz-box-sizing: border-box;
-	-webkit-box-sizing: border-box;
-	border-radius: 4px;
-	margin: 8px;
-	padding: 0;
-	cursor: pointer;
-	border: 2px solid transparent;
-	background-image: var(--gradient), var(--gradient);
-	background-origin: border-box;
-	background-clip: content-box, border-box;
-	box-shadow: 800px 0 0 0 var(--white) inset;
+.ant-btn,
+.ant-btn[disabled],
+.ant-btn[disabled]:hover {
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  border-radius: 4px;
+  margin: 8px;
+  padding: 0;
+  cursor: pointer;
+  border: 2px solid transparent;
+  background-image: var(--gradient), var(--gradient);
+  background-origin: border-box;
+  background-clip: content-box, border-box;
+  box-shadow: 800px 0 0 0 var(--white) inset;
   span {
-    font-family: 'Bicyclette-Bold', sans-serif;
+    font-family: "Bicyclette-Bold", sans-serif;
     font-style: normal;
     text-transform: uppercase;
     align-items: center;
@@ -208,24 +213,26 @@
     height: 100%;
     box-sizing: border-box;
     transition: 0.2s;
-    padding: 4px 10px 3px 10px !important
+    padding: 4px 10px 3px 10px !important;
   }
 }
 
-.ant-btn[disabled], .ant-btn[disabled]:hover {
+.ant-btn[disabled],
+.ant-btn[disabled]:hover {
   opacity: var(--disabled-opacity);
   cursor: not-allowed;
 }
 
-.ant-btn:hover, .ant-btn:focus, button.active {
+.ant-btn:hover,
+.ant-btn:focus,
+button.active {
   border-color: transparent;
   background-image: var(--gradient), var(--gradient);
   background-origin: border-box;
   span {
     box-shadow: 0px 0px 0px 0px #fff inset;
     color: #ffffff;
-    background-image: var(--gradient),
-    var(--gradient);
+    background-image: var(--gradient), var(--gradient);
     background-origin: border-box;
     background-clip: content-box, border-box;
     box-shadow: none;
@@ -233,22 +240,24 @@
 }
 
 // Primary button
-.ant-btn-primary, .ant-btn-primary[disabled], .ant-btn-primary[disabled]:hover {
+.ant-btn-primary,
+.ant-btn-primary[disabled],
+.ant-btn-primary[disabled]:hover {
   border-color: transparent;
   background-image: var(--gradient), var(--gradient);
   background-origin: border-box;
   span {
     box-shadow: 0px 0px 0px 0px #fff inset;
     color: #ffffff;
-    background-image: var(--gradient),
-    var(--gradient);
+    background-image: var(--gradient), var(--gradient);
     background-origin: border-box;
     background-clip: content-box, border-box;
     box-shadow: none;
   }
-}
-.ant-btn-primary[disabled], .ant-btn-primary[disabled]:hover {
-  opacity: var(--disabled-opacity);
+  &[disabled],
+  &[disabled]:hover {
+    opacity: var(--disabled-opacity);
+  }
 }
 
 // Dashed button
@@ -273,19 +282,21 @@
     color: #ffffff;
     padding: 9px 15px 6px 15px !important;
   }
-}
-.ant-btn-dashed:hover,
-.ant-btn-dashed:focus {
-  border-color: #ffffff;
-  background: #ffffff;
-  span {
-    background: var(--gradient);
-    color: transparent;
-    -webkit-background-clip: text;
-    background-clip: text;
+  &:hover,
+  &:focus {
+    border-color: #ffffff;
+    background: #ffffff;
+    span {
+      background: var(--gradient);
+      color: transparent;
+      -webkit-background-clip: text;
+      background-clip: text;
+    }
   }
-}
-.ant-btn-dashed[disabled], .ant-btn-dashed[disabled]:hover, .ant-btn-dashed[disabled]:focus, .ant-btn-dashed[disabled]:active {
+  &[disabled],
+  &[disabled]:hover,
+  &[disabled]:focus,
+  &[disabled]:active {
     background: transparent;
     font-family: "Bicyclette-Bold";
     text-transform: uppercase;
@@ -305,6 +316,7 @@
       padding: 9px 15px 6px 15px !important;
     }
   }
+}
 
 // List items
 .ant-list-split .ant-list-item {

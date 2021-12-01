@@ -1,12 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@500;700&display=swap');
-@font-face {
-  font-family: 'Bicyclette';
-  src: url("./fonts/Bicyclette-Regular.woff") format('woff');
-}
-@font-face {
-  font-family: 'Bicyclette-Bold';
-  src: url("./fonts/Bicyclette-Bold.woff") format('woff');
-}
+
+
 @font-face {
   font-family: 'Jet-Icons';
   src: url("./fonts/JetIcons-Regular.woff") format('woff');
