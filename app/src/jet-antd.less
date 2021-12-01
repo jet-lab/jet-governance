@@ -1,3 +1,30 @@
+// Header, nav bar
+.ant-layout-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: var(--nav-height);
+  left: 0;
+  top: 0;
+  position: fixed;
+  width: 100%;
+  z-index: 100;
+  background: var(--gradient);
+  .nav-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: var(--view-clamp);
+    img#nav-header {
+      height: auto;
+      width: 140px;
+    }
+    div {
+      display: flex;
+    }
+  }
+}
+
 // Divider
 .ant-divider {
     box-shadow: inset 2px 2px 2px rgba(0, 0, 0, 0.15),

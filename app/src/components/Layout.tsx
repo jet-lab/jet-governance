@@ -16,15 +16,17 @@ export const AppLayout = React.memo(({ children }) => {
     <WalletModalProvider>
       <div className="App">
       <Layout>
-          <Header className="nav-bar">
-            <a href="/">
-              <img src={Logo} alt="logo" id="nav-header" />
-            </a>
-            <div>
-              <Switch checkedChildren="dark" unCheckedChildren="light" />
-              <ConnectButton />
-              <ConnectModal />
-            </div>
+        <Header>
+          <div className="nav-bar">
+          <a href="/">
+            <img src={Logo} alt="logo" id="nav-header" />
+          </a>
+          <div>
+            <Switch checkedChildren="dark" unCheckedChildren="light" />
+            <ConnectButton />
+            <ConnectModal />
+          </div>
+          </div>
         </Header>
         <Content>
           {children}

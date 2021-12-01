@@ -7,12 +7,6 @@ export const ProposalCard = (props: any) => {
   const { active, result, headline, number, end, id } = props;
   const [currentTime, setCurrentTime] = useState(Date.now());
 
-  const now = new Date().getTime();
-  const timeleft = end - now;
-  const hours = Math.floor((timeleft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-  const minutes = Math.floor((timeleft % (1000 * 60 * 60)) / (1000 * 60));
-  const seconds = Math.floor((timeleft % (1000 * 60)) / 1000);
-
     // Update current time every second
     useEffect(() => {
       const secondInterval = setInterval(() => {

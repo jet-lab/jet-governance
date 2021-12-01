@@ -24,7 +24,7 @@ export const HomeView = () => {
       <div className="panel">
         <h3>Your Info</h3>
 
-        <div className="neu-inset">
+        <div className="neu-inset" style={{width: "260px"}}>
           <h3>Staked Balance</h3>
           <div>
             <span className="text-gradient" id="locked-balance">{connected ? user.jet.locked : 0} JET</span>
@@ -51,7 +51,7 @@ export const HomeView = () => {
         </div>
       </div>
 
-      <div className="panel">
+      <div className="panel" style={{width: "100%"}}>
         <div className="flex justify-between header">
           <h3>{showing}</h3>
           <div>
