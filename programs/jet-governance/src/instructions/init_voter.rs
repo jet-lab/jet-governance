@@ -9,11 +9,10 @@ use crate::state::realm::Realm;
 #[instruction(bump: u8)]
 pub struct InitVoter<'info> {
     /// The user with authority over the voter account.
-    #[account(signer)]
-    pub owner: AccountInfo<'info>,
+    pub owner: Signer<'info>,
 
     /// Realm that voter account exists within
-    pub realm: ProgramAccount<'info, Realm>,
+    pub realm: Account<'info, Realm>,
 
     #[account(init,
               seeds = [
@@ -24,13 +23,13 @@ pub struct InitVoter<'info> {
               bump = bump,
               space = 8 + std::mem::size_of::<Voter>(),
               payer = owner)]
-    pub voter: ProgramAccount<'info, Voter>,
+    pub voter: Account<'info, Voter>,
 
     /// Required to init account
     pub system_program: AccountInfo<'info>,
 }
 
-pub fn handler(ctx: Context<InitVoter>) -> ProgramResult {
+pub fn handler(ctx: Context<InitVoter>, _bump: u8) -> ProgramResult {
     *ctx.accounts.voter.deref_mut() = Voter {
         realm: ctx.accounts.realm.key(),
         owner: ctx.accounts.owner.key(),

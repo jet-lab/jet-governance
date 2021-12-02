@@ -7,26 +7,25 @@ use crate::state::proposal::Proposal;
 
 #[derive(Accounts)]
 #[instruction(bump: u8)]
-pub struct EditDraft<'info> {
+pub struct EditProposal<'info> {
     /// The user with authority over the proposal.
-    #[account(signer)]
-    pub owner: AccountInfo<'info>,
+    pub owner: Signer<'info>,
 
     pub realm: AccountInfo<'info>,
 
     #[account(
         has_one = owner,
         has_one = realm)]
-    pub voter: ProgramAccount<'info, Voter>,
+    pub voter: Account<'info, Voter>,
 
     #[account(
         has_one = realm,
         has_one = owner)]
-    pub proposal: ProgramAccount<'info, Proposal>,
+    pub proposal: Account<'info, Proposal>,
 }
 
 pub fn handler(
-    ctx: Context<EditDraft>,
+    ctx: Context<EditProposal>,
     name: String,
     description: String,
 ) -> ProgramResult {

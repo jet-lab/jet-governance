@@ -9,13 +9,12 @@ use anchor_spl::token::{self, Transfer};
 #[instruction(bump: u8)]
 pub struct Withdraw<'info> {
     /// The user with authority over the voter account.
-    #[account(signer)]
-    pub owner: AccountInfo<'info>,
+    pub owner: Signer<'info>,
 
     #[account(
         has_one = vault,
         has_one = authority)]
-    pub realm: ProgramAccount<'info, Realm>,
+    pub realm: Account<'info, Realm>,
 
     // PDA that can sign on behalf of the realm
     #[account(
@@ -33,7 +32,7 @@ pub struct Withdraw<'info> {
     #[account(mut,
         has_one = owner,
         has_one = realm)]
-    pub voter: ProgramAccount<'info, Voter>,
+    pub voter: Account<'info, Voter>,
 
     /// Owner's token account containing the tokens to deposit
     #[account(mut)]

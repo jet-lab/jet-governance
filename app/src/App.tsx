@@ -1,41 +1,31 @@
 import "./App.less";
 import { HashRouter, Route, Switch } from "react-router-dom";
-import React, { useMemo, useState, useEffect } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { WalletProvider } from "@solana/wallet-adapter-react";
-import { ProposalProvider } from "./contexts/proposal";
+import { ProposalProvider, useProposal } from "./contexts/proposal";
 import { ConnectionProvider } from "./contexts/connection";
 import { AccountsProvider } from "./contexts/accounts";
 import { ConnectWalletProvider } from "./contexts/connectWallet";
 import { AppLayout } from "./components/Layout";
-
-import { INITIAL_STATE } from "./models/INITIAL_PROPOSALS";
+import { ClaimView } from "./views";
 
 import { HomeView, ProposalView } from "./views";
 import {
-  getLedgerWallet,
   getMathWallet,
   getPhantomWallet,
   getSolflareWallet,
   getSolletWallet,
   getSolongWallet,
-  getTorusWallet,
 } from "@solana/wallet-adapter-wallets";
 
 function App() {
   const [geobanned, setGeobanned] = useState(false);
+  const { allProposals } = useProposal();
 
   const wallets = useMemo(
     () => [
       getPhantomWallet(),
       getSolflareWallet(),
-      getTorusWallet({
-        options: {
-          // TODO: Get your own tor.us wallet client Id
-          clientId:
-            "BOM5Cl7PXgE9Ylq1Z1tqzhpydY0RVr8k90QQ85N7AKI5QGSrr9iDC-3rvmy0K_hF0JfpLMiXoDhta68JwcxS1LQ",
-        },
-      }),
-      getLedgerWallet(),
       getSolongWallet(),
       getMathWallet(),
       getSolletWallet(),
@@ -44,6 +34,7 @@ function App() {
   );
 
   // If IP address is in US, geoban
+  // TODO: try catch
   // useEffect(() => {
   //   const getGeobanned = async () => {
   //     const resp = await fetch("https://ipinfo.io/json?token=46ceefa5641a93", {
@@ -70,16 +61,20 @@ function App() {
                     <Route exact path="/">
                       <HomeView />
                     </Route>
+                    <Route exact path="/claim">
+                      <ClaimView />
+                    </Route>
                     {geobanned
                       ? null
-                      : INITIAL_STATE.map((proposal) => (
+                      : allProposals.map((proposal) => (
                           <Route
                             exact
                             path={`/proposal/${
                               proposal.id
                             }/${proposal.headline.substring(0, 7)}`}
                           >
-                            <ProposalView
+                          <ProposalView
+                              description={proposal.description}
                               id={proposal.id}
                               result={proposal.result}
                               headline={proposal.headline}

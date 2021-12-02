@@ -16,7 +16,7 @@ export const Stakeholders = (props: any) => {
     setSymbol("fas fa-thumbs-up")
   } else if (type === false) {
     setVote("against")
-    setColor("var(--rejected)")
+    setColor("var(--failure)")
     setSymbol("fas fa-thumbs-down")
   }
   }, [type])

@@ -1,6 +1,7 @@
-@import "~antd/dist/antd.dark.less";
+@import "~antd/dist/antd.less";
 @import "./jet-antd.less";
 @import "./jet-styles.css";
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap');
 
 /* Governance-specific app variables */
 :root {
@@ -8,17 +9,11 @@
   --status-inactive: hsla(0, 4%, 71%, 1);
   --status-rejected: hsla(0, 73%, 75%, 1);
   --status-passed: hsla(163, 44%, 43%, 1);
-
-  --disabled-opacity: 0.85;
-
-  --nav-height: 89px;
-  --mobile-nav-height: 60px;
 }
 ::-webkit-scrollbar {
   display: none !important;
 }
 body {
-  --row-highlight: @background-color-base;
   position: relative;
   margin: 0;
   font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
@@ -30,9 +25,20 @@ body {
   margin-left: var(--nav-width);
 }
 
+.neu-container {
+  box-shadow: var(--neu-shadow) !important;
+  border-radius: 4px !important;
+  padding: 29px 26px;
+}
+.neu-inset {
+  padding: 29px 26px;
+  mix-blend-mode: normal;
+  box-shadow: var(--neu-shadow-inset);
+  border-radius: var(--border-radius);
+}
+
 /* Text */
 h1,
-h2,
 p {
   position: relative;
   margin: unset;
@@ -55,11 +61,6 @@ i {
   user-select: none;
   font-style: normal;
 }
-span {
-  opacity: 0.85;
-  font-size: 14px;
-  max-width: 400px;
-}
 *:focus-visible {
   outline: unset;
 }
@@ -69,42 +70,36 @@ span {
 }
 
 .app-title {
-  font-family: "Bicyclette";
+  font-family: "Poppins";
   font-style: normal;
   font-weight: 300;
   letter-spacing: 0px;
-
-  h2 {
-    font-size: 20px;
-    margin: 0px;
-  }
-}
-
-.ant-layout-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  height: var(--nav-height);
-
-  div {
-    display: flex;
-  }
 }
 
 h1,
-h2,
-h3,
 h4 {
-  font-family: "Bicyclette", sans-serif;
+  font-family: "Poppins", sans-serif;
   font-weight: 700;
   color: hsla(0, 0%, 0%, 1);
   letter-spacing: 0.1em;
 }
 
+h2 {
+  font-family: "Helvetica Neue";
+  color: hsla(0, 0%, 0%, 1);
+  font-style: normal;
+  font-weight: 300;
+  font-size: 30px;
+  line-height: 35px;
+}
+
 h3 {
+  font-family: "Poppins", sans-serif;
   text-transform: uppercase;
-  font-size: 18px;
-  line-height: 17px;
+  color: hsla(0, 0%, 0%, 1);
+  font-size: 14px;
+  line-height: 21px;
+  letter-spacing: 0.14em;
   text-align: left;
   margin-bottom: 23px;
 }
@@ -118,107 +113,15 @@ h5 {
   color: var(--black);
 }
 
-.nav-bar {
-  position: fixed;
-  left: 0;
-  top: 0;
-  z-index: 100;
-  width: 100%;
-  background: var(--gradient);
-  z-index: 1000;
-  .connect-wallet {
-  }
-
-  img#govern-logo {
-    height: 62px;
-  }
-
-  .ant-menu-horizontal {
-    border-bottom-color: transparent;
-    background-color: transparent;
-    line-height: inherit;
-    font-size: 16px;
-    margin: 0 10px;
-
-    .ant-menu-item {
-      margin: 0 10px;
-      color: lightgrey;
-      height: 35px;
-      line-height: 35px;
-      border-width: 0px !important;
-    }
-
-    .ant-menu-item:hover {
-      color: white;
-      border-width: 0px !important;
-    }
-
-    .ant-menu-item-selected {
-      font-weight: bold;
-    }
-  }
-}
-
-.nav-bar-left {
-  box-sizing: border-box;
-  margin: 0px;
-  min-width: 0px;
-  display: flex;
-  padding: 0px;
-  -webkit-box-align: center;
-  align-items: center;
-  width: fit-content;
-}
-
-.wallet-wrapper {
-  padding-left: 0.7rem;
-  border-radius: 0.5rem;
-  display: flex;
-  align-items: center;
-  white-space: nowrap;
-}
-
-.wallet-key {
-  padding: 0.1rem 0.5rem 0.1rem 0.7rem;
-  margin-left: 0.3rem;
-  border-radius: 0.5rem;
-  display: flex;
-  align-items: center;
-}
-
-.ant-tabs-nav-scroll {
-  display: flex;
-  justify-content: center;
-}
-
-em {
-  font-weight: bold;
-  font-style: normal;
-  text-decoration: none;
-}
-
-.ant-notification {
-  a {
-    color: blue;
-    text-decoration: underline;
-    cursor: pointer;
-  }
-}
-
 .ant-layout-content {
   display: flex;
   overflow: auto;
   background-color: var(--white);
   margin-top: var(--nav-height);
-
   .panel {
     margin: 0 10px;
-    width: 100%;
-    .header span {
-      padding: 0 5px;
-    }
+    flex-grow: 1;
   }
-
   .content-body {
     padding: 40px;
     display: flex;
@@ -242,68 +145,50 @@ em {
       flex-wrap: wrap;
     }
   }
+}
 
-  .proposal-card {
-    height: 231px;
-    width: 231px;
-    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.25);
-    border-radius: 7px;
-    background: var(--white);
-    color: var(--black);
-    padding: 17px 11px 9px 19px;
-    margin: 11px 22px 11px 0;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    justify-content: space-between;
-    font-size: 10px;
+#locked-balance {
+  font-size: 42px;
+  padding-bottom: 10px;
+}
 
-    .header {
-      line-height: 12px;
-      text-transform: uppercase;
-      font-weight: bold;
-      padding-bottom: 7px;
-    }
-
-    .headline {
-      font-family: Helvetica Neue;
-      font-style: normal;
-      font-weight: 500;
-      font-size: 22px;
-      line-height: 27px;
-    }
-  }
-
-  .proposal-card.active {
-    background: var(--gradient);
-    color: var(--white);
-    .details .status.active {
-      color: var(--status-active);
-    }
-  }
-
-  .proposal-card.default {
-    .details {
-      .active {
-        color: var(--jet-green);
-      }
-      .inactive {
-        color: var(--status-inactive);
-      }
-      .rejected {
-        color: var(--status-rejected);
-      }
-      .passed {
-        color: var(--status-passed);
-      }
-    }
+#wallet-overview {
+  width: 100%;
+  span {
+    color: var(--dark-grey);
+    font-size: 13px;
+    padding-bottom: 20px;
   }
 }
 
-.status {
-  font-family: "Bicyclette", sans-serif;
-  text-transform: uppercase;
-  margin-bottom: -3px;
+#staking-input {
+    position: relative;
+    width: 100%;
+    input {
+    position: relative;
+    font-size: 20px;
+    padding-left: 50px;
+    padding-right: 80px;
+  }
+   span {
+    font-size: 24px;
+    color: var(--dark-grey);
+  }
+   .token-abbrev {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    right: var(--spacing-md);
+    padding: unset;
+  }
+   img {
+    width: 25px;
+    height: auto;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    left: var(--spacing-md);
+  }
 }
 
 .default.details,
@@ -348,16 +233,9 @@ em {
 }
 
 .proposal {
-  .info {
-    .inset {
-      padding: 39px 36px;
-      box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.25);
-      border-radius: 10px;
-    }
-
+  .content {
     .description {
       padding: 39px 36px;
-      border: 2px solid var(--black);
       margin: 0 36px 39px 0;
       display: flex;
       flex-direction: column;
@@ -370,23 +248,23 @@ em {
         padding-bottom: 20px;
         letter-spacing: unset;
       }
-      .status-details {
-        margin-top: 6px;
-        margin-left: 20px;
-        font-size: 10px;
-        line-height: 10px;
-        letter-spacing: 0.1em;
-        div {
-          align-items: flex-end;
-          h5 {
-            width: 105px;
-          }
-          span {
-            font-size: 12px;
-            line-height: 23px;
-          }
-        }
-      }
+      // .status-details {
+      //   margin-top: 6px;
+      //   margin-left: 20px;
+      //   font-size: 10px;
+      //   line-height: 10px;
+      //   letter-spacing: 0.1em;
+      //   div {
+      //     align-items: flex-end;
+      //     h5 {
+      //       width: 105px;
+      //     }
+      //     span {
+      //       font-size: 12px;
+      //       line-height: 23px;
+      //     }
+      //   }
+      // }
       p {
         font-size: 15px;
         line-height: 26px;
@@ -404,22 +282,15 @@ em {
   }
 }
 
-.vote-turnout {
+#vote-turnout {
   padding: 39px 27px;
   margin: 0 36px 39px 0;
-  grid-column: 17 e("/") 25;
-  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.15),
-    0px -4px 20px rgba(255, 255, 255, 0.5);
-  border-radius: 10px;
-  span {
-    margin-bottom: 13px;
-  }
   .results {
     margin-bottom: 37px;
     flex-grow: 1;
     padding-right: 20px;
     .results-header {
-      font-family: "Bicyclette-Bold", sans-serif;
+      font-family: "Poppins", sans-serif;
       font-size: 10px;
       line-height: 10px;
       margin-top: 6px;
@@ -429,28 +300,17 @@ em {
         -webkit-text-fill-color: var(--black) !important;
       }
     }
-    .ant-progress-inner {
-      position: relative;
-      display: inline-block;
-      width: 100%;
-      overflow: hidden;
-      vertical-align: middle;
-      background-color: var(--white);
-      box-shadow: inset -2px 0px 2px rgba(97, 95, 95, 0.5),
-        inset 1px 1px 2px rgba(0, 0, 0, 0.3);
-    }
   }
-  .voters div:first-of-type {
-    border: 2px solid var(--dark-grey);
-    border-radius: 20px;
-  }
+  .voters {
+    flex-grow: 1;
+}
   .stakeholders {
     display: flex;
     font-size: 12px;
     line-height: 23px;
     letter-spacing: 0.05em;
     width: 100%;
-    margin-bottom: 0;
+    padding: 3px;
     .address {
       width: 33%;
       overflow-x: auto;
@@ -464,29 +324,17 @@ em {
       width: 33%;
       text-align: right;
       text-transform: uppercase;
-      font-family: "Bicyclette-Bold", sans-serif;
+      font-family: "Poppins", sans-serif;
       font-size: 10px;
       line-height: 23px;
     }
   }
 }
 
-.token-input {
-  display: flex;
-  align-items: center;
-  border: 1px solid grey;
-  padding: 0px 10px;
-  margin: 5px 0px;
-}
-
-.token-balance {
-  margin-left: auto;
-  margin-right: 5px;
-  color: @text-color-secondary;
-}
-
-[class="ant-layout-header"] {
-  height: 16px !important;
+#claim {
+  .ant-progress-bg {
+    height: 31px !important;
+  }
 }
 
 @media only screen and (max-width: 780px) {

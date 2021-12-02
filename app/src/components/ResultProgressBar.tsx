@@ -17,7 +17,7 @@ export const ResultProgressBar = (props: any) => {
     setSymbol("fas fa-thumbs-up")
   } else if (type === "against") {
     setVote("against")
-    setColor("var(--rejected)")
+    setColor("var(--failure)")
     setSymbol("fas fa-thumbs-down")
   }
 }, [type])
@@ -29,7 +29,7 @@ export const ResultProgressBar = (props: any) => {
       {percent.toFixed(0)}% {" "}
       {vote.toUpperCase()} <i className={symbol}></i>
       <span>{abbreviateNumber(amount, 1)} JET</span>
-      <Progress percent={percent} status="active" showInfo={false} strokeColor={color} />
+      <Progress size="small" percent={percent} showInfo={false} strokeColor={color} />
     </div>
   );
 };

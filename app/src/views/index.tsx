@@ -1,3 +1,5 @@
+import { fromLamports } from "../utils/utils";
+
 export { HomeView } from "./Home";
-export { FaucetView } from "./Faucet";
 export { ProposalView } from "./Proposal";
+export { ClaimView } from "./Claim";

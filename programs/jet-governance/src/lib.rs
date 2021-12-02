@@ -16,44 +16,44 @@ mod jet_governance {
 
     pub fn init_realm(
         ctx: Context<InitRealm>,
-        _bump: InitRealmBumpSeeds,
+        bump: InitRealmBumpSeeds,
     ) -> ProgramResult {
-        init_realm::handler(ctx)
+        init_realm::handler(ctx, bump)
     }
 
     pub fn init_voter(
         ctx: Context<InitVoter>,
-        _bump: u8,
+        bump: u8,
     ) -> ProgramResult {
-        init_voter::handler(ctx)
+        init_voter::handler(ctx, bump)
     }
 
     pub fn deposit(ctx: Context<Deposit>, amount: u64) -> ProgramResult {
-        deposit::handler(ctx, amount)
+        deposit_token::handler(ctx, amount)
     }
 
     pub fn withdraw(ctx: Context<Withdraw>, bump: u8, amount: u64) -> ProgramResult {
-        withdraw::handler(ctx, bump, amount)
+        withdraw_token::handler(ctx, bump, amount)
     }
 
     pub fn propose(ctx: Context<Propose>, name: String, description: String, activate: Time, finalize: Time) -> ProgramResult {
-        propose::handler(ctx, name, description, activate, finalize)
+        init_proposal::handler(ctx, name, description, activate, finalize)
     }
 
-    pub fn edit_draft(ctx: Context<EditDraft>, name: String, description: String) -> ProgramResult {
-        edit_draft::handler(ctx, name, description)
+    pub fn edit_proposal(ctx: Context<EditProposal>, name: String, description: String) -> ProgramResult {
+        edit_proposal::handler(ctx, name, description)
     }
 
     pub fn vote(
         ctx: Context<VoteAccounts>,
-        _bump: u8,
+        bump: u8,
         vote: Vote2,
     ) -> ProgramResult {
-        vote::handler(ctx, vote)
+        cast_vote::handler(ctx, bump, vote)
     }
 
     pub fn rescind(ctx: Context<Rescind>) -> ProgramResult {
-        rescind::handler(ctx)
+        rescind_vote::handler(ctx)
     }
 
     pub fn change_vote(ctx: Context<ChangeVote>, vote: Vote2) -> ProgramResult {

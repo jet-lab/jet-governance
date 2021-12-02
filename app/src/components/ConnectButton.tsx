@@ -14,7 +14,7 @@ export const ConnectButton: FunctionComponent = () => {
     [connected]
   );
   const connectButtonClasses = useMemo(() =>
-    `connect-btn flex-centered ${connected ? '' : 'small-btn bicyclette'}`,
+    `connect-btn flex-centered ${connected ? '' : 'small-btn'}`,
     [connected]
   );
   const connectButtonText = useMemo(() => 
@@ -26,7 +26,7 @@ export const ConnectButton: FunctionComponent = () => {
 
   return (
     <Button className={connectButtonClasses}
-      type="primary"
+      type="dashed"
       title={connectButtonTitle}
       onClick={() => connected ? disconnect() : setConnecting(true)}>
       {connectButtonText}

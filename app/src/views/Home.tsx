@@ -1,46 +1,57 @@
-import { WalletMultiButton } from "@solana/wallet-adapter-ant-design";
-import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-import { useConnectionConfig } from "../contexts/connection";
+import React, { useState } from "react";
 import { useProposal } from "../contexts/proposal";
-import { useUserBalance, useUserTotalBalance } from "../hooks";
-import { WRAPPED_SOL_MINT, JET_TOKEN_MINT } from "../utils/ids";
 import { ProposalCard } from "../components/ProposalCard";
-import { formatUSD } from "../utils/utils";
 import { Button, InputNumber, Divider } from "antd";
-import { ProposalState } from "../models/INITIAL_PROPOSALS";
+import { useWallet } from "@solana/wallet-adapter-react";
+import { shortenAddress, formatTokenAmount } from "../utils/utils";
+import { user, proposals } from "../hooks/useClient";
+import { Input } from "../components/Input";
+// import { user, proposals } from "../hooks/jet-client/useClient";
 
 export const HomeView = () => {
-
+  const { connected, publicKey } = useWallet();
   const { showing, setShowing, shownProposals } = useProposal();
-
-  const SRM_ADDRESS = "SRMuApVNdxXokk5GT7XD5cUUgXMBCoAz2LHeuAoKWRt";
-  const SRM = useUserBalance(SRM_ADDRESS);
-  const SOL = useUserBalance(WRAPPED_SOL_MINT);
-  const JET = useUserBalance(JET_TOKEN_MINT);
-  const { balanceInUSD: totalBalanceInUSD } = useUserTotalBalance();
+  const [inputAmount, setInputAmount] = useState<number | null>(null);
 
   const inputCheck = (value: number) => {
     if (value && value < 0) {
       value = 0;
     }
-  }
-  
+  };
+
   return (
     <div className="content-body">
       <div className="panel">
         <h3>Your Info</h3>
-        <div className="stake-info">
-          Locked Balance
+
+        <div className="neu-inset" style={{width: "260px"}}>
+          <h3>Staked Balance</h3>
+          <div className="text-gradient" id="locked-balance">
+            {connected ? user.jet.locked : 0} JET
+          </div>
+          <div id="wallet-overview" className="flex justify-between">
+            <span>38.5k JET available to unstake. Visit claims for info.</span>
+          </div>
           <Divider />
-          Lock
-          <InputNumber min={0} />
-          <Button>Lock</Button>
-          <Button>Unlock</Button>
+          <div className="flex column">
+            <Input type="number" token
+                value={inputAmount === null ? '' : inputAmount}
+                maxInput={connected ? user.jet.wallet : 0}
+                disabled={!connected}
+                onChange={(value: number) => setInputAmount(value)}
+              submit={() => null}
+            />
+            <Button type="primary" disabled={!connected}>
+              Stake
+            </Button>
+            <Button type="primary" disabled={!connected}>
+              Unstake
+            </Button>
+          </div>
         </div>
       </div>
 
-      <div className="panel">
+      <div className="panel" style={{width: "100%"}}>
         <div className="flex justify-between header">
           <h3>{showing}</h3>
           <div>

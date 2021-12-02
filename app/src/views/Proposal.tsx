@@ -2,17 +2,18 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useProposal } from "../contexts/proposal";
 import { ResultProgressBar } from "../components/ResultProgressBar";
-import { Stakeholders } from "../components/Stakeholders";
-import { TOP_STAKEHOLDERS } from "../models/TOP_STAKEHOLDERS";
 import { Button, Divider, Modal } from "antd";
 import { ProposalCard } from "../components/ProposalCard";
+import { VoterList } from "../components/VoterList";
+import { useWallet } from "@solana/wallet-adapter-react";
+import { useConnection } from "../contexts/connection";
 
 export const ProposalView = (props: any) => {
 
-  const { id, headline, active, end, result, hash } = props;
+  const { id, headline, active, end, description, result, hash } = props;
   // TODO: Fetch user's stake from blockchain
-
   const { activeProposals } = useProposal();
+  const { connected } = useWallet();
 
   const [stake, setStake] = useState(0);
   const inFavor = 722300;
@@ -44,8 +45,6 @@ export const ProposalView = (props: any) => {
         onOk() {},
       });
   }
-
-
   
   const confirmFavor = () => {
     if (checkIsStaked()) {
@@ -106,42 +105,19 @@ export const ProposalView = (props: any) => {
         <i className="fas fa-arrow-left"></i> All Proposals
       </Link>
 
-      <div className="flex info">
+      <div className="flex content">
         <div className="flex column" style={{ width: "70%" }}>
           <h3>Proposal Details</h3>
-          <div className="description">
+          <div className="description neu-container">
             <div className="flex">
               <h3>Proposal {id}</h3>
-              <div className="status-details">
-                <div className={`status ${active ? "active" : result}`}>
-                  <i className="fas fa-circle"></i>
-                  {active ? "ACTIVE" : result}
-                </div>
-                {active ? <div className="end">{days} days left</div> : ""}
-              </div>
             </div>
             <h1 className="headline text-gradient">{headline}</h1>
             <p>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-              eiusmod tempor incididunt ut labore et dolore magna aliqua. Mattis
-              aliquam faucibus purus in massa. Ac auctor augue mauris augue
-              neque gravida. Aenean euismod elementum nisi quis eleifend quam.
-              Augue lacus viverra vitae congue. Diam sollicitudin tempor id eu
-              nisl nunc.
-            </p>
-            <p>
-              Ornare arcu odio ut sem nulla pharetra diam sit amet. Nisl vel
-              pretium lectus quam id. Amet porttitor eget dolor morbi non arcu
-              risus quis. Amet aliquam id diam maecenas ultricies mi eget mauris
-              pharetra. Vitae semper quis lectus nulla at volutpat diam. Nunc
-              sed augue lacus viverra ve eu. Neque convallis a cras semper
-              auctor neque vitae tempus. Elementum integer enim neque volutpat
-              ac. Ornare quam viverra orci.
+              {description}
             </p>
 
-            <Divider />
-
-            <div className="inset flex column">
+            <div className="neu-inset flex column">
               <div>
                 <h5>Proposal ID:</h5>
                 <span>{hash}</span>
@@ -163,16 +139,16 @@ export const ProposalView = (props: any) => {
 
           <div className="flex column" id="vote-mobile">
           <h3>Your Vote</h3>
-          <div className="show-tokens flex column inset">
-            <Button onClick={confirmFavor}>In favor</Button>
-            <Button onClick={confirmAgainst}>Against</Button>
-            <Button onClick={confirmAbstain}>Abstain</Button>
-            <Button type="primary">Vote</Button>
+          <div className="neu-container flex column">
+            <Button onClick={confirmFavor} disabled={!connected && true}>In favor</Button>
+            <Button onClick={confirmAgainst} disabled={!connected && true}>Against</Button>
+            <Button onClick={confirmAbstain} disabled={!connected && true}>Abstain</Button>
+            <Button type="primary" disabled={!connected && true}>Vote</Button>
           </div>
         </div>
 
           <h3>Vote turnout</h3>
-          <div className="vote-turnout flex justify-evenly">
+          <div className="neu-container flex justify-evenly" id="vote-turnout">
             <div className="results">
               <ResultProgressBar
                 type="inFavor"
@@ -192,24 +168,26 @@ export const ProposalView = (props: any) => {
             </div>
             <div className="voters">
               <h5>Top stakeholders</h5>
-              {TOP_STAKEHOLDERS.map((address) => (
+              <VoterList/>
+              
+              {/* {TOP_STAKEHOLDERS.map((address) => (
                 <Stakeholders
                   address={address.address}
                   amount={address.amount}
                   type={address.vote}
                 />
-              ))}
+              ))} */}
             </div>
           </div>
         </div>
 
         <div className="flex column" style={{ width: "30%" }} id="vote-desktop">
           <h3>Your Vote</h3>
-          <div className="show-tokens flex column inset">
-            <Button onClick={confirmFavor}>In favor</Button>
-            <Button onClick={confirmAgainst}>Against</Button>
-            <Button onClick={confirmAbstain}>Abstain</Button>
-            <Button type="primary">Vote</Button>
+          <div className="neu-container flex column" id="your-vote">
+            <Button onClick={confirmFavor}  disabled={!connected && true}>In favor</Button>
+            <Button onClick={confirmAgainst}  disabled={!connected && true}>Against</Button>
+            <Button onClick={confirmAbstain}  disabled={!connected && true}>Abstain</Button>
+            <Button type="primary" disabled={!connected && true}>Vote</Button>
           </div>
         </div>
       </div>

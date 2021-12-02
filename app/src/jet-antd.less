@@ -1,42 +1,225 @@
-@import "~antd/es/style/themes/dark.less";
-@import "~antd/dist/antd.dark.less";
-
-.ant-divider-horizontal {
-  margin-bottom: 28px;
+// Header, nav bar
+.ant-layout-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: var(--nav-height);
+  left: 0;
+  top: 0;
+  position: fixed;
+  width: 100%;
+  z-index: 100;
+  background: var(--gradient);
+  .nav-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: var(--view-clamp);
+    img#nav-header {
+      height: auto;
+      width: 140px;
+    }
+  }
 }
 
+// Divider
 .ant-divider {
-    box-shadow: inset 2px 2px 2px rgba(0, 0, 0, 0.15),
+  box-shadow: inset 2px 2px 2px rgba(0, 0, 0, 0.15),
     inset 2px 2px 2px rgba(255, 255, 255, 0.9);
   border-radius: 20px;
   padding: 0 6%;
   min-height: 3px;
 }
+.ant-divider-horizontal {
+  margin-bottom: 28px;
+}
 
-.ant-modal-content {
-  .ant-modal-confirm-title {
-
+// Toggle switch
+.ant-switch {
+  margin-bottom: 8px;
+  margin: 0;
+  padding: 0;
+  color: #000000d9;
+  font-size: 14px;
+  font-variant: tabular-nums;
+  line-height: 1.5715;
+  list-style: none;
+  font-feature-settings: "tnum";
+  position: relative;
+  display: inline-block;
+  box-sizing: border-box;
+  min-width: 44px;
+  height: 22px;
+  line-height: 22px;
+  vertical-align: middle;
+  background-color: #00000040;
+  border: 0;
+  border-radius: 100px;
+  cursor: pointer;
+  transition: all 0.2s;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  .ant-switch-checked {
+    background-color: var(--ant-primary-color);
+    .ant-switch-handle {
+      left: calc(100% - 20px);
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      width: 18px;
+      height: 18px;
+      transition: all 0.2s ease-in-out;
+    }
+    .ant-switch-handle:before {
+      position: absolute;
+      inset: 0;
+      background-color: #fff;
+      border-radius: 9px;
+      box-shadow: 0 2px 4px #00230b33;
+      transition: all 0.2s ease-in-out;
+      content: "";
+    }
   }
-  .ant-modal-confirm-content {
+}
+.ant-switch:focus {
+  outline: 0;
+  box-shadow: 0 0 0 2px #0000001a;
+}
 
+// Progress bar
+.ant-progress-line {
+  position: relative;
+  width: 100%;
+  font-size: 14px;
+}
+.ant-progress {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  color: rgba(0, 0, 0, 0.85);
+  font-size: 14px;
+  font-variant: tabular-nums;
+  line-height: 1.5715;
+  list-style: none;
+  font-feature-settings: 'tnum', "tnum";
+  display: inline-block;
+}
+.ant-progress-inner {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+  overflow: hidden;
+  vertical-align: middle;
+  background-color: var(--white);
+  box-shadow: inset -2px 0px 2px rgba(97, 95, 95, 0.5),
+    inset 1px 1px 2px rgba(0, 0, 0, 0.3);
+  border-radius: 100px;
+}
+.ant-progress-success-bg, .ant-progress-bg {
+  position: relative;
+  background-color: #1890ff;
+  border-radius: 100px;
+  transition: all 0.4s cubic-bezier(0.08, 0.82, 0.17, 1) 0s;
+}
+
+// Input
+.ant-input-number-input {
+  width: 100%;
+  padding: var(--spacing-md) var(--spacing-lg);
+  margin: var(--spacing-xs) 0;
+  box-shadow: var(--neu-shadow-inset);
+  background: var(--grey);
+  color: var(--input-color);
+  font-size: 13px;
+  border: none;
+  border-radius: var(--border-radius);
+  transition: box-shadow var(--transition);
+  box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+}
+.ant-input-number {
+  border: none;
+}
+
+// Toggle switch
+.ant-switch {
+}
+
+// Modal
+.ant-modal-wrap {
+  background: rgba(229, 235, 244, 0.9);
+  .ant-modal-body,
+  .ant-modal-content {
+    min-width: 275px;
+    max-width: 700px;
+    box-shadow: var(--neu-shadow-low);
+    background: var(--white);
+    border-radius: var(--border-radius);
   }
 }
 
-.ant-btn {
-	box-sizing: border-box;
-	-moz-box-sizing: border-box;
-	-webkit-box-sizing: border-box;
-	border-radius: 4px;
-	margin: 8px;
-	padding: 0;
-	cursor: pointer;
-	border: 2px solid transparent;
-	background-image: var(--gradient), var(--gradient);
-	background-origin: border-box;
-	background-clip: content-box, border-box;
-	box-shadow: 800px 0 0 0 var(--white) inset;
+// Card
+.ant-card {
+  width: 250px;
+  height: 250px;
+  padding: var(--spacing-md);
+  box-shadow: var(--neu-shadow);
+  background: var(--light-grey);
+  border-radius: var(--border-radius);
+  transition: box-shadow var(--transition);
+  margin: 0 var(--spacing-lg) var(--spacing-lg) 0;
+  cursor: pointer;
+  color: var(--black);
+  .ant-card-body {
+    height: 100%;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  .header,
+  .details {
+    font-family: "Poppins", sans-serif;
+    font-size: 14px;
+    line-height: 21px;
+    text-transform: uppercase;
+    font-weight: bold;
+    padding-bottom: 7px;
+  }
+  // .headline {
+  //   font-family: Helvetica Neue;
+  //   font-style: normal;
+  //   font-weight: 500;
+  //   font-size: 22px;
+  //   line-height: 27px;
+  // }
+}
+
+.ant-card:hover {
+  box-shadow: var(--neu-shadow-low);
+}
+
+// Buttons, default button
+.ant-btn,
+.ant-btn[disabled],
+.ant-btn[disabled]:hover {
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  border-radius: 4px;
+  margin: 8px;
+  padding: 0;
+  cursor: pointer;
+  border: 2px solid transparent;
+  background-image: var(--gradient), var(--gradient);
+  background-origin: border-box;
+  background-clip: content-box, border-box;
+  box-shadow: 800px 0 0 0 var(--white) inset;
   span {
-    font-family: 'Bicyclette-Bold', sans-serif;
+    font-family: "Poppins", sans-serif;
     font-style: normal;
     text-transform: uppercase;
     align-items: center;
@@ -51,28 +234,57 @@
     height: 100%;
     box-sizing: border-box;
     transition: 0.2s;
-    padding: 4px 10px 3px 10px !important
+    padding: 4px 10px 3px 10px !important;
   }
 }
 
-.ant-btn:hover, .ant-btn:focus, button.active {
+.ant-btn[disabled],
+.ant-btn[disabled]:hover {
+  opacity: var(--disabled-opacity);
+  cursor: not-allowed;
+}
+
+.ant-btn:hover,
+.ant-btn:focus,
+button.active {
   border-color: transparent;
   background-image: var(--gradient), var(--gradient);
   background-origin: border-box;
   span {
     box-shadow: 0px 0px 0px 0px #fff inset;
     color: #ffffff;
-    background-image: var(--gradient),
-    var(--gradient);
+    background-image: var(--gradient), var(--gradient);
     background-origin: border-box;
     background-clip: content-box, border-box;
     box-shadow: none;
   }
 }
 
-.ant-btn-primary {
+// Primary button
+.ant-btn-primary,
+.ant-btn-primary[disabled],
+.ant-btn-primary[disabled]:hover {
+  border-color: transparent;
+  background-image: var(--gradient), var(--gradient);
+  background-origin: border-box;
+  span {
+    box-shadow: 0px 0px 0px 0px #fff inset;
+    color: #ffffff;
+    background-image: var(--gradient), var(--gradient);
+    background-origin: border-box;
+    background-clip: content-box, border-box;
+    box-shadow: none;
+  }
+  &[disabled],
+  &[disabled]:hover {
+    opacity: var(--disabled-opacity);
+  }
+}
+
+// Dashed button
+.ant-btn-dashed {
   background: transparent;
-  font-family: "Bicyclette-Bold";
+  font-family: "Poppins";
   text-transform: uppercase;
   font-size: 14px;
   line-height: 14px;
@@ -91,22 +303,23 @@
     color: #ffffff;
     padding: 9px 15px 6px 15px !important;
   }
-}
-.ant-btn-primary:hover,
-.ant-btn-primary:focus {
-  border-color: #ffffff;
-  background: #ffffff;
-  span {
-    background: var(--gradient);
-    color: transparent;
-    -webkit-background-clip: text;
-    background-clip: text;
+  &:hover,
+  &:focus {
+    border-color: #ffffff;
+    background: #ffffff;
+    span {
+      background: var(--gradient);
+      color: transparent;
+      -webkit-background-clip: text;
+      background-clip: text;
+    }
   }
-}
-
-.ant-btn-primary[disabled], .ant-btn-primary[disabled]:hover, .ant-btn-primary[disabled]:focus, .ant-btn-primary[disabled]:active {
+  &[disabled],
+  &[disabled]:hover,
+  &[disabled]:focus,
+  &[disabled]:active {
     background: transparent;
-    font-family: "Bicyclette-Bold";
+    font-family: "Poppins";
     text-transform: uppercase;
     font-size: 14px;
     line-height: 14px;
@@ -124,3 +337,9 @@
       padding: 9px 15px 6px 15px !important;
     }
   }
+}
+
+// List items
+.ant-list-split .ant-list-item {
+  border-bottom: none;
+}
