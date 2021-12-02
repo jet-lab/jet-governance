@@ -15,12 +15,10 @@ mod tests {
 
     use super::*;
 
-
     #[test]
     fn test_init_realm() -> Result<()> {
         let client = TestClient::new();
         let mint = token::initialize_mint(&client.paying_client)?;
-        solana::finalize(&client.paying_client)?;
         let realm_pubkey = instructions::init_realm(
             &client.anchor_program,
             client.payer.pubkey(),
@@ -47,7 +45,6 @@ mod tests {
     fn test_init_voter() -> Result<()> {
         let client = TestClient::new();
         let mint = token::initialize_mint(&client.paying_client)?;
-        solana::finalize(&client.paying_client)?;
         let realm = instructions::init_realm(
             &client.anchor_program,
             client.payer.pubkey(),
@@ -78,7 +75,6 @@ mod tests {
             &client.payer.pubkey()
         )?;
         token::mint_to(&client.paying_client, mint, token_account, 100)?;
-        solana::finalize(&client.paying_client)?;
         let realm_pubkey = instructions::init_realm(
             &client.anchor_program,
             client.payer.pubkey(),

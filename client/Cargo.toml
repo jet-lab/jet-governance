@@ -16,3 +16,10 @@ solana-remote-wallet = "1.7.11"
 solana-clap-utils = "1.7.11"
 clap2 = { package = "clap", version = "2.33.0" }
 shellexpand = "2.1.0"
+lock_api = "0.3.4"
+parking_lot = "0.10.2"
+lazy_static = "1.4.0"
+
+[dependencies.hidapi]
+version = "1.2.5"
+default-features = false

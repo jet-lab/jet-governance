@@ -59,7 +59,7 @@ pub fn send_transaction_with_commitment(
 }
 
 /// wait the amount of time it would take a transaction to finalize
-pub fn finalize(
+pub fn _finalize(
     paying_client: &PayingClient,
 ) -> Result<()> {
     send_transaction_with_commitment(

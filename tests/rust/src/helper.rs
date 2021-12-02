@@ -1,7 +1,7 @@
 /// Purpose: Make test code as terse and declarative as possible.
 /// It's OK if this code is a little bit spaghetti, as long as 
 /// it makes the tests themselves simpler.
-use std::{convert::TryInto, rc::Rc, time::{SystemTime, UNIX_EPOCH}};
+use std::{convert::TryInto, rc::Rc, time::{SystemTime, UNIX_EPOCH}, sync::Arc};
 
 use anchor_client::{Program, solana_sdk::pubkey::Pubkey};
 use anyhow::Result;
@@ -41,12 +41,6 @@ pub struct TestRealm<'a> {
     pub mint: Pubkey,
 }
 
-
-// impl TestVoter {
-//     pub fn get(&self, client: &TestClient) -> Result<Voter> {
-//         state::get_voter(&client.anchor_program, self.key)
-//     }
-// }
 
 impl<'a> TestRealm<'a> {
     pub fn new(client: &'a TestClient) -> Result<Self> {
@@ -128,7 +122,7 @@ impl<'a> TestRealm<'a> {
         Ok(test_proposal)
     }
 
-    pub fn state(&self) -> Result<Realm> {
+    pub fn _state(&self) -> Result<Realm> {
         state::get_realm(&self.client.anchor_program, self.key)
     }
 }
