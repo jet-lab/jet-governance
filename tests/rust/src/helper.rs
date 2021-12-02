@@ -59,7 +59,7 @@ impl<'a> TestRealm<'a> {
         })
     }
 
-    pub fn new_voter(&'a self, owner: &'a dyn Signer) -> Result<TestVoter<'a>> {
+    pub fn init_voter(&'a self, owner: &'a dyn Signer) -> Result<TestVoter<'a>> {
         println!("Creating voter");
         let token_account = token::create_account(
             &self.client.paying_client,
@@ -122,7 +122,7 @@ impl<'a> TestRealm<'a> {
         Ok(test_proposal)
     }
 
-    pub fn _state(&self) -> Result<Realm> {
+    pub fn state(&self) -> Result<Realm> {
         state::get_realm(&self.client.anchor_program, self.key)
     }
 }
