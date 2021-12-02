@@ -84,7 +84,7 @@ pub fn deposit(
     ).0;
     anchor_program
         .request()
-        .accounts(jet_governance::accounts::Deposit {
+        .accounts(jet_governance::accounts::DepositToken {
             realm,
             owner: owner.pubkey(),
             voter,
@@ -92,7 +92,7 @@ pub fn deposit(
             token_account,
             token_program: spl_token::id(),
         })
-        .args(jet_governance::instruction::Deposit {
+        .args(jet_governance::instruction::DepositToken {
             amount
         })
         .signer(owner)
@@ -122,7 +122,7 @@ pub fn withdraw(
     );
     anchor_program
         .request()
-        .accounts(jet_governance::accounts::Withdraw {
+        .accounts(jet_governance::accounts::WithdrawToken {
             realm,
             owner: owner.pubkey(),
             voter,
@@ -131,7 +131,7 @@ pub fn withdraw(
             token_account,
             token_program: spl_token::id(),
         })
-        .args(jet_governance::instruction::Withdraw {
+        .args(jet_governance::instruction::WithdrawToken {
             bump,
             amount
         })
@@ -153,13 +153,13 @@ pub fn propose(
     let proposal_account = Keypair::new();
     anchor_program
         .request()
-        .accounts(jet_governance::accounts::Propose {
+        .accounts(jet_governance::accounts::InitProposal {
             realm,
             owner: owner.pubkey(),
             proposal: proposal_account.pubkey(),
             system_program: system_program::id(),
         })
-        .args(jet_governance::instruction::Propose {
+        .args(jet_governance::instruction::InitProposal {
             name: name.to_string(),
             description: description.to_string(),
             activate,
@@ -189,7 +189,7 @@ pub fn vote(
     );
     anchor_program
         .request()
-        .accounts(jet_governance::accounts::VoteAccounts {
+        .accounts(jet_governance::accounts::CastVote {
             realm,
             owner: owner.pubkey(),
             voter,
@@ -197,7 +197,7 @@ pub fn vote(
             vote_record,
             system_program: system_program::id(),
         })
-        .args(jet_governance::instruction::Vote {
+        .args(jet_governance::instruction::CastVote {
             vote,
             bump: vote_record_bump,
         })
@@ -256,14 +256,14 @@ pub fn rescind(
     ).0;
     anchor_program
         .request()
-        .accounts(jet_governance::accounts::Rescind {
+        .accounts(jet_governance::accounts::RescindVote {
             realm,
             owner: owner.pubkey(),
             voter,
             proposal,
             vote_record,
         })
-        .args(jet_governance::instruction::Rescind { })
+        .args(jet_governance::instruction::RescindVote { })
         .signer(owner)
         .send()?;
     Ok(vote_record)

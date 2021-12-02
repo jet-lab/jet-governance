@@ -1,7 +1,7 @@
 /// Purpose: Make test code as terse and declarative as possible.
 /// It's OK if this code is a little bit spaghetti, as long as 
 /// it makes the tests themselves simpler.
-use std::{convert::TryInto, rc::Rc, time::{SystemTime, UNIX_EPOCH}, sync::Arc};
+use std::{convert::TryInto, rc::Rc, time::{SystemTime, UNIX_EPOCH}};
 
 use anchor_client::{Program, solana_sdk::pubkey::Pubkey};
 use anyhow::Result;

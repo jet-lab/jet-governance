@@ -10,7 +10,7 @@ use super::transition_proposal::Time;
 
 #[derive(Accounts)]
 #[instruction(bump: u8)]
-pub struct Propose<'info> {
+pub struct InitProposal<'info> {
     /// The user with authority over the proposal.
     pub owner: Signer<'info>,
 
@@ -27,7 +27,7 @@ pub struct Propose<'info> {
 }
 
 pub fn handler(
-    ctx: Context<Propose>,
+    ctx: Context<InitProposal>,
     name: String,
     description: String,
     activate: Time,

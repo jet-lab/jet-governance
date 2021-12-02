@@ -3,7 +3,7 @@ use crate::{state::voter::Voter, state::voter::VoteRecord, state::proposal::Prop
 
 
 #[derive(Accounts)]
-pub struct Rescind<'info> {
+pub struct RescindVote<'info> {
     /// The user with authority over the voter account.
     pub owner: Signer<'info>,
 
@@ -23,7 +23,7 @@ pub struct Rescind<'info> {
     pub vote_record: Account<'info, VoteRecord>,
 }
 
-pub fn handler(ctx: Context<Rescind>) -> ProgramResult {
+pub fn handler(ctx: Context<RescindVote>) -> ProgramResult {
     let vote_record = &ctx.accounts.vote_record;
     let proposal = &mut ctx.accounts.proposal;
     let voter = &mut ctx.accounts.voter;

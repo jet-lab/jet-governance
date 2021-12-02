@@ -28,15 +28,15 @@ mod jet_governance {
         init_voter::handler(ctx, bump)
     }
 
-    pub fn deposit(ctx: Context<Deposit>, amount: u64) -> ProgramResult {
+    pub fn deposit_token(ctx: Context<DepositToken>, amount: u64) -> ProgramResult {
         deposit_token::handler(ctx, amount)
     }
 
-    pub fn withdraw(ctx: Context<Withdraw>, bump: u8, amount: u64) -> ProgramResult {
+    pub fn withdraw_token(ctx: Context<WithdrawToken>, bump: u8, amount: u64) -> ProgramResult {
         withdraw_token::handler(ctx, bump, amount)
     }
 
-    pub fn propose(ctx: Context<Propose>, name: String, description: String, activate: Time, finalize: Time) -> ProgramResult {
+    pub fn init_proposal(ctx: Context<InitProposal>, name: String, description: String, activate: Time, finalize: Time) -> ProgramResult {
         init_proposal::handler(ctx, name, description, activate, finalize)
     }
 
@@ -44,15 +44,15 @@ mod jet_governance {
         edit_proposal::handler(ctx, name, description)
     }
 
-    pub fn vote(
-        ctx: Context<VoteAccounts>,
+    pub fn cast_vote(
+        ctx: Context<CastVote>,
         bump: u8,
         vote: Vote2,
     ) -> ProgramResult {
         cast_vote::handler(ctx, bump, vote)
     }
 
-    pub fn rescind(ctx: Context<Rescind>) -> ProgramResult {
+    pub fn rescind_vote(ctx: Context<RescindVote>) -> ProgramResult {
         rescind_vote::handler(ctx)
     }
 

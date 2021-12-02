@@ -1,4 +1,4 @@
-use std::{rc::Rc, sync::{Arc, Mutex}};
+use std::{rc::Rc, sync::Arc};
 
 use anchor_client::{Cluster, Program, solana_sdk::{commitment_config::{CommitmentConfig, CommitmentLevel}, signer::Signer}};
 

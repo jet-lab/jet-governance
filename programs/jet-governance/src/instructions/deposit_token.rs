@@ -7,7 +7,7 @@ use crate::state::{voter::Voter, realm::Realm};
 
 #[derive(Accounts)]
 #[instruction(bump: u8)]
-pub struct Deposit<'info> {
+pub struct DepositToken<'info> {
     /// The user with authority over the voter account.
     #[account(signer)]
     pub owner: AccountInfo<'info>,
@@ -33,7 +33,7 @@ pub struct Deposit<'info> {
 }
 
 pub fn handler(
-    ctx: Context<Deposit>,
+    ctx: Context<DepositToken>,
     amount: u64,
 ) -> ProgramResult {
     (*ctx.accounts.voter.deref_mut()).deposited += amount;

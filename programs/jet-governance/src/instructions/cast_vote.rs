@@ -6,7 +6,7 @@ use crate::{state::proposal::Proposal, state::{Vote2, voter::VoteRecord}, state:
 
 #[derive(Accounts)]
 #[instruction(bump: u8)]
-pub struct VoteAccounts<'info> {
+pub struct CastVote<'info> {
     /// The user with authority over the voter account.
     pub owner: Signer<'info>,
 
@@ -35,7 +35,7 @@ pub struct VoteAccounts<'info> {
     pub system_program: AccountInfo<'info>,
 }
 
-pub fn handler(ctx: Context<VoteAccounts>, _bump: u8, vote: Vote2) -> ProgramResult {
+pub fn handler(ctx: Context<CastVote>, _bump: u8, vote: Vote2) -> ProgramResult {
     let voter_key = ctx.accounts.voter.key();
     let proposal_key = ctx.accounts.proposal.key();
     let proposal = ctx.accounts.proposal.deref_mut();

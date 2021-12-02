@@ -7,7 +7,7 @@ use anchor_spl::token::{self, Transfer};
 
 #[derive(Accounts)]
 #[instruction(bump: u8)]
-pub struct Withdraw<'info> {
+pub struct WithdrawToken<'info> {
     /// The user with authority over the voter account.
     pub owner: Signer<'info>,
 
@@ -43,7 +43,7 @@ pub struct Withdraw<'info> {
 }
 
 pub fn handler(
-    ctx: Context<Withdraw>,
+    ctx: Context<WithdrawToken>,
     bump: u8,
     amount: u64,
 ) -> ProgramResult {
