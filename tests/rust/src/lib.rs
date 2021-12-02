@@ -13,7 +13,7 @@ mod tests {
     use crate::helper::{TestClient, TestRealm, now};
     
     #[test]
-    fn test_init_realm() -> Result<()> {
+    fn init_realm_should_create_realm_account_with_correct_data() -> Result<()> {
         let client = TestClient::new();
         let test_realm = TestRealm::new(&client)?;
         let expected_authority = Pubkey::find_program_address(
@@ -34,7 +34,7 @@ mod tests {
     }
 
     #[test]
-    fn test_init_voter() -> Result<()> {
+    fn init_voter_should_create_voter_account_with_correct_data() -> Result<()> {
         let client = TestClient::new();
         let realm = TestRealm::new(&client)?;
         let voter = realm.init_voter(client.payer.as_ref())?.state()?;
@@ -48,7 +48,7 @@ mod tests {
     }
 
     #[test]
-    fn test_deposit() -> Result<()> {
+    fn deposit_token_should_increment_voter_deposited_amount() -> Result<()> {
         let client = TestClient::new();
         let realm = TestRealm::new(&client)?;
         let test_voter = realm.init_voter(client.payer.as_ref())?;
@@ -65,7 +65,7 @@ mod tests {
     }
 
     #[test]
-    fn test_full_workflow_one_voter() -> Result<()> {
+    fn full_workflow_with_payer_as_voter() -> Result<()> {
         let client = TestClient::new();
         let realm = TestRealm::new(&client)?;
 
