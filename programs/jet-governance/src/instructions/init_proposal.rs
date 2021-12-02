@@ -12,16 +12,15 @@ use super::transition_proposal::Time;
 #[instruction(bump: u8)]
 pub struct Propose<'info> {
     /// The user with authority over the proposal.
-    #[account(signer)]
-    pub owner: AccountInfo<'info>,
+    pub owner: Signer<'info>,
 
     #[account(has_one = owner)] // For now, only realm owner can propose
-    pub realm: ProgramAccount<'info, Realm>,
+    pub realm: Account<'info, Realm>,
 
     #[account(init,
         space = 8 + std::mem::size_of::<Proposal>(),
         payer = owner)]
-    pub proposal: ProgramAccount<'info, Proposal>,
+    pub proposal: Account<'info, Proposal>,
 
     //. Required to init account
     pub system_program: AccountInfo<'info>,

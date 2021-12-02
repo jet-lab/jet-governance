@@ -11,7 +11,7 @@ pub struct InitRealm<'info> {
     #[account(init,
         space = 8 + std::mem::size_of::<Realm>(),
         payer = owner)]
-    pub realm: ProgramAccount<'info, Realm>,
+    pub realm: Account<'info, Realm>,
 
     // account with permission to modify realm configuration
     pub owner: AccountInfo<'info>,
@@ -59,7 +59,7 @@ pub struct InitRealmBumpSeeds {
 }
 
 
-pub fn handler(ctx: Context<InitRealm>) -> ProgramResult {
+pub fn handler(ctx: Context<InitRealm>, _bump: InitRealmBumpSeeds) -> ProgramResult {
     let realm = ctx.accounts.realm.deref_mut();
     realm.owner = ctx.accounts.owner.key();
     realm.authority = ctx.accounts.authority.key();

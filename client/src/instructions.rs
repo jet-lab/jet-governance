@@ -30,7 +30,7 @@ pub fn init_realm(
             rent: rent::id(),
         })
         .args(jet_governance::instruction::InitRealm {
-            _bump: InitRealmBumpSeeds {
+            bump: InitRealmBumpSeeds {
                 authority: authority_bump,
                 vault: vault_bump,
             }
@@ -59,7 +59,7 @@ pub fn init_voter(
             system_program: system_program::id(),
         })
         .args(jet_governance::instruction::InitVoter {
-            _bump: voter_bump
+            bump: voter_bump
         })
         .signer(owner)
         .send()?;
@@ -199,7 +199,7 @@ pub fn vote(
         })
         .args(jet_governance::instruction::Vote {
             vote,
-            _bump: vote_record_bump,
+            bump: vote_record_bump,
         })
         .signer(owner)
         .send()?;

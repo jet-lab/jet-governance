@@ -10,20 +10,19 @@ use crate::state::proposal::{Proposal, ProposalEvent};
 #[instruction(bump: u8)]
 pub struct TransitionProposal<'info> {
     /// The user with authority over the proposal.
-    #[account(signer)]
-    pub owner: AccountInfo<'info>,
+    pub owner: Signer<'info>,
 
     pub realm: AccountInfo<'info>,
 
     #[account(
         has_one = owner,
         has_one = realm)]
-    pub voter: ProgramAccount<'info, Voter>,
+    pub voter: Account<'info, Voter>,
 
     #[account(mut,
         has_one = realm,
         has_one = owner)]
-    pub proposal: ProgramAccount<'info, Proposal>,
+    pub proposal: Account<'info, Proposal>,
 }
 
 
