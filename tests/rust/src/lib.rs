@@ -6,15 +6,12 @@ mod helper;
 /// tests the actual program - requires a running cluster with program deployed
 #[cfg(test)]
 mod tests {
-    use std::{convert::TryInto, rc::Rc, time::{SystemTime, UNIX_EPOCH}};
-
-    use anchor_client::{Program, solana_sdk::pubkey::Pubkey};
+    use anchor_client::{solana_sdk::pubkey::Pubkey};
     use anyhow::Result;
-    use jet_governance::{instructions::Time, state::{ProposalEvent, Realm, Vote2, Voter}};
-    use jet_governance_client::{instructions, load, state};
-    use solana_sdk::{commitment_config::CommitmentLevel, signature::Keypair, signer::Signer};
+    use jet_governance::{instructions::Time, state::Vote2};
+    use jet_governance_client::{instructions, state};
 
-    use crate::{helper::{TestClient, TestRealm, now}, solana::PayingClient};
+    use crate::helper::{TestClient, TestRealm, now};
 
     use super::*;
 
@@ -110,30 +107,26 @@ mod tests {
         Ok(())
     }
 
-
-
     #[test]
     fn test_full_workflow_one_voter() -> Result<()> {
         let client = TestClient::new();
-        let test_realm = TestRealm::new(&client)?;
-        let realm_pubkey = test_realm.key;
+        let realm = TestRealm::new(&client)?;
 
         // voter
-        let test_voter = test_realm.new_voter(client.payer.as_ref())?;
+        let test_voter = realm.new_voter(client.payer.as_ref())?;
         test_voter.mint(100)?;
         test_voter.deposit(80)?;
         let voter = test_voter.state()?;
         assert_eq!(80, voter.deposited);
         
         // proposal
-        let test_proposal = test_realm.new_proposal(
+        let test_proposal = realm.new_proposal(
             client.payer.as_ref(),
             "Hello world",
             "This proposal says hello",
             Time::Now,
             Time::Never,
         )?;
-        let proposal_pubkey = test_proposal.key;
         let proposal = test_proposal.state()?;
         let current_timestamp = now();
         assert_eq!(true, proposal.lifecycle.activated(current_timestamp));
@@ -150,84 +143,45 @@ mod tests {
         assert_eq!(1, voter.active_votes);
         
         // change vote
-        println!("Changing vote");
-        let _vote_record_pubkey = instructions::change_vote(
-            &client.anchor_program,
-            realm_pubkey,
-            client.payer.as_ref(),
-            proposal_pubkey,
-            Vote2::No,
-        )?;
+        test_voter.change_vote(test_proposal, Vote2::No)?;
 
-        let proposal = state::get_proposal(&client.anchor_program, proposal_pubkey)?;
+        let proposal = test_proposal.state()?;
         assert_eq!(0, proposal.vote().yes());
         assert_eq!(80, proposal.vote().no());
         assert_eq!(0, proposal.vote().abstain());
         let voter = test_voter.state()?;
         assert_eq!(1, voter.active_votes);
-        ////////////
         
         // rescind vote
-        println!("Rescinding vote");
-        let _vote_record_pubkey = instructions::rescind(
-            &client.anchor_program,
-            realm_pubkey,
-            client.payer.as_ref(),
-            proposal_pubkey,
-        )?;
+        test_voter.rescind(test_proposal)?;
 
-        let proposal = state::get_proposal(&client.anchor_program, proposal_pubkey)?;
+        let proposal = test_proposal.state()?;
         assert_eq!(0, proposal.vote().yes());
         assert_eq!(0, proposal.vote().no());
         assert_eq!(0, proposal.vote().abstain());
         let voter = test_voter.state()?;
         assert_eq!(0, voter.active_votes);
-        ////////////
         
         // withdraw
-        println!("Withdrawing tokens");
-        instructions::withdraw(
-            &client.anchor_program,
-            realm_pubkey,
-            client.payer.as_ref(),
-            test_voter.token,
-            30,
-        )?;
+        test_voter.withdraw(30)?;
         let voter = test_voter.state()?;
         assert_eq!(50, voter.deposited);
-        ////////////
         
         // re-vote
-        println!("Voting again");
-        let _vote_record_pubkey = instructions::vote(
-            &client.anchor_program,
-            realm_pubkey,
-            client.payer.as_ref(),
-            proposal_pubkey,
-            Vote2::Abstain,
-        )?;
+        test_voter.vote(test_proposal, Vote2::Abstain)?;
 
-        let proposal = state::get_proposal(&client.anchor_program, proposal_pubkey)?;
+        let proposal = test_proposal.state()?;
         assert_eq!(0, proposal.vote().yes());
         assert_eq!(0, proposal.vote().no());
         assert_eq!(50, proposal.vote().abstain());
         let voter = test_voter.state()?;
         assert_eq!(1, voter.active_votes);
-        ////////////
         
         // finalize
-        println!("Finalizing proposal");
-        let _vote_record_pubkey = instructions::transition_proposal(
-            &client.anchor_program,
-            realm_pubkey,
-            client.payer.as_ref(),
-            proposal_pubkey,
-            ProposalEvent::Finalize,
-            Time::Now,
-        )?;
+        test_proposal.finalize(client.payer.as_ref(), Time::Now)?;
         let current_timestamp = now();
 
-        let proposal = state::get_proposal(&client.anchor_program, proposal_pubkey)?;
+        let proposal = test_proposal.state()?;
         assert_eq!(true, proposal.lifecycle.activated(current_timestamp));
         assert_eq!(true, proposal.lifecycle.finalized(current_timestamp));
         assert_eq!(0, proposal.vote().yes());

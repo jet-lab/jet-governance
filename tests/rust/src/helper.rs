@@ -7,7 +7,7 @@ use anchor_client::{Program, solana_sdk::pubkey::Pubkey};
 use anyhow::Result;
 use jet_governance::{instructions::Time, state::{Proposal, ProposalEvent, Realm, Vote2, Voter}};
 use jet_governance_client::{instructions, load, state};
-use solana_sdk::{clock::UnixTimestamp, commitment_config::CommitmentLevel, signature::Keypair, signer::Signer};
+use solana_sdk::{clock::UnixTimestamp, commitment_config::CommitmentLevel, signer::Signer};
 
 use crate::{solana::PayingClient, token};
 
@@ -65,7 +65,7 @@ impl<'a> TestRealm<'a> {
         })
     }
 
-    pub fn new_voter(&self, owner: &dyn Signer) -> Result<TestVoter> {
+    pub fn new_voter(&'a self, owner: &'a dyn Signer) -> Result<TestVoter<'a>> {
         println!("Creating voter");
         let token_account = token::create_account(
             &self.client.paying_client,
@@ -80,7 +80,7 @@ impl<'a> TestRealm<'a> {
         let test_voter = TestVoter {
             client: self.client,
             realm: self,
-            owner: owner.pubkey(),
+            owner,
             key: voter_pubkey,
             token: token_account,
         };
@@ -138,7 +138,7 @@ impl<'a> TestRealm<'a> {
 pub struct TestVoter<'a> {
     pub client: &'a TestClient,
     pub realm: &'a TestRealm<'a>,
-    pub owner: Pubkey,
+    pub owner: &'a dyn Signer,
     pub key: Pubkey,
     pub token: Pubkey,
 }
@@ -157,7 +157,18 @@ impl<'a> TestVoter<'a> {
         instructions::deposit(
             &self.client.anchor_program,
             self.realm.key,
-            self.client.payer.as_ref(),
+            self.owner,
+            self.token,
+            amount,
+        )
+    }
+
+    pub fn withdraw(&self, amount: u64) -> Result<()> {
+        println!("Withdrawing");
+        instructions::withdraw(
+            &self.client.anchor_program,
+            self.realm.key,
+            self.owner,
             self.token,
             amount,
         )
@@ -168,9 +179,30 @@ impl<'a> TestVoter<'a> {
         instructions::vote(
             &self.client.anchor_program,
             self.realm.key,
-            self.client.payer.as_ref(),
+            self.owner,
             proposal.key,
             vote,
+        )
+    }
+
+    pub fn change_vote(&self, proposal: TestProposal, vote: Vote2) -> Result<Pubkey> {
+        println!("Changing vote");
+        instructions::change_vote(
+            &self.client.anchor_program,
+            self.realm.key,
+            self.owner,
+            proposal.key,
+            vote,
+        )
+    }
+
+    pub fn rescind(&self, proposal: TestProposal) -> Result<Pubkey> {
+        println!("Rescinding");
+        instructions::rescind(
+            &self.client.anchor_program,
+            self.realm.key,
+            self.owner,
+            proposal.key,
         )
     }
 }
@@ -187,6 +219,22 @@ pub struct TestProposal<'a> {
 impl<'a> TestProposal<'a> {
     pub fn state(&self) -> Result<Proposal> {
         state::get_proposal(&self.client.anchor_program, self.key)
+    }
+
+    pub fn finalize(&self, owner: &dyn Signer, when: Time) -> Result<()> {
+        println!("Finalizing");
+        self.transition(owner, ProposalEvent::Finalize, when)
+    }
+
+    pub fn transition(&self, owner: &dyn Signer, event: ProposalEvent, when: Time) -> Result<()> {
+        instructions::transition_proposal(
+            &self.client.anchor_program,
+            self.realm.key,
+            owner,
+            self.key,
+            event,
+            when,
+        )
     }
 }
 
