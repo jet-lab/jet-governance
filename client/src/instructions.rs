@@ -278,13 +278,9 @@ pub fn transition_proposal(
     proposal: Pubkey,
     event: ProposalEvent,
     when: Time,
-) -> Result<Pubkey> {
+) -> Result<()> {
     let voter = Pubkey::find_program_address(
         &[b"voter", &owner.pubkey().to_bytes(), &realm.to_bytes()],
-        &anchor_program.id()
-    ).0;
-    let vote_record = Pubkey::find_program_address(
-        &[b"vote-record", &voter.to_bytes(), &proposal.to_bytes()],
         &anchor_program.id()
     ).0;
     anchor_program
@@ -301,5 +297,5 @@ pub fn transition_proposal(
         })
         .signer(owner)
         .send()?;
-    Ok(vote_record)
+    Ok(())
 }

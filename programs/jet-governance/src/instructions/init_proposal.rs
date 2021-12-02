@@ -22,7 +22,7 @@ pub struct Propose<'info> {
         payer = owner)]
     pub proposal: Account<'info, Proposal>,
 
-    //. Required to init account
+    /// Required to init account
     pub system_program: AccountInfo<'info>,
 }
 

@@ -14,6 +14,7 @@ pub struct TransitionProposal<'info> {
 
     pub realm: AccountInfo<'info>,
 
+    // todo is this needed? if so require it when creating proposal
     #[account(
         has_one = owner,
         has_one = realm)]
