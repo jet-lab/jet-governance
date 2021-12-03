@@ -18,7 +18,7 @@ pub struct EditProposal<'info> {
         has_one = realm)]
     pub voter: Account<'info, Voter>,
 
-    #[account(
+    #[account(mut,
         has_one = realm,
         has_one = owner)]
     pub proposal: Account<'info, Proposal>,

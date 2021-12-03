@@ -46,7 +46,8 @@ impl Proposal {
     }
 
     pub fn content_mut(&mut self) -> &mut ProposalContent {
-        if !self.lifecycle.activated(Clock::get().unwrap().unix_timestamp) {
+        if self.lifecycle.activated(Clock::get().unwrap().unix_timestamp)
+            || self.lifecycle.finalized(Clock::get().unwrap().unix_timestamp) {
             panic!("Proposal is not editable.")
         }
         &mut self.content
@@ -77,8 +78,9 @@ pub struct ProposalLifecycle {
 
 impl ProposalLifecycle {
     pub fn activate(&mut self, timestamp: Option<UnixTimestamp>) {
-        if self.activated(Clock::get().unwrap().unix_timestamp) {
-            panic!("Cannot modify the activation time of a proposal that was already activated.");
+        if self.activated(Clock::get().unwrap().unix_timestamp)
+            || self.finalized(Clock::get().unwrap().unix_timestamp) {
+            panic!("Cannot modify the activation time of a proposal that was already activated or finalized.");
         }
         self.activate = timestamp;
     }

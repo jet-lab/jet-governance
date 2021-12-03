@@ -135,7 +135,7 @@ impl<'a> TestVoter<'a> {
         let test_proposal = TestProposal {
             client: self.client,
             realm: self.realm,
-            owner: self.owner.pubkey(),
+            owner: self.owner,
             key,
         };
         let proposal = test_proposal.state()?;
@@ -209,7 +209,7 @@ impl<'a> TestVoter<'a> {
 pub struct TestProposal<'a> {
     pub client: &'a TestClient,
     pub realm: &'a TestRealm<'a>,
-    pub owner: Pubkey,
+    pub owner: &'a dyn Signer,
     pub key: Pubkey,
 }
 
@@ -218,9 +218,26 @@ impl<'a> TestProposal<'a> {
         state::get_proposal(&self.client.anchor_program, self.key)
     }
 
-    pub fn finalize(&self, owner: &dyn Signer, when: Time) -> Result<()> {
-        println!("Finalizing");
-        self.transition(owner, ProposalEvent::Finalize, when)
+    pub fn edit(&self, name: &str, description: &str) -> Result<()> {
+        println!("Editing proposal");
+        instructions::edit_proposal(
+            &self.client.anchor_program,
+            self.key,
+            self.realm.key,
+            self.owner,
+            name,
+            description,
+        )
+    }
+
+    pub fn activate(&self, when: Time) -> Result<()> {
+        println!("Activating proposal");
+        self.transition(self.owner, ProposalEvent::Activate, when)
+    }
+
+    pub fn finalize(&self, when: Time) -> Result<()> {
+        println!("Finalizing proposal");
+        self.transition(self.owner, ProposalEvent::Finalize, when)
     }
 
     pub fn transition(&self, owner: &dyn Signer, event: ProposalEvent, when: Time) -> Result<()> {

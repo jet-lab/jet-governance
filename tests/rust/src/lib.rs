@@ -9,6 +9,7 @@ mod tests {
     use anchor_client::{solana_sdk::pubkey::Pubkey};
     use anyhow::Result;
     use jet_governance::{instructions::Time, state::Vote2};
+    use jet_governance_client::instructions;
     use solana_sdk::{signature::Keypair, signer::Signer};
 
     use crate::helper::{TestClient, TestRealm, now};
@@ -66,6 +67,117 @@ mod tests {
     }
 
     #[test]
+    fn only_realm_owner_may_propose() -> Result<()> {
+        let client = TestClient::new();
+        let realm_owner = Keypair::new();
+        let realm = TestRealm::new_custom_owner(&client, realm_owner.pubkey())?;
+        let proposer = realm.init_voter(&realm_owner)?;
+        proposer.init_proposal(
+            "hello world",
+            "this proposal says hello",
+            Time::Now,
+            Time::Never,
+        )?;
+
+        let voter_signer = Keypair::new();
+        let voter = realm.init_voter(&voter_signer)?;
+        let result = voter.init_proposal(
+            "hello world 2",
+            "this proposal says hello too",
+            Time::Now,
+            Time::Never,
+        );
+        assert_eq!(true, result.is_err());
+        
+        Ok(())
+    }
+
+    #[test]
+    fn only_proposal_owner_may_edit() -> Result<()> {
+        let client = TestClient::new();
+        let realm_owner = Keypair::new();
+        let realm = TestRealm::new_custom_owner(&client, realm_owner.pubkey())?;
+        let proposer = realm.init_voter(&realm_owner)?;
+        let proposal = proposer.init_proposal(
+            "draft",
+            "this is a draft",
+            Time::Never,
+            Time::Never,
+        )?;
+        proposal.edit("hello", "hello world")?;
+
+        let voter_signer = Keypair::new();
+        realm.init_voter(&voter_signer)?;
+        instructions::edit_proposal(
+            &proposal.client.anchor_program,
+            proposal.key,
+            proposal.realm.key,
+            &voter_signer,
+            "bad",
+            "do something evil",
+        ).unwrap_err();
+
+        let proposal = proposal.state()?;
+        assert_eq!("hello", proposal.content().name);
+        assert_eq!("hello world", proposal.content().description);
+        
+        Ok(())
+    }
+
+    #[test]
+    fn activated_proposal_cannot_be_edited_or_retransitioned() -> Result<()> {
+        let client = TestClient::new();
+        let realm_owner = Keypair::new();
+        let realm = TestRealm::new_custom_owner(&client, realm_owner.pubkey())?;
+        let proposer = realm.init_voter(&realm_owner)?;
+        let proposal = proposer.init_proposal(
+            "draft",
+            "this is a draft",
+            Time::Never,
+            Time::Never,
+        )?;
+        proposal.edit("hello", "hello world")?;
+        proposal.activate(Time::Now)?;
+        proposal.edit("oops", "too late").unwrap_err();
+        proposal.activate(Time::Now).unwrap_err();
+        proposal.finalize(Time::Now)?;
+        proposal.edit("oops", "too late").unwrap_err();
+        proposal.activate(Time::Now).unwrap_err();
+        proposal.finalize(Time::Now).unwrap_err();
+
+        let proposal = proposal.state()?;
+        assert_eq!("hello", proposal.content().name);
+        assert_eq!("hello world", proposal.content().description);
+        
+        Ok(())
+    }
+
+    #[test]
+    fn early_finalized_proposal_cannot_be_edited_or_transitioned() -> Result<()> {
+        let client = TestClient::new();
+        let realm_owner = Keypair::new();
+        let realm = TestRealm::new_custom_owner(&client, realm_owner.pubkey())?;
+        let proposer = realm.init_voter(&realm_owner)?;
+        let proposal = proposer.init_proposal(
+            "draft",
+            "this is a draft",
+            Time::Never,
+            Time::Never,
+        )?;
+        proposal.edit("hello", "hello world")?;
+        proposal.finalize(Time::Now)?;
+        proposal.edit("oops", "too late").unwrap_err();
+        proposal.activate(Time::Now).unwrap_err();
+        proposal.finalize(Time::Now).unwrap_err();
+
+        let proposal = proposal.state()?;
+        assert_eq!("hello", proposal.content().name);
+        assert_eq!("hello world", proposal.content().description);
+        
+        Ok(())
+    }
+
+    #[test]
     fn voter_should_not_be_able_to_withdraw_with_active_votes() -> Result<()> {
         let client = TestClient::new();
         let realm_owner = Keypair::new();
@@ -84,8 +196,95 @@ mod tests {
         voter.deposit(80)?;
         voter.vote(proposal, Vote2::Yes)?;
         
-        let result = voter.withdraw(1);
-        assert_eq!(true, result.is_err());
+        voter.withdraw(1).unwrap_err();
+        
+        Ok(())
+    }
+
+    #[test]
+    fn cannot_vote_on_inactive_proposal() -> Result<()> {
+        let client = TestClient::new();
+        let realm = TestRealm::new(&client)?;
+        let proposer = realm.init_voter(client.payer.as_ref())?;
+        let proposal = proposer.init_proposal(
+            "hello world",
+            "this proposal says hello",
+            Time::Never,
+            Time::Never,
+        )?;
+
+        let voter_signer = Keypair::new();
+        let voter = realm.init_voter(&voter_signer)?;
+        voter.mint(100)?;
+        voter.deposit(60)?;
+        voter.vote(proposal, Vote2::Yes).unwrap_err();
+        
+        proposal.activate(Time::Now)?;
+        let voter_signer = Keypair::new();
+        let voter = realm.init_voter(&voter_signer)?;
+        voter.mint(100)?;
+        voter.deposit(50)?;
+        voter.vote(proposal, Vote2::No)?;
+
+        proposal.finalize(Time::Now)?;
+        let voter_signer = Keypair::new();
+        let voter = realm.init_voter(&voter_signer)?;
+        voter.mint(100)?;
+        voter.deposit(40)?;
+        voter.vote(proposal, Vote2::Abstain).unwrap_err();
+        
+        let proposal = proposal.state()?;
+        assert_eq!(0, proposal.vote().yes());
+        assert_eq!(50, proposal.vote().no());
+        assert_eq!(0, proposal.vote().abstain());
+        
+        Ok(())
+    }
+
+    #[test]
+    fn voter_should_not_be_able_to_withdraw_more_tokens_than_they_deposited() -> Result<()> {
+        let client = TestClient::new();
+        let realm = TestRealm::new(&client)?;
+
+        let key = Keypair::new();
+        let voter1 = realm.init_voter(&key)?;
+        voter1.mint(100)?;
+        voter1.deposit(80)?;
+        
+        let key = Keypair::new();
+        let voter2 = realm.init_voter(&key)?;
+        voter2.mint(100)?;
+        voter2.deposit(40)?;
+        
+        voter2.withdraw(41).unwrap_err();
+
+        let voter2 = voter2.state()?;
+        assert_eq!(40, voter2.deposited);
+        
+        Ok(())
+    }
+
+
+    #[test]
+    fn voter_should_not_be_able_to_incrementally_withdraw_more_tokens_than_they_deposited() -> Result<()> {
+        let client = TestClient::new();
+        let realm = TestRealm::new(&client)?;
+
+        let key = Keypair::new();
+        let voter1 = realm.init_voter(&key)?;
+        voter1.mint(100)?;
+        voter1.deposit(80)?;
+        
+        let key = Keypair::new();
+        let voter2 = realm.init_voter(&key)?;
+        voter2.mint(100)?;
+        voter2.deposit(40)?;
+        voter2.withdraw(40)?;
+        
+        voter2.withdraw(1).unwrap_err();
+
+        let voter2 = voter2.state()?;
+        assert_eq!(0, voter2.deposited);
         
         Ok(())
     }
@@ -160,7 +359,7 @@ mod tests {
         assert_eq!(1, voter.active_votes);
         
         // finalize
-        test_proposal.finalize(client.payer.as_ref(), Time::Now)?;
+        test_proposal.finalize(Time::Now)?;
         let current_timestamp = now();
 
         let proposal = test_proposal.state()?;

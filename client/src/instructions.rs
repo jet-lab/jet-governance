@@ -176,6 +176,34 @@ pub fn init_proposal(
     Ok(proposal_account.pubkey())
 }
 
+pub fn edit_proposal(
+    anchor_program: &Program,
+    proposal: Pubkey,
+    realm: Pubkey,
+    owner: &dyn Signer,
+    name: &str,
+    description: &str,
+) -> Result<()> {
+    let voter = Pubkey::find_program_address(
+        &[b"voter", &owner.pubkey().to_bytes(), &realm.to_bytes()],
+        &anchor_program.id()
+    ).0;
+    anchor_program
+        .request()
+        .accounts(jet_governance::accounts::EditProposal {
+            realm,
+            owner: owner.pubkey(),
+            voter,
+            proposal,
+        })
+        .args(jet_governance::instruction::EditProposal {
+            name: name.to_string(),
+            description: description.to_string(),
+        })
+        .signer(owner)
+        .send()?;
+    Ok(())
+}
 
 pub fn vote(
     anchor_program: &Program,
