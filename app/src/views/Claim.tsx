@@ -3,7 +3,7 @@ import { useProposal } from "../contexts/proposal";
 import { Button, Divider, Progress, Collapse, Timeline } from "antd";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { shortenAddress, formatTokenAmount } from "../utils/utils";
-import { user } from "../hooks/useClient";
+import { useUser } from "../hooks/useClient";
 // import { user, proposals } from "../hooks/jet-client/useClient";
 
 export const ClaimView = () => {

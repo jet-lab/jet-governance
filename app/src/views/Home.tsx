@@ -1,23 +1,43 @@
 import React, { useState } from "react";
 import { useProposal } from "../contexts/proposal";
 import { ProposalCard } from "../components/ProposalCard";
-import { Button, InputNumber, Divider } from "antd";
+import { Button, Divider } from "antd";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { shortenAddress, formatTokenAmount } from "../utils/utils";
-import { user, proposals } from "../hooks/useClient";
+import { useUser, proposals } from "../hooks/useClient";
 import { Input } from "../components/Input";
-// import { user, proposals } from "../hooks/jet-client/useClient";
+import { makeAirdropTx } from "@jet-lab/jet-engine";
+import { sendTransaction } from "../contexts/connection";
+import { useConnection } from "../contexts/connection";
+import { JET_FAUCET_DEVNET, JET_TOKEN_MINT_DEVNET } from "../utils/ids";
 
 export const HomeView = () => {
+  const wallet = useWallet();
   const { connected, publicKey } = useWallet();
+  const connection = useConnection()
   const { showing, setShowing, shownProposals } = useProposal();
   const [inputAmount, setInputAmount] = useState<number | null>(null);
+  const {jetBalance, locked} = useUser()
 
   const inputCheck = (value: number) => {
     if (value && value < 0) {
       value = 0;
     }
   };
+
+
+ const getAirdrop = async () => {
+  if (!publicKey) {
+    return alert("Connect your wallet!");
+  }
+  let transactionInstruction = await makeAirdropTx(JET_TOKEN_MINT_DEVNET, JET_FAUCET_DEVNET, publicKey, connection);
+  await sendTransaction(
+      connection,
+      wallet,
+      transactionInstruction,
+      []
+  )
+}
 
   return (
     <div className="content-body">
@@ -27,16 +47,17 @@ export const HomeView = () => {
         <div className="neu-inset" style={{width: "260px"}}>
           <h3>Staked Balance</h3>
           <div className="text-gradient" id="locked-balance">
-            {connected ? user.jet.locked : 0} JET
+            {connected ? jetBalance.balance : 0} JET
           </div>
           <div id="wallet-overview" className="flex justify-between">
             <span>38.5k JET available to unstake. Visit claims for info.</span>
           </div>
+          <Button onClick={getAirdrop}>GET JET</Button>
           <Divider />
           <div className="flex column">
             <Input type="number" token
                 value={inputAmount === null ? '' : inputAmount}
-                maxInput={connected ? user.jet.wallet : 0}
+                maxInput={connected ? jetBalance.balance : 0}
                 disabled={!connected}
                 onChange={(value: number) => setInputAmount(value)}
               submit={() => null}

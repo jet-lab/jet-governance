@@ -6,6 +6,13 @@ export const WRAPPED_SOL_MINT = new PublicKey(
 export const JET_TOKEN_MINT = new PublicKey(
   "JET6zMJWkCN9tpRT2v2jfAmm5VnQFDpUBCyaKojmGtz"
 );
+export const JET_TOKEN_MINT_DEVNET = new PublicKey(
+  "FRuFWBrp1Kh6LpAi9CRvjk97C6YpCR7AERq62N2CZFUg"
+);
+export const JET_FAUCET_DEVNET = new PublicKey(
+  "4RqY4p1xXMcMF1xrGYtJG8aaQDR7s8GHkjfSHFqcBmQV"
+);
+
 export let TOKEN_PROGRAM_ID = new PublicKey(
   "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
 );
