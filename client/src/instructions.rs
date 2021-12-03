@@ -28,6 +28,7 @@ pub fn init_realm(
             token_program: spl_token::id(),
             system_program: system_program::id(),
             rent: rent::id(),
+            payer: anchor_program.payer(),
         })
         .args(jet_governance::instruction::InitRealm {
             bump: InitRealmBumpSeeds {
@@ -44,28 +45,27 @@ pub fn init_realm(
 pub fn init_voter(
     anchor_program: &Program,
     realm: Pubkey,
-    owner: &dyn Signer,
+    owner: Pubkey,
 ) -> Result<Pubkey> {
     let (voter, voter_bump) = Pubkey::find_program_address(
-        &[b"voter", &owner.pubkey().to_bytes(), &realm.to_bytes()],
+        &[b"voter", &owner.to_bytes(), &realm.to_bytes()],
         &anchor_program.id()
     );
     anchor_program
         .request()
         .accounts(jet_governance::accounts::InitVoter {
             realm,
-            owner: owner.pubkey(),
+            owner,
             voter,
             system_program: system_program::id(),
+            payer: anchor_program.payer(),
         })
         .args(jet_governance::instruction::InitVoter {
             bump: voter_bump
         })
-        .signer(owner)
         .send()?;
     Ok(voter)
 }
-
 
 pub fn deposit(
     anchor_program: &Program,
@@ -141,7 +141,7 @@ pub fn withdraw(
 }
 
 
-pub fn propose(
+pub fn init_proposal(
     anchor_program: &Program,
     realm: Pubkey,
     owner: &dyn Signer,
@@ -151,13 +151,19 @@ pub fn propose(
     finalize: Time,
 ) -> Result<Pubkey> {
     let proposal_account = Keypair::new();
+    let voter = Pubkey::find_program_address(
+        &[b"voter", &owner.pubkey().to_bytes(), &realm.to_bytes()],
+        &anchor_program.id()
+    ).0;
     anchor_program
         .request()
         .accounts(jet_governance::accounts::InitProposal {
             realm,
             owner: owner.pubkey(),
+            voter,
             proposal: proposal_account.pubkey(),
             system_program: system_program::id(),
+            payer: anchor_program.payer(),
         })
         .args(jet_governance::instruction::InitProposal {
             name: name.to_string(),
@@ -165,7 +171,6 @@ pub fn propose(
             activate,
             finalize,
         })
-        .signer(owner)
         .signer(&proposal_account)
         .send()?;
     Ok(proposal_account.pubkey())
@@ -196,6 +201,7 @@ pub fn vote(
             proposal,
             vote_record,
             system_program: system_program::id(),
+            payer: anchor_program.payer(),
         })
         .args(jet_governance::instruction::CastVote {
             vote,

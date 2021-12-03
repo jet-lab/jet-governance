@@ -44,12 +44,16 @@ pub struct TestRealm<'a> {
 
 impl<'a> TestRealm<'a> {
     pub fn new(client: &'a TestClient) -> Result<Self> {
+        Self::new_custom_owner(client, client.payer.pubkey())
+    }
+
+    pub fn new_custom_owner(client: &'a TestClient, owner: Pubkey) -> Result<Self> {
         println!("Initializing mint");
         let mint = token::initialize_mint(&client.paying_client)?;
         println!("Initializing realm");
         let realm = instructions::init_realm(
             &client.anchor_program,
-            client.payer.pubkey(),
+            owner,
             mint,
         )?;
         Ok(TestRealm {
@@ -69,7 +73,7 @@ impl<'a> TestRealm<'a> {
         let voter_pubkey = instructions::init_voter(
             &self.client.anchor_program,
             self.key,
-            owner,
+            owner.pubkey(),
         )?;
         let test_voter = TestVoter {
             client: self.client,
@@ -79,47 +83,11 @@ impl<'a> TestRealm<'a> {
             token: token_account,
         };
         let voter = test_voter.state()?;
-        assert_eq!(self.client.payer.pubkey(), voter.owner);
+        assert_eq!(owner.pubkey(), voter.owner);
         assert_eq!(self.key, voter.realm);
         assert_eq!(0, voter.deposited);
         assert_eq!(0, voter.active_votes);
         Ok(test_voter)
-    }
-
-    /// does not validate lifecycle
-    pub fn new_proposal(
-        &self,
-        owner: &dyn Signer,
-        name: &str,
-        description: &str,
-        activate: Time,
-        finalize: Time,
-    ) -> Result<TestProposal> {
-        println!("Creating proposal");
-        let key = instructions::propose(
-            &self.client.anchor_program,
-            self.key,
-            owner,
-            name,
-            description,
-            activate,
-            finalize,
-        )?;
-        let test_proposal = TestProposal {
-            client: self.client,
-            realm: self,
-            owner: owner.pubkey(),
-            key,
-        };
-        let proposal = test_proposal.state()?;
-        assert_eq!(self.client.payer.pubkey(), proposal.owner);
-        assert_eq!(self.key, proposal.realm);
-        assert_eq!(name, proposal.content().name);
-        assert_eq!(description, proposal.content().description);
-        assert_eq!(0, proposal.vote().yes());
-        assert_eq!(0, proposal.vote().no());
-        assert_eq!(0, proposal.vote().abstain());
-        Ok(test_proposal)
     }
 
     pub fn state(&self) -> Result<Realm> {
@@ -144,6 +112,41 @@ impl<'a> TestVoter<'a> {
 
     pub fn state(&self) -> Result<Voter> {
         state::get_voter(&self.client.anchor_program, self.key)
+    }
+    
+    /// does not validate lifecycle
+    pub fn init_proposal(
+        &self,
+        name: &str,
+        description: &str,
+        activate: Time,
+        finalize: Time,
+    ) -> Result<TestProposal> {
+        println!("Creating proposal");
+        let key = instructions::init_proposal(
+            &self.client.anchor_program,
+            self.realm.key,
+            self.owner,
+            name,
+            description,
+            activate,
+            finalize,
+        )?;
+        let test_proposal = TestProposal {
+            client: self.client,
+            realm: self.realm,
+            owner: self.owner.pubkey(),
+            key,
+        };
+        let proposal = test_proposal.state()?;
+        assert_eq!(self.owner.pubkey(), proposal.owner);
+        assert_eq!(self.realm.key, proposal.realm);
+        assert_eq!(name, proposal.content().name);
+        assert_eq!(description, proposal.content().description);
+        assert_eq!(0, proposal.vote().yes());
+        assert_eq!(0, proposal.vote().no());
+        assert_eq!(0, proposal.vote().abstain());
+        Ok(test_proposal)
     }
 
     pub fn deposit(&self, amount: u64) -> Result<()> {

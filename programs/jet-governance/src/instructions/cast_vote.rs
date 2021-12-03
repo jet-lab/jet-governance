@@ -28,11 +28,13 @@ pub struct CastVote<'info> {
              ],
              bump = bump,
              space = 8 + std::mem::size_of::<VoteRecord>(),
-             payer = owner)]
+             payer = payer)]
     pub vote_record: Account<'info, VoteRecord>,
     
     /// Required to init account
     pub system_program: AccountInfo<'info>,
+
+    pub payer: Signer<'info>,
 }
 
 pub fn handler(ctx: Context<CastVote>, _bump: u8, vote: Vote2) -> ProgramResult {

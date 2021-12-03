@@ -10,7 +10,7 @@ pub struct InitRealm<'info> {
     // newly created realm - key provided by initializer: not a PDA
     #[account(init,
         space = 8 + std::mem::size_of::<Realm>(),
-        payer = owner)]
+        payer = payer)]
     pub realm: Account<'info, Realm>,
 
     // account with permission to modify realm configuration
@@ -24,7 +24,7 @@ pub struct InitRealm<'info> {
         ],
         bump = bump.authority,
         space = 8,
-        payer = owner)]
+        payer = payer)]
     pub authority: AccountInfo<'info>,
 
     // Account to store deposited governance tokens
@@ -36,7 +36,7 @@ pub struct InitRealm<'info> {
         bump = bump.vault,
         token::mint = governance_token_mint,
         token::authority = authority,
-        payer = owner)]
+        payer = payer)]
     pub vault: AccountInfo<'info>,
 
     /// The mint for the governance token
@@ -49,6 +49,8 @@ pub struct InitRealm<'info> {
     pub system_program: AccountInfo<'info>,
 
     pub rent: Sysvar<'info, Rent>,
+
+    pub payer: Signer<'info>,
 }
 
 

@@ -9,6 +9,7 @@ mod tests {
     use anchor_client::{solana_sdk::pubkey::Pubkey};
     use anyhow::Result;
     use jet_governance::{instructions::Time, state::Vote2};
+    use solana_sdk::{signature::Keypair, signer::Signer};
 
     use crate::helper::{TestClient, TestRealm, now};
     
@@ -65,6 +66,31 @@ mod tests {
     }
 
     #[test]
+    fn voter_should_not_be_able_to_withdraw_with_active_votes() -> Result<()> {
+        let client = TestClient::new();
+        let realm_owner = Keypair::new();
+        let realm = TestRealm::new_custom_owner(&client, realm_owner.pubkey())?;
+        let proposer = realm.init_voter(&realm_owner)?;
+        let proposal = proposer.init_proposal(
+            "hello world",
+            "this proposal says hello",
+            Time::Now,
+            Time::Never,
+        )?;
+
+        let voter_signer = Keypair::new();
+        let voter = realm.init_voter(&voter_signer)?;
+        voter.mint(100)?;
+        voter.deposit(80)?;
+        voter.vote(proposal, Vote2::Yes)?;
+        
+        let result = voter.withdraw(1);
+        assert_eq!(true, result.is_err());
+        
+        Ok(())
+    }
+
+    #[test]
     fn full_workflow_with_payer_as_voter() -> Result<()> {
         let client = TestClient::new();
         let realm = TestRealm::new(&client)?;
@@ -77,8 +103,7 @@ mod tests {
         assert_eq!(80, voter.deposited);
         
         // proposal
-        let test_proposal = realm.new_proposal(
-            client.payer.as_ref(),
+        let test_proposal = test_voter.init_proposal(
             "Hello world",
             "This proposal says hello",
             Time::Now,

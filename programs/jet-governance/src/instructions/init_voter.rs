@@ -9,7 +9,7 @@ use crate::state::realm::Realm;
 #[instruction(bump: u8)]
 pub struct InitVoter<'info> {
     /// The user with authority over the voter account.
-    pub owner: Signer<'info>,
+    pub owner: AccountInfo<'info>,
 
     /// Realm that voter account exists within
     pub realm: Account<'info, Realm>,
@@ -22,11 +22,13 @@ pub struct InitVoter<'info> {
               ],
               bump = bump,
               space = 8 + std::mem::size_of::<Voter>(),
-              payer = owner)]
+              payer = payer)]
     pub voter: Account<'info, Voter>,
 
     /// Required to init account
     pub system_program: AccountInfo<'info>,
+
+    pub payer: Signer<'info>,
 }
 
 pub fn handler(ctx: Context<InitVoter>, _bump: u8) -> ProgramResult {
