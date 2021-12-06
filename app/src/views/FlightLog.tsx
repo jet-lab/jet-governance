@@ -6,10 +6,8 @@ import { shortenAddress, formatTokenAmount } from "../utils/utils";
 import { useUser } from "../hooks/useClient";
 // import { user, proposals } from "../hooks/jet-client/useClient";
 
-export const ClaimView = () => {
+export const FlightLogView = () => {
   const { connected, publicKey } = useWallet();
-  const { showing, setShowing, shownProposals } = useProposal();
-  const [inputAmount, setInputAmount] = useState<number | null>(null);
 
   const { Panel } = Collapse;
 

@@ -6,8 +6,9 @@ import { ProposalProvider, useProposal } from "./contexts/proposal";
 import { ConnectionProvider } from "./contexts/connection";
 import { AccountsProvider } from "./contexts/accounts";
 import { ConnectWalletProvider } from "./contexts/connectWallet";
+import { AirdropProvider } from "./contexts/airdrop";
 import { AppLayout } from "./components/Layout";
-import { ClaimView } from "./views";
+import { AirdropView, FlightLogView } from "./views";
 
 import { HomeView, ProposalView } from "./views";
 import {
@@ -54,40 +55,45 @@ function App() {
       <ConnectionProvider>
         <WalletProvider wallets={wallets} autoConnect>
           <ConnectWalletProvider>
-            <AccountsProvider>
-              <ProposalProvider>
-                <AppLayout>
-                  <Switch>
-                    <Route exact path="/">
-                      <HomeView />
-                    </Route>
-                    <Route exact path="/claim">
-                      <ClaimView />
-                    </Route>
-                    {geobanned
-                      ? null
-                      : allProposals.map((proposal) => (
-                          <Route
-                            exact
-                            path={`/proposal/${
-                              proposal.id
-                            }/${proposal.headline.substring(0, 7)}`}
-                          >
-                          <ProposalView
-                              description={proposal.description}
-                              id={proposal.id}
-                              result={proposal.result}
-                              headline={proposal.headline}
-                              active={proposal.active}
-                              end={proposal.end}
-                              hash={proposal.hash}
-                            />
-                          </Route>
-                        ))}
-                  </Switch>
-                </AppLayout>
-              </ProposalProvider>
-            </AccountsProvider>
+            <AirdropProvider>
+              <AccountsProvider>
+                <ProposalProvider>
+                  <AppLayout>
+                    <Switch>
+                      <Route exact path="/">
+                        <HomeView />
+                      </Route>
+                      <Route exact path="/airdrop">
+                        <AirdropView />
+                      </Route>
+                      <Route exact path="/flight-log">
+                        <FlightLogView />
+                      </Route>
+                      {geobanned
+                        ? null
+                        : allProposals.map((proposal) => (
+                            <Route
+                              exact
+                              path={`/proposal/${
+                                proposal.id
+                              }/${proposal.headline.substring(0, 7)}`}
+                            >
+                              <ProposalView
+                                description={proposal.description}
+                                id={proposal.id}
+                                result={proposal.result}
+                                headline={proposal.headline}
+                                active={proposal.active}
+                                end={proposal.end}
+                                hash={proposal.hash}
+                              />
+                            </Route>
+                          ))}
+                    </Switch>
+                  </AppLayout>
+                </ProposalProvider>
+              </AccountsProvider>
+            </AirdropProvider>
           </ConnectWalletProvider>
         </WalletProvider>
       </ConnectionProvider>

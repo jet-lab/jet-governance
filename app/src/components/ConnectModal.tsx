@@ -1,6 +1,7 @@
 import React, { FunctionComponent, useState } from "react";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { useConnectWallet } from "../contexts/connectWallet";
+import { useUser } from "../hooks/useClient";
 
 export const ConnectModal: FunctionComponent = () => {
   const { wallets, select, connected } = useWallet();
@@ -14,13 +15,9 @@ export const ConnectModal: FunctionComponent = () => {
           onClick={() => setConnecting(false)}>
         </div>
         <div className="modal flex-centered column">
-          <img src="img/jet/jet_logo_gradient.png"
-            width="120px"
-            height="auto" 
-            alt="Jet Protocol" 
-          />
+          <h2>Connect wallet</h2>
           <span>
-            Connect your wallet to Vote
+            <strong>Vote</strong>, <strong>earn rewards</strong>, and <strong>check for airdrops</strong> by connecting your wallet.
           </span>
           <div className="divider">
           </div>

@@ -23,8 +23,11 @@ export const AppLayout = React.memo(({ children }) => {
                 <Link to="/" className="nav-link">
                   Voting
                 </Link>
-                <Link to="/claim" className="nav-link">
-                  Claims
+                <Link to="/airdrop" className="nav-link">
+                  Airdrop 
+                </Link>
+                <Link to="/flight-log" className="nav-link">
+                  Flight log
                 </Link>
                 <ConnectButton />
                 <ConnectModal />
