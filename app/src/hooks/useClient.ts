@@ -1,9 +1,15 @@
+import { useWallet } from "@solana/wallet-adapter-react";
+import { makeAirdropTx } from "@jet-lab/jet-engine";
+import { useUserBalance } from "./useUserBalance"
+import { JET_FAUCET_DEVNET, JET_TOKEN_MINT_DEVNET } from "../utils/ids";
+import { PublicKey } from "@solana/web3.js";
+
 /* TODO: Tristyn integration client */
-export const user = {
-  jet: {
-    locked: 71358,
-    wallet: 30420
-  }
+export const useUser = (walletAddress?: PublicKey) => {
+  const jetBalance = useUserBalance(JET_TOKEN_MINT_DEVNET);
+  const locked = 71358;
+
+  return {jetBalance, locked};
 };
 
 export const proposals = [

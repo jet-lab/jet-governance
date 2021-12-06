@@ -1,5 +1,5 @@
 import { PublicKey } from "@solana/web3.js";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useMint } from "../contexts/accounts";
 import { fromLamports } from "../utils/utils";
 import { useUserAccounts } from "./useUserAccounts";

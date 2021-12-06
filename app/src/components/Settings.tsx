@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, Select } from "antd";
+import { Select } from "antd";
 import { ENDPOINTS, useConnectionConfig } from "../contexts/connection";
 import { useWallet } from "@solana/wallet-adapter-react";
 
@@ -10,7 +10,6 @@ export const Settings = () => {
   return (
     <>
       <div style={{ display: "grid" }}>
-        Network:{" "}
         <Select
           onSelect={setEndpoint}
           value={endpoint}
@@ -22,11 +21,6 @@ export const Settings = () => {
             </Select.Option>
           ))}
         </Select>
-        {connected && (
-          <Button type="primary" onClick={disconnect}>
-            Disconnect
-          </Button>
-        )}
       </div>
     </>
   );

@@ -14,6 +14,7 @@ import { setProgramIds } from "../utils/ids";
 import { cache, getMultipleAccounts, MintParser } from "./accounts";
 import { ENV as ChainID } from "@solana/spl-token-registry";
 import { WalletAdapter } from "@solana/wallet-adapter-base";
+import { WalletContextState } from "@solana/wallet-adapter-react";
 
 export type ENV =
   | "mainnet-beta"
@@ -44,7 +45,8 @@ export const ENDPOINTS = [
   },
 ];
 
-const DEFAULT = ENDPOINTS[0].endpoint;
+// TODO BEFORE LAUNCH: Change default to mainnet
+const DEFAULT = ENDPOINTS[2].endpoint;
 
 interface ConnectionConfig {
   connection: Connection;
@@ -59,7 +61,7 @@ const ConnectionContext = React.createContext<ConnectionConfig>({
   setEndpoint: () => {},
   connection: new Connection(DEFAULT, "recent"),
   sendConnection: new Connection(DEFAULT, "recent"),
-  env: ENDPOINTS[0].name,
+  env: ENDPOINTS[2].name,
 });
 
 export function ConnectionProvider({ children = undefined as any }) {
@@ -176,7 +178,7 @@ const getErrorForTransaction = async (connection: Connection, txid: string) => {
 
 export const sendTransaction = async (
   connection: Connection,
-  wallet: WalletAdapter,
+  wallet: WalletContextState,
   instructions: TransactionInstruction[],
   signers: Keypair[],
   awaitConfirmation = true
