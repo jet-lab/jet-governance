@@ -18,10 +18,10 @@ export function AirdropProvider({ children = undefined as any }) {
     name: "Let it rain",
     amount: 70000,
     end: new Date(),
-    claimed: false
+    claimed: true
   }, {
-    name: "Let it rain",
-    amount: 70000,
+    name: "Top secret airdrop",
+    amount: 90000,
     end: new Date(),
     claimed: false
     }

@@ -5,7 +5,7 @@ import { useWallet } from "@solana/wallet-adapter-react";
 import { useAirdrop } from "../contexts/airdrop";
 import { shortenAddress, formatTokenAmount } from "../utils/utils";
 import { useUser } from "../hooks/useClient";
-import { Available } from "../components/airdrop/Available"
+import { Available } from "../components/airdrop/Available";
 // import { user, proposals } from "../hooks/jet-client/useClient";
 
 export const AirdropView = () => {
@@ -29,13 +29,14 @@ export const AirdropView = () => {
           <p>
             Airdrop claims deposit a fixed amount of Jet tokens into your
             governance account. These tokens are locked for a 30-day vesting
-            period, during which your tokens incrementally unlock on a rolling
-            basis. You may vote with your tokens during this period. As tokens
-            are vested, you can unstake them.
+            period, during which time you may vote with your tokens. As tokens
+            are vested, they can remain staked to accrue rewards or you can
+            choose to unstake them.
           </p>
 
           <Divider />
 
+          <h2>Available</h2>
           {airdrops?.map((airdrop) => (
             <Available
               name={airdrop.name}
@@ -43,10 +44,7 @@ export const AirdropView = () => {
               end={airdrop.end}
               claimed={airdrop.claimed}
             />
-))}
-          
-          <h2>Available</h2>
-          
+          ))}
         </div>
       </div>
 
@@ -58,26 +56,28 @@ export const AirdropView = () => {
             <Progress percent={40} showInfo={false} />
             <Divider />
             <Collapse accordion>
-            <Panel header="This is panel header 1" key="1">
-              <p>Airdrop Name</p>
-              <Timeline>
-                <Timeline.Item>Create a services site 2015-09-01</Timeline.Item>
-                <Timeline.Item>
-                  Solve initial network problems 2015-09-01
-                </Timeline.Item>
-                <Timeline.Item>Technical testing 2015-09-01</Timeline.Item>
-                <Timeline.Item>
-                  Network problems being solved 2015-09-01
-                </Timeline.Item>
-              </Timeline>
-            </Panel>
-            <Panel header="This is panel header 2" key="2">
-              <p>Airdrop Name</p>
-            </Panel>
-            <Panel header="This is panel header 3" key="3">
-              <p>Airdrop Name</p>
-            </Panel>
-          </Collapse>
+              <Panel header="This is panel header 1" key="1">
+                <p>Airdrop Name</p>
+                <Timeline>
+                  <Timeline.Item>
+                    Create a services site 2015-09-01
+                  </Timeline.Item>
+                  <Timeline.Item>
+                    Solve initial network problems 2015-09-01
+                  </Timeline.Item>
+                  <Timeline.Item>Technical testing 2015-09-01</Timeline.Item>
+                  <Timeline.Item>
+                    Network problems being solved 2015-09-01
+                  </Timeline.Item>
+                </Timeline>
+              </Panel>
+              <Panel header="This is panel header 2" key="2">
+                <p>Airdrop Name</p>
+              </Panel>
+              <Panel header="This is panel header 3" key="3">
+                <p>Airdrop Name</p>
+              </Panel>
+            </Collapse>
           </div>
         </div>
       </div>
