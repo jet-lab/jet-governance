@@ -14,8 +14,8 @@ export const AppLayout = React.memo(({ children }) => {
     <WalletModalProvider>
       <div className="App">
         <Layout>
-          <Header>
-            <div className="nav-bar">
+          <Header className="nav">
+            <div className="navbar-container">
               <a href="/">
                 <img src={Logo} alt="logo" id="nav-header" />
               </a>

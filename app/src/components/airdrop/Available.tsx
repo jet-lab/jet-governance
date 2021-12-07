@@ -1,11 +1,11 @@
 import { useState, useEffect } from "react";
 import { useWallet } from "@solana/wallet-adapter-react";
-import { Button } from "antd";
+import { Button, Modal, Timeline } from "antd";
 import { CheckOutlined } from "@ant-design/icons";
 import { getRemainingTime } from "../../utils/utils";
 
 export const Available = (props: any) => {
-  const { name, amount, end, claimed } = props;
+  const { name, amount, end, claimed, vested } = props;
   const [currentTime, setCurrentTime] = useState(Date.now());
   const { connected, wallet, publicKey, disconnect } = useWallet();
 
@@ -16,6 +16,30 @@ export const Available = (props: any) => {
     }, 1000);
     return () => clearInterval(secondInterval);
   });
+
+  const claimAirdrop = () => {
+    Modal.info({
+      title: "You just received an airdrop!",
+      centered: true,
+      content: (
+        <div>
+          <p>
+            You can use your airdrop tokens to vote immediately, but staking
+            rewards will only begin to accrue when your airdrop has vested.
+          </p>
+          <Timeline>
+            <Timeline.Item>Claimed</Timeline.Item>
+            <Timeline.Item className="incomplete">
+              Vesting period begins
+            </Timeline.Item>
+            <Timeline.Item className="incomplete">Vesting complete</Timeline.Item>
+          </Timeline>
+        </div>
+      ),
+      okText: `I understand`,
+      onOk() {},
+    });
+  };
 
   return (
     <div className="flex justify-between align-center">
@@ -31,6 +55,7 @@ export const Available = (props: any) => {
       <Button
         type="primary"
         className={`claim-button ${claimed ? "disabled" : ""}`}
+        onClick={claimAirdrop}
       >
         {claimed ? <CheckOutlined /> : "claim"}
       </Button>

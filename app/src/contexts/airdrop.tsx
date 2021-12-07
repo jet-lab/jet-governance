@@ -5,7 +5,8 @@ interface AirdropConfig {
     name: string,
     amount: number,
     end: Date,
-    claimed: boolean
+    claimed: boolean,
+    vested?: boolean
   }[];
 }
 
@@ -18,7 +19,8 @@ export function AirdropProvider({ children = undefined as any }) {
     name: "Let it rain",
     amount: 70000,
     end: new Date(),
-    claimed: true
+    claimed: true,
+    vested: false
   }, {
     name: "Top secret airdrop",
     amount: 90000,

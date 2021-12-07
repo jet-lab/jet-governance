@@ -43,6 +43,7 @@ export const AirdropView = () => {
               amount={airdrop.amount}
               end={airdrop.end}
               claimed={airdrop.claimed}
+              vested={airdrop.vested}
             />
           ))}
         </div>
@@ -50,7 +51,7 @@ export const AirdropView = () => {
 
       <div className="panel">
         <h3>Your info</h3>
-        <div className="flex justify-between header">
+        <div className="header">
           <div className="neu-container">
             <h2>Vesting progress</h2>
             <Progress percent={40} showInfo={false} />
