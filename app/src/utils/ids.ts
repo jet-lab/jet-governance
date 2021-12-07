@@ -25,6 +25,15 @@ export let SWAP_PROGRAM_ID = new PublicKey(
   "SwaPpA9LAaLfeLi3a68M4DjnLqgtticKg6CnyNwgAC8"
 );
 
+export const JET_GOV_PROGRAM_ID = new PublicKey(
+  "5TBwvU5xoA13fzmZgWVgFBUmBz1YCdiq2AshDZpPn3AL"
+);
+
+// TODO: what is the realm public key?
+export const GOV_REALM_ADDRESS = new PublicKey(
+  "Realm11111111111111111111111111111111111111"
+);
+
 export const PROGRAM_IDS = [
   {
     name: "mainnet-beta",

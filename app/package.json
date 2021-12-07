@@ -24,7 +24,7 @@
   "dependencies": {
     "@ant-design/icons": "^4.5.0",
     "@craco/craco": "^5.7.0",
-    "@jet-lab/jet-engine": "file:../../jet-engine",
+    "@jet-lab/jet-engine": "^0.2.0",
     "@project-serum/serum": "^0.13.34",
     "@solana/spl-token": "^0.1.6",
     "@solana/spl-token-registry": "^0.2.203",
