@@ -1,7 +1,7 @@
 @import "~antd/dist/antd.less";
 @import "./jet-antd.less";
 @import "./jet-styles.css";
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap");
 
 /* Governance-specific app variables */
 :root {
@@ -163,26 +163,26 @@ h5 {
 }
 
 #staking-input {
-    position: relative;
-    width: 100%;
-    input {
+  position: relative;
+  width: 100%;
+  input {
     position: relative;
     font-size: 20px;
     padding-left: 50px;
     padding-right: 80px;
   }
-   span {
+  span {
     font-size: 24px;
     color: var(--dark-grey);
   }
-   .token-abbrev {
+  .token-abbrev {
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
     right: var(--spacing-md);
     padding: unset;
   }
-   img {
+  img {
     width: 25px;
     height: auto;
     position: absolute;
@@ -249,23 +249,6 @@ h5 {
         padding-bottom: 20px;
         letter-spacing: unset;
       }
-      // .status-details {
-      //   margin-top: 6px;
-      //   margin-left: 20px;
-      //   font-size: 10px;
-      //   line-height: 10px;
-      //   letter-spacing: 0.1em;
-      //   div {
-      //     align-items: flex-end;
-      //     h5 {
-      //       width: 105px;
-      //     }
-      //     span {
-      //       font-size: 12px;
-      //       line-height: 23px;
-      //     }
-      //   }
-      // }
       p {
         font-size: 15px;
         line-height: 26px;
@@ -304,7 +287,7 @@ h5 {
   }
   .voters {
     flex-grow: 1;
-}
+  }
   .stakeholders {
     display: flex;
     font-size: 12px;
@@ -336,6 +319,16 @@ h5 {
   .ant-progress-bg {
     height: 31px !important;
   }
+  .avail-info {
+    width: 85%;
+  }
+  .claim-button {
+    width: 15%;
+  }
+}
+
+.gray {
+  color: var(--dark-grey)
 }
 
 @media only screen and (max-width: 780px) {

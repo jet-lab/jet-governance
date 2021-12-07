@@ -37,7 +37,7 @@ export const AirdropView = () => {
           <Divider />
 
           <h2>Available</h2>
-          {airdrops?.map((airdrop) => (
+          {connected && airdrops?.map((airdrop) => (
             <Available
               name={airdrop.name}
               amount={airdrop.amount}
