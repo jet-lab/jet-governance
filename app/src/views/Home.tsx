@@ -49,16 +49,31 @@ export const HomeView = () => {
         <h3>Your Info</h3>
 
         <div className="neu-inset" style={{ width: "260px" }}>
-          <h3>Staked Balance</h3>
+          <h3>Voting Balance</h3>
           <div className="text-gradient" id="locked-balance">
             {connected ? jetBalance.balance : 0} JET
           </div>
-          <div id="wallet-overview" className="flex justify-between">
-            <span>38.5k JET available to unstake. Visit claims for info.</span>
+          <div id="wallet-overview" className="flex justify-between column">
+            <div className="flex justify-between">
+              <span >Current Staking APR</span>
+              <span>10%</span>
+            </div>
+            <div className="flex justify-between">
+              <span>Est. Daily Reward</span>
+              <span>10%</span>
+            </div>
+            <div className="flex justify-between">
+              <span>Est. Monthly Reward</span>
+              <span>10%</span>
+            </div>
           </div>
           <Button onClick={getAirdrop}>GET JET</Button>
           <Divider />
           <div className="flex column">
+          <div className="flex justify-between">
+              <span>Staked Tokens</span>
+              <span>{locked}</span>
+            </div>
             <Input
               type="number"
               token
@@ -68,16 +83,28 @@ export const HomeView = () => {
               onChange={(value: number) => setInputAmount(value)}
               submit={() => null}
             />
-            <Button onClick={() => setShowStakeModal(true)} disabled={!connected && true}>Stake</Button>
+            <Button
+              onClick={() => setShowStakeModal(true)}
+              disabled={!connected && true}
+            >
+              Stake
+            </Button>
             <StakeModal
               showModal={showStakeModal}
-              stakeAmount={inputAmount}
-              setShowStakeModal={setShowStakeModal}/>
-            <Button onClick={() => setShowUnstakeModal(true)} disabled={!connected && true}>Unstake</Button>
+              stakeAmount={inputAmount ?? 0}
+              setShowStakeModal={setShowStakeModal}
+            />
+            <Button
+              onClick={() => setShowUnstakeModal(true)}
+              disabled={!connected && true}
+            >
+              Unstake
+            </Button>
             <UnstakeModal
               showModal={showUnstakeModal}
-              locked={locked}
-              setShowStakeModal={setShowStakeModal}/>
+              unstakedAmount={inputAmount ?? 0}
+              setShowStakeModal={setShowStakeModal}
+            />
           </div>
         </div>
       </div>

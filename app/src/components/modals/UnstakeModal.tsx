@@ -4,10 +4,10 @@ import { Modal } from "antd";
 export const UnstakeModal = (props: {
   showModal: boolean;
   setShowStakeModal: Function;
-  locked: number | null;
+  unstakedAmount: number | null;
 }) => {
   const [unstakeSuccess, setUnstakeSuccess] = useState(false);
-  const { showModal, locked, setShowStakeModal } = props;
+  const { showModal, unstakedAmount, setShowStakeModal } = props;
 
   const handleOk = () => {
     setShowStakeModal(false);
@@ -22,7 +22,7 @@ export const UnstakeModal = (props: {
   return (
     <>
       <Modal
-        title={`You are unstaking ${locked} JET from the platform.`}
+        title={`You are unstaking ${unstakedAmount} JET from the platform.`}
         visible={showModal}
         okText="Confirm"
         onOk={handleOk}
@@ -42,11 +42,12 @@ export const UnstakeModal = (props: {
       </Modal>
 
       <Modal
-        title={`You have successfully unstaked ${locked} JET.`}
+        title={`You have successfully unstaked ${unstakedAmount} JET.`}
         visible={unstakeSuccess}
         okText="Confirm"
         onOk={handleOk}
         onCancel={handleCancel}
+        cancelButtonProps={{ style: { display: "none " } }}
       >
       </Modal>
     </>

@@ -28,6 +28,7 @@ export const StakeModal = (props: {
         onOk={handleOk}
         onCancel={handleCancel}
         closable={false}
+        cancelButtonProps={{ style: { display: "none " } }}
       >
         <p>Staking tokens yields X% APR.</p>
 
