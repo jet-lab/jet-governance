@@ -10,14 +10,19 @@ import { makeAirdropTx } from "@jet-lab/jet-engine";
 import { sendTransaction } from "../contexts/connection";
 import { useConnection } from "../contexts/connection";
 import { JET_FAUCET_DEVNET, JET_TOKEN_MINT_DEVNET } from "../utils/ids";
+import { StakeModal } from "../components/modals/StakeModal";
+import { UnstakeModal } from "../components/modals/UnstakeModal";
 
 export const HomeView = () => {
+  const [showStakeModal, setShowStakeModal] = useState(false);
+  const [showUnstakeModal, setShowUnstakeModal] = useState(false);
+
   const wallet = useWallet();
   const { connected, publicKey } = useWallet();
-  const connection = useConnection()
+  const connection = useConnection();
   const { showing, setShowing, shownProposals } = useProposal();
   const [inputAmount, setInputAmount] = useState<number | null>(null);
-  const {jetBalance, locked} = useUser()
+  const { jetBalance, locked } = useUser();
 
   const inputCheck = (value: number) => {
     if (value && value < 0) {
@@ -25,26 +30,25 @@ export const HomeView = () => {
     }
   };
 
-
- const getAirdrop = async () => {
-  if (!publicKey) {
-    return alert("Connect your wallet!");
-  }
-  let transactionInstruction = await makeAirdropTx(JET_TOKEN_MINT_DEVNET, JET_FAUCET_DEVNET, publicKey, connection);
-  await sendTransaction(
-      connection,
-      wallet,
-      transactionInstruction,
-      []
-  )
-}
+  const getAirdrop = async () => {
+    if (!publicKey) {
+      return alert("Connect your wallet!");
+    }
+    let transactionInstruction = await makeAirdropTx(
+      JET_TOKEN_MINT_DEVNET,
+      JET_FAUCET_DEVNET,
+      publicKey,
+      connection
+    );
+    await sendTransaction(connection, wallet, transactionInstruction, []);
+  };
 
   return (
     <div className="content-body">
       <div className="panel">
         <h3>Your Info</h3>
 
-        <div className="neu-inset" style={{width: "260px"}}>
+        <div className="neu-inset" style={{ width: "260px" }}>
           <h3>Staked Balance</h3>
           <div className="text-gradient" id="locked-balance">
             {connected ? jetBalance.balance : 0} JET
@@ -55,24 +59,30 @@ export const HomeView = () => {
           <Button onClick={getAirdrop}>GET JET</Button>
           <Divider />
           <div className="flex column">
-            <Input type="number" token
-                value={inputAmount === null ? '' : inputAmount}
-                maxInput={connected ? jetBalance.balance : 0}
-                disabled={!connected}
-                onChange={(value: number) => setInputAmount(value)}
+            <Input
+              type="number"
+              token
+              value={inputAmount === null ? "" : inputAmount}
+              maxInput={connected ? jetBalance.balance : 0}
+              disabled={!connected}
+              onChange={(value: number) => setInputAmount(value)}
               submit={() => null}
             />
-            <Button type="primary" disabled={!connected}>
-              Stake
-            </Button>
-            <Button type="primary" disabled={!connected}>
-              Unstake
-            </Button>
+            <Button onClick={() => setShowStakeModal(true)} disabled={!connected && true}>Stake</Button>
+            <StakeModal
+              showModal={showStakeModal}
+              stakeAmount={inputAmount}
+              setShowStakeModal={setShowStakeModal}/>
+            <Button onClick={() => setShowUnstakeModal(true)} disabled={!connected && true}>Unstake</Button>
+            <UnstakeModal
+              showModal={showUnstakeModal}
+              locked={locked}
+              setShowStakeModal={setShowStakeModal}/>
           </div>
         </div>
       </div>
 
-      <div className="panel" style={{width: "100%"}}>
+      <div className="panel" style={{ width: "100%" }}>
         <div className="flex justify-between header">
           <h3>{showing}</h3>
           <div>

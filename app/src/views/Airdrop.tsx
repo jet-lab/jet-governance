@@ -24,7 +24,7 @@ export const AirdropView = () => {
     <div className="content-body" id="claim">
       <div className="panel">
         <h3>Airdrop</h3>
-        <div className="neu-container">
+        <div className="neu-container view-container">
           <h2>Here’s how your airdrop works.</h2>
           <p>
             Airdrop claims deposit a fixed amount of Jet tokens into your

@@ -1,103 +1,35 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useProposal } from "../contexts/proposal";
-import { ResultProgressBar } from "../components/ResultProgressBar";
+import { ResultProgressBar } from "../components/proposal/ResultProgressBar";
 import { Button, Divider, Modal } from "antd";
 import { ProposalCard } from "../components/ProposalCard";
-import { VoterList } from "../components/VoterList";
+import { VoterList } from "../components/proposal/VoterList";
 import { useWallet } from "@solana/wallet-adapter-react";
-import { useConnection } from "../contexts/connection";
+import { VoteModal } from "../components/proposal/VoteModal";
+import { useUser } from "../hooks/useClient";
 
 export const ProposalView = (props: any) => {
 
   const { id, headline, active, end, description, result, hash } = props;
-  // TODO: Fetch user's stake from blockchain
+  const [vote, setVote] = useState("");
+  const [staked, setStaked] = useState(false);
+    // TODO: Fetch user's stake from blockchain
   const { activeProposals } = useProposal();
   const { connected } = useWallet();
+  const { locked } = useUser();
 
-  const [stake, setStake] = useState(0);
   const inFavor = 722300;
   const against = 220700;
   const abstain = 70200;
   const startDate = new Date("Jan 5, 2022 15:37:25");
   const endDate = new Date("Jan 5, 2022 15:37:25");
-  const now = new Date().getTime();
-  const timeleft = end - now;
-  const days = Math.floor(timeleft / (1000 * 60 * 60 * 24));
 
-
-  const checkIsStaked = () => {
-    if (stake === 0) {
-      return false;
-    }
-  }
-
-  const stakeRedirect = () => {
-    Modal.error({
-        title: 'Before you can vote, you need to lock some JET tokens.',
-        centered: true,
-        content: (
-          <div>
-            <p>Info about what this means. 1 JET = 1 vote. Lock funds in order to vote. Once you lock your desired amount of JET, you will be able to vote on active proposals. Your JET will remain bonded until the proposal voting period ends. Once the period has ended, you can unbond your JET. </p>
-          </div>
-      ),
-      okText: `I understand`,
-        onOk() {},
-      });
-  }
-  
-  const confirmFavor = () => {
-    if (checkIsStaked()) {
-      Modal.success({
-        title: `You're about to vote in favor of proposal #${id}`,
-        centered: true,
-      content: (
-        <div>
-          <p>You have X.XX JET locked, and will be able to unlock these funds when voting ends on end.</p>
-        </div>
-      ),
-      okText: `Confirm vote`,
-      onOk() {},
-    });
-    } else {
-      stakeRedirect();
-    }
-  }
-
-  const confirmAgainst = () => {
-    if (checkIsStaked()) {
-      Modal.error({
-        title: 'This is a notification message',
-        centered: true,
-        content: (
-          <div>
-            <p>some messages...some messages...</p>
-            <p>some messages...some messages...</p>
-          </div>
-        ),
-        onOk() { },
-      });
-    } else {
-      stakeRedirect();
-    }
-  }
-  const confirmAbstain = () => {
-    if (checkIsStaked()) {
-      Modal.info({
-        title: 'This is a notification message',
-        centered: true,
-        content: (
-          <div>
-            <p>some messages...some messages...</p>
-            <p>some messages...some messages...</p>
-          </div>
-        ),
-        onOk() { },
-      });
-    } else {
-      stakeRedirect();
-    }
-}
+  useEffect(() => {
+    if (locked !== 0) {
+      return setStaked(true);
+    };
+  }, [])
 
   return (
     <div className="content-body proposal flex column flex-start">
@@ -108,11 +40,11 @@ export const ProposalView = (props: any) => {
       <div className="flex content">
         <div className="flex column" style={{ width: "70%" }}>
           <h3>Proposal Details</h3>
-          <div className="description neu-container">
+          <div className="description neu-container view-container">
             <div className="flex">
               <h3>Proposal {id}</h3>
             </div>
-            <h1 className="headline text-gradient">{headline}</h1>
+            <h1 className="headline text-gradient view-header">{headline}</h1>
             <p>
               {description}
             </p>
@@ -139,16 +71,17 @@ export const ProposalView = (props: any) => {
 
           <div className="flex column" id="vote-mobile">
           <h3>Your Vote</h3>
-          <div className="neu-container flex column">
-            <Button onClick={confirmFavor} disabled={!connected && true}>In favor</Button>
-            <Button onClick={confirmAgainst} disabled={!connected && true}>Against</Button>
-            <Button onClick={confirmAbstain} disabled={!connected && true}>Abstain</Button>
+          <div className="neu-container flex column view-container">
+            <Button onClick={()=>setVote("inFavor")} disabled={!connected && true}>In favor</Button>
+            <Button onClick={()=>setVote("against")} disabled={!connected && true}>Against</Button>
+            <Button onClick={()=>setVote("abstain")} disabled={!connected && true}>Abstain</Button>
             <Button type="primary" disabled={!connected && true}>Vote</Button>
+            <VoteModal vote={vote} staked={staked} />
           </div>
         </div>
 
           <h3>Vote turnout</h3>
-          <div className="neu-container flex justify-evenly" id="vote-turnout">
+          <div className="neu-container flex justify-evenly view-container" id="vote-turnout">
             <div className="results">
               <ResultProgressBar
                 type="inFavor"
@@ -169,25 +102,17 @@ export const ProposalView = (props: any) => {
             <div className="voters">
               <h5>Top stakeholders</h5>
               <VoterList/>
-              
-              {/* {TOP_STAKEHOLDERS.map((address) => (
-                <Stakeholders
-                  address={address.address}
-                  amount={address.amount}
-                  type={address.vote}
-                />
-              ))} */}
             </div>
           </div>
         </div>
 
         <div className="flex column" style={{ width: "30%" }} id="vote-desktop">
           <h3>Your Vote</h3>
-          <div className="neu-container flex column" id="your-vote">
-            <Button onClick={confirmFavor}  disabled={!connected && true}>In favor</Button>
-            <Button onClick={confirmAgainst}  disabled={!connected && true}>Against</Button>
-            <Button onClick={confirmAbstain}  disabled={!connected && true}>Abstain</Button>
-            <Button type="primary" disabled={!connected && true}>Vote</Button>
+          <div className="neu-container view-container flex column" id="your-vote">
+            <Button onClick={()=>setVote("inFavor")}  disabled={!connected && true}>In favor</Button>
+            <Button onClick={()=>setVote("against")}  disabled={!connected && true}>Against</Button>
+            <Button onClick={()=>setVote("abstain")}  disabled={!connected && true}>Abstain</Button>
+            <VoteModal vote={vote} staked={staked} />
           </div>
         </div>
       </div>

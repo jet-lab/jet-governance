@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { List, Button, Skeleton } from 'antd';
-import { Voter, TOP_STAKEHOLDERS } from "../models/TOP_STAKEHOLDERS";
+import { Voter, TOP_STAKEHOLDERS } from "../../models/TOP_STAKEHOLDERS";
 import { Stakeholders } from './Stakeholders';
 
 export const VoterList = () => {

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Progress } from 'antd';
-import { abbreviateNumber } from "../utils/utils";
+import { abbreviateNumber } from "../../utils/utils";
 
 export const ResultProgressBar = (props: any) => {
   const { type, amount, total } = props;

@@ -3,11 +3,13 @@ import { useWallet } from "@solana/wallet-adapter-react";
 import { Button, Modal, Timeline } from "antd";
 import { CheckOutlined } from "@ant-design/icons";
 import { getRemainingTime } from "../../utils/utils";
+import { ClaimModal } from "./ClaimModal";
 
 export const Available = (props: any) => {
+  const [showModal, setShowModal] = useState(false);
+  const { connected, wallet, publicKey, disconnect } = useWallet();
   const { name, amount, end, claimed, vested } = props;
   const [currentTime, setCurrentTime] = useState(Date.now());
-  const { connected, wallet, publicKey, disconnect } = useWallet();
 
   // Update current time every second
   useEffect(() => {
@@ -18,27 +20,7 @@ export const Available = (props: any) => {
   });
 
   const claimAirdrop = () => {
-    Modal.info({
-      title: "You just received an airdrop!",
-      centered: true,
-      content: (
-        <div>
-          <p>
-            You can use your airdrop tokens to vote immediately, but staking
-            rewards will only begin to accrue when your airdrop has vested.
-          </p>
-          <Timeline>
-            <Timeline.Item>Claimed</Timeline.Item>
-            <Timeline.Item className="incomplete">
-              Vesting period begins
-            </Timeline.Item>
-            <Timeline.Item className="incomplete">Vesting complete</Timeline.Item>
-          </Timeline>
-        </div>
-      ),
-      okText: `I understand`,
-      onOk() {},
-    });
+    setShowModal(true);
   };
 
   return (
@@ -54,11 +36,18 @@ export const Available = (props: any) => {
       </span>
       <Button
         type="primary"
-        className={`claim-button ${claimed ? "disabled" : ""}`}
+        className="claim-button"
         onClick={claimAirdrop}
+        disabled={claimed ? true : false}
       >
         {claimed ? <CheckOutlined /> : "claim"}
       </Button>
+
+      <ClaimModal
+        showModal={showModal}
+        stakeAmount={1000}
+        setShowModal={setShowModal}
+      />
     </div>
   );
 };

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { abbreviateNumber, shortenAddress } from "../utils/utils";
+import { abbreviateNumber, shortenAddress } from "../../utils/utils";
 
 export const Stakeholders = (props: any) => {
   const { type, amount, address } = props;
