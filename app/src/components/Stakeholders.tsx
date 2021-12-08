@@ -11,12 +11,12 @@ export const Stakeholders = (props: any) => {
   useEffect(() => {
     if (type === true) {
     setVote("in favor")
-    setColor("var(--gradient)")
+    setColor("@gradient")
     setGradient(true);
     setSymbol("fas fa-thumbs-up")
   } else if (type === false) {
     setVote("against")
-    setColor("var(--failure)")
+    setColor("@failure")
     setSymbol("fas fa-thumbs-down")
   }
   }, [type])

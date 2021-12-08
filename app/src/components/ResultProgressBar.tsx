@@ -12,12 +12,12 @@ export const ResultProgressBar = (props: any) => {
   useEffect(() => {
     if (type === "inFavor") {
     setVote("in favor")
-    setColor("var(--gradient)")
+    setColor("var(@gradient)")
     setGradient(true);
     setSymbol("fas fa-thumbs-up")
   } else if (type === "against") {
     setVote("against")
-    setColor("var(--failure)")
+    setColor("var(@failure)")
     setSymbol("fas fa-thumbs-down")
   }
 }, [type])

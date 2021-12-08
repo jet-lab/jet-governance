@@ -1,122 +1,25 @@
-@import "@jet-lab/jet-antd/lib/jet-antd.less";
-@import "@jet-lab/jet-antd/lib/dark.less";
+@import "~@jet-lab/jet-antd/lib/jet-antd.less";
+@import "~@jet-lab/jet-antd/lib/jet-antd-dark.less";
 @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap");
 
 /* Governance-specific app variables */
-:root {
-  --status-active: hsla(140, 84%, 84%, 1);
-  --status-inactive: hsla(0, 4%, 71%, 1);
-  --status-rejected: hsla(0, 73%, 75%, 1);
-  --status-passed: hsla(163, 44%, 43%, 1);
-}
-::-webkit-scrollbar {
-  display: none !important;
-}
-body {
-  position: relative;
-  margin: 0;
-  font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
-  background: var(--white);
-  color: var(--black);
-  overflow-x: hidden;
-  letter-spacing: 0.25px;
-  width: calc(100% - var(--nav-width));
-  margin-left: var(--nav-width);
-}
-
 .neu-container {
-  box-shadow: var(--neu-shadow) !important;
-  border-radius: 4px !important;
-  padding: 29px 26px;
+  box-shadow: @neu-shadow !important;
+  border-radius: @border-radius;
+  padding: @spacing-xl;
 }
 .neu-inset {
-  padding: 29px 26px;
+  padding: @spacing-xl;
   mix-blend-mode: normal;
-  box-shadow: var(--neu-shadow-inset);
-  border-radius: var(--border-radius);
-}
-
-/* Text */
-h1,
-p {
-  position: relative;
-  margin: unset;
-  text-decoration: none;
-  color: var(--black) !important;
-  opacity: 0.9;
-  font-size: 16px;
-}
-
-a,
-i {
-  text-decoration: none;
-  margin: var(--spacing-xs);
-  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
-  -webkit-touch-callout: none;
-  -moz-user-select: none;
-  -khtml-user-select: none;
-  -webkit-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-  font-style: normal;
-}
-*:focus-visible {
-  outline: unset;
-}
-.disabled {
-  cursor: not-allowed !important;
-  opacity: var(--disabled-opacity) !important;
-}
-
-.app-title {
-  font-family: "Poppins";
-  font-style: normal;
-  font-weight: 300;
-  letter-spacing: 0px;
-}
-
-h1,
-h4 {
-  font-family: "Poppins", sans-serif;
-  font-weight: 700;
-  color: hsla(0, 0%, 0%, 1);
-  letter-spacing: 0.1em;
-}
-
-h2 {
-  font-family: "Helvetica Neue";
-  color: hsla(0, 0%, 0%, 1);
-  font-style: normal;
-  font-weight: 300;
-  font-size: 30px;
-  line-height: 35px;
-}
-
-h3 {
-  font-family: "Poppins", sans-serif;
-  text-transform: uppercase;
-  color: hsla(0, 0%, 0%, 1);
-  font-size: 14px;
-  line-height: 21px;
-  letter-spacing: 0.14em;
-  text-align: left;
-  margin-bottom: 23px;
-}
-
-h5 {
-  font-size: 10px;
-  line-height: 12px;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  font-weight: bold;
-  color: var(--black);
+  box-shadow: @neu-shadow-inset;
+  border-radius: @border-radius;
 }
 
 .ant-layout-content {
   display: flex;
   overflow: auto;
-  background-color: var(--white);
-  margin-top: var(--nav-height);
+  background-color: @white;
+  margin-top: @nav-height;
   .panel {
     margin: 0 10px;
     flex-grow: 1;
@@ -124,7 +27,7 @@ h5 {
   .content-body {
     padding-top: 40px;
     display: flex;
-    width: var(--view-clamp);
+    width: @view-clamp;
     margin: auto;
 
     .stake-info {
@@ -155,7 +58,7 @@ h5 {
 #wallet-overview {
   width: 100%;
   span {
-    color: var(--dark-grey);
+    color: @dark-grey;
     font-size: 13px;
     padding-bottom: 20px;
   }
@@ -172,13 +75,13 @@ h5 {
   }
   span {
     font-size: 24px;
-    color: var(--dark-grey);
+    color: @dark-grey;
   }
   .token-abbrev {
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
-    right: var(--spacing-md);
+    right: @spacing-md;
     padding: unset;
   }
   img {
@@ -187,24 +90,24 @@ h5 {
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
-    left: var(--spacing-md);
+    left: @spacing-md;
   }
 }
 
 .default.details,
 .status-details {
-  .active {
-    color: var(--jet-green);
-  }
-  .inactive {
-    color: var(--status-inactive);
-  }
-  .rejected {
-    color: var(--status-rejected);
-  }
-  .passed {
-    color: var(--status-passed);
-  }
+  // .active {
+  //   color: @jet-green);
+  // }
+  // .inactive {
+  //   color: @status-inactive);
+  // }
+  // .rejected {
+  //   color: @status-rejected);
+  // }
+  // .passed {
+  //   color: @status-passed);
+  // }
   div {
     padding-right: 9px;
     display: flex;
@@ -220,16 +123,6 @@ h5 {
 
 .details {
   display: flex;
-}
-
-.divider {
-  box-shadow: inset 2px 2px 2px rgba(0, 0, 0, 0.15),
-    inset 2px 2px 2px rgba(255, 255, 255, 0.9);
-  border-radius: 20px;
-  width: 100%;
-  padding: 0 6%;
-  height: 3px;
-  margin-bottom: 28px;
 }
 
 .proposal {
@@ -280,7 +173,7 @@ h5 {
       span {
         font-family: "Helvetica Neue";
         font-size: 8px;
-        -webkit-text-fill-color: var(--black) !important;
+        -webkit-text-fill-color: @black !important;
       }
     }
   }
@@ -327,7 +220,7 @@ h5 {
 }
 
 .gray {
-  color: var(--dark-grey)
+  color: @dark-grey
 }
 
 @media only screen and (max-width: 780px) {

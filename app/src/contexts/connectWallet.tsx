@@ -22,5 +22,6 @@ export const ConnectWalletProvider = (props: { children: any }) => {
 // Dark theme hook
 export const useConnectWallet = () => {
   const context = useContext(ConnectWalletContext);
+  
   return context;
 };

@@ -1,9 +1,10 @@
-import React, { FunctionComponent, useState } from "react";
+import React, { useState } from "react";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { useConnectWallet } from "../contexts/connectWallet";
-import { useUser } from "../hooks/useClient";
 
-export const ConnectModal: FunctionComponent = () => {
+export function ConnectWalletModal(props: {
+  headline?: string
+}) {
   const { wallets, select, connected } = useWallet();
   const { connecting, setConnecting } = useConnectWallet();
   const [walletChoice, setWalletChoice] = useState('');
@@ -15,16 +16,21 @@ export const ConnectModal: FunctionComponent = () => {
           onClick={() => setConnecting(false)}>
         </div>
         <div className="modal flex-centered column">
-          <h2>Connect wallet</h2>
+          <img src="img/jet/jet_logo_gradient.png"
+            width="120px"
+            height="auto" 
+            alt="Jet Protocol" 
+          />
           <span>
-            <strong>Vote</strong>, <strong>earn rewards</strong>, and <strong>check for airdrops</strong> by connecting your wallet.
+            {props.headline}
           </span>
-          <div className="divider">
+          <div className="ant-divider">
           </div>
           <div className="wallets flex-centered column">
             {wallets.map((wallet) => (
               <div key={wallet.name} 
-                className={`wallet flex align-center justify-between ${walletChoice === wallet.name ? 'active' : ''}`}
+                className={`wallet flex align-center justify-between 
+                  ${walletChoice === wallet.name ? 'active' : ''}`}
                 onClick={() => {
                   setWalletChoice(wallet.name);
                   select(wallet.name);
@@ -35,7 +41,7 @@ export const ConnectModal: FunctionComponent = () => {
                     height="auto"
                     alt={`${wallet.name} Logo`}
                   />
-                  <p>
+                  <p className="center-text">
                     {wallet.name}
                   </p>
                 </div>

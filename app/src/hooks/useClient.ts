@@ -3,13 +3,13 @@ import { useWallet } from "@solana/wallet-adapter-react";
 import { Provider /*, Idl*/ } from '@project-serum/anchor';
 import { GovClient, GovProposal, GovProposalData, GovRealm, GovRealmData, GovVoter, GovVoterData, GovVoteRecord, GovVoteRecordData, /*makeAirdropTx*/ } from "@jet-lab/jet-engine";
 import { useUserBalance } from "./useUserBalance"
-import { JET_FAUCET_DEVNET, JET_TOKEN_MINT_DEVNET, GOV_REALM_ADDRESS } from "../utils/ids";
+import { JET_FAUCET_DEVNET, JET_TOKEN_MINT_DEVNET } from "../utils/ids";
 import { PublicKey } from "@solana/web3.js";
 import { ConfirmOptions } from '@solana/web3.js';
 import { useConnection } from '../contexts/connection';
-import localnetIdl from "../../public/idl/localnet/jet_governance.json"
-import devnetIdl from "../../public/idl/devnet/jet_governance.json";
-import mainnetBetaIdl from "../../public/idl/mainnet-beta/jet_governance.json";
+// import localnetIdl from "../../public/idl/localnet/jet_governance.json"
+// import devnetIdl from "../../public/idl/devnet/jet_governance.json";
+// import mainnetBetaIdl from "../../public/idl/mainnet-beta/jet_governance.json";
 
 /* TODO: Tristyn integration client */
 export const useUser = (walletAddress?: PublicKey) => {
@@ -77,15 +77,15 @@ export const proposals = [
 // 7. GovVoteRecord
 
 
-export let idl: any;
-const idlEnv = process.env.IDL;
-if (idlEnv === 'localnet') {
-  idl = localnetIdl;
-} else if (idlEnv === 'devnet') {
-  idl = devnetIdl;
-} else if (idlEnv === 'mainnet-beta') {
-  idl = mainnetBetaIdl;
-}
+// export let idl: any;
+// const idlEnv = process.env.IDL;
+// if (idlEnv === 'localnet') {
+//   idl = localnetIdl;
+// } else if (idlEnv === 'devnet') {
+//   idl = devnetIdl;
+// } else if (idlEnv === 'mainnet-beta') {
+//   idl = mainnetBetaIdl;
+// }
 
 const confirmOptions = {
   skipPreflight: false,
@@ -130,23 +130,23 @@ export function useClient() {
   return client
 }
 
-export function useRealm() {
-  const client = useClient()
-  const [realm, setRealm] = useState<GovRealm | undefined>()
-  useEffect(() => {
-    let abort = false
-    if (client) {
-      GovRealm.load(client, GOV_REALM_ADDRESS)
-        // TODO: questions - what is newRealm type, GovRealmData?
-        .then(newRealm => !abort && setRealm(newRealm))
-        .catch(console.error)
-    }
+// export function useRealm() {
+//   const client = useClient()
+//   const [realm, setRealm] = useState<GovRealm | undefined>()
+//   useEffect(() => {
+//     let abort = false
+//     if (client) {
+//       GovRealm.load(client, GOV_REALM_ADDRESS)
+//         // TODO: questions - what is newRealm type, GovRealmData?
+//         .then(newRealm => !abort && setRealm(newRealm))
+//         .catch(console.error)
+//     }
 
-    return () => { abort = true }
-  }, [client])
+//     return () => { abort = true }
+//   }, [client])
 
-  return realm
-}
+//   return realm
+// }
 
 export function useProposal() {
   const client = useClient();

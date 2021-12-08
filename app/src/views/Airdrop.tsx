@@ -52,7 +52,7 @@ export const AirdropView = () => {
       <div className="panel">
         <h3>Your info</h3>
         <div className="header">
-          <div className="neu-container">
+          <div className="neu-container view-container">
             <h2>Vesting progress</h2>
             <Progress percent={40} showInfo={false} />
             <Divider />

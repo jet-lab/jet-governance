@@ -9,7 +9,6 @@ import { ConnectWalletProvider } from "./contexts/connectWallet";
 import { AirdropProvider } from "./contexts/airdrop";
 import { AppLayout } from "./components/Layout";
 import { AirdropView, FlightLogView } from "./views";
-
 import { HomeView, ProposalView } from "./views";
 import {
   getMathWallet,
