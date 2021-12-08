@@ -14,9 +14,9 @@ import { useConnection } from '../contexts/connection';
 /* TODO: Tristyn integration client */
 export const useUser = (walletAddress?: PublicKey) => {
   const jetBalance = useUserBalance(JET_TOKEN_MINT_DEVNET);
-  const locked = 71358;
+  const staked = 71358;
 
-  return {jetBalance, locked};
+  return {jetBalance, staked};
 };
 
 export const proposals = [

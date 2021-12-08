@@ -13,11 +13,11 @@ export const ProposalView = (props: any) => {
 
   const { id, headline, active, end, description, result, hash } = props;
   const [vote, setVote] = useState("");
-  const [staked, setStaked] = useState(false);
+  const [ifStaked, setIfStaked] = useState(false);
     // TODO: Fetch user's stake from blockchain
   const { activeProposals } = useProposal();
   const { connected } = useWallet();
-  const { locked } = useUser();
+  const { staked } = useUser();
 
   const inFavor = 722300;
   const against = 220700;
@@ -26,8 +26,8 @@ export const ProposalView = (props: any) => {
   const endDate = new Date("Jan 5, 2022 15:37:25");
 
   useEffect(() => {
-    if (locked !== 0) {
-      return setStaked(true);
+    if (staked !== 0) {
+      return setIfStaked(true);
     };
   }, [])
 
