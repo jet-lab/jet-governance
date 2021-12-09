@@ -1,12 +1,13 @@
 import "./App.less";
 import { HashRouter, Route, Switch } from "react-router-dom";
-import { useMemo, useState, useEffect } from "react";
+import { useMemo, useState } from "react";
 import { WalletProvider } from "@solana/wallet-adapter-react";
 import { ProposalProvider, useProposal } from "./contexts/proposal";
 import { ConnectionProvider } from "./contexts/connection";
 import { AccountsProvider } from "./contexts/accounts";
 import { ConnectWalletProvider } from "./contexts/connectWallet";
 import { AirdropProvider } from "./contexts/airdrop";
+import { DarkThemeProvider } from "./contexts/darkTheme";
 import { AppLayout } from "./components/Layout";
 import { AirdropView, FlightLogView } from "./views";
 import { HomeView, ProposalView } from "./views";
@@ -17,6 +18,8 @@ import {
   getSolletWallet,
   getSolongWallet,
 } from "@solana/wallet-adapter-wallets";
+import "./App.less";
+import "./DarkTheme.less";
 
 function App() {
   const [geobanned, setGeobanned] = useState(false);
@@ -51,51 +54,53 @@ function App() {
 
   return (
     <HashRouter basename={"/"}>
-      <ConnectionProvider>
-        <WalletProvider wallets={wallets} autoConnect>
-          <ConnectWalletProvider>
-            <AirdropProvider>
-              <AccountsProvider>
-                <ProposalProvider>
-                  <AppLayout>
-                    <Switch>
-                      <Route exact path="/">
-                        <HomeView />
-                      </Route>
-                      <Route exact path="/airdrop">
-                        <AirdropView />
-                      </Route>
-                      <Route exact path="/flight-log">
-                        <FlightLogView />
-                      </Route>
-                      {geobanned
-                        ? null
-                        : allProposals.map((proposal) => (
-                            <Route
-                              exact
-                              path={`/proposal/${
-                                proposal.id
-                              }/${proposal.headline.substring(0, 7)}`}
-                            >
-                              <ProposalView
-                                description={proposal.description}
-                                id={proposal.id}
-                                result={proposal.result}
-                                headline={proposal.headline}
-                                active={proposal.active}
-                                end={proposal.end}
-                                hash={proposal.hash}
-                              />
-                            </Route>
-                          ))}
-                    </Switch>
-                  </AppLayout>
-                </ProposalProvider>
-              </AccountsProvider>
-            </AirdropProvider>
-          </ConnectWalletProvider>
-        </WalletProvider>
-      </ConnectionProvider>
+      <DarkThemeProvider>
+        <ConnectionProvider>
+          <WalletProvider wallets={wallets} autoConnect>
+            <ConnectWalletProvider>
+              <AirdropProvider>
+                <AccountsProvider>
+                  <ProposalProvider>
+                    <AppLayout>
+                      <Switch>
+                        <Route exact path="/">
+                          <HomeView />
+                        </Route>
+                        <Route exact path="/airdrop">
+                          <AirdropView />
+                        </Route>
+                        <Route exact path="/flight-log">
+                          <FlightLogView />
+                        </Route>
+                        {geobanned
+                          ? null
+                          : allProposals.map((proposal) => (
+                              <Route
+                                exact
+                                path={`/proposal/${
+                                  proposal.id
+                                }/${proposal.headline.substring(0, 7)}`}
+                              >
+                                <ProposalView
+                                  description={proposal.description}
+                                  id={proposal.id}
+                                  result={proposal.result}
+                                  headline={proposal.headline}
+                                  active={proposal.active}
+                                  end={proposal.end}
+                                  hash={proposal.hash}
+                                />
+                              </Route>
+                            ))}
+                      </Switch>
+                    </AppLayout>
+                  </ProposalProvider>
+                </AccountsProvider>
+              </AirdropProvider>
+            </ConnectWalletProvider>
+          </WalletProvider>
+        </ConnectionProvider>
+      </DarkThemeProvider>
     </HashRouter>
   );
 }

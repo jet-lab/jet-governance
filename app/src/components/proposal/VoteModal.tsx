@@ -1,12 +1,21 @@
 import { useState, useEffect } from "react";
 import { Button, Input, Modal } from "antd";
 
-export const VoteModal = (props: { vote: string, ifStaked: boolean }) => {
-  const [isVoteModalVisible, setIsVoteModalVisible] = useState(false);
-  const [isStakeRedirectVisible, setIsStakeRedirectModalVisible] = useState(false);
+export const VoteModal = (props: {
+  vote: string;
+  ifStaked: boolean;
+  setIsVoteModalVisible: Function;
+  isVoteModalVisible: boolean;
+}) => {
+  const [isStakeRedirectVisible, setIsStakeRedirectModalVisible] =
+    useState(false);
   const [collateral, setCollateral] = useState("500");
 
-  const { vote, ifStaked } = props;
+  const {
+    vote,
+    ifStaked,
+    setIsVoteModalVisible,
+    isVoteModalVisible } = props;
 
   const handleOk = () => {
     setIsVoteModalVisible(false);
@@ -21,7 +30,6 @@ export const VoteModal = (props: { vote: string, ifStaked: boolean }) => {
 
   return (
     <>
-      <Button onClick={showModal}>Make Offer</Button>
       <Modal
         title={`Create offer for TEST`}
         visible={isVoteModalVisible}

@@ -1,0 +1,36 @@
+@import "./App.less";
+
+// Swap theming colors
+@black: #fff;
+@dark-grey: #e1e7f1;
+@grey: #504f4f;
+@light-grey: #494848;
+@white: #444;
+@light-shadow: rgb(82, 82, 82);
+@dark-shadow: rgb(60, 60, 60);
+
+// Specific overrides
+.navbar-container {
+  .left-container-hamburger span {
+    background: @black !important;
+  }
+
+  .nav-link {
+    color: @black !important;
+
+    &::before {
+      background: @black !important;
+    }
+  }
+  
+  .secondary-btn {
+    color: @black !important;
+    border-color: @black !important;
+  }
+}
+
+// Identifyer for stylesheet because 
+// I can't utilize the title unfortunately
+.jet-dark-theme {
+  display: none;
+}

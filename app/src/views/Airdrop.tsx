@@ -21,10 +21,10 @@ export const AirdropView = () => {
   };
 
   return (
-    <div className="content-body" id="claim">
+    <div className="view-container content-body" id="airdrop">
       <div className="panel">
         <h3>Airdrop</h3>
-        <div className="neu-container view-container">
+        <div className="neu-container" style={{ maxWidth: "750px"}}>
           <h2>Here’s how your airdrop works.</h2>
           <p>
             Airdrop claims deposit a fixed amount of Jet tokens into your
@@ -52,9 +52,9 @@ export const AirdropView = () => {
       <div className="panel">
         <h3>Your info</h3>
         <div className="header">
-          <div className="neu-container view-container">
+          <div className="neu-container">
             <h2>Vesting progress</h2>
-            <Progress percent={40} showInfo={false} />
+            <Progress percent={40} />
             <Divider />
             <Collapse accordion>
               <Panel header="This is panel header 1" key="1">

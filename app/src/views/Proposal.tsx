@@ -10,6 +10,7 @@ import { VoteModal } from "../components/proposal/VoteModal";
 import { useUser } from "../hooks/useClient";
 
 export const ProposalView = (props: any) => {
+  const [isVoteModalVisible, setIsVoteModalVisible] = useState(false);
 
   const { id, headline, active, end, description, result, hash } = props;
   const [vote, setVote] = useState("");
@@ -17,7 +18,7 @@ export const ProposalView = (props: any) => {
     // TODO: Fetch user's stake from blockchain
   const { activeProposals } = useProposal();
   const { connected } = useWallet();
-  const { staked } = useUser();
+  const { stakedBalance } = useUser();
 
   const inFavor = 722300;
   const against = 220700;
@@ -26,25 +27,25 @@ export const ProposalView = (props: any) => {
   const endDate = new Date("Jan 5, 2022 15:37:25");
 
   useEffect(() => {
-    if (staked !== 0) {
+    if (stakedBalance !== 0) {
       return setIfStaked(true);
     };
   }, [])
 
   return (
-    <div className="content-body proposal flex column flex-start">
+    <div className="view-container proposal flex column flex-start">
       <Link to="/">
         <i className="fas fa-arrow-left"></i> All Proposals
       </Link>
 
-      <div className="flex content">
+      <div className="view-container flex content">
         <div className="flex column" style={{ width: "70%" }}>
           <h3>Proposal Details</h3>
-          <div className="description neu-container view-container">
+          <div className="description neu-container ">
             <div className="flex">
               <h3>Proposal {id}</h3>
             </div>
-            <h1 className="headline text-gradient view-header">{headline}</h1>
+            <h1 className="text-gradient view-header">{headline}</h1>
             <p>
               {description}
             </p>
@@ -71,17 +72,21 @@ export const ProposalView = (props: any) => {
 
           <div className="flex column" id="vote-mobile">
           <h3>Your Vote</h3>
-          <div className="neu-container flex column view-container">
+          <div className="neu-container flex column">
             <Button onClick={()=>setVote("inFavor")} disabled={!connected && true}>In favor</Button>
             <Button onClick={()=>setVote("against")} disabled={!connected && true}>Against</Button>
             <Button onClick={()=>setVote("abstain")} disabled={!connected && true}>Abstain</Button>
             <Button type="primary" disabled={!connected && true}>Vote</Button>
-            <VoteModal vote={vote} ifStaked={ifStaked} />
+              <VoteModal
+                vote={vote}
+                ifStaked={ifStaked}
+                isVoteModalVisible={isVoteModalVisible}
+                setIsVoteModalVisible={setIsVoteModalVisible} />
           </div>
         </div>
 
           <h3>Vote turnout</h3>
-          <div className="neu-container flex justify-evenly view-container" id="vote-turnout">
+          <div className="neu-container flex justify-evenly" id="vote-turnout">
             <div className="results">
               <ResultProgressBar
                 type="inFavor"
@@ -112,7 +117,12 @@ export const ProposalView = (props: any) => {
             <Button onClick={()=>setVote("inFavor")}  disabled={!connected && true}>In favor</Button>
             <Button onClick={()=>setVote("against")}  disabled={!connected && true}>Against</Button>
             <Button onClick={()=>setVote("abstain")}  disabled={!connected && true}>Abstain</Button>
-            <VoteModal vote={vote} ifStaked={ifStaked} />
+            <Button type="primary" disabled={!connected && true}>Vote</Button>
+              <VoteModal
+                vote={vote}
+                ifStaked={ifStaked}
+                isVoteModalVisible={isVoteModalVisible}
+                setIsVoteModalVisible={setIsVoteModalVisible} />
           </div>
         </div>
       </div>

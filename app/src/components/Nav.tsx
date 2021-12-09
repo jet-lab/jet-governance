@@ -4,13 +4,13 @@ import { useWallet } from "@solana/wallet-adapter-react";
 import { useConnectWallet } from "../contexts/connectWallet";
 import { shortenAddress } from "../utils/utils";
 import { Button, Switch } from "antd";
-import { useDarkTheme } from "../hooks/darkTheme";
+import { useDarkTheme } from "../contexts/darkTheme";
 
 export function Nav() {
   const { pathname } = useLocation();
   const { connected, disconnect, publicKey } = useWallet();
   const { setConnecting } = useConnectWallet();
-  // const darkTheme = useDarkTheme();
+  const { toggleDarkTheme } = useDarkTheme();
   const [drawerOpened, setDrawerOpened] = useState(false);
   const navLinks = [
     {title: 'Voting', route: '/'},
@@ -39,7 +39,7 @@ export function Nav() {
           </a>
         </div>
         <div className="right-container flex-centered">
-          <Switch onChange={() => null} />
+          <Switch onChange={() => toggleDarkTheme()} />
           {navLinks.map((link) =>
             <Link to={link.route} className={`nav-link ${pathname === link.route ? 'active' : ''}`}>
               {link.title}

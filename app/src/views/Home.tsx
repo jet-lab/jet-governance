@@ -22,7 +22,7 @@ export const HomeView = () => {
   const connection = useConnection();
   const { showing, setShowing, shownProposals } = useProposal();
   const [inputAmount, setInputAmount] = useState<number | null>(null);
-  const { jetBalance, staked } = useUser();
+  const { votingBalance, stakedBalance } = useUser();
 
   const inputCheck = (value: number) => {
     if (value && value < 0) {
@@ -51,7 +51,7 @@ export const HomeView = () => {
         <div className="neu-inset" style={{ width: "260px" }}>
           <h3>Voting Balance</h3>
           <div className="text-gradient" id="staked-balance">
-            {connected ? jetBalance.balance : 0} JET
+            {connected ? votingBalance : 0} vJET
           </div>
           <div id="wallet-overview" className="flex justify-between column">
             <div className="flex justify-between">
@@ -72,13 +72,13 @@ export const HomeView = () => {
           <div className="flex column">
           <div className="flex justify-between">
               <span>Staked Tokens</span>
-              <span>{staked}</span>
+              <span>{stakedBalance}</span>
             </div>
             <Input
               type="number"
               token
               value={inputAmount === null ? "" : inputAmount}
-              maxInput={connected ? jetBalance.balance : 0}
+              maxInput={connected ? votingBalance : 0}
               disabled={!connected}
               onChange={(value: number) => setInputAmount(value)}
               submit={() => null}
@@ -103,13 +103,14 @@ export const HomeView = () => {
             <UnstakeModal
               showModal={showUnstakeModal}
               unstakedAmount={inputAmount ?? 0}
+              setInputAmount={setInputAmount}
               setShowUnstakeModal={setShowUnstakeModal}
             />
           </div>
         </div>
       </div>
 
-      <div className="panel" style={{ width: "100%" }}>
+      <div style={{ width: "100%" }}>
         <div className="flex justify-between header">
           <h3>{showing}</h3>
           <div className="filter-status">

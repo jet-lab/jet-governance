@@ -4,10 +4,11 @@ import { Modal } from "antd";
 export const UnstakeModal = (props: {
   showModal: boolean;
   setShowUnstakeModal: Function;
+  setInputAmount: Function,
   unstakedAmount: number | null;
 }) => {
   const [unstakeSuccess, setUnstakeSuccess] = useState(false);
-  const { showModal, unstakedAmount, setShowUnstakeModal } = props;
+  const { showModal, setShowUnstakeModal, setInputAmount, unstakedAmount } = props;
 
   const handleOk = () => {
     setShowUnstakeModal(false);
@@ -17,7 +18,10 @@ export const UnstakeModal = (props: {
   const handleCancel = () => {
     setShowUnstakeModal(false);
     setUnstakeSuccess(false);
+    setInputAmount(null)
   };
+
+
 
   return (
     <>
@@ -26,7 +30,7 @@ export const UnstakeModal = (props: {
         visible={showModal}
         okText="Confirm"
         onOk={handleOk}
-        onCancel={handleCancel}
+        onCancel={() => setShowUnstakeModal(false)}
       >
         <p>
           You have two active votes that will be rescinded upon confirmation of

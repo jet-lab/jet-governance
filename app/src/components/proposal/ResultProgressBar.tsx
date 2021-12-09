@@ -4,7 +4,7 @@ import { abbreviateNumber } from "../../utils/utils";
 
 export const ResultProgressBar = (props: any) => {
   const { type, amount, total } = props;
-  const [color, setColor] = useState("hsla(0, 1%, 62%, 1)")
+  const [color, setColor] = useState("")
   const [vote, setVote] = useState("abstain")
   const [gradient, setGradient] = useState(false);
   const [symbol, setSymbol] = useState("");
@@ -12,12 +12,12 @@ export const ResultProgressBar = (props: any) => {
   useEffect(() => {
     if (type === "inFavor") {
     setVote("in favor")
-    setColor("var(@gradient)")
+    // setColor("var(--gradient)")
     setGradient(true);
     setSymbol("fas fa-thumbs-up")
   } else if (type === "against") {
     setVote("against")
-    setColor("var(@failure)")
+    setColor("var(--failure)")
     setSymbol("fas fa-thumbs-down")
   }
 }, [type])
