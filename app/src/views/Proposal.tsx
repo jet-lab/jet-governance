@@ -76,7 +76,7 @@ export const ProposalView = (props: any) => {
             <Button onClick={()=>setVote("against")} disabled={!connected && true}>Against</Button>
             <Button onClick={()=>setVote("abstain")} disabled={!connected && true}>Abstain</Button>
             <Button type="primary" disabled={!connected && true}>Vote</Button>
-            <VoteModal vote={vote} staked={staked} />
+            <VoteModal vote={vote} ifStaked={ifStaked} />
           </div>
         </div>
 
@@ -112,7 +112,7 @@ export const ProposalView = (props: any) => {
             <Button onClick={()=>setVote("inFavor")}  disabled={!connected && true}>In favor</Button>
             <Button onClick={()=>setVote("against")}  disabled={!connected && true}>Against</Button>
             <Button onClick={()=>setVote("abstain")}  disabled={!connected && true}>Abstain</Button>
-            <VoteModal vote={vote} staked={staked} />
+            <VoteModal vote={vote} ifStaked={ifStaked} />
           </div>
         </div>
       </div>

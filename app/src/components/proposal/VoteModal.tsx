@@ -1,19 +1,19 @@
 import { useState, useEffect } from "react";
 import { Button, Input, Modal } from "antd";
 
-export const VoteModal = (props: { vote: string, staked: boolean }) => {
+export const VoteModal = (props: { vote: string, ifStaked: boolean }) => {
   const [isVoteModalVisible, setIsVoteModalVisible] = useState(false);
   const [isStakeRedirectVisible, setIsStakeRedirectModalVisible] = useState(false);
   const [collateral, setCollateral] = useState("500");
 
-  const { vote, staked } = props;
+  const { vote, ifStaked } = props;
 
   const handleOk = () => {
     setIsVoteModalVisible(false);
   };
 
   const showModal = () => {
-    if (!staked) {
+    if (!ifStaked) {
       return setIsStakeRedirectModalVisible(true);
     }
     setIsVoteModalVisible(true);

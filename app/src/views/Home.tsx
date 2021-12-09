@@ -103,7 +103,7 @@ export const HomeView = () => {
             <UnstakeModal
               showModal={showUnstakeModal}
               unstakedAmount={inputAmount ?? 0}
-              setShowStakeModal={setShowStakeModal}
+              setShowUnstakeModal={setShowUnstakeModal}
             />
           </div>
         </div>
