@@ -11,14 +11,16 @@ import { useUser } from "../hooks/useClient";
 
 export const ProposalView = (props: any) => {
   const [isVoteModalVisible, setIsVoteModalVisible] = useState(false);
-
-  const { id, headline, active, end, description, result, hash } = props;
-  const [vote, setVote] = useState("");
+  const [isStakeRedirectModalVisible, setIsStakeRedirectModalVisible] = useState(false);
   const [ifStaked, setIfStaked] = useState(false);
-    // TODO: Fetch user's stake from blockchain
+  const [vote, setVote] = useState("");
+
+  // TODO: Fetch user's stake from blockchain
   const { activeProposals } = useProposal();
   const { connected } = useWallet();
   const { stakedBalance } = useUser();
+
+  const { id, headline, active, end, description, result, hash } = props;
 
   const inFavor = 722300;
   const against = 220700;
@@ -31,6 +33,14 @@ export const ProposalView = (props: any) => {
       return setIfStaked(true);
     };
   }, [])
+
+  const handleVoteModal = () => {
+    if (!ifStaked) {
+      return setIsStakeRedirectModalVisible(true);
+    } else {
+      return setIsVoteModalVisible(true);
+    }
+  }
 
   return (
     <div className="view-container proposal flex column flex-start">
@@ -76,12 +86,20 @@ export const ProposalView = (props: any) => {
             <Button onClick={()=>setVote("inFavor")} disabled={!connected && true}>In favor</Button>
             <Button onClick={()=>setVote("against")} disabled={!connected && true}>Against</Button>
             <Button onClick={()=>setVote("abstain")} disabled={!connected && true}>Abstain</Button>
-            <Button type="primary" disabled={!connected && true}>Vote</Button>
+              <Button
+                type="primary"
+                disabled={!connected && true}
+                onClick={handleVoteModal} 
+              >Vote</Button>
               <VoteModal
                 vote={vote}
-                ifStaked={ifStaked}
                 isVoteModalVisible={isVoteModalVisible}
-                setIsVoteModalVisible={setIsVoteModalVisible} />
+                setIsVoteModalVisible={setIsVoteModalVisible}
+                isStakeRedirectModalVisible={isStakeRedirectModalVisible}
+                setIsStakeRedirectModalVisible={setIsStakeRedirectModalVisible}
+                proposalNumber={id}
+                endDate={end}
+            />
           </div>
         </div>
 
@@ -117,12 +135,20 @@ export const ProposalView = (props: any) => {
             <Button onClick={()=>setVote("inFavor")}  disabled={!connected && true}>In favor</Button>
             <Button onClick={()=>setVote("against")}  disabled={!connected && true}>Against</Button>
             <Button onClick={()=>setVote("abstain")}  disabled={!connected && true}>Abstain</Button>
-            <Button type="primary" disabled={!connected && true}>Vote</Button>
+            <Button
+                type="primary"
+                disabled={!connected && true}
+                onClick={handleVoteModal} 
+              >Vote</Button>
               <VoteModal
                 vote={vote}
-                ifStaked={ifStaked}
                 isVoteModalVisible={isVoteModalVisible}
-                setIsVoteModalVisible={setIsVoteModalVisible} />
+                setIsVoteModalVisible={setIsVoteModalVisible}
+                isStakeRedirectModalVisible={isStakeRedirectModalVisible}
+                setIsStakeRedirectModalVisible={setIsStakeRedirectModalVisible}
+              proposalNumber={id}
+              endDate={end}
+            />
           </div>
         </div>
       </div>

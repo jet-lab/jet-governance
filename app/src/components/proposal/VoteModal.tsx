@@ -1,59 +1,68 @@
 import { useState, useEffect } from "react";
 import { Button, Input, Modal } from "antd";
+import { useUser } from "../../hooks/useClient";
 
 export const VoteModal = (props: {
   vote: string;
-  ifStaked: boolean;
   setIsVoteModalVisible: Function;
   isVoteModalVisible: boolean;
+  setIsStakeRedirectModalVisible: Function;
+  isStakeRedirectModalVisible: boolean;
+  proposalNumber: number;
+  endDate: Date;
 }) => {
-  const [isStakeRedirectVisible, setIsStakeRedirectModalVisible] =
-    useState(false);
-  const [collateral, setCollateral] = useState("500");
+  const [voteType, setVoteType] = useState("")
+  const { stakedBalance } = useUser()
+
 
   const {
     vote,
-    ifStaked,
     setIsVoteModalVisible,
-    isVoteModalVisible } = props;
-
-  const handleOk = () => {
-    setIsVoteModalVisible(false);
-  };
-
-  const showModal = () => {
-    if (!ifStaked) {
-      return setIsStakeRedirectModalVisible(true);
+    isVoteModalVisible,
+    setIsStakeRedirectModalVisible,
+    isStakeRedirectModalVisible,
+    proposalNumber,
+    endDate} = props;
+  
+  useEffect(() => {
+    if (vote === "inFavor") {
+      setVoteType("in favor of")
+    } else if (vote === "against") {
+      setVoteType("against")
+    } else if (vote === "abstain") {
+      setVoteType("to abstain from")
     }
-    setIsVoteModalVisible(true);
+  }, [vote])
+    
+  
+  // Handlers for vote modal
+
+
+
+  // Handlers for stake redirect modal
+  const handleOk = () => {
+    setIsStakeRedirectModalVisible(false);
   };
 
   return (
     <>
       <Modal
-        title={`Create offer for TEST`}
+        title={`You are about to vote ${voteType} proposal #${proposalNumber}`}
         visible={isVoteModalVisible}
-        okText="Create Offer"
+        okText="Confirm vote"
         onOk={handleOk}
         onCancel={() => setIsVoteModalVisible(false)}
         closable={false}
       >
-        <p>Test</p>
-        <p>Collateral</p>
-        <Input
-          suffix="ATLAS"
-          value={collateral}
-          onChange={(event) => setCollateral(event.target.value)}
-        />
-        <p>Fee</p>
+        <p>You have {stakedBalance} JET staked, and will be able to unstake these funds when voting ends on {endDate.toLocaleDateString()}.</p>
       </Modal>
 
       <Modal
         title="Before you can vote, you have to stake some JET tokens."
-        visible={isStakeRedirectVisible}
+        visible={isStakeRedirectModalVisible}
         okText="I understand"
         onOk={handleOk}
-        onCancel={() => setIsStakeRedirectModalVisible(false)}
+        cancelButtonProps={{ style: { display: "none " } }}
       >
         <p>You gotta stake!</p>
       </Modal>
