@@ -67,7 +67,7 @@ export const VoterList = () => {
             lineHeight: '32px',
           }}
         >
-          <Button onClick={onLoadMore}>more</Button>
+          <Button onClick={onLoadMore}>View full history</Button>
         </div>
       ) : null;
 

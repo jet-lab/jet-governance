@@ -36,7 +36,9 @@ export const VoteModal = (props: {
     
   
   // Handlers for vote modal
-
+  const confirmVote = () => {
+    setIsVoteModalVisible(false);
+  };
 
 
   // Handlers for stake redirect modal
@@ -50,7 +52,7 @@ export const VoteModal = (props: {
         title={`You are about to vote ${voteType} proposal #${proposalNumber}`}
         visible={isVoteModalVisible}
         okText="Confirm vote"
-        onOk={handleOk}
+        onOk={confirmVote}
         onCancel={() => setIsVoteModalVisible(false)}
         closable={false}
       >

@@ -157,11 +157,11 @@ p {
 
   .other-proposals div {
     overflow-y: scroll;
+    flex-wrap: wrap;
   }
 }
 
 #vote-turnout {
-  padding: 39px 27px;
   margin: 0 36px 39px 0;
   .results {
     margin-bottom: 37px;
@@ -181,6 +181,17 @@ p {
   }
   .voters {
     flex-grow: 1;
+  }
+// Overrides for jet-antd and stakeholders display
+  .ant-list-item {
+    border-bottom: none;
+  }
+  .ant-list {
+    box-shadow: none;
+  }
+  ul.ant-list-items li:first-child {
+    border: 1px solid @dark-grey;
+    border-radius: @border-radius;
   }
   .stakeholders {
     display: flex;

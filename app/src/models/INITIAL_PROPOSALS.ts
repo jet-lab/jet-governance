@@ -24,15 +24,15 @@ export const INITIAL_STATE: ProposalState[] = [{
   hash: "0xsolanabreakpoint2023"
 }, {
   id: 5,
-  active: false,
-  result: "inactive",
+  active: true,
+  end: new Date("Jan 25, 2022 16:37:52"),
   headline: "sed do eiusmod tempor incididunt ut labore et dolore magna aliqua",
   description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Mattis aliquam faucibus purus in massa. Ac auctor augue mauris augue neque gravida. Aenean euismod elementum nisi quis eleifend quam. Augue lacus viverra vitae congue. Diam sollicitudin tempor id eu nisl nunc.",
   hash: "0xsolanabreakpoint2024"
 }, {
   id: 4,
-  active: false,
-  result: "passed",
+  active: true,
+  end: new Date("Feb 25, 2022 16:37:52"),
   headline: "Lorem ipsum",
   description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Mattis aliquam faucibus purus in massa. Ac auctor augue mauris augue neque gravida. Aenean euismod elementum nisi quis eleifend quam. Augue lacus viverra vitae congue. Diam sollicitudin tempor id eu nisl nunc.",
   hash: "0xsolanabreakpoint2025"

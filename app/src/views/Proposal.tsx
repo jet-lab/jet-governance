@@ -123,7 +123,7 @@ export const ProposalView = (props: any) => {
               />
             </div>
             <div className="voters">
-              <h5>Top stakeholders</h5>
+              <span>Your vote</span>
               <VoterList/>
             </div>
           </div>

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { abbreviateNumber, shortenAddress } from "../../utils/utils";
 
-export const Stakeholders = (props: any) => {
+export const Row = (props: any) => {
   const { type, amount, address } = props;
   const [color, setColor] = useState("hsla(0, 1%, 62%, 1)")
   const [vote, setVote] = useState("abstain")
@@ -20,8 +20,6 @@ export const Stakeholders = (props: any) => {
     setSymbol("fas fa-thumbs-down")
   }
   }, [type])
-  
-
 
   return (
     <div className="stakeholders">
