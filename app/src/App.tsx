@@ -87,6 +87,7 @@ function App() {
                                   result={proposal.result}
                                   headline={proposal.headline}
                                   active={proposal.active}
+                                  start={proposal.start}
                                   end={proposal.end}
                                   hash={proposal.hash}
                                 />

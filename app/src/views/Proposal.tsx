@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useProposal } from "../contexts/proposal";
 import { ResultProgressBar } from "../components/proposal/ResultProgressBar";
-import { Button, Divider, Modal } from "antd";
+import { Button, Divider } from "antd";
 import { ProposalCard } from "../components/ProposalCard";
 import { VoterList } from "../components/proposal/VoterList";
 import { useWallet } from "@solana/wallet-adapter-react";
@@ -12,6 +12,7 @@ import { USER_VOTE_HISTORY } from "../models/USER_VOTE_HISTORY";
 import { TOP_STAKEHOLDERS } from "../models/TOP_STAKEHOLDERS";
 
 export const ProposalView = (props: any) => {
+  const [inactive, setInactive] = useState(false);
   const [isVoteModalVisible, setIsVoteModalVisible] = useState(false);
   const [isStakeRedirectModalVisible, setIsStakeRedirectModalVisible] = useState(false);
   const [ifStaked, setIfStaked] = useState(false);
@@ -22,13 +23,17 @@ export const ProposalView = (props: any) => {
   const { connected } = useWallet();
   const { stakedBalance } = useUser();
 
-  const { id, headline, active, end, description, result, hash } = props;
+  const { id, headline, start, end, description, result, hash } = props;
 
   const inFavor = 722300;
   const against = 220700;
   const abstain = 70200;
-  const startDate = new Date("Jan 5, 2022 15:37:25");
-  const endDate = new Date("Jan 5, 2022 15:37:25");
+
+  useEffect(() => {
+    if (end < new Date()) {
+      setInactive(true);
+    }
+  })
 
   useEffect(() => {
     if (stakedBalance !== 0) {
@@ -94,11 +99,11 @@ export const ProposalView = (props: any) => {
               </div>
               <div>
                 <h5>Start date:</h5>
-                <span>{startDate.toString()}</span>
+                <span>{start.toString()}</span>
               </div>
               <div>
                 <h5>End date:</h5>
-                <span>{endDate.toString()}</span>
+                <span>{end.toString()}</span>
               </div>
               <div>
                 <h5>Block height:</h5>
@@ -110,12 +115,12 @@ export const ProposalView = (props: any) => {
           <div className="flex column" id="vote-mobile">
           <h3>Your Vote</h3>
           <div className="neu-container flex column">
-            <Button onClick={()=>setVote("inFavor")} disabled={!connected && true}>In favor</Button>
-            <Button onClick={()=>setVote("against")} disabled={!connected && true}>Against</Button>
-            <Button onClick={()=>setVote("abstain")} disabled={!connected && true}>Abstain</Button>
+          <Button onClick={()=>setVote("inFavor")} disabled={(!connected || !inactive) && true}>In favor</Button>
+            <Button onClick={()=>setVote("against")} disabled={(!connected || !inactive) && true}>Against</Button>
+            <Button onClick={()=>setVote("abstain")} disabled={(!connected || !inactive) && true}>Abstain</Button>
               <Button
                 type="primary"
-                disabled={!connected && true}
+                disabled={(!connected || !inactive) && true}
                 onClick={handleVoteModal} 
               >Vote</Button>
               <VoteModal
@@ -162,12 +167,12 @@ export const ProposalView = (props: any) => {
         <div className="flex column" style={{ width: "30%" }} id="vote-desktop">
           <h3>Your Vote</h3>
           <div className="neu-container view-container flex column" id="your-vote">
-            <Button onClick={()=>setVote("inFavor")}  disabled={!connected && true}>In favor</Button>
-            <Button onClick={()=>setVote("against")}  disabled={!connected && true}>Against</Button>
-            <Button onClick={()=>setVote("abstain")}  disabled={!connected && true}>Abstain</Button>
-            <Button
+          <Button onClick={()=>setVote("inFavor")} disabled={(!connected || !inactive) && true}>In favor</Button>
+            <Button onClick={()=>setVote("against")} disabled={(!connected || !inactive) && true}>Against</Button>
+            <Button onClick={()=>setVote("abstain")} disabled={(!connected || !inactive) && true}>Abstain</Button>
+              <Button
                 type="primary"
-                disabled={!connected && true}
+                disabled={(!connected || !inactive) && true}
                 onClick={handleVoteModal} 
               >Vote</Button>
             <VoteModal
