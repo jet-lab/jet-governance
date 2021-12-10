@@ -9,6 +9,7 @@ import { useWallet } from "@solana/wallet-adapter-react";
 import { VoteModal } from "../components/proposal/VoteModal";
 import { useUser } from "../hooks/useClient";
 import { USER_VOTE_HISTORY } from "../models/USER_VOTE_HISTORY";
+import { TOP_STAKEHOLDERS } from "../models/TOP_STAKEHOLDERS";
 
 export const ProposalView = (props: any) => {
   const [isVoteModalVisible, setIsVoteModalVisible] = useState(false);
@@ -33,7 +34,7 @@ export const ProposalView = (props: any) => {
     if (stakedBalance !== 0) {
       return setIfStaked(true);
     };
-  }, [])
+  }, [stakedBalance])
 
   const handleVoteModal = () => {
     if (!ifStaked) {
@@ -45,6 +46,28 @@ export const ProposalView = (props: any) => {
 
   // Find matching user vote within USER_VOTE_HISTORY
   const userVote = USER_VOTE_HISTORY.find(x => x.id === id)
+
+  const handleCsvDownload = () => {
+    // Convert array of objects to array of arrays
+    const voteHistoryCsv = TOP_STAKEHOLDERS.map(Object.values)
+
+    //define the heading for each row of the data  
+    var csv = 'Address,Amount,Vote\n';  
+          
+    //merge the data with CSV  
+    voteHistoryCsv.forEach(function(row) {  
+      csv += row.join(',');  
+      csv += "\n";  
+    });
+  
+    var hiddenElement = document.createElement('a');  
+    hiddenElement.href = 'data:text/csv;charset=utf-8,' + encodeURI(csv);  
+    hiddenElement.target = '_blank';  
+      
+    //provide the name for the CSV file to be downloaded  
+    hiddenElement.download = `JetGovern_${id}_Votes.csv'`;  
+    hiddenElement.click();  
+  }
 
   return (
     <div className="view-container proposal flex column flex-start">
@@ -127,7 +150,10 @@ export const ProposalView = (props: any) => {
               />
             </div>
             <div className="voters">
+              <div className="flex justify-between">
               <span>Your vote</span>
+              <span onClick={handleCsvDownload}>CSV</span>
+              </div>
               <VoterList id={id} userVote={userVote?.vote} amount={userVote?.amount} />
             </div>
           </div>

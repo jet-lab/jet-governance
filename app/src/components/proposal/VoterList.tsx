@@ -6,9 +6,9 @@ import { useUser } from "../../hooks/useClient";
 import { useWallet } from "@solana/wallet-adapter-react";
 
 export const VoterList = (props: {
-  id: number,
-  userVote?: string,
-  amount?: number
+  id: number;
+  userVote?: string;
+  amount?: number;
 }) => {
   const [initLoading, setInitLoading] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -17,8 +17,8 @@ export const VoterList = (props: {
   const [list, setList] = useState<Voter[]>([]);
 
   // const { address } = useUser()
-  const { publicKey, connected } = useWallet()
-  const { id, userVote, amount } = props
+  const { publicKey, connected } = useWallet();
+  const { id, userVote, amount } = props;
 
   const count = 5;
 
@@ -77,18 +77,20 @@ export const VoterList = (props: {
           lineHeight: "32px",
         }}
       >
-        <Button onClick={onLoadMore}>View full history</Button>
+        <Button onClick={onLoadMore}>More</Button>
       </div>
     ) : null;
 
   return (
     <>
-      {connected && amount && userVote && publicKey && <Stakeholders
-        type={userVote}
-        amount={amount}
-        address={publicKey.toString()}
-        thisUser={true}
-      />}
+      {amount && userVote && publicKey && (
+          <Stakeholders
+            type={userVote}
+            amount={amount}
+            address={publicKey.toString()}
+            thisUser={true}
+          />
+      )}
       <List
         loading={initLoading}
         itemLayout="horizontal"
@@ -96,13 +98,8 @@ export const VoterList = (props: {
         dataSource={list}
         renderItem={(item) => (
           <List.Item
-          // actions={[<a key="list-loadmore-edit">edit</a>, <a key="list-loadmore-more">more</a>]}
           >
             <Skeleton avatar title={false} loading={loading} active>
-              {/* <List.Item.Meta
-                  title={<a href="https://ant.design">{item.name.last}</a>}
-                  description="Ant Design, a design language for background applications, is refined by Ant UED Team"
-              /> */}
               <Stakeholders
                 type={item.vote}
                 amount={item.amount ?? 0}
