@@ -14,7 +14,6 @@ export const VoteModal = (props: {
   const [voteType, setVoteType] = useState("")
   const { stakedBalance } = useUser()
 
-
   const {
     vote,
     setIsVoteModalVisible,

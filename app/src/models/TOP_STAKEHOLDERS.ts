@@ -1,67 +1,287 @@
 export interface Voter {
-  address?: string,
-  amount?: number,
-  vote?: boolean | null
+  address: string,
+  amount: number,
+  vote: string
 }
 
 export const TOP_STAKEHOLDERS: Voter[] = [{
   address: "0x4687431223dtest",
   amount: 17200000,
-  vote: true
+  vote: "inFavor"
 }, {
   address: "0x468746742123st",
   amount: 745952,
-  vote: false
+  vote: "against"
 }, {
   address: "0x4689872310dfgiysf00",
   amount: 988452,
-  vote: null
+  vote: "abstain"
 }, {
   address: "0x4687431223dtest",
   amount: 17200000,
-  vote: false
+  vote: "against"
 }, {
   address: "0x4687431223dtest",
   amount: 87324,
-  vote: true
+  vote: "inFavor"
 }, {
   address: "0x4687431223dtest",
   amount: 17200000,
-  vote: true
+  vote: "inFavor"
 }, {
   address: "0x468746742123st",
   amount: 745952,
-  vote: false
+  vote: "against"
 }, {
   address: "0x4689872310dfgiysf00",
   amount: 988452,
-  vote: null
+  vote: "abstain"
 }, {
   address: "0x4687431223dtest",
   amount: 17200000,
-  vote: false
+  vote: "against"
 }, {
   address: "0x4687431223dtest",
   amount: 87324,
-  vote: true
+  vote: "inFavor"
 }, {
   address: "0x4687431223dtest",
   amount: 17200000,
-  vote: true
+  vote: "inFavor"
 }, {
   address: "0x468746742123st",
   amount: 745952,
-  vote: false
+  vote: "against"
 }, {
   address: "0x4689872310dfgiysf00",
   amount: 988452,
-  vote: null
+  vote: "abstain"
 }, {
   address: "0x4687431223dtest",
   amount: 17200000,
-  vote: false
+  vote: "against"
 }, {
   address: "0x4687431223dtest",
   amount: 87324,
-  vote: true
+  vote: "inFavor"
+}, {
+  address: "0x4687431223dtest",
+  amount: 17200000,
+  vote: "inFavor"
+}, {
+  address: "0x468746742123st",
+  amount: 745952,
+  vote: "against"
+}, {
+  address: "0x4689872310dfgiysf00",
+  amount: 988452,
+  vote: "abstain"
+}, {
+  address: "0x4687431223dtest",
+  amount: 17200000,
+  vote: "against"
+}, {
+  address: "0x4687431223dtest",
+  amount: 87324,
+  vote: "inFavor"
+}, {
+  address: "0x4687431223dtest",
+  amount: 17200000,
+  vote: "inFavor"
+}, {
+  address: "0x468746742123st",
+  amount: 745952,
+  vote: "against"
+}, {
+  address: "0x4689872310dfgiysf00",
+  amount: 988452,
+  vote: "abstain"
+}, {
+  address: "0x4687431223dtest",
+  amount: 17200000,
+  vote: "against"
+}, {
+  address: "0x4687431223dtest",
+  amount: 87324,
+  vote: "inFavor"
+}, {
+  address: "0x4687431223dtest",
+  amount: 17200000,
+  vote: "inFavor"
+}, {
+  address: "0x468746742123st",
+  amount: 745952,
+  vote: "against"
+}, {
+  address: "0x4689872310dfgiysf00",
+  amount: 988452,
+  vote: "abstain"
+}, {
+  address: "0x4687431223dtest",
+  amount: 17200000,
+  vote: "against"
+}, {
+  address: "0x4687431223dtest",
+  amount: 87324,
+  vote: "inFavor"
+}, {
+  address: "0x4687431223dtest",
+  amount: 17200000,
+  vote: "inFavor"
+}, {
+  address: "0x468746742123st",
+  amount: 745952,
+  vote: "against"
+}, {
+  address: "0x4689872310dfgiysf00",
+  amount: 988452,
+  vote: "abstain"
+}, {
+  address: "0x4687431223dtest",
+  amount: 17200000,
+  vote: "against"
+}, {
+  address: "0x4687431223dtest",
+  amount: 87324,
+  vote: "inFavor"
+}, {
+  address: "0x4687431223dtest",
+  amount: 17200000,
+  vote: "inFavor"
+}, {
+  address: "0x468746742123st",
+  amount: 745952,
+  vote: "against"
+}, {
+  address: "0x4689872310dfgiysf00",
+  amount: 988452,
+  vote: "abstain"
+}, {
+  address: "0x4687431223dtest",
+  amount: 17200000,
+  vote: "against"
+}, {
+  address: "0x4687431223dtest",
+  amount: 87324,
+  vote: "inFavor"
+}, {
+  address: "0x4687431223dtest",
+  amount: 17200000,
+  vote: "inFavor"
+}, {
+  address: "0x468746742123st",
+  amount: 745952,
+  vote: "against"
+}, {
+  address: "0x4689872310dfgiysf00",
+  amount: 988452,
+  vote: "abstain"
+}, {
+  address: "0x4687431223dtest",
+  amount: 17200000,
+  vote: "against"
+}, {
+  address: "0x4687431223dtest",
+  amount: 87324,
+  vote: "inFavor"
+}, {
+  address: "0x4687431223dtest",
+  amount: 17200000,
+  vote: "inFavor"
+}, {
+  address: "0x468746742123st",
+  amount: 745952,
+  vote: "against"
+}, {
+  address: "0x4689872310dfgiysf00",
+  amount: 988452,
+  vote: "abstain"
+}, {
+  address: "0x4687431223dtest",
+  amount: 17200000,
+  vote: "against"
+}, {
+  address: "0x4687431223dtest",
+  amount: 87324,
+  vote: "inFavor"
+}, {
+  address: "0x4687431223dtest",
+  amount: 17200000,
+  vote: "inFavor"
+}, {
+  address: "0x468746742123st",
+  amount: 745952,
+  vote: "against"
+}, {
+  address: "0x4689872310dfgiysf00",
+  amount: 988452,
+  vote: "abstain"
+}, {
+  address: "0x4687431223dtest",
+  amount: 17200000,
+  vote: "against"
+}, {
+  address: "0x4687431223dtest",
+  amount: 87324,
+  vote: "inFavor"
+}, {
+  address: "0x4687431223dtest",
+  amount: 17200000,
+  vote: "inFavor"
+}, {
+  address: "0x468746742123st",
+  amount: 745952,
+  vote: "against"
+}, {
+  address: "0x4689872310dfgiysf00",
+  amount: 988452,
+  vote: "abstain"
+}, {
+  address: "0x4687431223dtest",
+  amount: 17200000,
+  vote: "against"
+}, {
+  address: "0x4687431223dtest",
+  amount: 87324,
+  vote: "inFavor"
+}, {
+  address: "0x4687431223dtest",
+  amount: 17200000,
+  vote: "inFavor"
+}, {
+  address: "0x468746742123st",
+  amount: 745952,
+  vote: "against"
+}, {
+  address: "0x4689872310dfgiysf00",
+  amount: 988452,
+  vote: "abstain"
+}, {
+  address: "0x4687431223dtest",
+  amount: 17200000,
+  vote: "against"
+}, {
+  address: "0x4687431223dtest",
+  amount: 87324,
+  vote: "inFavor"
+}, {
+  address: "0x4687431223dtest",
+  amount: 17200000,
+  vote: "inFavor"
+}, {
+  address: "0x468746742123st",
+  amount: 745952,
+  vote: "against"
+}, {
+  address: "0x4689872310dfgiysf00",
+  amount: 988452,
+  vote: "abstain"
+}, {
+  address: "0x4687431223dtest",
+  amount: 17200000,
+  vote: "against"
+}, {
+  address: "0x4687431223dtest",
+  amount: 87324,
+  vote: "inFavor"
 }]

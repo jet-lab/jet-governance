@@ -8,6 +8,7 @@ import { VoterList } from "../components/proposal/VoterList";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { VoteModal } from "../components/proposal/VoteModal";
 import { useUser } from "../hooks/useClient";
+import { USER_VOTE_HISTORY } from "../models/USER_VOTE_HISTORY";
 
 export const ProposalView = (props: any) => {
   const [isVoteModalVisible, setIsVoteModalVisible] = useState(false);
@@ -41,6 +42,9 @@ export const ProposalView = (props: any) => {
       return setIsVoteModalVisible(true);
     }
   }
+
+  // Find matching user vote within USER_VOTE_HISTORY
+  const userVote = USER_VOTE_HISTORY.find(x => x.id === id)
 
   return (
     <div className="view-container proposal flex column flex-start">
@@ -124,7 +128,7 @@ export const ProposalView = (props: any) => {
             </div>
             <div className="voters">
               <span>Your vote</span>
-              <VoterList/>
+              <VoterList id={id} userVote={userVote?.vote} amount={userVote?.amount} />
             </div>
           </div>
         </div>
@@ -140,7 +144,7 @@ export const ProposalView = (props: any) => {
                 disabled={!connected && true}
                 onClick={handleVoteModal} 
               >Vote</Button>
-              <VoteModal
+            <VoteModal
                 vote={vote}
                 isVoteModalVisible={isVoteModalVisible}
                 setIsVoteModalVisible={setIsVoteModalVisible}
