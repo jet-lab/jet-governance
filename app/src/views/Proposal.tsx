@@ -10,11 +10,13 @@ import { VoteModal } from "../components/proposal/VoteModal";
 import { useUser } from "../hooks/useClient";
 import { USER_VOTE_HISTORY } from "../models/USER_VOTE_HISTORY";
 import { TOP_STAKEHOLDERS } from "../models/TOP_STAKEHOLDERS";
+import { INITIAL_STATE } from "../models/INITIAL_PROPOSALS";
 
-export const ProposalView = (props: any) => {
-  const [inactive, setInactive] = useState(false);
+export const ProposalView = (props: { id: number }) => {
+  const [inactive, setInactive] = useState(true);
   const [isVoteModalVisible, setIsVoteModalVisible] = useState(false);
-  const [isStakeRedirectModalVisible, setIsStakeRedirectModalVisible] = useState(false);
+  const [isStakeRedirectModalVisible, setIsStakeRedirectModalVisible] =
+    useState(false);
   const [ifStaked, setIfStaked] = useState(false);
   const [vote, setVote] = useState("");
 
@@ -23,23 +25,39 @@ export const ProposalView = (props: any) => {
   const { connected } = useWallet();
   const { stakedBalance } = useUser();
 
-  const { id, headline, start, end, description, result, hash } = props;
+  //TODO: Fix this temporary fix from the proposal being possibly undefined
+  const proposal =
+    INITIAL_STATE.find((proposal) => proposal.id === props.id) ??
+    INITIAL_STATE[0];
 
-  const inFavor = 722300;
-  const against = 220700;
-  const abstain = 70200;
+  const {
+    id,
+    headline,
+    start,
+    end,
+    description,
+    result,
+    hash,
+    inFavor,
+    against,
+    abstain,
+  } = proposal;
 
   useEffect(() => {
-    if (end < new Date()) {
-      setInactive(true);
+    if (end.getTime() < Date.now()) {
+      setInactive(false);
     }
-  })
+  }, [end]);
+
+  if (!connected || !inactive) {
+    console.log("voting disabled");
+  }
 
   useEffect(() => {
     if (stakedBalance !== 0) {
       return setIfStaked(true);
-    };
-  }, [stakedBalance])
+    }
+  }, [stakedBalance]);
 
   const handleVoteModal = () => {
     if (!ifStaked) {
@@ -47,32 +65,32 @@ export const ProposalView = (props: any) => {
     } else {
       return setIsVoteModalVisible(true);
     }
-  }
+  };
 
   // Find matching user vote within USER_VOTE_HISTORY
-  const userVote = USER_VOTE_HISTORY.find(x => x.id === id)
+  const userVote = USER_VOTE_HISTORY.find((x) => x.id === id);
 
   const handleCsvDownload = () => {
     // Convert array of objects to array of arrays
-    const voteHistoryCsv = TOP_STAKEHOLDERS.map(Object.values)
+    const voteHistoryCsv = TOP_STAKEHOLDERS.map(Object.values);
 
-    //define the heading for each row of the data  
-    var csv = 'Address,Amount,Vote\n';  
-          
-    //merge the data with CSV  
-    voteHistoryCsv.forEach(function(row) {  
-      csv += row.join(',');  
-      csv += "\n";  
+    //define the heading for each row of the data
+    var csv = "Address,Amount,Vote\n";
+
+    //merge the data with CSV
+    voteHistoryCsv.forEach(function (row) {
+      csv += row.join(",");
+      csv += "\n";
     });
-  
-    var hiddenElement = document.createElement('a');  
-    hiddenElement.href = 'data:text/csv;charset=utf-8,' + encodeURI(csv);  
-    hiddenElement.target = '_blank';  
-      
-    //provide the name for the CSV file to be downloaded  
-    hiddenElement.download = `JetGovern_${id}_Votes.csv'`;  
-    hiddenElement.click();  
-  }
+
+    var hiddenElement = document.createElement("a");
+    hiddenElement.href = "data:text/csv;charset=utf-8," + encodeURI(csv);
+    hiddenElement.target = "_blank";
+
+    //provide the name for the CSV file to be downloaded
+    hiddenElement.download = `JetGovern_${id}_Votes.csv'`;
+    hiddenElement.click();
+  };
 
   return (
     <div className="view-container proposal flex column flex-start">
@@ -88,9 +106,7 @@ export const ProposalView = (props: any) => {
               <h3>Proposal {id}</h3>
             </div>
             <h1 className="text-gradient view-header">{headline}</h1>
-            <p>
-              {description}
-            </p>
+            <p>{description}</p>
 
             <div className="neu-inset flex column">
               <div>
@@ -112,7 +128,7 @@ export const ProposalView = (props: any) => {
             </div>
           </div>
 
-          <div className="flex column" id="vote-mobile">
+          {/* <div className="flex column" id="vote-mobile">
           <h3>Your Vote</h3>
           <div className="neu-container flex column">
           <Button onClick={()=>setVote("inFavor")} disabled={(!connected || !inactive) && true}>In favor</Button>
@@ -133,7 +149,7 @@ export const ProposalView = (props: any) => {
                 endDate={end}
             />
           </div>
-        </div>
+        </div> */}
 
           <h3>Vote turnout</h3>
           <div className="neu-container flex justify-evenly" id="vote-turnout">
@@ -156,31 +172,55 @@ export const ProposalView = (props: any) => {
             </div>
             <div className="voters">
               <div className="flex justify-between">
-              <span>Your vote</span>
-              <span onClick={handleCsvDownload}>CSV</span>
+                <span>Your vote</span>
+                <span onClick={handleCsvDownload}>CSV</span>
               </div>
-              <VoterList id={id} userVote={userVote?.vote} amount={userVote?.amount} />
+              <VoterList
+                id={id}
+                userVote={userVote?.vote}
+                amount={userVote?.amount}
+              />
             </div>
           </div>
         </div>
 
         <div className="flex column" style={{ width: "30%" }} id="vote-desktop">
           <h3>Your Vote</h3>
-          <div className="neu-container view-container flex column" id="your-vote">
-          <Button onClick={()=>setVote("inFavor")} disabled={(!connected || !inactive) && true}>In favor</Button>
-            <Button onClick={()=>setVote("against")} disabled={(!connected || !inactive) && true}>Against</Button>
-            <Button onClick={()=>setVote("abstain")} disabled={(!connected || !inactive) && true}>Abstain</Button>
-              <Button
-                type="primary"
-                disabled={(!connected || !inactive) && true}
-                onClick={handleVoteModal} 
-              >Vote</Button>
+          <div
+            className="neu-container view-container flex column"
+            id="your-vote"
+          >
+            <Button
+              onClick={() => setVote("inFavor")}
+              disabled={(!connected && true) || (inactive && true)}
+            >
+              In favor
+            </Button>
+            <Button
+              onClick={() => setVote("against")}
+              disabled={(!connected || inactive) && true}
+            >
+              Against
+            </Button>
+            <Button
+              onClick={() => setVote("abstain")}
+              disabled={(!connected || inactive) && true}
+            >
+              Abstain
+            </Button>
+            <Button
+              type="primary"
+              disabled={(!connected || inactive) && true}
+              onClick={handleVoteModal}
+            >
+              Vote
+            </Button>
             <VoteModal
-                vote={vote}
-                isVoteModalVisible={isVoteModalVisible}
-                setIsVoteModalVisible={setIsVoteModalVisible}
-                isStakeRedirectModalVisible={isStakeRedirectModalVisible}
-                setIsStakeRedirectModalVisible={setIsStakeRedirectModalVisible}
+              vote={vote}
+              isVoteModalVisible={isVoteModalVisible}
+              setIsVoteModalVisible={setIsVoteModalVisible}
+              isStakeRedirectModalVisible={isStakeRedirectModalVisible}
+              setIsStakeRedirectModalVisible={setIsStakeRedirectModalVisible}
               proposalNumber={id}
               endDate={end}
             />
@@ -193,7 +233,7 @@ export const ProposalView = (props: any) => {
       <div className="other-proposals">
         <h3>Other active proposals</h3>
         <div className="flex">
-        {activeProposals.map((proposal: any) => (
+          {activeProposals.map((proposal: any) => (
             <ProposalCard
               headline={proposal.headline}
               number={proposal.id}
@@ -202,8 +242,8 @@ export const ProposalView = (props: any) => {
               end={proposal.end ?? null}
               result={proposal.result ?? null}
             />
-        ))}
-          </div>
+          ))}
+        </div>
       </div>
     </div>
   );

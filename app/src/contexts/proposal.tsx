@@ -12,7 +12,7 @@ interface ProposalConfig {
 
 const ProposalContext = React.createContext<ProposalConfig>({
   allProposals: INITIAL_STATE,
-  activeProposals: INITIAL_STATE.filter((p) => p.active),
+  activeProposals: INITIAL_STATE.filter((p) => !p.result),
   showing: "active",
   setShowing: () => {},
   shownProposals: INITIAL_STATE,
@@ -24,7 +24,7 @@ export function ProposalProvider({ children = undefined as any }) {
   const [shownProposals, setShownProposals] = useState(INITIAL_STATE);
 
   const allProposals = INITIAL_STATE;
-  const activeProposals = INITIAL_STATE.filter((p) => p.active);
+  const activeProposals = INITIAL_STATE.filter((p) => !p.result);
   // const inactiveProposals = INITIAL_STATE.filter(
   //   (p) => !p.active && p.result === "inactive"
   // );
@@ -37,13 +37,13 @@ export function ProposalProvider({ children = undefined as any }) {
 
   useEffect(() => {
     if (showing === "active") {
-      setShownProposals(INITIAL_STATE.filter((p) => p.active));
+      setShownProposals(INITIAL_STATE.filter((p) => !p.result));
     } else if (showing === "inactive") {
-      setShownProposals(INITIAL_STATE.filter((p) => !p.active && p.result === "inactive"));
+      setShownProposals(INITIAL_STATE.filter((p) => p.result === "inactive"));
     } else if (showing === "passed") {
-      setShownProposals(INITIAL_STATE.filter((p) => !p.active && p.result === "passed"));
+      setShownProposals(INITIAL_STATE.filter((p) => p.result === "passed"));
     } else if (showing === "rejected") {
-      setShownProposals(INITIAL_STATE.filter((p) => !p.active && p.result === "rejected"));
+      setShownProposals(INITIAL_STATE.filter((p) => p.result === "rejected"));
     } else if (showing === "all") {
       setShownProposals(INITIAL_STATE);
     }

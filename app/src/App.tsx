@@ -82,14 +82,7 @@ function App() {
                                 }/${proposal.headline.substring(0, 7)}`}
                               >
                                 <ProposalView
-                                  description={proposal.description}
                                   id={proposal.id}
-                                  result={proposal.result}
-                                  headline={proposal.headline}
-                                  active={proposal.active}
-                                  start={proposal.start}
-                                  end={proposal.end}
-                                  hash={proposal.hash}
                                 />
                               </Route>
                             ))}

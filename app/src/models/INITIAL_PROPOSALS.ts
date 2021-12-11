@@ -1,73 +1,89 @@
 export interface ProposalState {
   id: number,
-  active: boolean,
-  start?: Date,
-  end?: Date,
+  start: Date,
+  end: Date,
   result?: string,
   headline: string,
   description: string,
-  hash: string
+  hash: string,
+  inFavor: number,
+  against: number,
+  abstain: number
 }
 
 export const INITIAL_STATE: ProposalState[] = [{
   id: 7,
-  active: true,
   start: new Date("Aug 25, 2021 16:37:52"),
   end: new Date("Jul 25, 2022 16:37:52"),
   headline: "Lorem ipsum dolor sit amet, consectetur adipiscing elit",
   description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Mattis aliquam faucibus purus in massa. Ac auctor augue mauris augue neque gravida. Aenean euismod elementum nisi quis eleifend quam. Augue lacus viverra vitae congue. Diam sollicitudin tempor id eu nisl nunc.",
-  hash: "0xsolanabreakpoint2022"
+  hash: "0xsolanabreakpoint2022",
+  inFavor: 722300,
+  against: 220700,
+  abstain: 70200
 }, {
   id: 6,
-  active: true,
   start: new Date("Aug 25, 2021 16:37:52"),
   end: new Date("Dec 25, 2021 16:37:52"),
   headline: "Lorem ipsum",
   description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Mattis aliquam faucibus purus in massa. Ac auctor augue mauris augue neque gravida. Aenean euismod elementum nisi quis eleifend quam. Augue lacus viverra vitae congue. Diam sollicitudin tempor id eu nisl nunc.",
-  hash: "0xsolanabreakpoint2023"
+  hash: "0xsolanabreakpoint2023",
+  inFavor: 722300,
+  against: 220700,
+  abstain: 70200
 }, {
   id: 5,
-  active: true,
   start: new Date("Aug 25, 2021 16:37:52"),
   end: new Date("Jan 25, 2022 16:37:52"),
   headline: "sed do eiusmod tempor incididunt ut labore et dolore magna aliqua",
   description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Mattis aliquam faucibus purus in massa. Ac auctor augue mauris augue neque gravida. Aenean euismod elementum nisi quis eleifend quam. Augue lacus viverra vitae congue. Diam sollicitudin tempor id eu nisl nunc.",
-  hash: "0xsolanabreakpoint2024"
+  hash: "0xsolanabreakpoint2024",
+  inFavor: 722300,
+  against: 220700,
+  abstain: 70200
 }, {
   id: 4,
-  active: true,
   start: new Date("Aug 25, 2021 16:37:52"),
   end: new Date("Feb 25, 2022 16:37:52"),
   headline: "Lorem ipsum",
   description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Mattis aliquam faucibus purus in massa. Ac auctor augue mauris augue neque gravida. Aenean euismod elementum nisi quis eleifend quam. Augue lacus viverra vitae congue. Diam sollicitudin tempor id eu nisl nunc.",
-  hash: "0xsolanabreakpoint2025"
+  hash: "0xsolanabreakpoint2025",
+  inFavor: 722300,
+  against: 220700,
+  abstain: 70200
 }, {
   id: 3,
-  active: false,
   start: new Date("Jul 25, 2021 16:37:52"),
   end: new Date("Nov 25, 2021 16:37:52"),
   result: "rejected",
   headline: "Ut enim ad minim veniam, quis nostrud exercitation ullamco",
   description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Mattis aliquam faucibus purus in massa. Ac auctor augue mauris augue neque gravida. Aenean euismod elementum nisi quis eleifend quam. Augue lacus viverra vitae congue. Diam sollicitudin tempor id eu nisl nunc.",
-  hash: "0xsolanabreakpoint2026"
+  hash: "0xsolanabreakpoint2026",
+  inFavor: 722300,
+  against: 220700,
+  abstain: 70200
 },{
   id: 2,
-  active: false,
   result: "inactive",
   start: new Date("Jul 25, 2021 16:37:52"),
-  end: new Date("Oct 25, 2022 16:37:52"),
+  end: new Date("Oct 25, 2021 16:37:52"),
   headline: "Lorem ipsum",
   description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Mattis aliquam faucibus purus in massa. Ac auctor augue mauris augue neque gravida. Aenean euismod elementum nisi quis eleifend quam. Augue lacus viverra vitae congue. Diam sollicitudin tempor id eu nisl nunc.",
-  hash: "0xsolanabreakpoint2027"
+  hash: "0xsolanabreakpoint2027",
+  inFavor: 722300,
+  against: 220700,
+  abstain: 70200
   }, {
   id: 1,
-  active: false,
   result: "inactive",
   start: new Date("Jul 25, 2021 16:37:52"),
-  end: new Date("Sep 25, 2022 16:37:52"),
+  end: new Date("Sep 25, 2021 16:37:52"),
   headline: "Lorem ipsum",
   description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Mattis aliquam faucibus purus in massa. Ac auctor augue mauris augue neque gravida. Aenean euismod elementum nisi quis eleifend quam. Augue lacus viverra vitae congue. Diam sollicitudin tempor id eu nisl nunc.",
-  hash: "0xsolanabreakpoint2028"
+  hash: "0xsolanabreakpoint2028",
+  inFavor: 722300,
+  against: 220700,
+  abstain: 70200
   }]
 
 interface User {
