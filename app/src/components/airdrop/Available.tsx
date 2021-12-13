@@ -24,7 +24,7 @@ export const Available = (props: any) => {
   };
 
   return (
-    <div className="flex justify-between align-center">
+    <div className="flex justify-between align-center avail-list">
       <span className="avail-info">
         <strong>
           {name} | {amount} JET

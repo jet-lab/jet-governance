@@ -23,9 +23,9 @@ export const AirdropView = () => {
   return (
     <div className="view-container content-body" id="airdrop">
       <div className="panel" style={{ width: "50%" }}>
-        <h3>Airdrop</h3>
+        <h2>Airdrop</h2>
         <div className="neu-container" style={{ maxWidth: "750px" }}>
-          <h2>Here's how your airdrop works.</h2>
+          <h1>Here's how your airdrop works.</h1>
           <p>
             Airdrop claims deposit a fixed amount of Jet tokens into your
             governance account. These tokens are locked for a 30-day vesting
@@ -36,7 +36,7 @@ export const AirdropView = () => {
 
           <Divider />
 
-          <h2>Available</h2>
+          <h1>Available</h1>
           {connected &&
             airdrops?.map((airdrop) => (
               <Available
@@ -51,10 +51,10 @@ export const AirdropView = () => {
       </div>
 
       <div className="panel" style={{ width: "50%" }}>
-        <h3>Your info</h3>
+        <h2>Your info</h2>
         <div className="header">
           <div className="neu-container">
-            <h2>Vesting progress</h2>
+            <h1>Vesting progress</h1>
             Currently vesting: {vesting.map((airdrop) => `${airdrop.name}, `)}
             <Progress percent={40} showInfo={false} />
             <Divider />

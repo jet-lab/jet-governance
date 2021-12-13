@@ -67,7 +67,7 @@ export const HomeView = () => {
   return (
     <div className="content-body">
       <div className="panel">
-        <h3>Your Info</h3>
+        <h2>Your Info</h2>
 
         <div className="neu-inset" style={{ width: "260px" }}>
           <h3>Voting Balance</h3>
@@ -142,7 +142,7 @@ export const HomeView = () => {
 
       <div style={{ width: "100%" }}>
         <div className="flex justify-between header">
-          <h3>{showing}</h3>
+          <h2>{showing}</h2>
           <div className="filter-status">
             <span onClick={() => setShowing("active")}>Active</span>
             <span onClick={() => setShowing("inactive")}>Inactive</span>

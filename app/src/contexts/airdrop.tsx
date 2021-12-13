@@ -12,7 +12,12 @@ interface AirdropConfig {
   unclaimedAirdrops: Function,
   vestingAirdrops: Function,
   vestedAirdrops: Function,
-  totalAirdropped: Function
+  totalAirdropped: Function,
+  transactionHistory: {
+    date: string;
+    transaction: string;
+    amount: number
+  }[]
 }
 
 const AirdropContext = React.createContext<AirdropConfig>({
@@ -21,7 +26,8 @@ const AirdropContext = React.createContext<AirdropConfig>({
   unclaimedAirdrops: () => { },
   vestingAirdrops:  () => { },
   vestedAirdrops: () => { },
-  totalAirdropped: () => { }
+  totalAirdropped: () => { },
+  transactionHistory: []
 });
 
 export function AirdropProvider({ children = undefined as any }) {
@@ -93,6 +99,28 @@ export function AirdropProvider({ children = undefined as any }) {
     return claimedAmount.reduce((a,b)=>a+b)
   }
 
+  const transactionHistory = [{
+    date: new Date("25 Dec 2021").toString(),
+    transaction: 'unstaked',
+    amount: 3500
+  }, {
+    date: new Date("25 Nov 2020").toString(),
+    transaction: 'unstaked',
+    amount: 3500
+  }, {
+    date: new Date("25 Sep 2020").toString(),
+    transaction: 'unstaked',
+    amount: 3500
+  }, {
+    date: new Date("25 Dec 2020").toString(),
+    transaction: 'unstaked',
+    amount: 3500
+  }, {
+    date: new Date("25 Jul 2020").toString(),
+    transaction: 'unstaked',
+    amount: 3500
+  }]
+
   return (
     <AirdropContext.Provider
       value={{
@@ -101,7 +129,8 @@ export function AirdropProvider({ children = undefined as any }) {
         unclaimedAirdrops,
         vestingAirdrops,
         vestedAirdrops,
-        totalAirdropped
+        totalAirdropped,
+        transactionHistory
       }}
     >
       {children}
