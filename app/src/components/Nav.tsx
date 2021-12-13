@@ -14,18 +14,11 @@ export function Nav() {
   const { setConnecting } = useConnectWallet();
   const { toggleDarkTheme } = useDarkTheme();
   const [drawerOpened, setDrawerOpened] = useState(false);
-  const { airdrops } = useAirdrop(); 
-
-  const availAirdrops = () => {
-    const unclaimedAirdrops = airdrops?.filter(airdrop => 
-      airdrop.claimed === false    
-    )
-    return unclaimedAirdrops?.length
-  }
+  const { unclaimedAirdrops } = useAirdrop(); 
 
   const navLinks = [
     {title: 'Voting', route: '/'},
-    {title: `Airdrop ${availAirdrops()}`, route: '/airdrop'},
+    {title: `Airdrop ${unclaimedAirdrops()}`, route: '/airdrop'},
     {title: 'Flight log', route: '/flight-log'}
   ];
 

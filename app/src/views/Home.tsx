@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import { useState, useEffect } from "react";
 import { useProposal } from "../contexts/proposal";
 import { ProposalCard } from "../components/ProposalCard";
-import { Button, Divider } from "antd";
+import { Button, Divider, notification } from "antd";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { useUser } from "../hooks/useClient";
 import { Input } from "../components/Input";
@@ -13,6 +13,7 @@ import { StakeModal } from "../components/modals/StakeModal";
 import { UnstakeModal } from "../components/modals/UnstakeModal";
 import { VotingBalanceModal } from "../components/modals/VotingBalanceModal";
 import { InfoCircleOutlined } from "@ant-design/icons";
+import { useAirdrop } from "../contexts/airdrop";
 
 export const HomeView = () => {
   const [showStakeModal, setShowStakeModal] = useState(false);
@@ -25,7 +26,9 @@ export const HomeView = () => {
   const { showing, setShowing, shownProposals } = useProposal();
   const [inputAmount, setInputAmount] = useState<number | null>(null);
   const { votingBalance, stakedBalance } = useUser();
+  const { vestedAirdrops } = useAirdrop();
 
+  // Devnet only: airdrop JET tokens
   const getAirdrop = async () => {
     if (!publicKey) {
       return alert("Connect your wallet!");
@@ -39,6 +42,28 @@ export const HomeView = () => {
     await sendTransaction(connection, wallet, transactionInstruction, []);
   };
 
+  const openNotification = () => {
+    const vestedAirdropNotifications = vestedAirdrops();
+    vestedAirdropNotifications.map(
+      (airdrop: {
+        name: string;
+        amount: number;
+        end: Date;
+        claimed: boolean;
+        vested: boolean;
+      }) =>
+        notification.open({
+          message: "Fully vested",
+          description: `${airdrop.name} has fully vested and may now be unstaked! Click for info.`,
+          onClick: () => {
+            console.log("Go to Airdrop page");
+          },
+        })
+    );
+  };
+
+  useEffect(() => openNotification(), []);
+
   return (
     <div className="content-body">
       <div className="panel">
@@ -51,7 +76,7 @@ export const HomeView = () => {
           </div>
           <div id="wallet-overview" className="flex justify-between column">
             <div className="flex justify-between">
-              <span >Current Staking APR</span>
+              <span>Current Staking APR</span>
               <span>10%</span>
             </div>
             <div className="flex justify-between">
@@ -66,9 +91,18 @@ export const HomeView = () => {
           <Button onClick={getAirdrop}>GET JET</Button>
           <Divider />
           <div className="flex column">
-          <div className="flex justify-between">
-              <span>{new Intl.NumberFormat().format(stakedBalance)} JET available to unstake <InfoCircleOutlined onClick={() => setShowVotingBalanceModal(true)} /></span>
-              <VotingBalanceModal showModal={showVotingBalanceModal} setShowModal={setShowVotingBalanceModal} />
+            <div className="flex justify-between">
+              <span>
+                {new Intl.NumberFormat().format(stakedBalance)} JET available to
+                unstake{" "}
+                <InfoCircleOutlined
+                  onClick={() => setShowVotingBalanceModal(true)}
+                />
+              </span>
+              <VotingBalanceModal
+                showModal={showVotingBalanceModal}
+                setShowModal={setShowVotingBalanceModal}
+              />
             </div>
             <Input
               type="number"
