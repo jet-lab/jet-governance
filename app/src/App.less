@@ -4,6 +4,8 @@
 :root {
   @failure: #ec6a69;
   --failure: @failure;
+  @grey: #949494;
+  --grey: @grey;
 }
 
 /* App-specific styling */
@@ -181,6 +183,9 @@ p {
   }
   .voters {
     flex-grow: 1;
+    #csv {
+      cursor: pointer;
+    }
   }
 // Overrides for jet-antd and stakeholders display
   .ant-list-item {

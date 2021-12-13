@@ -2,23 +2,26 @@ import React, { useState, useEffect } from "react";
 import { Progress } from 'antd';
 import { abbreviateNumber } from "../../utils/utils";
 
-export const ResultProgressBar = (props: any) => {
+export const ResultProgressBar = (props: {
+  type: string, amount: number, total: number
+}) => {
   const { type, amount, total } = props;
   const [color, setColor] = useState("")
-  const [vote, setVote] = useState("abstain")
-  const [gradient, setGradient] = useState(false);
-  const [symbol, setSymbol] = useState("");
+  const [vote, setVote] = useState("inFavor")
+  const [gradient, setGradient] = useState(true);
+  const [symbol, setSymbol] = useState("fas fa-thumbs-up");
 
   useEffect(() => {
-    if (type === "inFavor") {
-    setVote("in favor")
-    // setColor("var(--gradient)")
-    setGradient(true);
-    setSymbol("fas fa-thumbs-up")
-  } else if (type === "against") {
-    setVote("against")
-    setColor("var(--failure)")
-    setSymbol("fas fa-thumbs-down")
+    if (type === "against") {
+      setVote("against")
+      setColor("var(--failure)")
+      setSymbol("fas fa-thumbs-down")
+      setGradient(false)
+    } else if (type === "abstain") {
+    setVote("abstain")
+    setColor("var(--grey)")
+      setSymbol("")
+      setGradient(false)
   }
 }, [type])
 

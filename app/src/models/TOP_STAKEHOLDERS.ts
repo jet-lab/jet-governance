@@ -5,63 +5,63 @@ export interface Voter {
 }
 
 export const TOP_STAKEHOLDERS: Voter[] = [{
-  address: "0x4687431223dtest",
+  address: "1x4687431223dtest",
   amount: 17200000,
   vote: "inFavor"
 }, {
-  address: "0x468746742123st",
+  address: "2x468746742123st",
   amount: 745952,
   vote: "against"
 }, {
-  address: "0x4689872310dfgiysf00",
+  address: "3x4689872310dfgiysf00",
   amount: 988452,
   vote: "abstain"
 }, {
-  address: "0x4687431223dtest",
+  address: "4x4687431223dtest",
   amount: 17200000,
   vote: "against"
 }, {
-  address: "0x4687431223dtest",
+  address: "5x4687431223dtest",
   amount: 87324,
   vote: "inFavor"
 }, {
-  address: "0x4687431223dtest",
+  address: "6x4687431223dtest",
   amount: 17200000,
   vote: "inFavor"
 }, {
-  address: "0x468746742123st",
+  address: "7x468746742123st",
   amount: 745952,
   vote: "against"
 }, {
-  address: "0x4689872310dfgiysf00",
+  address: "8x4689872310dfgiysf00",
   amount: 988452,
   vote: "abstain"
 }, {
-  address: "0x4687431223dtest",
+  address: "9x4687431223dtest",
   amount: 17200000,
   vote: "against"
 }, {
-  address: "0x4687431223dtest",
+  address: "10x4687431223dtest",
   amount: 87324,
   vote: "inFavor"
 }, {
-  address: "0x4687431223dtest",
+  address: "110x4687431223dtest",
   amount: 17200000,
   vote: "inFavor"
 }, {
-  address: "0x468746742123st",
+  address: "120x468746742123st",
   amount: 745952,
   vote: "against"
 }, {
-  address: "0x4689872310dfgiysf00",
+  address: "130x4689872310dfgiysf00",
   amount: 988452,
   vote: "abstain"
 }, {
-  address: "0x4687431223dtest",
+  address: "140x4687431223dtest",
   amount: 17200000,
   vote: "against"
 }, {
-  address: "0x4687431223dtest",
+  address: "150x4687431223dtest",
   amount: 87324,
   vote: "inFavor"
 }, {

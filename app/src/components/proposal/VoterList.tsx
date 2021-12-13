@@ -13,60 +13,30 @@ export const VoterList = (props: {
   const [initLoading, setInitLoading] = useState(false);
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(1);
-  const [data, setData] = useState([]);
+  const [data, setData] = useState<Voter[]>(TOP_STAKEHOLDERS);
   const [list, setList] = useState<Voter[]>([]);
 
-  // const { address } = useUser()
-  const { publicKey, connected } = useWallet();
+  const { publicKey } = useWallet();
   const { id, userVote, amount } = props;
 
   const count = 5;
 
   useEffect(() => {
-    setList(TOP_STAKEHOLDERS.slice(page, count * page));
-  }, [page]);
+    setList(data.slice(0, count * page));
+  }, [data, page]);
 
+ // Function to fake lazy loading
   const onLoadMore = () => {
     setLoading(true);
-    setList(
-      list.concat(TOP_STAKEHOLDERS.slice(count * page, count * page + 1))
+    setList(() =>
+      list.concat(data.slice(count * page, count * page + 1))
     );
     setPage(page + 1);
 
     setLoading(false);
     setInitLoading(false);
-
-    // setList((prev) => prev.concat(
-    //   [...new Array(count)].map(() => ({
-    //     loading: true,
-    //     name: {},
-    //     picture: {}
-    //   })),
-    // ));
   };
 
-  // this.setState({
-  //   loading: true,
-  //   list: this.state.data.concat(
-  //     [...new Array(count)].map(() => ({ loading: true, name: {}, picture: {} })),
-  //   ),
-  // });
-  // this.getData(res => {
-  //   const data = this.state.data.concat(res.results);
-  //   this.setState(
-  //     {
-  //       data,
-  //       list: data,
-  //       loading: false,
-  //     },
-  //     () => {
-  //       // Resetting window's offsetTop so as to display react-virtualized demo underfloor.
-  //       // In real scene, you can using public method of react-virtualized:
-  //       // https://stackoverflow.com/questions/46700726/how-to-use-public-method-updateposition-of-react-virtualized
-  //       window.dispatchEvent(new Event('resize'));
-  //     },
-  //   );
-  // });
   const loadMore =
     !initLoading && !loading ? (
       <div
@@ -77,7 +47,7 @@ export const VoterList = (props: {
           lineHeight: "32px",
         }}
       >
-        <Button onClick={onLoadMore}>More</Button>
+        <Button onClick={onLoadMore}>Load more</Button>
       </div>
     ) : null;
 

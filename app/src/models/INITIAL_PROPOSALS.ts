@@ -6,6 +6,7 @@ export interface ProposalState {
   headline: string,
   description: string,
   hash: string,
+  type: string[],
   inFavor: number,
   against: number,
   abstain: number
@@ -18,6 +19,7 @@ export const INITIAL_STATE: ProposalState[] = [{
   headline: "Lorem ipsum dolor sit amet, consectetur adipiscing elit",
   description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Mattis aliquam faucibus purus in massa. Ac auctor augue mauris augue neque gravida. Aenean euismod elementum nisi quis eleifend quam. Augue lacus viverra vitae congue. Diam sollicitudin tempor id eu nisl nunc.",
   hash: "0xsolanabreakpoint2022",
+  type: ["test", "1", "2", "3"],
   inFavor: 722300,
   against: 220700,
   abstain: 70200
@@ -28,6 +30,7 @@ export const INITIAL_STATE: ProposalState[] = [{
   headline: "Lorem ipsum",
   description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Mattis aliquam faucibus purus in massa. Ac auctor augue mauris augue neque gravida. Aenean euismod elementum nisi quis eleifend quam. Augue lacus viverra vitae congue. Diam sollicitudin tempor id eu nisl nunc.",
   hash: "0xsolanabreakpoint2023",
+  type: ["test", "1", "2", "3"],
   inFavor: 722300,
   against: 220700,
   abstain: 70200
@@ -38,6 +41,7 @@ export const INITIAL_STATE: ProposalState[] = [{
   headline: "sed do eiusmod tempor incididunt ut labore et dolore magna aliqua",
   description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Mattis aliquam faucibus purus in massa. Ac auctor augue mauris augue neque gravida. Aenean euismod elementum nisi quis eleifend quam. Augue lacus viverra vitae congue. Diam sollicitudin tempor id eu nisl nunc.",
   hash: "0xsolanabreakpoint2024",
+  type: ["test", "1", "2", "3"],
   inFavor: 722300,
   against: 220700,
   abstain: 70200
@@ -48,6 +52,7 @@ export const INITIAL_STATE: ProposalState[] = [{
   headline: "Lorem ipsum",
   description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Mattis aliquam faucibus purus in massa. Ac auctor augue mauris augue neque gravida. Aenean euismod elementum nisi quis eleifend quam. Augue lacus viverra vitae congue. Diam sollicitudin tempor id eu nisl nunc.",
   hash: "0xsolanabreakpoint2025",
+  type: ["test", "1", "2", "3"],
   inFavor: 722300,
   against: 220700,
   abstain: 70200
@@ -59,6 +64,7 @@ export const INITIAL_STATE: ProposalState[] = [{
   headline: "Ut enim ad minim veniam, quis nostrud exercitation ullamco",
   description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Mattis aliquam faucibus purus in massa. Ac auctor augue mauris augue neque gravida. Aenean euismod elementum nisi quis eleifend quam. Augue lacus viverra vitae congue. Diam sollicitudin tempor id eu nisl nunc.",
   hash: "0xsolanabreakpoint2026",
+  type: ["test", "1", "2", "3"],
   inFavor: 722300,
   against: 220700,
   abstain: 70200
@@ -70,6 +76,7 @@ export const INITIAL_STATE: ProposalState[] = [{
   headline: "Lorem ipsum",
   description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Mattis aliquam faucibus purus in massa. Ac auctor augue mauris augue neque gravida. Aenean euismod elementum nisi quis eleifend quam. Augue lacus viverra vitae congue. Diam sollicitudin tempor id eu nisl nunc.",
   hash: "0xsolanabreakpoint2027",
+  type: ["test", "1", "2", "3"],
   inFavor: 722300,
   against: 220700,
   abstain: 70200
@@ -81,6 +88,7 @@ export const INITIAL_STATE: ProposalState[] = [{
   headline: "Lorem ipsum",
   description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Mattis aliquam faucibus purus in massa. Ac auctor augue mauris augue neque gravida. Aenean euismod elementum nisi quis eleifend quam. Augue lacus viverra vitae congue. Diam sollicitudin tempor id eu nisl nunc.",
   hash: "0xsolanabreakpoint2028",
+  type: ["test", "1", "2", "3"],
   inFavor: 722300,
   against: 220700,
   abstain: 70200

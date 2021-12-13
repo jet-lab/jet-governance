@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useProposal } from "../contexts/proposal";
 import { ResultProgressBar } from "../components/proposal/ResultProgressBar";
-import { Button, Divider } from "antd";
+import { Button, Divider, Tag } from "antd";
 import { ProposalCard } from "../components/ProposalCard";
 import { VoterList } from "../components/proposal/VoterList";
 import { useWallet } from "@solana/wallet-adapter-react";
@@ -38,6 +38,7 @@ export const ProposalView = (props: { id: number }) => {
     description,
     result,
     hash,
+    type,
     inFavor,
     against,
     abstain,
@@ -106,20 +107,20 @@ export const ProposalView = (props: { id: number }) => {
 
             <div className="neu-inset flex column">
               <div>
-                <h5>Proposal ID:</h5>
+                <span>Proposal ID:</span>
                 <span>{hash}</span>
               </div>
               <div>
-                <h5>Start date:</h5>
+                <span>Type:</span>
+                <span>{type.map((type) => <Tag>{type}</Tag>)}</span>
+              </div>
+              <div>
+                <span>Start date:</span>
                 <span>{start.toString()}</span>
               </div>
               <div>
-                <h5>End date:</h5>
+                <span>End date:</span>
                 <span>{end.toString()}</span>
-              </div>
-              <div>
-                <h5>Block height:</h5>
-                <span>test</span>
               </div>
             </div>
           </div>
@@ -169,7 +170,7 @@ export const ProposalView = (props: { id: number }) => {
             <div className="voters">
               <div className="flex justify-between">
                 <span>Your vote</span>
-                <span onClick={handleCsvDownload}>CSV</span>
+                <span onClick={handleCsvDownload} id="csv">CSV</span>
               </div>
               <VoterList
                 id={id}
@@ -181,7 +182,7 @@ export const ProposalView = (props: { id: number }) => {
         </div>
 
         <div className="flex column" style={{ width: "30%" }} id="vote-desktop">
-          <h3>Your Vote</h3>
+          {userVote && (<h3>Your Vote</h3>)}
           <div
             className="neu-container view-container flex column"
             id="your-vote"
