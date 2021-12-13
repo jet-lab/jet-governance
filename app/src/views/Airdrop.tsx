@@ -1,12 +1,7 @@
-import React, { useState } from "react";
-import { useProposal } from "../contexts/proposal";
-import { Button, Divider, Progress, Collapse, Timeline } from "antd";
+import { Divider, Progress, Collapse, Timeline } from "antd";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { useAirdrop } from "../contexts/airdrop";
-import { shortenAddress, formatTokenAmount } from "../utils/utils";
-import { useUser } from "../hooks/useClient";
 import { Available } from "../components/airdrop/Available";
-// import { user, proposals } from "../hooks/jet-client/useClient";
 
 export const AirdropView = () => {
   const { connected } = useWallet();
@@ -14,18 +9,12 @@ export const AirdropView = () => {
 
   const { Panel } = Collapse;
 
-  const inputCheck = (value: number) => {
-    if (value && value < 0) {
-      value = 0;
-    }
-  };
-
   return (
     <div className="view-container content-body" id="airdrop">
       <div className="panel">
         <h3>Airdrop</h3>
         <div className="neu-container" style={{ maxWidth: "750px"}}>
-          <h2>Here’s how your airdrop works.</h2>
+          <h2>Here's how your airdrop works.</h2>
           <p>
             Airdrop claims deposit a fixed amount of Jet tokens into your
             governance account. These tokens are locked for a 30-day vesting

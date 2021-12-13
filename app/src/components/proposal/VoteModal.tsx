@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Button, Input, Modal } from "antd";
+import { Modal } from "antd";
 import { useUser } from "../../hooks/useClient";
 
 export const VoteModal = (props: {

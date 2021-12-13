@@ -165,26 +165,6 @@ export const formatAmount = (
   abbr: boolean = true
 ) => (abbr ? abbreviateNumber(val, precision) : val.toFixed(precision));
 
-export function formatTokenAmount(
-  account?: TokenAccount,
-  mint?: MintInfo,
-  rate: number = 1.0,
-  prefix = "",
-  suffix = "",
-  precision = 6,
-  abbr = false
-): string {
-  if (!account) {
-    return "";
-  }
-
-  return `${[prefix]}${formatAmount(
-    fromLamports(account, mint, rate),
-    precision,
-    abbr
-  )}${suffix}`;
-}
-
 export const formatUSD = new Intl.NumberFormat("en-US", {
   style: "currency",
   currency: "USD",

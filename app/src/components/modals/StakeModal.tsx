@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import { Button, Input, Modal } from "antd";
+import { useState } from "react";
+import { Modal } from "antd";
 
 export const StakeModal = (props: {
   showModal: boolean;
@@ -9,7 +9,6 @@ export const StakeModal = (props: {
   const [isStakeRedirectVisible, setIsStakeRedirectModalVisible] =
     useState(false);
   const [showSuccessfulModal, setShowSuccessfulModal] = useState(false);
-  const [collateral, setCollateral] = useState("500");
 
   const { showModal, stakeAmount, setShowStakeModal } = props;
 

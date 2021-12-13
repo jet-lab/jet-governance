@@ -6,32 +6,32 @@ enum Votes {
 
 export interface VoteState {
   id: number,
-  vote: string,
+  vote: Votes,
   amount: number,
 }
 
 export const USER_VOTE_HISTORY: VoteState[] = [{
   id: 7,
-  vote: "inFavor",
+  vote: Votes.InFavor,
   amount: 8000
 }, {
   id: 6,
-  vote: "against",
+  vote: Votes.Against,
   amount: 8000
 }, {
   id: 5,
-  vote: "inFavor",
+  vote: Votes.InFavor,
   amount: 8000
 }, {
   id: 3,
-  vote: "inFavor",
+  vote: Votes.InFavor,
   amount: 8000
 },{
   id: 2,
-  vote: "against",
+  vote: Votes.Against,
   amount: 8000
   }, {
   id: 1,
-  vote: "against",
+  vote: Votes.Against,
   amount: 8000
   }]

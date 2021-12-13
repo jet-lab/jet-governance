@@ -3,8 +3,7 @@ import { useProposal } from "../contexts/proposal";
 import { ProposalCard } from "../components/ProposalCard";
 import { Button, Divider } from "antd";
 import { useWallet } from "@solana/wallet-adapter-react";
-import { shortenAddress, formatTokenAmount } from "../utils/utils";
-import { useUser, proposals } from "../hooks/useClient";
+import { useUser } from "../hooks/useClient";
 import { Input } from "../components/Input";
 import { makeAirdropTx } from "@jet-lab/jet-engine";
 import { sendTransaction } from "../contexts/connection";
@@ -27,12 +26,6 @@ export const HomeView = () => {
   const [inputAmount, setInputAmount] = useState<number | null>(null);
   const { votingBalance, stakedBalance } = useUser();
 
-  const inputCheck = (value: number) => {
-    if (value && value < 0) {
-      value = 0;
-    }
-  };
-
   const getAirdrop = async () => {
     if (!publicKey) {
       return alert("Connect your wallet!");
@@ -54,7 +47,7 @@ export const HomeView = () => {
         <div className="neu-inset" style={{ width: "260px" }}>
           <h3>Voting Balance</h3>
           <div className="text-gradient" id="staked-balance">
-            {connected ? votingBalance : 0} vJET
+            {connected ? new Intl.NumberFormat().format(votingBalance) : 0} vJET
           </div>
           <div id="wallet-overview" className="flex justify-between column">
             <div className="flex justify-between">
@@ -74,7 +67,7 @@ export const HomeView = () => {
           <Divider />
           <div className="flex column">
           <div className="flex justify-between">
-              <span>{stakedBalance} JET available to unstake <InfoCircleOutlined onClick={() => setShowVotingBalanceModal(true)} /></span>
+              <span>{new Intl.NumberFormat().format(stakedBalance)} JET available to unstake <InfoCircleOutlined onClick={() => setShowVotingBalanceModal(true)} /></span>
               <VotingBalanceModal showModal={showVotingBalanceModal} setShowModal={setShowVotingBalanceModal} />
             </div>
             <Input
