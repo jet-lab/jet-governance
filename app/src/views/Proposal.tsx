@@ -44,14 +44,10 @@ export const ProposalView = (props: { id: number }) => {
   } = proposal;
 
   useEffect(() => {
-    if (end.getTime() < Date.now()) {
+    if (end.getTime() > Date.now()) {
       setInactive(false);
     }
   }, [end]);
-
-  if (!connected || !inactive) {
-    console.log("voting disabled");
-  }
 
   useEffect(() => {
     if (stakedBalance !== 0) {
@@ -192,7 +188,7 @@ export const ProposalView = (props: { id: number }) => {
           >
             <Button
               onClick={() => setVote("inFavor")}
-              disabled={(!connected && true) || (inactive && true)}
+              disabled={(!connected || inactive) && true}
             >
               In favor
             </Button>
