@@ -8,14 +8,20 @@ interface AirdropConfig {
     claimed: boolean;
     vested: boolean;
   }[],
+  claimedAirdrops: Function,
   unclaimedAirdrops: Function,
-  vestedAirdrops: Function
+  vestingAirdrops: Function,
+  vestedAirdrops: Function,
+  totalAirdropped: Function
 }
 
 const AirdropContext = React.createContext<AirdropConfig>({
   airdrops: [],
+  claimedAirdrops: () => { },
   unclaimedAirdrops: () => { },
-  vestedAirdrops: () => { }
+  vestingAirdrops:  () => { },
+  vestedAirdrops: () => { },
+  totalAirdropped: () => { }
 });
 
 export function AirdropProvider({ children = undefined as any }) {
@@ -50,11 +56,25 @@ export function AirdropProvider({ children = undefined as any }) {
     },
   ];
 
+  const claimedAirdrops = () => {
+    const claimedAirdrops = airdrops.filter(airdrop => 
+      airdrop.claimed === true
+    )
+    return claimedAirdrops
+  }
+
   const unclaimedAirdrops = () => {
     const unclaimedAirdrops = airdrops.filter(airdrop => 
-      airdrop.claimed === false    
+      airdrop.claimed === false
     )
     return unclaimedAirdrops?.length
+  }
+
+  const vestingAirdrops = () => {
+    const vestingAirdrops = airdrops.filter(airdrop => 
+      airdrop.claimed === true && airdrop.vested === false
+    )
+    return vestingAirdrops
   }
 
   const vestedAirdrops = () => {
@@ -64,12 +84,24 @@ export function AirdropProvider({ children = undefined as any }) {
     return vestedAirdrops
   }
 
+  const totalAirdropped = () => {
+    const claimed = claimedAirdrops();
+    const claimedAmount = [];
+    for (let i = 0; i < claimed.length; i++) {
+      claimedAmount.push(claimed[i].amount)
+    }
+    return claimedAmount.reduce((a,b)=>a+b)
+  }
+
   return (
     <AirdropContext.Provider
       value={{
         airdrops,
+        claimedAirdrops,
         unclaimedAirdrops,
-        vestedAirdrops
+        vestingAirdrops,
+        vestedAirdrops,
+        totalAirdropped
       }}
     >
       {children}

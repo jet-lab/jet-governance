@@ -3,17 +3,28 @@ import { useWallet } from "@solana/wallet-adapter-react";
 import { useAirdrop } from "../contexts/airdrop";
 import { Available } from "../components/airdrop/Available";
 
+interface Airdrop {
+  name: string;
+  amount: number;
+  end: Date;
+  claimed: boolean;
+  vested: boolean;
+}
+
 export const AirdropView = () => {
   const { connected } = useWallet();
-  const { airdrops } = useAirdrop();
+  const { airdrops, claimedAirdrops, vestingAirdrops, totalAirdropped } = useAirdrop();
+
+  const vesting: Airdrop[] = vestingAirdrops();
+  const claimed: Airdrop[] = claimedAirdrops();
 
   const { Panel } = Collapse;
 
   return (
     <div className="view-container content-body" id="airdrop">
-      <div className="panel">
+      <div className="panel" style={{ width: "50%" }}>
         <h3>Airdrop</h3>
-        <div className="neu-container" style={{ maxWidth: "750px"}}>
+        <div className="neu-container" style={{ maxWidth: "750px" }}>
           <h2>Here's how your airdrop works.</h2>
           <p>
             Airdrop claims deposit a fixed amount of Jet tokens into your
@@ -26,48 +37,39 @@ export const AirdropView = () => {
           <Divider />
 
           <h2>Available</h2>
-          {connected && airdrops?.map((airdrop) => (
-            <Available
-              name={airdrop.name}
-              amount={airdrop.amount}
-              end={airdrop.end}
-              claimed={airdrop.claimed}
-              vested={airdrop.vested}
-            />
-          ))}
+          {connected &&
+            airdrops?.map((airdrop) => (
+              <Available
+                name={airdrop.name}
+                amount={airdrop.amount}
+                end={airdrop.end}
+                claimed={airdrop.claimed}
+                vested={airdrop.vested}
+              />
+            ))}
         </div>
       </div>
 
-      <div className="panel">
+      <div className="panel" style={{ width: "50%" }}>
         <h3>Your info</h3>
         <div className="header">
           <div className="neu-container">
             <h2>Vesting progress</h2>
+            Currently vesting: {vesting.map((airdrop) => `${airdrop.name}, `)}
             <Progress percent={40} showInfo={false} />
             <Divider />
             <Collapse accordion>
-              <Panel header="This is panel header 1" key="1">
-                <p>Airdrop Name</p>
+            {claimed.map((airdrop, key) => (
+                <Panel header={airdrop.name} key={key}>
                 <Timeline>
-                  <Timeline.Item>
-                    Create a services site 2015-09-01
-                  </Timeline.Item>
-                  <Timeline.Item>
-                    Solve initial network problems 2015-09-01
-                  </Timeline.Item>
-                  <Timeline.Item>Technical testing 2015-09-01</Timeline.Item>
-                  <Timeline.Item>
-                    Network problems being solved 2015-09-01
-                  </Timeline.Item>
+                  <Timeline.Item>Airdrop claimed</Timeline.Item>
+                  <Timeline.Item>Vesting begins</Timeline.Item>
+                  <Timeline.Item className={!airdrop.vested ? "incomplete" : ""}>Vesting period complete</Timeline.Item>
                 </Timeline>
               </Panel>
-              <Panel header="This is panel header 2" key="2">
-                <p>Airdrop Name</p>
-              </Panel>
-              <Panel header="This is panel header 3" key="3">
-                <p>Airdrop Name</p>
-              </Panel>
+              ))}
             </Collapse>
+            Total: {new Intl.NumberFormat().format(totalAirdropped())}
           </div>
         </div>
       </div>
