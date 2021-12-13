@@ -169,7 +169,7 @@ export const ProposalView = (props: { id: number }) => {
             </div>
             <div className="voters">
               <div className="flex justify-between">
-                <span>Your vote</span>
+              {userVote ? (<h3>Your Vote</h3>) : (<span />)}
                 <span onClick={handleCsvDownload} id="csv">CSV</span>
               </div>
               <VoterList
@@ -182,7 +182,7 @@ export const ProposalView = (props: { id: number }) => {
         </div>
 
         <div className="flex column" style={{ width: "30%" }} id="vote-desktop">
-          {userVote && (<h3>Your Vote</h3>)}
+          <h3>Your Vote</h3>
           <div
             className="neu-container view-container flex column"
             id="your-vote"

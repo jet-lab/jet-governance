@@ -5,6 +5,8 @@ import { useConnectWallet } from "../contexts/connectWallet";
 import { shortenAddress } from "../utils/utils";
 import { Button, Switch } from "antd";
 import { useDarkTheme } from "../contexts/darkTheme";
+import { useAirdrop } from "../contexts/airdrop";
+
 
 export function Nav() {
   const { pathname } = useLocation();
@@ -12,9 +14,18 @@ export function Nav() {
   const { setConnecting } = useConnectWallet();
   const { toggleDarkTheme } = useDarkTheme();
   const [drawerOpened, setDrawerOpened] = useState(false);
+  const { airdrops } = useAirdrop(); 
+
+  const availAirdrops = () => {
+    const unclaimedAirdrops = airdrops?.filter(airdrop => 
+      airdrop.claimed === false    
+    )
+    return unclaimedAirdrops?.length
+  }
+
   const navLinks = [
     {title: 'Voting', route: '/'},
-    {title: 'Airdrop', route: '/airdrop'},
+    {title: `Airdrop ${availAirdrops()}`, route: '/airdrop'},
     {title: 'Flight log', route: '/flight-log'}
   ];
 

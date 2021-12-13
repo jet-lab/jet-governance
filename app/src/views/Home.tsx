@@ -12,10 +12,13 @@ import { useConnection } from "../contexts/connection";
 import { JET_FAUCET_DEVNET, JET_TOKEN_MINT_DEVNET } from "../utils/ids";
 import { StakeModal } from "../components/modals/StakeModal";
 import { UnstakeModal } from "../components/modals/UnstakeModal";
+import { VotingBalanceModal } from "../components/modals/VotingBalanceModal";
+import { InfoCircleOutlined } from "@ant-design/icons";
 
 export const HomeView = () => {
   const [showStakeModal, setShowStakeModal] = useState(false);
   const [showUnstakeModal, setShowUnstakeModal] = useState(false);
+  const [showVotingBalanceModal, setShowVotingBalanceModal] = useState(false);
 
   const wallet = useWallet();
   const { connected, publicKey } = useWallet();
@@ -71,8 +74,8 @@ export const HomeView = () => {
           <Divider />
           <div className="flex column">
           <div className="flex justify-between">
-              <span>Staked Tokens</span>
-              <span>{stakedBalance}</span>
+              <span>{stakedBalance} JET available to unstake <InfoCircleOutlined onClick={() => setShowVotingBalanceModal(true)} /></span>
+              <VotingBalanceModal showModal={showVotingBalanceModal} setShowModal={setShowVotingBalanceModal} />
             </div>
             <Input
               type="number"

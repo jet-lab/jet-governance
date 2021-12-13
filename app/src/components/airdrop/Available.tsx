@@ -7,7 +7,7 @@ import { ClaimModal } from "./ClaimModal";
 
 export const Available = (props: any) => {
   const [showModal, setShowModal] = useState(false);
-  const { connected, wallet, publicKey, disconnect } = useWallet();
+  const { wallet, publicKey } = useWallet();
   const { name, amount, end, claimed, vested } = props;
   const [currentTime, setCurrentTime] = useState(Date.now());
 
