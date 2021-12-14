@@ -97,7 +97,7 @@ export const ProposalView = (props: { id: number }) => {
 
       <div className="view-container flex content">
         <div className="flex column" style={{ width: "70%" }}>
-          <h3>Proposal Details</h3>
+          <h2>Proposal Details</h2>
           <div className="description neu-container ">
             <div className="flex">
               <h3>Proposal {id}</h3>
@@ -148,7 +148,7 @@ export const ProposalView = (props: { id: number }) => {
           </div>
         </div> */}
 
-          <h3>Vote turnout</h3>
+          <h2>Vote turnout</h2>
           <div className="neu-container flex justify-evenly" id="vote-turnout">
             <div className="results">
               <ResultProgressBar
@@ -182,7 +182,7 @@ export const ProposalView = (props: { id: number }) => {
         </div>
 
         <div className="flex column" style={{ width: "30%" }} id="vote-desktop">
-          <h3>Your Vote</h3>
+          <h2>Your Vote</h2>
           <div
             className="neu-container view-container flex column"
             id="your-vote"

@@ -58,6 +58,7 @@ export const HomeView = () => {
           onClick: () => {
             console.log("Go to Airdrop page");
           },
+          placement: 'bottomRight'
         })
     );
   };

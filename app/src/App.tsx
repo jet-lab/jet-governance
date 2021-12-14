@@ -9,6 +9,7 @@ import { ConnectWalletProvider } from "./contexts/connectWallet";
 import { AirdropProvider } from "./contexts/airdrop";
 import { DarkThemeProvider } from "./contexts/darkTheme";
 import { AppLayout } from "./components/Layout";
+import { ScrollToTop } from "./contexts/scrollToTop";
 import { AirdropView, FlightLogView } from "./views";
 import { HomeView, ProposalView } from "./views";
 import {
@@ -36,9 +37,6 @@ function App() {
     []
   );
 
-  // If IP address is in US, geoban
-  // TODO: try catch
-  // useEffect(() => {
   //   const getGeobanned = async () => {
   //     const resp = await fetch("https://ipinfo.io/json?token=46ceefa5641a93", {
   //       method: "GET",
@@ -49,6 +47,10 @@ function App() {
   //       setGeobanned(true);
   //     }
   //   };
+
+  // If IP address is in US, geoban
+  // TODO: try catch
+  // useEffect(() => {
   //   getGeobanned();
   // });
 
@@ -62,31 +64,31 @@ function App() {
                 <AccountsProvider>
                   <ProposalProvider>
                     <AppLayout>
-                      <Switch>
-                        <Route exact path="/">
-                          <HomeView />
-                        </Route>
-                        <Route exact path="/airdrop">
-                          <AirdropView />
-                        </Route>
-                        <Route exact path="/flight-log">
-                          <FlightLogView />
-                        </Route>
-                        {geobanned
-                          ? null
-                          : allProposals.map((proposal) => (
-                              <Route
-                                exact
-                                path={`/proposal/${
-                                  proposal.id
-                                }/${proposal.headline.substring(0, 7)}`}
-                              >
-                                <ProposalView
-                                  id={proposal.id}
-                                />
-                              </Route>
-                            ))}
-                      </Switch>
+                      <ScrollToTop>
+                        <Switch>
+                          <Route exact path="/">
+                            <HomeView />
+                          </Route>
+                          <Route exact path="/airdrop">
+                            <AirdropView />
+                          </Route>
+                          <Route exact path="/flight-log">
+                            <FlightLogView />
+                          </Route>
+                          {geobanned
+                            ? null
+                            : allProposals.map((proposal) => (
+                                <Route
+                                  exact
+                                  path={`/proposal/${
+                                    proposal.id
+                                  }/${proposal.headline.substring(0, 7)}`}
+                                >
+                                  <ProposalView id={proposal.id} />
+                                </Route>
+                              ))}
+                        </Switch>
+                      </ScrollToTop>
                     </AppLayout>
                   </ProposalProvider>
                 </AccountsProvider>
