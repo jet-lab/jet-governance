@@ -50,7 +50,8 @@ checksum = "250f629c0161ad8107cf89319e990051fae62832fd343083bea452d93e2205fd"
 
 [[package]]
 name = "anchor-attribute-access-control"
-version = "0.18.2"
+version = "0.19.0"
+source = "git+https://github.com/jet-lab/anchor#fcb07eb8c3c9355f3cabc00afa4faa6247ccc960"
 dependencies = [
  "anchor-syn",
  "anyhow",
@@ -62,7 +63,8 @@ dependencies = [
 
 [[package]]
 name = "anchor-attribute-account"
-version = "0.18.2"
+version = "0.19.0"
+source = "git+https://github.com/jet-lab/anchor#fcb07eb8c3c9355f3cabc00afa4faa6247ccc960"
 dependencies = [
  "anchor-syn",
  "anyhow",
@@ -74,8 +76,19 @@ dependencies = [
 ]
 
 [[package]]
+name = "anchor-attribute-constant"
+version = "0.19.0"
+source = "git+https://github.com/jet-lab/anchor#fcb07eb8c3c9355f3cabc00afa4faa6247ccc960"
+dependencies = [
+ "anchor-syn",
+ "proc-macro2 1.0.30",
+ "syn 1.0.80",
+]
+
+[[package]]
 name = "anchor-attribute-error"
-version = "0.18.2"
+version = "0.19.0"
+source = "git+https://github.com/jet-lab/anchor#fcb07eb8c3c9355f3cabc00afa4faa6247ccc960"
 dependencies = [
  "anchor-syn",
  "proc-macro2 1.0.30",
@@ -85,7 +98,8 @@ dependencies = [
 
 [[package]]
 name = "anchor-attribute-event"
-version = "0.18.2"
+version = "0.19.0"
+source = "git+https://github.com/jet-lab/anchor#fcb07eb8c3c9355f3cabc00afa4faa6247ccc960"
 dependencies = [
  "anchor-syn",
  "anyhow",
@@ -96,7 +110,8 @@ dependencies = [
 
 [[package]]
 name = "anchor-attribute-interface"
-version = "0.18.2"
+version = "0.19.0"
+source = "git+https://github.com/jet-lab/anchor#fcb07eb8c3c9355f3cabc00afa4faa6247ccc960"
 dependencies = [
  "anchor-syn",
  "anyhow",
@@ -108,7 +123,8 @@ dependencies = [
 
 [[package]]
 name = "anchor-attribute-program"
-version = "0.18.2"
+version = "0.19.0"
+source = "git+https://github.com/jet-lab/anchor#fcb07eb8c3c9355f3cabc00afa4faa6247ccc960"
 dependencies = [
  "anchor-syn",
  "anyhow",
@@ -119,7 +135,8 @@ dependencies = [
 
 [[package]]
 name = "anchor-attribute-state"
-version = "0.18.2"
+version = "0.19.0"
+source = "git+https://github.com/jet-lab/anchor#fcb07eb8c3c9355f3cabc00afa4faa6247ccc960"
 dependencies = [
  "anchor-syn",
  "anyhow",
@@ -130,7 +147,8 @@ dependencies = [
 
 [[package]]
 name = "anchor-client"
-version = "0.18.2"
+version = "0.19.0"
+source = "git+https://github.com/jet-lab/anchor#fcb07eb8c3c9355f3cabc00afa4faa6247ccc960"
 dependencies = [
  "anchor-lang",
  "anyhow",
@@ -144,7 +162,8 @@ dependencies = [
 
 [[package]]
 name = "anchor-derive-accounts"
-version = "0.18.2"
+version = "0.19.0"
+source = "git+https://github.com/jet-lab/anchor#fcb07eb8c3c9355f3cabc00afa4faa6247ccc960"
 dependencies = [
  "anchor-syn",
  "anyhow",
@@ -155,10 +174,12 @@ dependencies = [
 
 [[package]]
 name = "anchor-lang"
-version = "0.18.2"
+version = "0.19.0"
+source = "git+https://github.com/jet-lab/anchor#fcb07eb8c3c9355f3cabc00afa4faa6247ccc960"
 dependencies = [
  "anchor-attribute-access-control",
  "anchor-attribute-account",
+ "anchor-attribute-constant",
  "anchor-attribute-error",
  "anchor-attribute-event",
  "anchor-attribute-interface",
@@ -166,6 +187,7 @@ dependencies = [
  "anchor-attribute-state",
  "anchor-derive-accounts",
  "base64 0.13.0",
+ "bincode",
  "borsh",
  "bytemuck",
  "solana-program",
@@ -174,7 +196,8 @@ dependencies = [
 
 [[package]]
 name = "anchor-spl"
-version = "0.18.2"
+version = "0.19.0"
+source = "git+https://github.com/jet-lab/anchor#fcb07eb8c3c9355f3cabc00afa4faa6247ccc960"
 dependencies = [
  "anchor-lang",
  "solana-program",
@@ -184,7 +207,8 @@ dependencies = [
 
 [[package]]
 name = "anchor-syn"
-version = "0.18.2"
+version = "0.19.0"
+source = "git+https://github.com/jet-lab/anchor#fcb07eb8c3c9355f3cabc00afa4faa6247ccc960"
 dependencies = [
  "anyhow",
  "bs58 0.3.1",
@@ -1509,6 +1533,24 @@ dependencies = [
  "solana-clap-utils",
  "solana-remote-wallet",
  "spl-token",
+]
+
+[[package]]
+name = "jet-rewards"
+version = "0.1.0"
+dependencies = [
+ "anchor-lang",
+ "anchor-spl",
+ "bytemuck",
+ "jet-staking",
+]
+
+[[package]]
+name = "jet-staking"
+version = "0.1.0"
+dependencies = [
+ "anchor-lang",
+ "anchor-spl",
 ]
 
 [[package]]

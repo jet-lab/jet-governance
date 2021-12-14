@@ -1,6 +1,7 @@
 use std::ops::DerefMut;
 
 use anchor_lang::prelude::*;
+use anchor_spl::token::TokenAccount;
 use crate::state::realm::Realm;
 
 
@@ -37,7 +38,7 @@ pub struct InitRealm<'info> {
         token::mint = governance_token_mint,
         token::authority = authority,
         payer = payer)]
-    pub vault: AccountInfo<'info>,
+    pub vault: Account<'info, TokenAccount>,
 
     /// The mint for the governance token
     pub governance_token_mint: AccountInfo<'info>,
