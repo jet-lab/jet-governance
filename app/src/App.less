@@ -15,7 +15,6 @@ button.inactive {
   max-width: 300px !important;
   min-height: 300px !important;
 }
-
 /* Styles between these lines should be included at the next version of the jet-antd library */
 
 
@@ -159,6 +158,8 @@ p {
   flex-direction: column;
 }
 
+// Styles for proposal page
+
 .proposal {
   .content {
     .description {
@@ -173,16 +174,37 @@ p {
       }
     }
   }
-  #vote-mobile {
-    display: none;
-    margin-bottom: 40px;
-  }
-
   .other-proposals div {
     overflow-y: scroll;
     flex-wrap: wrap;
   }
 }
+
+  // Vote selector
+  button, .ant-btn {
+    &.vote-select {
+    background: unset;
+    border: 1px solid transparent;
+    background-image: @gradient, @gradient;
+    text-transform: uppercase;
+    background-clip: content-box, border-box;
+    box-shadow: 800px 0 0 0 @white inset;
+    span {
+      opacity: 1;
+      background-image: linear-gradient(135deg, #3d9e83 25%, #278db6 85%);
+      background-clip: text;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    &:hover, &:active {
+      opacity: @disabled-opacity;
+    }
+    &:active {
+      box-shadow: unset;
+      background: rgba(@grey, 0.25);
+    }
+  }}
 
 #vote-turnout {
   margin: 0 36px 39px 0;

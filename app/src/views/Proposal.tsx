@@ -102,7 +102,7 @@ export const ProposalView = (props: { id: number }) => {
             <div className="flex">
               <h3>Proposal {id}</h3>
             </div>
-            <h1 className="text-gradient view-header">{headline}</h1>
+            <h1 className="view-header">{headline}</h1>
             <p>{description}</p>
 
             <div className="neu-inset flex column">
@@ -167,18 +167,21 @@ export const ProposalView = (props: { id: number }) => {
             <Button
               onClick={() => setVote("inFavor")}
               disabled={(!connected || inactive) && true}
+              className="vote-select"
             >
               In favor
             </Button>
             <Button
               onClick={() => setVote("against")}
               disabled={(!connected || inactive) && true}
+              className="vote-select"
             >
               Against
             </Button>
             <Button
               onClick={() => setVote("abstain")}
               disabled={(!connected || inactive) && true}
+              className="vote-select"
             >
               Abstain
             </Button>
