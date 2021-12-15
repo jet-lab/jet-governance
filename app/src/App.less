@@ -6,7 +6,20 @@
   --failure: @failure;
   @grey: #949494;
   --grey: @grey;
+  @disabled-opacity: 0.6;
 }
+
+/* Styles between these lines should be included at the next version of the jet-antd library */
+button.inactive {
+  filter: blur(2px);
+}
+.ant-modal-content {
+  max-width: 300px !important;
+  min-height: 300px !important;
+}
+
+/* Styles between these lines should be included at the next version of the jet-antd library */
+
 
 /* App-specific styling */
 /* This is an extension of the jet-antd library for the purposes of this UI only */
@@ -33,10 +46,7 @@
     justify-content: space-between;
   }
 }
-.ant-modal-content {
-  max-width: 300px !important;
-  min-height: 300px !important;
-}
+
 p {
   margin: 20px auto;
 }
@@ -240,6 +250,9 @@ p {
   }
   .claim-button {
     width: 15%;
+  }
+  .announced {
+    filter: blur(3px);
   }
 }
 

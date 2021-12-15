@@ -238,5 +238,9 @@ export const getRemainingTime = (currentTime: number, endTime: number): string =
 
   const seconds = Math.floor(difference % 60);
 
-  return `${days}:${hours}:${seconds}`;
+  if (days > 0) {
+    return `${days} ${days === 1 ? "day" : "days"}`
+  } else {
+    return `${hours.toLocaleString(undefined,{minimumIntegerDigits: 2})}:${minutes.toLocaleString(undefined,{minimumIntegerDigits: 2})}:${seconds.toLocaleString(undefined,{minimumIntegerDigits: 2})}`
+  }
 };

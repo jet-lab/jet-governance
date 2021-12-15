@@ -1,4 +1,5 @@
 import React, { useState, useContext, useEffect } from "react";
+import { proposals } from "../hooks/useClient";
 import { INITIAL_STATE, ProposalState } from "../models/INITIAL_PROPOSALS";
 
 interface ProposalConfig {
@@ -16,7 +17,7 @@ const ProposalContext = React.createContext<ProposalConfig>({
   showing: "active",
   setShowing: () => {},
   shownProposals: INITIAL_STATE,
-  setShownProposals: () => {},
+  setShownProposals: () => { },
 });
 
 export function ProposalProvider({ children = undefined as any }) {
@@ -25,15 +26,6 @@ export function ProposalProvider({ children = undefined as any }) {
 
   const allProposals = INITIAL_STATE;
   const activeProposals = INITIAL_STATE.filter((p) => !p.result);
-  // const inactiveProposals = INITIAL_STATE.filter(
-  //   (p) => !p.active && p.result === "inactive"
-  // );
-  // const passedProposals = INITIAL_STATE.filter(
-  //   (p) => !p.active && p.result === "passed"
-  // );
-  // const rejectedProposals = INITIAL_STATE.filter(
-  //   (p) => !p.active && p.result === "rejected"
-  // );
 
   useEffect(() => {
     if (showing === "active") {

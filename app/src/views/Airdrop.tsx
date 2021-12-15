@@ -13,7 +13,8 @@ interface Airdrop {
 
 export const AirdropView = () => {
   const { connected } = useWallet();
-  const { airdrops, claimedAirdrops, vestingAirdrops, totalAirdropped } = useAirdrop();
+  const { airdrops, claimedAirdrops, vestingAirdrops, totalAirdropped } =
+    useAirdrop();
 
   const vesting: Airdrop[] = vestingAirdrops();
   const claimed: Airdrop[] = claimedAirdrops();
@@ -44,7 +45,7 @@ export const AirdropView = () => {
                 amount={airdrop.amount}
                 end={airdrop.end}
                 claimed={airdrop.claimed}
-                vested={airdrop.vested}
+                announced={airdrop.announced}
               />
             ))}
         </div>
@@ -55,18 +56,26 @@ export const AirdropView = () => {
         <div className="header">
           <div className="neu-container">
             <h1>Vesting progress</h1>
-            Currently vesting: {vesting.map((airdrop) => `${airdrop.name}, `)}
+            {vesting.length === 0
+              ? "All of your rewards are fully vested. Stake away!"
+              : `Currently vesting: ${vesting.map(
+                  (airdrop) => `${airdrop.name}, `
+                )}`}
             <Progress percent={40} showInfo={false} />
             <Divider />
             <Collapse accordion>
-            {claimed.map((airdrop, key) => (
+              {claimed.map((airdrop, key) => (
                 <Panel header={airdrop.name} key={key}>
-                <Timeline>
-                  <Timeline.Item>Airdrop claimed</Timeline.Item>
-                  <Timeline.Item>Vesting begins</Timeline.Item>
-                  <Timeline.Item className={!airdrop.vested ? "incomplete" : ""}>Vesting period complete</Timeline.Item>
-                </Timeline>
-              </Panel>
+                  <Timeline>
+                    <Timeline.Item>Airdrop claimed</Timeline.Item>
+                    <Timeline.Item>Vesting begins</Timeline.Item>
+                    <Timeline.Item
+                      className={!airdrop.vested ? "incomplete" : ""}
+                    >
+                      Vesting period complete
+                    </Timeline.Item>
+                  </Timeline>
+                </Panel>
               ))}
             </Collapse>
             Total: {new Intl.NumberFormat().format(totalAirdropped())}
