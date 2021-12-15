@@ -50,6 +50,7 @@ export function Nav() {
             </Link>
           )}
           <Button className="secondary-btn flex-centered"
+            type="ghost"
             title={connected ? "disconnect" : "CONNECT"}
             onClick={() => connected ? disconnect() : setConnecting(true)}>
             {connected 

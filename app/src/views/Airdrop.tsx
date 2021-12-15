@@ -9,7 +9,7 @@ export const AirdropView = () => {
     useAirdrop();
 
   return (
-    <div className="view-container content-body" id="airdrop">
+    <div className="view-container" id="airdrop">
       <div>
         <h2>Airdrop</h2>
         <div className="neu-container">

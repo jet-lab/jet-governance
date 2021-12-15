@@ -63,49 +63,53 @@ export const HomeView = () => {
     );
   };
 
+  const totalDailyReward = 1000000
+  const totalStake = 1500000
+  const userDailyReward = totalDailyReward * stakedBalance / totalStake
+
   useEffect(() => openNotification(), []);
 
   return (
-    <div className="content-body">
+    <div className="view-container content-body">
       <div className="panel">
         <h2>
-          Your Info{" "}
-          <InfoCircleOutlined onClick={() => setShowVotingBalanceModal(true)} />
+          Your Info
         </h2>
-        <VotingBalanceModal
+
+        <div className="neu-inset" style={{ width: "260px" }}>
+          <h3>Votes{" "}
+            <InfoCircleOutlined onClick={() => setShowVotingBalanceModal(true)} />
+          </h3>
+            <VotingBalanceModal
           showModal={showVotingBalanceModal}
           setShowModal={setShowVotingBalanceModal}
         />
 
-        <div className="neu-inset" style={{ width: "260px" }}>
-          <h3>Votes</h3>
           <div className="text-gradient" id="staked-balance">
             {connected ? new Intl.NumberFormat().format(votingBalance) : 0}
           </div>
+          <Button onClick={getAirdrop}>GET JET</Button>
           <div id="wallet-overview" className="flex justify-between column">
-            <div className="flex justify-between">
+            <div className="flex justify-between" id="current-staking-apr">
               <span>Current Staking APR</span>
-              <span>365 * (total_daily_reward / total stake)</span>
+              <span>{(365 * userDailyReward / totalStake).toFixed(2)}%</span>
             </div>
             <div className="flex justify-between">
               <span>Est. Daily Reward</span>
-              <span>
-                user_daily_reward = total_daily_reward * user_stake /
-                total_stake
+              <span>{userDailyReward}
               </span>
             </div>
             <div className="flex justify-between">
               <span>Est. Monthly Reward</span>
-              <span>Daily reward * 30</span>
+              <span>{userDailyReward * 30}</span>
             </div>
           </div>
-          <Button onClick={getAirdrop}>GET JET</Button>
           <Divider />
           <div className="flex column">
             <div className="flex justify-between">
+            <span>Staked Tokens</span>
               <span>
-                {new Intl.NumberFormat().format(stakedBalance)} JET available to
-                unstake{" "}
+                {new Intl.NumberFormat().format(stakedBalance)}
               </span>
             </div>
             <Input
@@ -159,12 +163,7 @@ export const HomeView = () => {
         <div className="show-proposals">
           {shownProposals.map((proposal: any) => (
             <ProposalCard
-              headline={proposal.headline}
-              number={proposal.id}
-              id={proposal.id}
-              active={proposal.active}
-              end={proposal.end ?? null}
-              result={proposal.result ?? null}
+              proposal={proposal}
             />
           ))}
         </div>

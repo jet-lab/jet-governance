@@ -2,8 +2,6 @@
 @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap");
 
 :root {
-  @failure: #ec6a69;
-  --failure: @failure;
   @grey: #949494;
   --grey: @grey;
   @disabled-opacity: 0.6;
@@ -35,7 +33,7 @@ button.inactive {
   border-radius: @border-radius;
 }
 
-.ant-card {
+.proposal-card.ant-card {
   height: 200px;
   width: 200px;
   margin: 0 @spacing-md @spacing-md @spacing-md;
@@ -44,6 +42,15 @@ button.inactive {
     flex-direction: column;
     height: 100%;
     justify-content: space-between;
+  }
+  .ant-progress-bg {
+    background: @white !important;
+  }
+  .ant-progress-success-bg {
+    background: var(--jet-green) !important;
+  }
+  .ant-progress-inner {
+    background: @failure !important;
   }
 }
 
@@ -59,42 +66,44 @@ p {
     margin: 0 10px;
   }
   .content-body {
-    padding-top: 40px;
     display: flex;
-    width: @view-clamp;
     margin: auto;
-
-    .stake-info {
-      background: #e0e7f2;
-      box-shadow: inset 0px -1px 2px rgba(255, 255, 255, 0.75),
-        inset 0px 1px 2px rgba(0, 0, 0, 0.1);
-      border-radius: 15px;
-      margin-bottom: 82px;
-      width: 230px;
-      display: flex;
-      flex-direction: column;
-      padding: 20px;
-    }
-
-    .show-proposals {
-      display: flex;
-      justify-content: flex-start;
-      flex-wrap: wrap;
-    }
   }
 }
 
+// Styles for home page
+.stake-info {
+  background: #e0e7f2;
+  box-shadow: inset 0px -1px 2px rgba(255, 255, 255, 0.75),
+    inset 0px 1px 2px rgba(0, 0, 0, 0.1);
+  border-radius: 15px;
+  margin-bottom: 82px;
+  width: 230px;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+}
+
+.show-proposals {
+  display: flex;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+}
+
 #staked-balance {
-  font-size: 42px;
+  font-size: 75px;
   padding-bottom: 10px;
 }
 
 #wallet-overview {
   width: 100%;
+  #current-staking-apr span {
+    font-weight: 500;
+    font-size: 15px;
+  }
   span {
-    color: @dark-grey;
+    color: @black;
     font-size: 13px;
-    padding-bottom: 20px;
   }
 }
 
@@ -147,6 +156,7 @@ p {
 
 .details {
   display: flex;
+  flex-direction: column;
 }
 
 .proposal {
@@ -258,32 +268,4 @@ p {
 
 .gray {
   color: @dark-grey;
-}
-
-@media only screen and (max-width: 780px) {
-  .content-body {
-    flex-direction: column;
-  }
-  .header {
-    flex-direction: column-reverse;
-  }
-
-  .info {
-    flex-direction: column;
-    div {
-      width: 100% !important;
-    }
-  }
-  .vote-turnout {
-    flex-direction: column;
-  }
-
-  .proposal {
-    #vote-mobile {
-      display: flex;
-    }
-    #vote-desktop {
-      display: none;
-    }
-  }
 }

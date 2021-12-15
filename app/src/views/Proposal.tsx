@@ -125,29 +125,6 @@ export const ProposalView = (props: { id: number }) => {
             </div>
           </div>
 
-          {/* <div className="flex column" id="vote-mobile">
-          <h3>Your Vote</h3>
-          <div className="neu-container flex column">
-          <Button onClick={()=>setVote("inFavor")} disabled={(!connected || !inactive) && true}>In favor</Button>
-            <Button onClick={()=>setVote("against")} disabled={(!connected || !inactive) && true}>Against</Button>
-            <Button onClick={()=>setVote("abstain")} disabled={(!connected || !inactive) && true}>Abstain</Button>
-              <Button
-                type="primary"
-                disabled={(!connected || !inactive) && true}
-                onClick={handleVoteModal} 
-              >Vote</Button>
-              <VoteModal
-                vote={vote}
-                isVoteModalVisible={isVoteModalVisible}
-                setIsVoteModalVisible={setIsVoteModalVisible}
-                isStakeRedirectModalVisible={isStakeRedirectModalVisible}
-                setIsStakeRedirectModalVisible={setIsStakeRedirectModalVisible}
-                proposalNumber={id}
-                endDate={end}
-            />
-          </div>
-        </div> */}
-
           <h2>Vote turnout</h2>
           <div className="neu-container flex justify-evenly" id="vote-turnout">
             <div className="results">
@@ -170,7 +147,7 @@ export const ProposalView = (props: { id: number }) => {
             <div className="voters">
               <div className="flex justify-between">
               {userVote ? (<h3>Your Vote</h3>) : (<span />)}
-                <span onClick={handleCsvDownload} id="csv">CSV</span>
+                <span onClick={handleCsvDownload} id="csv">Download CSV</span>
               </div>
               <VoterList
                 id={id}
@@ -232,12 +209,7 @@ export const ProposalView = (props: { id: number }) => {
         <div className="flex">
           {activeProposals.map((proposal: any) => (
             <ProposalCard
-              headline={proposal.headline}
-              number={proposal.id}
-              id={proposal.id}
-              active={proposal.active}
-              end={proposal.end ?? null}
-              result={proposal.result ?? null}
+              proposal={proposal}
             />
           ))}
         </div>
