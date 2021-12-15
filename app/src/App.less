@@ -17,7 +17,6 @@ button.inactive {
 }
 /* Styles between these lines should be included at the next version of the jet-antd library */
 
-
 /* App-specific styling */
 /* This is an extension of the jet-antd library for the purposes of this UI only */
 .neu-container {
@@ -70,7 +69,7 @@ p {
   }
 }
 
-// Styles for home page
+/* Styles for home page */
 .stake-info {
   background: #e0e7f2;
   box-shadow: inset 0px -1px 2px rgba(255, 255, 255, 0.75),
@@ -158,8 +157,7 @@ p {
   flex-direction: column;
 }
 
-// Styles for proposal page
-
+/* Proposal page */
 .proposal {
   .content {
     .description {
@@ -180,15 +178,15 @@ p {
   }
 }
 
-  // Vote selector
-  button, .ant-btn {
-    &.vote-select {
+/* Vote selector */
+button,
+.ant-btn {
+  padding: 11px;
+  &.vote-select {
+    box-shadow: @neu-shadow;
     background: unset;
-    border: 1px solid transparent;
-    background-image: @gradient, @gradient;
     text-transform: uppercase;
     background-clip: content-box, border-box;
-    box-shadow: 800px 0 0 0 @white inset;
     span {
       opacity: 1;
       background-image: linear-gradient(135deg, #3d9e83 25%, #278db6 85%);
@@ -197,14 +195,14 @@ p {
       -webkit-text-fill-color: transparent;
     }
 
-    &:hover, &:active {
-      opacity: @disabled-opacity;
+    &:hover {
+      box-shadow: @neu-shadow-low;
     }
     &:active {
-      box-shadow: unset;
-      background: rgba(@grey, 0.25);
+      box-shadow: @neu-shadow-inset;
     }
-  }}
+  }
+}
 
 #vote-turnout {
   margin: 0 36px 39px 0;
@@ -230,7 +228,8 @@ p {
       cursor: pointer;
     }
   }
-// Overrides for jet-antd and stakeholders display
+
+  /* Overrides for jet-antd and stakeholders  */
   .ant-list-item {
     border-bottom: none;
     padding: 0;
@@ -238,6 +237,19 @@ p {
   .ant-list {
     padding: 0;
     box-shadow: none;
+    button {
+      background: @white;
+      span {
+        opacity: 1;
+        background-image: linear-gradient(135deg, #3d9e83 25%, #278db6 85%);
+        background-clip: text;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+      &:active {
+        box-shadow: none;
+      }
+    }
   }
   .your-vote {
     border: 1px solid @dark-grey;
