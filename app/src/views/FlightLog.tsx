@@ -36,7 +36,7 @@ export const FlightLogView = () => {
   return (
     <div className="view-container" id="claim">
       <div className="panel">
-        <h2>Transaction history</h2>
+        <h2>Flight Logs</h2>
         <div className="neu-container">
         <Table dataSource={dataSource} columns={columns} />
         </div>

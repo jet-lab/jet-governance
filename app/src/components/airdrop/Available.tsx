@@ -38,7 +38,7 @@ export const Available = (props: {
         {announced ? "Info about airdrop info, etc. Available for each user." : "Oh you're sneaky. You thought you could unblur this and find out what this airdrop is."}
         {" "}
         <span className="gray">
-          Ends in {getRemainingTime(currentTime, end)}
+          Ends in {announced ? getRemainingTime(currentTime, end) : "You'll have to find out"}
         </span>
       </span>
       <Button

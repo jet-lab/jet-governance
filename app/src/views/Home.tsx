@@ -58,7 +58,7 @@ export const HomeView = () => {
           onClick: () => {
             console.log("Go to Airdrop page");
           },
-          placement: 'bottomRight'
+          placement: "bottomRight",
         })
     );
   };
@@ -68,25 +68,35 @@ export const HomeView = () => {
   return (
     <div className="content-body">
       <div className="panel">
-        <h2>Your Info</h2>
+        <h2>
+          Your Info{" "}
+          <InfoCircleOutlined onClick={() => setShowVotingBalanceModal(true)} />
+        </h2>
+        <VotingBalanceModal
+          showModal={showVotingBalanceModal}
+          setShowModal={setShowVotingBalanceModal}
+        />
 
         <div className="neu-inset" style={{ width: "260px" }}>
-          <h3>Voting Balance</h3>
+          <h3>Votes</h3>
           <div className="text-gradient" id="staked-balance">
-            {connected ? new Intl.NumberFormat().format(votingBalance) : 0} vJET
+            {connected ? new Intl.NumberFormat().format(votingBalance) : 0}
           </div>
           <div id="wallet-overview" className="flex justify-between column">
             <div className="flex justify-between">
               <span>Current Staking APR</span>
-              <span>10%</span>
+              <span>365 * (total_daily_reward / total stake)</span>
             </div>
             <div className="flex justify-between">
               <span>Est. Daily Reward</span>
-              <span>10%</span>
+              <span>
+                user_daily_reward = total_daily_reward * user_stake /
+                total_stake
+              </span>
             </div>
             <div className="flex justify-between">
               <span>Est. Monthly Reward</span>
-              <span>10%</span>
+              <span>Daily reward * 30</span>
             </div>
           </div>
           <Button onClick={getAirdrop}>GET JET</Button>
@@ -96,14 +106,7 @@ export const HomeView = () => {
               <span>
                 {new Intl.NumberFormat().format(stakedBalance)} JET available to
                 unstake{" "}
-                <InfoCircleOutlined
-                  onClick={() => setShowVotingBalanceModal(true)}
-                />
               </span>
-              <VotingBalanceModal
-                showModal={showVotingBalanceModal}
-                setShowModal={setShowVotingBalanceModal}
-              />
             </div>
             <Input
               type="number"
