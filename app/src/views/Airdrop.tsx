@@ -21,6 +21,36 @@ export const AirdropView = () => {
 
   const { Panel } = Collapse;
 
+  const vestingProgress = () => {
+    const vesting = vestingAirdrops();
+
+    // Get the date at which vesting will end
+    // This will likely be a backend number in the future
+    const addDays = (date: Date, days: number) => {
+      var result = new Date(date);
+      result.setDate(result.getDate() + days);
+      return result;
+    }
+
+    const getRemainingPercentage = (start: Date, end: Date) => {
+      const difference = Math.abs(new Date().valueOf() - start.valueOf());
+      const range = end.valueOf() - start.valueOf()
+      return (difference / range) * 100
+    }
+
+    let allVestingPercentages = [0]
+
+    for (let i = 0; i < vesting.length; i++) {
+      const vestingEnd = addDays(vesting[i].claimDate, vesting[i].vestingPeriod)
+      allVestingPercentages.push(getRemainingPercentage(vesting[i].claimDate, vestingEnd))
+
+    }
+
+    return allVestingPercentages.reduce((x, y) => x + y);
+  }
+
+  const vestingProgressBar = vestingProgress()
+
   return (
     <div className="view-container content-body" id="airdrop">
       <div className="panel" style={{ width: "50%" }}>
@@ -61,7 +91,10 @@ export const AirdropView = () => {
               : `Currently vesting: ${vesting.map(
                   (airdrop) => `${airdrop.name}, `
                 )}`}
-            <Progress percent={40} showInfo={false} />
+            <Progress
+              percent={vestingProgressBar}
+              showInfo={false}
+            />
             <Divider />
             <Collapse accordion>
               {claimed.map((airdrop, key) => (

@@ -7,14 +7,15 @@ interface AirdropConfig {
     end: Date;
     announced: boolean;
     claimed: boolean;
+    claimDate?: Date;
+    vestingPeriod: number;
     vested: boolean;
   }[],
   claimedAirdrops: Function,
   unclaimedAirdrops: Function,
   vestingAirdrops: Function,
   vestedAirdrops: Function,
-  totalAirdropped: Function,
-  vestingProgress: Function,
+  totalAirdropped: Function
   transactionHistory: {
     date: string;
     transaction: string;
@@ -28,7 +29,6 @@ const AirdropContext = React.createContext<AirdropConfig>({
   unclaimedAirdrops: () => { },
   vestingAirdrops:  () => { },
   vestedAirdrops: () => { },
-  vestingProgress: () => { },
   totalAirdropped: () => { },
   transactionHistory: []
 });
@@ -41,6 +41,8 @@ export function AirdropProvider({ children = undefined as any }) {
       end: new Date("25 Jan 2022"),
       announced: true,
       claimed: true,
+      claimDate: new Date(),
+      vestingPeriod: 0,
       vested: true,
     },
     {
@@ -49,7 +51,8 @@ export function AirdropProvider({ children = undefined as any }) {
       end: new Date("25 Feb 2022"),
       announced: true,
       claimed: false,
-      vested: true,
+      vestingPeriod: 0,
+      vested: false,
     },
     {
       name: "I bless the rains down in Africa",
@@ -57,7 +60,9 @@ export function AirdropProvider({ children = undefined as any }) {
       end: new Date("25 Mar 2022"),
       announced: true,
       claimed: true,
-      vested: false,
+      claimDate: new Date("10 Dec 2021"),
+      vestingPeriod: 30,
+      vested: true,
     },
     {
       name: "The wild dogs cry out in the night",
@@ -65,6 +70,7 @@ export function AirdropProvider({ children = undefined as any }) {
       end: new Date("25 Apr 2022"),
       announced: false,
       claimed: false,
+      vestingPeriod: 0,
       vested: false,
     },
   ];
@@ -106,15 +112,6 @@ export function AirdropProvider({ children = undefined as any }) {
     return claimedAmount.reduce((a,b)=>a+b)
   }
 
-  const vestingProgress = () => {
-    const vesting = vestingAirdrops();
-    // for (let i = 0; i < vesting.length; i++) {
-    //   vesting[i].end
-    // }
-
-    return 40;
-  }
-
   const transactionHistory = [{
     date: new Date("25 Dec 2021").toString(),
     transaction: 'unstaked',
@@ -135,7 +132,7 @@ export function AirdropProvider({ children = undefined as any }) {
     date: new Date("25 Jul 2020").toString(),
     transaction: 'unstaked',
     amount: 3500
-  }]
+    }]
 
   return (
     <AirdropContext.Provider
@@ -146,8 +143,7 @@ export function AirdropProvider({ children = undefined as any }) {
         vestingAirdrops,
         vestedAirdrops,
         totalAirdropped,
-        transactionHistory,
-        vestingProgress
+        transactionHistory
       }}
     >
       {children}

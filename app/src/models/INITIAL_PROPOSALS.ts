@@ -15,7 +15,7 @@ export interface ProposalState {
 export const INITIAL_STATE: ProposalState[] = [{
   id: 7,
   start: new Date("Aug 25, 2021 16:37:52"),
-  end: new Date("Jul 25, 2022 16:37:52"),
+  end: new Date("Jan 18, 2022 16:37:52"),
   headline: "Lorem ipsum dolor sit amet, consectetur adipiscing elit",
   description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Mattis aliquam faucibus purus in massa. Ac auctor augue mauris augue neque gravida. Aenean euismod elementum nisi quis eleifend quam. Augue lacus viverra vitae congue. Diam sollicitudin tempor id eu nisl nunc.",
   hash: "0xsolanabreakpoint2022",

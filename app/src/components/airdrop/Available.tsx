@@ -35,7 +35,8 @@ export const Available = (props: {
         <strong>
           {announced ? `${name} | ${amount} JET` : "Upcoming airdrop  | ? JET"}
         </strong>{" "}
-        Info about airdrop info, etc. Available for each user.{" "}
+        {announced ? "Info about airdrop info, etc. Available for each user." : "Oh you're sneaky. You thought you could unblur this and find out what this airdrop is."}
+        {" "}
         <span className="gray">
           Ends in {getRemainingTime(currentTime, end)}
         </span>
