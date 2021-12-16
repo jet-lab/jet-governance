@@ -1,9 +1,8 @@
 use std::ops::DerefMut;
 
+use crate::state::{realm::Realm, voter::Voter};
 use anchor_lang::prelude::*;
-use crate::state::{voter::Voter, realm::Realm};
 use anchor_spl::token::{self, Transfer};
-
 
 #[derive(Accounts)]
 #[instruction(bump: u8)]
@@ -42,11 +41,7 @@ pub struct WithdrawToken<'info> {
     pub token_program: AccountInfo<'info>,
 }
 
-pub fn handler(
-    ctx: Context<WithdrawToken>,
-    bump: u8,
-    amount: u64,
-) -> ProgramResult {
+pub fn handler(ctx: Context<WithdrawToken>, bump: u8, amount: u64) -> ProgramResult {
     let voter = ctx.accounts.voter.deref_mut();
     if amount > voter.deposited {
         panic!("Cannot withdraw more than the total deposited");
@@ -69,9 +64,6 @@ pub fn handler(
         },
         seeds,
     );
-    token::transfer(
-        context,
-        amount
-    )?;
+    token::transfer(context, amount)?;
     Ok(())
 }

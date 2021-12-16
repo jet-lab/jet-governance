@@ -2,8 +2,12 @@ use std::rc::Rc;
 
 use anyhow::Result;
 use solana_client::{rpc_client::RpcClient, rpc_config::RpcSendTransactionConfig};
-use solana_sdk::{commitment_config::{CommitmentConfig, CommitmentLevel}, instruction::Instruction, signer::Signer, transaction::Transaction};
-
+use solana_sdk::{
+    commitment_config::{CommitmentConfig, CommitmentLevel},
+    instruction::Instruction,
+    signer::Signer,
+    transaction::Transaction,
+};
 
 pub struct PayingClient {
     pub rpc_client: Rc<RpcClient>,
@@ -19,7 +23,7 @@ pub fn send_transaction(
         paying_client,
         instructions,
         signers,
-        CommitmentLevel::Confirmed
+        CommitmentLevel::Confirmed,
     )
 }
 
@@ -27,7 +31,7 @@ pub fn send_transaction_with_commitment(
     paying_client: &PayingClient,
     instructions: &[Instruction],
     signers: &[&dyn Signer],
-    commitment: CommitmentLevel
+    commitment: CommitmentLevel,
 ) -> Result<()> {
     let mut config = RpcSendTransactionConfig::default();
     config.skip_preflight = true;
@@ -49,23 +53,18 @@ pub fn send_transaction_with_commitment(
         )
     };
 
-    paying_client.rpc_client.send_and_confirm_transaction_with_spinner_and_config(
-        &tx,
-        CommitmentConfig { commitment },
-        config,
-    )?;
+    paying_client
+        .rpc_client
+        .send_and_confirm_transaction_with_spinner_and_config(
+            &tx,
+            CommitmentConfig { commitment },
+            config,
+        )?;
 
     Ok(())
 }
 
 /// wait the amount of time it would take a transaction to finalize
-pub fn _finalize(
-    paying_client: &PayingClient,
-) -> Result<()> {
-    send_transaction_with_commitment(
-        paying_client,
-        &[],
-        &[],
-        CommitmentLevel::Finalized
-    )
+pub fn _finalize(paying_client: &PayingClient) -> Result<()> {
+    send_transaction_with_commitment(paying_client, &[], &[], CommitmentLevel::Finalized)
 }

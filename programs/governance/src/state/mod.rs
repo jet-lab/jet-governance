@@ -1,7 +1,7 @@
+pub mod proposal;
 pub mod realm;
 pub mod voter;
-pub mod proposal;
 
+pub use proposal::*;
 pub use realm::*;
 pub use voter::*;
-pub use proposal::*;

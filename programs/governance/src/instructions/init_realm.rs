@@ -1,9 +1,8 @@
 use std::ops::DerefMut;
 
+use crate::state::realm::Realm;
 use anchor_lang::prelude::*;
 use anchor_spl::token::TokenAccount;
-use crate::state::realm::Realm;
-
 
 #[derive(Accounts)]
 #[instruction(bump: InitRealmBumpSeeds)]
@@ -45,7 +44,7 @@ pub struct InitRealm<'info> {
 
     #[account(address = anchor_spl::token::ID)]
     pub token_program: AccountInfo<'info>,
-    
+
     //. Required to init account
     pub system_program: AccountInfo<'info>,
 
@@ -54,13 +53,11 @@ pub struct InitRealm<'info> {
     pub payer: Signer<'info>,
 }
 
-
 #[derive(AnchorDeserialize, AnchorSerialize)]
 pub struct InitRealmBumpSeeds {
     pub authority: u8,
     pub vault: u8,
 }
-
 
 pub fn handler(ctx: Context<InitRealm>, _bump: InitRealmBumpSeeds) -> ProgramResult {
     let realm = ctx.accounts.realm.deref_mut();

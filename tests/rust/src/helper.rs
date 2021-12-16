@@ -1,16 +1,22 @@
 /// Purpose: Make test code as terse and declarative as possible.
-/// It's OK if this code is a little bit spaghetti, as long as 
+/// It's OK if this code is a little bit spaghetti, as long as
 /// it makes the tests themselves simpler.
-use std::{convert::TryInto, rc::Rc, time::{SystemTime, UNIX_EPOCH}};
+use std::{
+    convert::TryInto,
+    rc::Rc,
+    time::{SystemTime, UNIX_EPOCH},
+};
 
-use anchor_client::{Program, solana_sdk::pubkey::Pubkey};
+use anchor_client::{solana_sdk::pubkey::Pubkey, Program};
 use anyhow::Result;
-use jet_governance::{instructions::Time, state::{Proposal, ProposalEvent, Realm, Vote2, Voter}};
+use jet_governance::{
+    instructions::Time,
+    state::{Proposal, ProposalEvent, Realm, Vote2, Voter},
+};
 use jet_governance_client::{instructions, load, state};
 use solana_sdk::{clock::UnixTimestamp, commitment_config::CommitmentLevel, signer::Signer};
 
 use crate::{solana::PayingClient, token};
-
 
 pub struct TestClient {
     pub payer: Rc<dyn Signer>,
@@ -34,13 +40,11 @@ impl TestClient {
     }
 }
 
-
 pub struct TestRealm<'a> {
     pub client: &'a TestClient,
     pub key: Pubkey,
     pub mint: Pubkey,
 }
-
 
 impl<'a> TestRealm<'a> {
     pub fn new(client: &'a TestClient) -> Result<Self> {
@@ -51,11 +55,7 @@ impl<'a> TestRealm<'a> {
         println!("Initializing mint");
         let mint = token::initialize_mint(&client.paying_client)?;
         println!("Initializing realm");
-        let realm = instructions::init_realm(
-            &client.anchor_program,
-            owner,
-            mint,
-        )?;
+        let realm = instructions::init_realm(&client.anchor_program, owner, mint)?;
         Ok(TestRealm {
             client,
             key: realm,
@@ -65,16 +65,10 @@ impl<'a> TestRealm<'a> {
 
     pub fn init_voter(&'a self, owner: &'a dyn Signer) -> Result<TestVoter<'a>> {
         println!("Creating voter");
-        let token_account = token::create_account(
-            &self.client.paying_client,
-            &self.mint,
-            &owner.pubkey()
-        )?;
-        let voter_pubkey = instructions::init_voter(
-            &self.client.anchor_program,
-            self.key,
-            owner.pubkey(),
-        )?;
+        let token_account =
+            token::create_account(&self.client.paying_client, &self.mint, &owner.pubkey())?;
+        let voter_pubkey =
+            instructions::init_voter(&self.client.anchor_program, self.key, owner.pubkey())?;
         let test_voter = TestVoter {
             client: self.client,
             realm: self,
@@ -95,7 +89,6 @@ impl<'a> TestRealm<'a> {
     }
 }
 
-
 #[derive(Clone, Copy)]
 pub struct TestVoter<'a> {
     pub client: &'a TestClient,
@@ -107,13 +100,18 @@ pub struct TestVoter<'a> {
 
 impl<'a> TestVoter<'a> {
     pub fn mint(&self, amount: u64) -> Result<()> {
-        token::mint_to(&self.client.paying_client, self.realm.mint, self.token, amount)
+        token::mint_to(
+            &self.client.paying_client,
+            self.realm.mint,
+            self.token,
+            amount,
+        )
     }
 
     pub fn state(&self) -> Result<Voter> {
         state::get_voter(&self.client.anchor_program, self.key)
     }
-    
+
     /// does not validate lifecycle
     pub fn init_proposal(
         &self,
@@ -204,7 +202,6 @@ impl<'a> TestVoter<'a> {
     }
 }
 
-
 #[derive(Clone, Copy)]
 pub struct TestProposal<'a> {
     pub client: &'a TestClient,
@@ -251,7 +248,6 @@ impl<'a> TestProposal<'a> {
         )
     }
 }
-
 
 pub fn now() -> UnixTimestamp {
     SystemTime::now()

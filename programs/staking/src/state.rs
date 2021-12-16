@@ -27,8 +27,12 @@ pub struct StakePool {
     /// Length of the unbonding period
     pub unbond_period: i64,
 
-    /// The total amount of virtual stake tokens (shares)
-    pub share_supply: u64,
+    /// The total amount of virtual stake tokens that can receive rewards
+    pub shares_bonded: u64,
+
+    /// The total amount of virtual stake tokens that are ineligible for rewards
+    /// because they are being unbonded for future withdrawal.
+    pub shares_unbonded: u64,
 }
 
 impl StakePool {
@@ -38,21 +42,29 @@ impl StakePool {
 
     pub fn deposit(&mut self, vault_amount: u64, token_amount: u64) -> u64 {
         let share_amount = self.tokens_as_shares(vault_amount, token_amount);
-        self.share_supply = self.share_supply.checked_add(share_amount).unwrap();
+        self.shares_bonded = self.shares_bonded.checked_add(share_amount).unwrap();
 
         share_amount
     }
 
     pub fn withdraw(&mut self, vault_amount: u64, share_amount: u64) -> u64 {
         let tokens = self.shares_as_tokens(vault_amount, share_amount);
-        self.share_supply = self.share_supply.checked_sub(share_amount).unwrap();
+        self.shares_unbonded = self.shares_unbonded.checked_sub(share_amount).unwrap();
+
+        tokens
+    }
+
+    pub fn unbond(&mut self, vault_amount: u64, share_amount: u64) -> u64 {
+        let tokens = self.shares_as_tokens(vault_amount, share_amount);
+        self.shares_bonded = self.shares_bonded.checked_sub(share_amount).unwrap();
+        self.shares_unbonded = self.shares_unbonded.checked_add(share_amount).unwrap();
 
         tokens
     }
 
     pub fn tokens_as_shares(&self, vault_amount: u64, token_amount: u64) -> u64 {
         let vault_amount = vault_amount as u128;
-        let share_supply = self.share_supply as u128;
+        let share_supply = self.shares_bonded as u128;
 
         let shares = (share_supply * token_amount as u128) / vault_amount;
 
@@ -63,7 +75,7 @@ impl StakePool {
 
     pub fn shares_as_tokens(&self, vault_amount: u64, share_amount: u64) -> u64 {
         let vault_amount = vault_amount as u128;
-        let share_supply = self.share_supply as u128;
+        let share_supply = self.shares_bonded as u128;
 
         let tokens = (vault_amount * share_amount as u128) / share_supply;
 
@@ -162,8 +174,11 @@ pub struct UnbondingAccount {
     /// The related account requesting to unstake
     pub stake_account: Pubkey,
 
-    /// The amount to be unstaked
+    /// The amount of shares to be unstaked
     pub amount: u64,
+
+    /// The token amount that should actually be received when withdrawing the stake
+    pub token_amount: u64,
 
     /// The time after which the staked amount can be withdrawn
     pub unbonded_at: i64,

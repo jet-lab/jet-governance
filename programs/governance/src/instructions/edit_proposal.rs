@@ -1,9 +1,8 @@
 use std::ops::DerefMut;
 
-use anchor_lang::prelude::*;
-use crate::state::voter::Voter;
 use crate::state::proposal::Proposal;
-
+use crate::state::voter::Voter;
+use anchor_lang::prelude::*;
 
 #[derive(Accounts)]
 #[instruction(bump: u8)]
@@ -24,11 +23,7 @@ pub struct EditProposal<'info> {
     pub proposal: Account<'info, Proposal>,
 }
 
-pub fn handler(
-    ctx: Context<EditProposal>,
-    name: String,
-    description: String,
-) -> ProgramResult {
+pub fn handler(ctx: Context<EditProposal>, name: String, description: String) -> ProgramResult {
     let content = ctx.accounts.proposal.deref_mut().content_mut();
     content.name = name;
     content.description = description;

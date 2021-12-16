@@ -1,10 +1,9 @@
 use std::ops::DerefMut;
 
+use crate::state::proposal::{Proposal, ProposalEvent};
+use crate::state::voter::Voter;
 use anchor_lang::prelude::*;
 use anchor_lang::solana_program::clock::UnixTimestamp;
-use crate::state::voter::Voter;
-use crate::state::proposal::{Proposal, ProposalEvent};
-
 
 #[derive(Accounts)]
 #[instruction(bump: u8)]
@@ -25,11 +24,10 @@ pub struct TransitionProposal<'info> {
     pub proposal: Account<'info, Proposal>,
 }
 
-
 pub fn handler(
     ctx: Context<TransitionProposal>,
     event: ProposalEvent,
-    when: Time
+    when: Time,
 ) -> ProgramResult {
     let proposal = ctx.accounts.proposal.deref_mut();
     match event {
@@ -43,7 +41,7 @@ pub fn handler(
 pub enum Time {
     Now,
     At(UnixTimestamp),
-    Never
+    Never,
 }
 
 impl Time {

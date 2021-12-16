@@ -38,7 +38,7 @@ impl Distribution {
         [
             self.address.as_ref(),
             b"vault".as_ref(),
-            self.vault_bump.as_ref()
+            self.vault_bump.as_ref(),
         ]
     }
 

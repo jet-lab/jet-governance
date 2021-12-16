@@ -1,6 +1,5 @@
-use anchor_lang::{prelude::*, solana_program::clock::UnixTimestamp};
 use super::Vote2;
-
+use anchor_lang::{prelude::*, solana_program::clock::UnixTimestamp};
 
 #[account]
 pub struct Proposal {
@@ -19,20 +18,14 @@ impl Proposal {
         name: String,
         description: String,
         activate: Option<UnixTimestamp>,
-        finalize: Option<UnixTimestamp>
+        finalize: Option<UnixTimestamp>,
     ) -> Proposal {
         Proposal {
             realm,
             owner,
             created_timestamp: Clock::get().unwrap().unix_timestamp,
-            content: ProposalContent {
-                name,
-                description,
-            },
-            lifecycle: ProposalLifecycle {
-                activate,
-                finalize,
-            },
+            content: ProposalContent { name, description },
+            lifecycle: ProposalLifecycle { activate, finalize },
             count: VoteCount::new(),
         }
     }
@@ -46,8 +39,13 @@ impl Proposal {
     }
 
     pub fn content_mut(&mut self) -> &mut ProposalContent {
-        if self.lifecycle.activated(Clock::get().unwrap().unix_timestamp)
-            || self.lifecycle.finalized(Clock::get().unwrap().unix_timestamp) {
+        if self
+            .lifecycle
+            .activated(Clock::get().unwrap().unix_timestamp)
+            || self
+                .lifecycle
+                .finalized(Clock::get().unwrap().unix_timestamp)
+        {
             panic!("Proposal is not editable.")
         }
         &mut self.content
@@ -55,20 +53,20 @@ impl Proposal {
 
     pub fn vote_mut(&mut self) -> &mut VoteCount {
         let current_timestamp = Clock::get().unwrap().unix_timestamp;
-        if !self.lifecycle.activated(current_timestamp) || self.lifecycle.finalized(current_timestamp) {
+        if !self.lifecycle.activated(current_timestamp)
+            || self.lifecycle.finalized(current_timestamp)
+        {
             panic!("Proposal is not votable");
         }
         &mut self.count
     }
 }
 
-
 #[derive(AnchorDeserialize, AnchorSerialize, Clone)]
 pub struct ProposalContent {
     pub name: String,
     pub description: String,
 }
-
 
 #[derive(AnchorDeserialize, AnchorSerialize, Clone)]
 pub struct ProposalLifecycle {
@@ -79,7 +77,8 @@ pub struct ProposalLifecycle {
 impl ProposalLifecycle {
     pub fn activate(&mut self, timestamp: Option<UnixTimestamp>) {
         if self.activated(Clock::get().unwrap().unix_timestamp)
-            || self.finalized(Clock::get().unwrap().unix_timestamp) {
+            || self.finalized(Clock::get().unwrap().unix_timestamp)
+        {
             panic!("Cannot modify the activation time of a proposal that was already activated or finalized.");
         }
         self.activate = timestamp;
@@ -99,7 +98,7 @@ impl ProposalLifecycle {
     pub fn finalized(&self, current_timestamp: UnixTimestamp) -> bool {
         self.done(self.finalize, current_timestamp)
     }
-    
+
     fn done(&self, it: Option<UnixTimestamp>, current_timestamp: UnixTimestamp) -> bool {
         match it {
             Some(timestamp) => current_timestamp >= timestamp,
@@ -124,9 +123,15 @@ impl VoteCount {
         }
     }
 
-    pub fn yes(&self) -> u64 { self.yes }
-    pub fn no(&self) -> u64 { self.no }
-    pub fn abstain(&self) -> u64 { self.abstain }
+    pub fn yes(&self) -> u64 {
+        self.yes
+    }
+    pub fn no(&self) -> u64 {
+        self.no
+    }
+    pub fn abstain(&self) -> u64 {
+        self.abstain
+    }
 
     pub fn add(&mut self, vote: Vote2, weight: u64) {
         self.edit(vote, weight, u64::checked_add)
@@ -136,9 +141,7 @@ impl VoteCount {
         self.edit(vote, weight, u64::checked_sub)
     }
 
-    fn edit<F: Fn(u64, u64) -> Option<u64>>(
-        &mut self, vote: Vote2, weight: u64, op: F
-    ) {
+    fn edit<F: Fn(u64, u64) -> Option<u64>>(&mut self, vote: Vote2, weight: u64, op: F) {
         match vote {
             Vote2::Yes => self.yes = op(self.yes, weight).unwrap(),
             Vote2::No => self.no = op(self.no, weight).unwrap(),

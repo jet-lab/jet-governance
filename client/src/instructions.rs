@@ -1,7 +1,14 @@
-use anchor_client::{Program, solana_sdk::{pubkey::Pubkey, signature::Keypair, signer::Signer, system_program, sysvar::rent}};
+use anchor_client::{
+    solana_sdk::{
+        pubkey::Pubkey, signature::Keypair, signer::Signer, system_program, sysvar::rent,
+    },
+    Program,
+};
 use anyhow::Result;
-use jet_governance::{instructions::{InitRealmBumpSeeds, Time}, state::{ProposalEvent, Vote2}};
-
+use jet_governance::{
+    instructions::{InitRealmBumpSeeds, Time},
+    state::{ProposalEvent, Vote2},
+};
 
 pub fn init_realm(
     anchor_program: &Program,
@@ -11,11 +18,11 @@ pub fn init_realm(
     let realm_acct = Keypair::new();
     let (authority, authority_bump) = Pubkey::find_program_address(
         &[b"realm-authority", &realm_acct.pubkey().to_bytes()],
-        &anchor_program.id()
+        &anchor_program.id(),
     );
     let (vault, vault_bump) = Pubkey::find_program_address(
         &[b"vault", &realm_acct.pubkey().to_bytes()],
-        &anchor_program.id()
+        &anchor_program.id(),
     );
     anchor_program
         .request()
@@ -34,22 +41,17 @@ pub fn init_realm(
             bump: InitRealmBumpSeeds {
                 authority: authority_bump,
                 vault: vault_bump,
-            }
+            },
         })
         .signer(&realm_acct)
         .send()?;
     Ok(realm_acct.pubkey())
 }
 
-
-pub fn init_voter(
-    anchor_program: &Program,
-    realm: Pubkey,
-    owner: Pubkey,
-) -> Result<Pubkey> {
+pub fn init_voter(anchor_program: &Program, realm: Pubkey, owner: Pubkey) -> Result<Pubkey> {
     let (voter, voter_bump) = Pubkey::find_program_address(
         &[b"voter", &owner.to_bytes(), &realm.to_bytes()],
-        &anchor_program.id()
+        &anchor_program.id(),
     );
     anchor_program
         .request()
@@ -60,9 +62,7 @@ pub fn init_voter(
             system_program: system_program::id(),
             payer: anchor_program.payer(),
         })
-        .args(jet_governance::instruction::InitVoter {
-            bump: voter_bump
-        })
+        .args(jet_governance::instruction::InitVoter { bump: voter_bump })
         .send()?;
     Ok(voter)
 }
@@ -76,12 +76,11 @@ pub fn deposit(
 ) -> Result<()> {
     let voter = Pubkey::find_program_address(
         &[b"voter", &owner.pubkey().to_bytes(), &realm.to_bytes()],
-        &anchor_program.id()
-    ).0;
-    let vault = Pubkey::find_program_address(
-        &[b"vault", &realm.to_bytes()],
-        &anchor_program.id()
-    ).0;
+        &anchor_program.id(),
+    )
+    .0;
+    let vault =
+        Pubkey::find_program_address(&[b"vault", &realm.to_bytes()], &anchor_program.id()).0;
     anchor_program
         .request()
         .accounts(jet_governance::accounts::DepositToken {
@@ -92,14 +91,11 @@ pub fn deposit(
             token_account,
             token_program: spl_token::id(),
         })
-        .args(jet_governance::instruction::DepositToken {
-            amount
-        })
+        .args(jet_governance::instruction::DepositToken { amount })
         .signer(owner)
         .send()?;
     Ok(())
 }
-
 
 pub fn withdraw(
     anchor_program: &Program,
@@ -110,15 +106,14 @@ pub fn withdraw(
 ) -> Result<()> {
     let voter = Pubkey::find_program_address(
         &[b"voter", &owner.pubkey().to_bytes(), &realm.to_bytes()],
-        &anchor_program.id()
-    ).0;
-    let vault = Pubkey::find_program_address(
-        &[b"vault", &realm.to_bytes()],
-        &anchor_program.id()
-    ).0;
+        &anchor_program.id(),
+    )
+    .0;
+    let vault =
+        Pubkey::find_program_address(&[b"vault", &realm.to_bytes()], &anchor_program.id()).0;
     let (authority, bump) = Pubkey::find_program_address(
         &[b"realm-authority", &realm.to_bytes()],
-        &anchor_program.id()
+        &anchor_program.id(),
     );
     anchor_program
         .request()
@@ -131,15 +126,11 @@ pub fn withdraw(
             token_account,
             token_program: spl_token::id(),
         })
-        .args(jet_governance::instruction::WithdrawToken {
-            bump,
-            amount
-        })
+        .args(jet_governance::instruction::WithdrawToken { bump, amount })
         .signer(owner)
         .send()?;
     Ok(())
 }
-
 
 pub fn init_proposal(
     anchor_program: &Program,
@@ -153,8 +144,9 @@ pub fn init_proposal(
     let proposal_account = Keypair::new();
     let voter = Pubkey::find_program_address(
         &[b"voter", &owner.pubkey().to_bytes(), &realm.to_bytes()],
-        &anchor_program.id()
-    ).0;
+        &anchor_program.id(),
+    )
+    .0;
     anchor_program
         .request()
         .accounts(jet_governance::accounts::InitProposal {
@@ -186,8 +178,9 @@ pub fn edit_proposal(
 ) -> Result<()> {
     let voter = Pubkey::find_program_address(
         &[b"voter", &owner.pubkey().to_bytes(), &realm.to_bytes()],
-        &anchor_program.id()
-    ).0;
+        &anchor_program.id(),
+    )
+    .0;
     anchor_program
         .request()
         .accounts(jet_governance::accounts::EditProposal {
@@ -214,11 +207,12 @@ pub fn vote(
 ) -> Result<Pubkey> {
     let voter = Pubkey::find_program_address(
         &[b"voter", &owner.pubkey().to_bytes(), &realm.to_bytes()],
-        &anchor_program.id()
-    ).0;
+        &anchor_program.id(),
+    )
+    .0;
     let (vote_record, vote_record_bump) = Pubkey::find_program_address(
         &[b"vote-record", &voter.to_bytes(), &proposal.to_bytes()],
-        &anchor_program.id()
+        &anchor_program.id(),
     );
     anchor_program
         .request()
@@ -240,7 +234,6 @@ pub fn vote(
     Ok(vote_record)
 }
 
-
 pub fn change_vote(
     anchor_program: &Program,
     realm: Pubkey,
@@ -250,12 +243,14 @@ pub fn change_vote(
 ) -> Result<Pubkey> {
     let voter = Pubkey::find_program_address(
         &[b"voter", &owner.pubkey().to_bytes(), &realm.to_bytes()],
-        &anchor_program.id()
-    ).0;
+        &anchor_program.id(),
+    )
+    .0;
     let vote_record = Pubkey::find_program_address(
         &[b"vote-record", &voter.to_bytes(), &proposal.to_bytes()],
-        &anchor_program.id()
-    ).0;
+        &anchor_program.id(),
+    )
+    .0;
     anchor_program
         .request()
         .accounts(jet_governance::accounts::ChangeVote {
@@ -265,14 +260,11 @@ pub fn change_vote(
             proposal,
             vote_record,
         })
-        .args(jet_governance::instruction::ChangeVote {
-            vote,
-        })
+        .args(jet_governance::instruction::ChangeVote { vote })
         .signer(owner)
         .send()?;
     Ok(vote_record)
 }
-
 
 pub fn rescind(
     anchor_program: &Program,
@@ -282,12 +274,14 @@ pub fn rescind(
 ) -> Result<Pubkey> {
     let voter = Pubkey::find_program_address(
         &[b"voter", &owner.pubkey().to_bytes(), &realm.to_bytes()],
-        &anchor_program.id()
-    ).0;
+        &anchor_program.id(),
+    )
+    .0;
     let vote_record = Pubkey::find_program_address(
         &[b"vote-record", &voter.to_bytes(), &proposal.to_bytes()],
-        &anchor_program.id()
-    ).0;
+        &anchor_program.id(),
+    )
+    .0;
     anchor_program
         .request()
         .accounts(jet_governance::accounts::RescindVote {
@@ -297,13 +291,11 @@ pub fn rescind(
             proposal,
             vote_record,
         })
-        .args(jet_governance::instruction::RescindVote { })
+        .args(jet_governance::instruction::RescindVote {})
         .signer(owner)
         .send()?;
     Ok(vote_record)
 }
-
-
 
 pub fn transition_proposal(
     anchor_program: &Program,
@@ -315,8 +307,9 @@ pub fn transition_proposal(
 ) -> Result<()> {
     let voter = Pubkey::find_program_address(
         &[b"voter", &owner.pubkey().to_bytes(), &realm.to_bytes()],
-        &anchor_program.id()
-    ).0;
+        &anchor_program.id(),
+    )
+    .0;
     anchor_program
         .request()
         .accounts(jet_governance::accounts::TransitionProposal {
@@ -325,10 +318,7 @@ pub fn transition_proposal(
             voter,
             proposal,
         })
-        .args(jet_governance::instruction::TransitionProposal { 
-            event,
-            when,
-        })
+        .args(jet_governance::instruction::TransitionProposal { event, when })
         .signer(owner)
         .send()?;
     Ok(())

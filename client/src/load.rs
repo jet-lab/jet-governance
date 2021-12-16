@@ -1,28 +1,27 @@
 use std::{rc::Rc, sync::Arc};
 
-use anchor_client::{Cluster, Program, solana_sdk::{commitment_config::{CommitmentConfig, CommitmentLevel}, signer::Signer}};
+use anchor_client::{
+    solana_sdk::{
+        commitment_config::{CommitmentConfig, CommitmentLevel},
+        signer::Signer,
+    },
+    Cluster, Program,
+};
 
 use clap2::ArgMatches;
 use lazy_static::lazy_static;
 use solana_clap_utils::keypair::DefaultSigner;
-use solana_remote_wallet::remote_wallet::{RemoteWalletManager, RemoteWalletError};
+use solana_remote_wallet::remote_wallet::{RemoteWalletError, RemoteWalletManager};
 
-
-pub fn program<'a>(
-    payer: Rc<dyn Signer>,
-    commitment: CommitmentLevel
-) -> Program {
+pub fn program<'a>(payer: Rc<dyn Signer>, commitment: CommitmentLevel) -> Program {
     let cluster = Cluster::Localnet;
     let connection = anchor_client::Client::new_with_options(
         cluster.clone(),
         payer.into(),
-        CommitmentConfig {
-            commitment,
-        }
+        CommitmentConfig { commitment },
     );
     connection.program(jet_governance::id())
 }
-
 
 pub fn wallet(path: &str) -> Rc<dyn Signer> {
     let path = &*shellexpand::tilde(path);
@@ -36,7 +35,7 @@ pub fn wallet(path: &str) -> Rc<dyn Signer> {
 }
 
 lazy_static! {
-    static ref HID_API: Arc<parking_lot::Mutex<hidapi::HidApi>> = 
+    static ref HID_API: Arc<parking_lot::Mutex<hidapi::HidApi>> =
         Arc::new(parking_lot::Mutex::new(hidapi::HidApi::new().unwrap()));
 }
 

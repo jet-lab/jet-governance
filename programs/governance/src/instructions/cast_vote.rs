@@ -1,8 +1,12 @@
 use std::ops::DerefMut;
 
+use crate::{
+    state::proposal::Proposal,
+    state::realm::Realm,
+    state::voter::Voter,
+    state::{voter::VoteRecord, Vote2},
+};
 use anchor_lang::prelude::*;
-use crate::{state::proposal::Proposal, state::{Vote2, voter::VoteRecord}, state::voter::Voter, state::realm::Realm};
-
 
 #[derive(Accounts)]
 #[instruction(bump: u8)]
@@ -30,7 +34,7 @@ pub struct CastVote<'info> {
              space = 8 + std::mem::size_of::<VoteRecord>(),
              payer = payer)]
     pub vote_record: Account<'info, VoteRecord>,
-    
+
     /// Required to init account
     pub system_program: AccountInfo<'info>,
 

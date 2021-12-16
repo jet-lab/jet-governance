@@ -65,7 +65,7 @@ pub fn add_stake_locked_handler(
     let vesting_account = &mut ctx.accounts.vesting_account;
 
     let vault_amount = token::accessor::amount(&ctx.accounts.stake_pool_vault)?;
-    let staked_amount = stake_pool.tokens_as_shares(vault_amount, amount);
+    let staked_amount = stake_pool.deposit(vault_amount, amount);
 
     vesting_account.stake_account = stake_account.key();
     vesting_account.total = staked_amount;
@@ -74,7 +74,6 @@ pub fn add_stake_locked_handler(
     vesting_account.vest_end_at = end_at;
 
     stake_account.locked = stake_account.locked.checked_add(staked_amount).unwrap();
-    stake_pool.share_supply = stake_pool.share_supply.checked_add(staked_amount).unwrap();
 
     token::transfer(ctx.accounts.transfer_context(), amount)?;
 

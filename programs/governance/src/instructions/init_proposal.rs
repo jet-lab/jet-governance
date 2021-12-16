@@ -1,13 +1,11 @@
 use std::ops::DerefMut;
 
-use anchor_lang::prelude::*;
 use crate::state::proposal::Proposal;
 use crate::state::realm::Realm;
 use crate::state::voter::Voter;
+use anchor_lang::prelude::*;
 
 use super::transition_proposal::Time;
-
-
 
 #[derive(Accounts)]
 #[instruction(bump: u8)]

@@ -18,7 +18,7 @@ pub mod rewards {
     }
 
     /// Add recipients of an airdrop.
-    /// 
+    ///
     /// Recipients have to be provided in sorted order based on the
     /// recipient's address.
     pub fn add_airdrop_recipients(
@@ -54,7 +54,10 @@ pub mod rewards {
     }
 
     /// Initialize a new token distribution
-    pub fn init_distribution(ctx: Context<InitDistribution>, params: InitDistributionParams) -> ProgramResult {
+    pub fn init_distribution(
+        ctx: Context<InitDistribution>,
+        params: InitDistributionParams,
+    ) -> ProgramResult {
         instructions::init_distribution_handler(ctx, params)
     }
 

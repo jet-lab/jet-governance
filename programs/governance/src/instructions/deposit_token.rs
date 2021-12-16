@@ -1,9 +1,8 @@
 use std::ops::DerefMut;
 
+use crate::state::{realm::Realm, voter::Voter};
 use anchor_lang::prelude::*;
 use anchor_spl::token::{self, Transfer};
-use crate::state::{voter::Voter, realm::Realm};
-
 
 #[derive(Accounts)]
 #[instruction(bump: u8)]
@@ -32,10 +31,7 @@ pub struct DepositToken<'info> {
     pub token_program: AccountInfo<'info>,
 }
 
-pub fn handler(
-    ctx: Context<DepositToken>,
-    amount: u64,
-) -> ProgramResult {
+pub fn handler(ctx: Context<DepositToken>, amount: u64) -> ProgramResult {
     (*ctx.accounts.voter.deref_mut()).deposited += amount;
     let context = CpiContext::new(
         ctx.accounts.token_program.clone(),
@@ -45,9 +41,6 @@ pub fn handler(
             authority: ctx.accounts.owner.clone(),
         },
     );
-    token::transfer(
-        context,
-        amount
-    )?;
+    token::transfer(context, amount)?;
     Ok(())
 }

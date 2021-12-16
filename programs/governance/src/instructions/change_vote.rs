@@ -1,8 +1,11 @@
 use std::ops::DerefMut;
 
+use crate::{
+    state::proposal::Proposal,
+    state::voter::Voter,
+    state::voter::{Vote2, VoteRecord},
+};
 use anchor_lang::prelude::*;
-use crate::{state::proposal::Proposal, state::voter::{Vote2, VoteRecord}, state::voter::Voter};
-
 
 #[derive(Accounts)]
 #[instruction(bump: u8)]
@@ -30,7 +33,9 @@ pub fn handler(ctx: Context<ChangeVote>, vote: Vote2) -> ProgramResult {
     let vote_record = ctx.accounts.vote_record.deref_mut();
     let proposal = ctx.accounts.proposal.deref_mut();
     let voter = ctx.accounts.voter.deref_mut();
-    proposal.vote_mut().rescind(vote_record.vote, vote_record.weight);
+    proposal
+        .vote_mut()
+        .rescind(vote_record.vote, vote_record.weight);
     proposal.vote_mut().add(vote, voter.deposited);
     vote_record.weight = voter.deposited;
     vote_record.vote = vote;

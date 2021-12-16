@@ -1,6 +1,5 @@
-use anchor_lang::{AccountsClose, prelude::*};
-use crate::{state::voter::Voter, state::voter::VoteRecord, state::proposal::Proposal};
-
+use crate::{state::proposal::Proposal, state::voter::VoteRecord, state::voter::Voter};
+use anchor_lang::{prelude::*, AccountsClose};
 
 #[derive(Accounts)]
 pub struct RescindVote<'info> {
@@ -27,7 +26,9 @@ pub fn handler(ctx: Context<RescindVote>) -> ProgramResult {
     let vote_record = &ctx.accounts.vote_record;
     let proposal = &mut ctx.accounts.proposal;
     let voter = &mut ctx.accounts.voter;
-    proposal.vote_mut().rescind(vote_record.vote, vote_record.weight);
+    proposal
+        .vote_mut()
+        .rescind(vote_record.vote, vote_record.weight);
     voter.active_votes -= 1;
     vote_record.close(ctx.accounts.owner.to_account_info())?;
     Ok(())

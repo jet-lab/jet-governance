@@ -1,9 +1,8 @@
 use std::ops::DerefMut;
 
-use anchor_lang::prelude::*;
-use crate::state::voter::Voter;
 use crate::state::realm::Realm;
-
+use crate::state::voter::Voter;
+use anchor_lang::prelude::*;
 
 #[derive(Accounts)]
 #[instruction(bump: u8)]
