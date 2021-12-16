@@ -46,11 +46,11 @@ pub mod rewards {
 
     /// Claim tokens from an airdrop, which are deposited as locked stake
     /// with vesting terms configured on the airdrop.
-    pub fn claim_airdrop_vesting(
-        ctx: Context<ClaimAirdropVesting>,
-        params: ClaimAirdropVestingParams,
+    pub fn claim_airdrop_locked(
+        ctx: Context<ClaimAirdropLocked>,
+        params: ClaimAirdropLockedParams,
     ) -> ProgramResult {
-        instructions::claim_airdrop_vesting_handler(ctx, params)
+        instructions::claim_airdrop_locked_handler(ctx, params)
     }
 
     /// Initialize a new token distribution

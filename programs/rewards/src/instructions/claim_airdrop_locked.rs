@@ -7,13 +7,13 @@ use jet_staking::program::JetStaking;
 use crate::state::*;
 
 #[derive(AnchorSerialize, AnchorDeserialize)]
-pub struct ClaimAirdropVestingParams {
+pub struct ClaimAirdropLockedParams {
     pub bump: u8,
     pub seed: u32,
 }
 
 #[derive(Accounts)]
-pub struct ClaimAirdropVesting<'info> {
+pub struct ClaimAirdropLocked<'info> {
     /// The airdrop to claim from
     #[account(mut,
               has_one = stake_pool,
@@ -48,7 +48,7 @@ pub struct ClaimAirdropVesting<'info> {
     pub system_program: Program<'info, System>,
 }
 
-impl<'info> ClaimAirdropVesting<'info> {
+impl<'info> ClaimAirdropLocked<'info> {
     fn add_stake_context(&self) -> CpiContext<'_, '_, '_, 'info, AddStakeLocked<'info>> {
         CpiContext::new(
             self.staking_program.to_account_info(),
@@ -66,9 +66,9 @@ impl<'info> ClaimAirdropVesting<'info> {
     }
 }
 
-pub fn claim_airdrop_vesting_handler(
-    ctx: Context<ClaimAirdropVesting>,
-    params: ClaimAirdropVestingParams,
+pub fn claim_airdrop_locked_handler(
+    ctx: Context<ClaimAirdropLocked>,
+    params: ClaimAirdropLockedParams,
 ) -> ProgramResult {
     let mut airdrop = ctx.accounts.airdrop.load_mut()?;
 
