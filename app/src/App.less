@@ -46,11 +46,16 @@ button.inactive {
   height: 200px;
   width: 200px;
   margin: 0 @spacing-md @spacing-md @spacing-md;
+  .header, .details {
+    font-size: @base-font-size;
+    color: @dark-grey;
+  }
   .ant-card-body {
     display: flex;
     flex-direction: column;
     height: 100%;
     justify-content: space-between;
+    padding: 0 !important;
   }
   .ant-progress-bg {
     background: @white !important;
@@ -269,20 +274,25 @@ button,
   .your-vote {
     border-radius: 30px;
     box-shadow: @neu-shadow-inset;
+    margin-bottom: -10px;
   }
   .stakeholders {
     display: flex;
-    line-height: 23px;
+    line-height: @base-font-size;
     letter-spacing: 0.05em;
     width: 100%;
     padding: 3px;
     .voter {
+      color: @dark-grey;
+      text-transform: uppercase;
       width: 25%;
-      overflow-x: auto;
-      font-size:  @sm-font-size !important;
+      text-align: left;
+      font-size:  @xs-font-size !important;
+      padding-left: 10px;
     }
     .address {
       width: 25%;
+      text-align: left;
       overflow-x: auto;
       font-size:  @sm-font-size !important;
     }
@@ -296,13 +306,9 @@ button,
       width: 25%;
       text-align: left;
       text-transform: uppercase;
-      font-family: "Poppins", sans-serif;
-      font-size: 10px;
-      line-height: 23px;
       font-size:  @sm-font-size !important;
     }
     .title {
-      text-transform: uppercase;
       font-size: 8px !important;
     }
   }

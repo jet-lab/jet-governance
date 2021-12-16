@@ -151,9 +151,9 @@ export const ProposalView = (props: { id: number }) => {
               </div>
               <div className={`stakeholders`} >
       <span className="voter title"></span>
-      <span className="address title">Wallet</span>
+      <span className="address title">WALLET</span>
       <span className="amount title">vJET</span>
-      <span className="vote title">Vote</span>
+      <span className="vote title">VOTE</span>
     </div>
               <VoterList
                 id={id}
