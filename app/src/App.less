@@ -19,6 +19,17 @@ button.inactive {
 
 /* App-specific styling */
 /* This is an extension of the jet-antd library for the purposes of this UI only */
+.badge {
+  box-shadow: 800px 0 0 0 @white inset;
+  height: 15px;
+  min-width: 15px;
+  padding: 3px;
+  border-radius: 50%;
+  display: inline-block;
+  color: @black;
+  text-align: center;
+}
+
 .neu-container {
   box-shadow: @neu-shadow !important;
   border-radius: @border-radius;
@@ -88,9 +99,13 @@ p {
   flex-wrap: wrap;
 }
 
-#staked-balance {
-  font-size: 75px;
+.staked-balance {
   padding-bottom: 10px;
+}
+
+#resize {
+  font-size: 100px;
+  overflow: auto;
 }
 
 #wallet-overview {

@@ -244,3 +244,22 @@ export const getRemainingTime = (currentTime: number, endTime: number): string =
     return `${hours.toLocaleString(undefined,{minimumIntegerDigits: 2})}:${minutes.toLocaleString(undefined,{minimumIntegerDigits: 2})}:${seconds.toLocaleString(undefined,{minimumIntegerDigits: 2})}`
   }
 };
+
+export const autoSizeText = () => {
+  const element = document.getElementById('resize')
+
+  const resizeText = (el: HTMLElement) => {
+    const elNewFontSize = (parseInt(getComputedStyle(el).fontSize.slice(0, -2)) - 1) + 'px';
+    el.style.fontSize = elNewFontSize
+  }
+
+  if (element) {
+    // while (element.scrollWidth + 10 > parseFloat(getComputedStyle(element).width)) {
+    //   console.log(element.scrollWidth + 10)
+    //   console.log(parseFloat(getComputedStyle(element).width))
+    //   console.log(getComputedStyle(element).fontSize)
+    //   resizeText(element)
+    // }
+    console.log((parseInt(getComputedStyle(element).fontSize.slice(0, -2)) - 1) + 'px')
+  }
+}
