@@ -14,6 +14,7 @@ import { UnstakeModal } from "../components/modals/UnstakeModal";
 import { VotingBalanceModal } from "../components/modals/VotingBalanceModal";
 import { InfoCircleOutlined } from "@ant-design/icons";
 import { useAirdrop } from "../contexts/airdrop";
+import { autoSizeText } from "../utils/utils";
 
 export const HomeView = () => {
   const [showStakeModal, setShowStakeModal] = useState(false);

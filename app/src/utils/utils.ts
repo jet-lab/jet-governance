@@ -249,17 +249,18 @@ export const autoSizeText = () => {
   const element = document.getElementById('resize')
 
   const resizeText = (el: HTMLElement) => {
+    console.log("original", getComputedStyle(el).fontSize)
     const elNewFontSize = (parseInt(getComputedStyle(el).fontSize.slice(0, -2)) - 1) + 'px';
+    console.log("new", elNewFontSize);
     el.style.fontSize = elNewFontSize
+    console.log("new2after", el.style.fontSize)
   }
 
   if (element) {
-    // while (element.scrollWidth + 10 > parseFloat(getComputedStyle(element).width)) {
-    //   console.log(element.scrollWidth + 10)
-    //   console.log(parseFloat(getComputedStyle(element).width))
-    //   console.log(getComputedStyle(element).fontSize)
-    //   resizeText(element)
-    // }
-    console.log((parseInt(getComputedStyle(element).fontSize.slice(0, -2)) - 1) + 'px')
+    do {
+      resizeText(element)
+    }
+    // TODO: Fix this logic check
+    while (element.scrollWidth > element.offsetWidth);
   }
 }

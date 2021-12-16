@@ -267,32 +267,43 @@ button,
     }
   }
   .your-vote {
-    border: 1px solid @dark-grey;
-    border-radius: @border-radius;
+    border-radius: 30px;
+    box-shadow: @neu-shadow-inset;
   }
   .stakeholders {
     display: flex;
-    font-size: 12px;
     line-height: 23px;
     letter-spacing: 0.05em;
     width: 100%;
     padding: 3px;
-    .address {
-      width: 33%;
+    .voter {
+      width: 25%;
       overflow-x: auto;
+      font-size:  @sm-font-size !important;
+    }
+    .address {
+      width: 25%;
+      overflow-x: auto;
+      font-size:  @sm-font-size !important;
     }
     .amount {
-      width: 33%;
-      text-align: right;
+      width: 25%;
+      text-align: left;
       margin-right: 21px;
+      font-size:  @sm-font-size !important;
     }
     .vote {
-      width: 33%;
-      text-align: right;
+      width: 25%;
+      text-align: left;
       text-transform: uppercase;
       font-family: "Poppins", sans-serif;
       font-size: 10px;
       line-height: 23px;
+      font-size:  @sm-font-size !important;
+    }
+    .title {
+      text-transform: uppercase;
+      font-size: 8px !important;
     }
   }
 }
