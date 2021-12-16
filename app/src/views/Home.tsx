@@ -14,6 +14,7 @@ import { UnstakeModal } from "../components/modals/UnstakeModal";
 import { VotingBalanceModal } from "../components/modals/VotingBalanceModal";
 import { InfoCircleOutlined } from "@ant-design/icons";
 import { useAirdrop } from "../contexts/airdrop";
+import { autoSizeText } from "../utils/utils";
 
 export const HomeView = () => {
   const [showStakeModal, setShowStakeModal] = useState(false);
@@ -27,6 +28,8 @@ export const HomeView = () => {
   const [inputAmount, setInputAmount] = useState<number | null>(null);
   const { votingBalance, stakedBalance } = useUser();
   const { vestedAirdrops } = useAirdrop();
+
+  useEffect(() => openNotification(), []);
 
   // Devnet only: airdrop JET tokens
   const getAirdrop = async () => {
@@ -67,8 +70,6 @@ export const HomeView = () => {
   const totalStake = 1500000
   const userDailyReward = totalDailyReward * stakedBalance / totalStake
 
-  useEffect(() => openNotification(), []);
-
   return (
     <div className="view-container content-body">
       <div className="panel">
@@ -76,7 +77,7 @@ export const HomeView = () => {
           Your Info
         </h2>
 
-        <div className="neu-inset" style={{ width: "260px" }}>
+        <div className="neu-inset" style={{ maxWidth: "260px" }}>
           <h3>Votes{" "}
             <InfoCircleOutlined onClick={() => setShowVotingBalanceModal(true)} />
           </h3>
@@ -85,9 +86,10 @@ export const HomeView = () => {
           setShowModal={setShowVotingBalanceModal}
         />
 
-          <div className="text-gradient" id="staked-balance">
+          <div className="text-gradient staked-balance" id="resize">
             {connected ? new Intl.NumberFormat().format(votingBalance) : 0}
           </div>
+
           <Button onClick={getAirdrop}>GET JET</Button>
           <div id="wallet-overview" className="flex justify-between column">
             <div className="flex justify-between" id="current-staking-apr">

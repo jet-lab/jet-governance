@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
-import { useWallet } from "@solana/wallet-adapter-react";
-import { Button, Modal, Timeline } from "antd";
+import { Button } from "antd";
 import { CheckOutlined } from "@ant-design/icons";
 import { getRemainingTime } from "../../utils/utils";
 import { ClaimModal } from "./ClaimModal";
@@ -13,7 +12,6 @@ export const Available = (props: {
   announced: boolean
 }) => {
   const [showModal, setShowModal] = useState(false);
-  const { wallet, publicKey } = useWallet();
   const { name, amount, end, claimed, announced } = props;
   const [currentTime, setCurrentTime] = useState(Date.now());
 

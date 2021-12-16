@@ -16,9 +16,11 @@ export function Nav() {
   const [drawerOpened, setDrawerOpened] = useState(false);
   const { unclaimedAirdrops } = useAirdrop(); 
 
+  const unclaimedBadge = (<div>{}</div>)
+
   const navLinks = [
     {title: 'Voting', route: '/'},
-    {title: `Airdrop ${unclaimedAirdrops()}`, route: '/airdrop'},
+    {title: `Airdrop`, badge: unclaimedAirdrops(), route: '/airdrop'},
     {title: 'Flight log', route: '/flight-log'}
   ];
 
@@ -46,7 +48,7 @@ export function Nav() {
           <Switch onChange={() => toggleDarkTheme()} />
           {navLinks.map((link) =>
             <Link to={link.route} className={`nav-link ${pathname === link.route ? 'active' : ''}`}>
-              {link.title}
+              {link.title} {link.badge ? (<span className="badge">{link.badge}</span>) : ""}
             </Link>
           )}
           <Button className="secondary-btn flex-centered"

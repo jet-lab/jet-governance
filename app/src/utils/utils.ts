@@ -244,3 +244,23 @@ export const getRemainingTime = (currentTime: number, endTime: number): string =
     return `${hours.toLocaleString(undefined,{minimumIntegerDigits: 2})}:${minutes.toLocaleString(undefined,{minimumIntegerDigits: 2})}:${seconds.toLocaleString(undefined,{minimumIntegerDigits: 2})}`
   }
 };
+
+export const autoSizeText = () => {
+  const element = document.getElementById('resize')
+
+  const resizeText = (el: HTMLElement) => {
+    console.log("original", getComputedStyle(el).fontSize)
+    const elNewFontSize = (parseInt(getComputedStyle(el).fontSize.slice(0, -2)) - 1) + 'px';
+    console.log("new", elNewFontSize);
+    el.style.fontSize = elNewFontSize
+    console.log("new2after", el.style.fontSize)
+  }
+
+  if (element) {
+    do {
+      resizeText(element)
+    }
+    // TODO: Fix this logic check
+    while (element.scrollWidth > element.offsetWidth);
+  }
+}

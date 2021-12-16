@@ -17,7 +17,7 @@ interface AirdropConfig {
   vestedAirdrops: Function,
   totalAirdropped: Function
   transactionHistory: {
-    date: string;
+    date: Date;
     transaction: string;
     amount: number
   }[]
@@ -113,23 +113,23 @@ export function AirdropProvider({ children = undefined as any }) {
   }
 
   const transactionHistory = [{
-    date: new Date("25 Dec 2021").toString(),
+    date: new Date("25 Dec 2021"),
     transaction: 'unstaked',
     amount: 3500
   }, {
-    date: new Date("25 Nov 2020").toString(),
+    date: new Date("25 Nov 2020"),
     transaction: 'unstaked',
     amount: 3500
   }, {
-    date: new Date("25 Sep 2020").toString(),
+    date: new Date("25 Sep 2020"),
     transaction: 'unstaked',
     amount: 3500
   }, {
-    date: new Date("25 Dec 2020").toString(),
+    date: new Date("25 Dec 2020"),
     transaction: 'unstaked',
     amount: 3500
   }, {
-    date: new Date("25 Jul 2020").toString(),
+    date: new Date("25 Jul 2020"),
     transaction: 'unstaked',
     amount: 3500
     }]

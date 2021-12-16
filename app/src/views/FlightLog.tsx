@@ -6,9 +6,44 @@ export const FlightLogView = () => {
   const { connected, publicKey } = useWallet();
   const { transactionHistory } = useAirdrop();
 
-  const dataSource = transactionHistory;
-  
-  console.log(transactionHistory);
+  const pendingTxns = () => {
+    
+  }
+
+  // Formatters for historical txns
+  const formatDate = (date: Date) => {
+    const padTo2Digits = (num: number) => {
+      return num.toString().padStart(2, "0")
+    }
+    return [
+      date.getFullYear(),
+      padTo2Digits(date.getMonth() + 1),
+      padTo2Digits(date.getDate())
+    ].join("-");
+  }
+
+  const dataSource: {
+    date: string,
+    status: string,
+    transaction: string,
+    amount: string
+  }[] = [];
+  const formatTransactionHistory = (tx: {
+    date: Date;
+    transaction: string;
+    amount: number;
+}) => {
+  dataSource.push({
+      date: formatDate(tx.date),
+      status: "Complete",
+      transaction: formatDate(tx.date),
+      amount: "+3750"
+    });
+  }
+
+  for (let i = 0; i < transactionHistory.length; i++) {
+    formatTransactionHistory(transactionHistory[i])
+  }
 
   const columns = [
     {
@@ -18,8 +53,8 @@ export const FlightLogView = () => {
     },
     {
       title: 'Status',
-      dataIndex: 'age',
-      key: 'age',
+      dataIndex: 'status',
+      key: 'status',
     },
     {
       title: 'Transaction',

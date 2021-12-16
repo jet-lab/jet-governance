@@ -146,9 +146,15 @@ export const ProposalView = (props: { id: number }) => {
             </div>
             <div className="voters">
               <div className="flex justify-between">
-              {userVote ? (<h3>Your Vote</h3>) : (<span />)}
+                <span />
                 <span onClick={handleCsvDownload} id="csv">Download CSV</span>
               </div>
+              <div className={`stakeholders`} >
+      <span className="voter title"></span>
+      <span className="address title">WALLET</span>
+      <span className="amount title">vJET</span>
+      <span className="vote title">VOTE</span>
+    </div>
               <VoterList
                 id={id}
                 userVote={userVote?.vote}

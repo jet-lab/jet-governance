@@ -21,9 +21,10 @@ export const Stakeholders = (props: {
 
   return (
     <div className={`stakeholders ${thisUser && 'your-vote'}`} >
+      <span className="voter">{thisUser && 'Your Vote'}</span>
       <span className="address">{shortenAddress(address)}</span>
       <span className="amount">{abbreviateNumber(amount, 2)} JET</span>
-      <span className={`vote`}>{vote}</span>
+      <span className="vote">{vote}</span>
     </div>
   );
 };

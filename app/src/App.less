@@ -19,6 +19,17 @@ button.inactive {
 
 /* App-specific styling */
 /* This is an extension of the jet-antd library for the purposes of this UI only */
+.badge {
+  box-shadow: 800px 0 0 0 @white inset;
+  height: 15px;
+  min-width: 15px;
+  padding: 3px;
+  border-radius: 50%;
+  display: inline-block;
+  color: @black;
+  text-align: center;
+}
+
 .neu-container {
   box-shadow: @neu-shadow !important;
   border-radius: @border-radius;
@@ -35,11 +46,16 @@ button.inactive {
   height: 200px;
   width: 200px;
   margin: 0 @spacing-md @spacing-md @spacing-md;
+  .header, .details {
+    font-size: @base-font-size;
+    color: @dark-grey;
+  }
   .ant-card-body {
     display: flex;
     flex-direction: column;
     height: 100%;
     justify-content: space-between;
+    padding: 0 !important;
   }
   .ant-progress-bg {
     background: @white !important;
@@ -88,9 +104,13 @@ p {
   flex-wrap: wrap;
 }
 
-#staked-balance {
-  font-size: 75px;
+.staked-balance {
   padding-bottom: 10px;
+}
+
+#resize {
+  font-size: 100px;
+  overflow: auto;
 }
 
 #wallet-overview {
@@ -252,32 +272,44 @@ button,
     }
   }
   .your-vote {
-    border: 1px solid @dark-grey;
-    border-radius: @border-radius;
+    border-radius: 30px;
+    box-shadow: @neu-shadow-inset;
+    margin-bottom: -10px;
   }
   .stakeholders {
     display: flex;
-    font-size: 12px;
-    line-height: 23px;
+    line-height: @base-font-size;
     letter-spacing: 0.05em;
     width: 100%;
     padding: 3px;
+    .voter {
+      color: @dark-grey;
+      text-transform: uppercase;
+      width: 25%;
+      text-align: left;
+      font-size:  @xs-font-size !important;
+      padding-left: 10px;
+    }
     .address {
-      width: 33%;
+      width: 25%;
+      text-align: left;
       overflow-x: auto;
+      font-size:  @sm-font-size !important;
     }
     .amount {
-      width: 33%;
-      text-align: right;
+      width: 25%;
+      text-align: left;
       margin-right: 21px;
+      font-size:  @sm-font-size !important;
     }
     .vote {
-      width: 33%;
-      text-align: right;
+      width: 25%;
+      text-align: left;
       text-transform: uppercase;
-      font-family: "Poppins", sans-serif;
-      font-size: 10px;
-      line-height: 23px;
+      font-size:  @sm-font-size !important;
+    }
+    .title {
+      font-size: 8px !important;
     }
   }
 }
