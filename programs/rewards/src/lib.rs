@@ -8,7 +8,7 @@ mod state;
 use instructions::*;
 
 #[program]
-pub mod rewards {
+pub mod jet_rewards {
     use super::*;
 
     /// Initialize a new account to manage an airdrop, which can distribute
