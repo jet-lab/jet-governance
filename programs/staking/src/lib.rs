@@ -1,7 +1,7 @@
 use anchor_lang::prelude::*;
 use anchor_lang::solana_program::clock::SECONDS_PER_DAY;
 
-declare_id!("Fg6PaFpoGXkYsidMpWTK6W2BeZ7FEfcYkg476zPFsLnS");
+declare_id!("JPLockxtkngHkaQT5AuRYow3HyUv5qWzmhwsCPd653n");
 
 mod instructions;
 mod state;
