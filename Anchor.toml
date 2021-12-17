@@ -1,3 +1,5 @@
+anchor_version = "0.18.2"
+
 [programs.localnet]
 jet_governance = "5TBwvU5xoA13fzmZgWVgFBUmBz1YCdiq2AshDZpPn3AL"
 jet_rewards = "JET777rQuPU8BatFbhp6irc1NAbozxTheBqNo25eLQP"
