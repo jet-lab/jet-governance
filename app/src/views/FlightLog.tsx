@@ -1,4 +1,4 @@
-import { Divider, Table } from "antd";
+import { Divider, Tooltip } from "antd";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { useAirdrop } from "../contexts/airdrop";
 import { InfoCircleOutlined } from "@ant-design/icons";
@@ -114,7 +114,14 @@ export const FlightLogView = () => {
                   </tr>
                   <tr>
                     <td className="italics">{row.date}</td>
-                    <td className="italics">{row.status} <InfoCircleOutlined /></td>
+                    <td className="italics">
+                      {row.status}{" "}
+                      <Tooltip
+                        title="Unstaking transactions require a 30-day unbonding period. Your transaction will be considered pending until the unbonding period completes."
+                        mouseEnterDelay={0.1}>
+                        <InfoCircleOutlined />
+                      </Tooltip>
+                    </td>
                     <td className="italics">{row.transaction}</td>
                     <td className="italics">{row.amount}</td>
                   </tr>
