@@ -5,7 +5,7 @@ import { InfoCircleOutlined } from "@ant-design/icons";
 
 export const FlightLogView = () => {
   const { connected, publicKey } = useWallet();
-  const { transactionHistory } = useAirdrop();
+  const { pendingTransactions, completeTransactions } = useAirdrop();
 
   // Formatters for historical txns
   const formatDate = (date: Date) => {
@@ -19,76 +19,7 @@ export const FlightLogView = () => {
     ].join("-");
   };
 
-  const completedTx: {
-    date: string;
-    status: string;
-    transaction: string;
-    amount: string;
-  }[] = [];
-
-  const formatTransactionHistory = (tx: {
-    date: Date;
-    transaction: string;
-    amount: number;
-  }) => {
-    completedTx.push({
-      date: formatDate(tx.date),
-      status: "Complete",
-      transaction: formatDate(tx.date),
-      amount: "+3750",
-    });
-  };
-
-  for (let i = 0; i < transactionHistory.length; i++) {
-    formatTransactionHistory(transactionHistory[i]);
-  }
-
-  const pendingTx: {
-    date: string;
-    status: string;
-    transaction: string;
-    amount: string;
-  }[] = [];
-
-  const formatPendingHistory = (tx: {
-    date: Date;
-    transaction: string;
-    amount: number;
-  }) => {
-    pendingTx.push({
-      date: formatDate(tx.date),
-      status: "Pending",
-      transaction: formatDate(tx.date),
-      amount: "+3750",
-    });
-  };
-
-  for (let i = 0; i < transactionHistory.length; i++) {
-    formatPendingHistory(transactionHistory[i]);
-  }
-
-  const columns = [
-    {
-      title: "Date",
-      dataIndex: "date",
-      key: "date",
-    },
-    {
-      title: "Status",
-      dataIndex: "status",
-      key: "status",
-    },
-    {
-      title: "Transaction",
-      dataIndex: "transaction",
-      key: "transaction",
-    },
-    {
-      title: "Amount",
-      dataIndex: "amount",
-      key: "amount",
-    },
-  ];
+  console.log(pendingTransactions);
 
   return (
     <div className="view-container" id="claim">
@@ -107,25 +38,21 @@ export const FlightLogView = () => {
             </thead>
 
             <tbody>
-              {pendingTx.map((row) => (
-                <>
-                  <tr className="datatable-spacer">
-                    <td>{/* Extra row for spacing */}</td>
-                  </tr>
-                  <tr>
-                    <td className="italics">{row.date}</td>
-                    <td className="italics">
-                      {row.status}{" "}
-                      <Tooltip
-                        title="Unstaking transactions require a 30-day unbonding period. Your transaction will be considered pending until the unbonding period completes."
-                        mouseEnterDelay={0.1}>
-                        <InfoCircleOutlined />
-                      </Tooltip>
-                    </td>
-                    <td className="italics">{row.transaction}</td>
-                    <td className="italics">{row.amount}</td>
-                  </tr>
-                </>
+              {pendingTransactions.map((row) => (
+                <tr>
+                  <td className="italics">{formatDate(row.date)}</td>
+                  <td className="italics">
+                    {row.status}{" "}
+                    <Tooltip
+                      title="Unstaking transactions require a 30-day unbonding period. Your transaction will be considered pending until the unbonding period completes."
+                      mouseEnterDelay={0.1}
+                    >
+                      <InfoCircleOutlined />
+                    </Tooltip>
+                  </td>
+                  <td className="italics">{row.transaction}</td>
+                  <td className="italics">{row.amount}</td>
+                </tr>
               ))}
               <tr>
                 <td colSpan={4}>
@@ -133,18 +60,13 @@ export const FlightLogView = () => {
                 </td>
               </tr>
 
-              {completedTx.map((row) => (
-                <>
-                  <tr className="datatable-spacer">
-                    <td>{/* Extra row for spacing */}</td>
-                  </tr>
-                  <tr>
-                    <td>{row.date}</td>
-                    <td>{row.status}</td>
-                    <td className="asset">{row.transaction}</td>
-                    <td className="reserve-detail center-text">{row.amount}</td>
-                  </tr>
-                </>
+              {completeTransactions.map((row) => (
+                <tr>
+                  <td>{formatDate(row.date)}</td>
+                  <td>{row.status}</td>
+                  <td className="asset">{row.transaction}</td>
+                  <td className="reserve-detail center-text">{row.amount}</td>
+                </tr>
               ))}
             </tbody>
           </table>

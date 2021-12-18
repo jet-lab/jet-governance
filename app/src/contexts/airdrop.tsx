@@ -1,4 +1,6 @@
 import React, { useContext } from "react";
+import { useWallet } from "@solana/wallet-adapter-react";
+import { shortenAddress } from "../utils/utils";
 
 interface AirdropConfig {
   airdrops?: {
@@ -18,9 +20,22 @@ interface AirdropConfig {
   totalAirdropped: Function
   transactionHistory: {
     date: Date;
+    status: string;
     transaction: string;
     amount: number
-  }[]
+  }[];
+  pendingTransactions: {
+    date: Date;
+    status: string;
+    transaction: string;
+    amount: number
+  }[];
+  completeTransactions: {
+    date: Date;
+    status: string;
+    transaction: string;
+    amount: number
+  }[];
 }
 
 const AirdropContext = React.createContext<AirdropConfig>({
@@ -30,10 +45,14 @@ const AirdropContext = React.createContext<AirdropConfig>({
   vestingAirdrops:  () => { },
   vestedAirdrops: () => { },
   totalAirdropped: () => { },
-  transactionHistory: []
+  transactionHistory: [],
+  pendingTransactions: [],
+  completeTransactions: []
 });
 
 export function AirdropProvider({ children = undefined as any }) {
+  const { connected, publicKey } = useWallet();
+
   const airdrops = [
     {
       name: "Test Pilot Airdrop",
@@ -114,25 +133,33 @@ export function AirdropProvider({ children = undefined as any }) {
 
   const transactionHistory = [{
     date: new Date("25 Dec 2021"),
+    status: "Pending",
     transaction: 'unstaked',
     amount: 3500
   }, {
     date: new Date("25 Nov 2020"),
+    status: "Complete",
     transaction: 'unstaked',
     amount: 3500
   }, {
     date: new Date("25 Sep 2020"),
-    transaction: 'unstaked',
+    status: "Complete",
+    transaction: 'Staked from ?? airdrop',
     amount: 3500
   }, {
     date: new Date("25 Dec 2020"),
-    transaction: 'unstaked',
+    status: "Complete",
+    transaction: `Staked from wallet ${publicKey && shortenAddress(publicKey?.toString())}`,
     amount: 3500
   }, {
     date: new Date("25 Jul 2020"),
-    transaction: 'unstaked',
+    status: "Pending",
+    transaction: 'Account opened',
     amount: 3500
     }]
+  
+  const pendingTransactions = transactionHistory.filter(tx => tx.status === "Pending");
+  const completeTransactions = transactionHistory.filter(tx => tx.status === "Complete");
 
   return (
     <AirdropContext.Provider
@@ -143,7 +170,9 @@ export function AirdropProvider({ children = undefined as any }) {
         vestingAirdrops,
         vestedAirdrops,
         totalAirdropped,
-        transactionHistory
+        transactionHistory,
+        pendingTransactions,
+        completeTransactions
       }}
     >
       {children}
