@@ -1,7 +1,10 @@
 export interface ProposalState {
   id: number,
+  // The date that the proposal starts 
+  // being able to be voted on
   start: Date,
   end: Date,
+  // Will be added in after the currentDate > endDate
   result?: string,
   headline: string,
   description: string,
