@@ -1,6 +1,7 @@
+import { shortenAddress } from "@oyster/common";
 import { PublicKey } from "@solana/web3.js";
 import React, { useState, useEffect } from "react";
-import { abbreviateNumber, shortenAddress } from "../../utils/utils";
+import { abbreviateNumber } from "@oyster/common";
 
 export const Stakeholders = (props: {
   type: string,

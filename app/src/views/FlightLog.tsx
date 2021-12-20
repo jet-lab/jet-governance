@@ -2,6 +2,7 @@ import { Divider, Tooltip } from "antd";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { useAirdrop } from "../contexts/airdrop";
 import { InfoCircleOutlined } from "@ant-design/icons";
+import React from "react";
 
 export const FlightLogView = () => {
   const { connected, publicKey } = useWallet();

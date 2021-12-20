@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 import { useWallet } from "@solana/wallet-adapter-react";
-import { shortenAddress } from "../utils/utils";
+import { shortenAddress } from "@oyster/common";
 
 interface AirdropConfig {
   airdrops?: {
@@ -51,7 +51,7 @@ const AirdropContext = React.createContext<AirdropConfig>({
 });
 
 export function AirdropProvider({ children = undefined as any }) {
-  const { connected, publicKey } = useWallet();
+  const { publicKey } = useWallet();
 
   const airdrops = [
     {

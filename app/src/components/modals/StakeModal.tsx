@@ -1,13 +1,12 @@
 import { useState } from "react";
 import { Modal } from "antd";
+import React from "react";
 
 export const StakeModal = (props: {
   showModal: boolean;
   stakeAmount: number | null;
   setShowStakeModal: Function;
 }) => {
-  const [isStakeRedirectVisible, setIsStakeRedirectModalVisible] =
-    useState(false);
   const [showSuccessfulModal, setShowSuccessfulModal] = useState(false);
 
   const { showModal, stakeAmount, setShowStakeModal } = props;

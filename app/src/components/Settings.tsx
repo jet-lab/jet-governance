@@ -1,10 +1,8 @@
 import React from "react";
 import { Select } from "antd";
-import { ENDPOINTS, useConnectionConfig } from "../contexts/connection";
-import { useWallet } from "@solana/wallet-adapter-react";
+import { ENDPOINTS, useConnectionConfig } from "@oyster/common";
 
 export const Settings = () => {
-  const { connected, disconnect } = useWallet();
   const { endpoint, setEndpoint } = useConnectionConfig();
 
   return (

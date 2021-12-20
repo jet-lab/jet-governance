@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
 import { Button } from "antd";
 import { CheckOutlined } from "@ant-design/icons";
-import { getRemainingTime } from "../../utils/utils";
 import { ClaimModal } from "./ClaimModal";
+import React from "react";
+import { getRemainingTime } from "@oyster/common";
 
 export const Available = (props: {
   name: string,

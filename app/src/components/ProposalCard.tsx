@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Card, Progress } from "antd";
-import { getRemainingTime } from "../utils/utils";
 import { ProposalState } from "../models/INITIAL_PROPOSALS";
+import { getRemainingTime } from "@oyster/common";
 
 export const ProposalCard = (props: { proposal: ProposalState }) => {
   const [currentTime, setCurrentTime] = useState(Date.now());
   const { proposal } = props;
-  const { result, headline, end, id, inFavor, against, abstain } = proposal;
+  const { headline, end, id, inFavor, against, abstain } = proposal;
 
   // Truncate headline if too long
   var headlineTruncated = headline.substr(0, 25) + "\u2026";

@@ -6,10 +6,11 @@ import * as BufferLayout from "buffer-layout";
  * Layout for a public key
  */
 export const publicKey = (property = "publicKey"): unknown => {
-  const publicKeyLayout = BufferLayout.blob(32, property);
+  const layout = BufferLayout.blob(32, property);
+  const publicKeyLayout = layout as any as BufferLayout.Layout<PublicKey>
 
-  const _decode = publicKeyLayout.decode.bind(publicKeyLayout);
-  const _encode = publicKeyLayout.encode.bind(publicKeyLayout);
+  const _decode = layout.decode.bind(layout);
+  const _encode = layout.encode.bind(layout);
 
   publicKeyLayout.decode = (buffer: Buffer, offset: number) => {
     const data = _decode(buffer, offset);
@@ -28,11 +29,12 @@ export const publicKey = (property = "publicKey"): unknown => {
  */
 export const uint64 = (property = "uint64"): unknown => {
   const layout = BufferLayout.blob(8, property);
+  const uint64Layout = layout as any as BufferLayout.Layout<BN>;
 
   const _decode = layout.decode.bind(layout);
   const _encode = layout.encode.bind(layout);
 
-  layout.decode = (buffer: Buffer, offset: number) => {
+  uint64Layout.decode = (buffer: Buffer, offset: number) => {
     const data = _decode(buffer, offset);
     return new BN(
       [...data]
@@ -43,7 +45,7 @@ export const uint64 = (property = "uint64"): unknown => {
     );
   };
 
-  layout.encode = (num: BN, buffer: Buffer, offset: number) => {
+  uint64Layout.encode = (num: BN, buffer: Buffer, offset: number) => {
     const a = num.toArray().reverse();
     let b = Buffer.from(a);
     if (b.length !== 8) {
@@ -54,17 +56,19 @@ export const uint64 = (property = "uint64"): unknown => {
     return _encode(b, buffer, offset);
   };
 
-  return layout;
+  return uint64Layout;
 };
 
 // TODO: wrap in BN (what about decimals?)
 export const uint128 = (property = "uint128"): unknown => {
   const layout = BufferLayout.blob(16, property);
 
+  const bnLayout = layout as any as BufferLayout.Layout<BN>;
+
   const _decode = layout.decode.bind(layout);
   const _encode = layout.encode.bind(layout);
 
-  layout.decode = (buffer: Buffer, offset: number) => {
+  bnLayout.decode = (buffer: Buffer, offset: number) => {
     const data = _decode(buffer, offset);
     return new BN(
       [...data]
@@ -75,7 +79,7 @@ export const uint128 = (property = "uint128"): unknown => {
     );
   };
 
-  layout.encode = (num: BN, buffer: Buffer, offset: number) => {
+  bnLayout.encode = (num: BN, buffer: Buffer, offset: number) => {
     const a = num.toArray().reverse();
     let b = Buffer.from(a);
     if (b.length !== 16) {
@@ -87,7 +91,7 @@ export const uint128 = (property = "uint128"): unknown => {
     return _encode(b, buffer, offset);
   };
 
-  return layout;
+  return bnLayout;
 };
 
 /**
@@ -106,7 +110,7 @@ export const rustString = (property = "string"): unknown => {
   const _encode = rsl.encode.bind(rsl);
 
   rsl.decode = (buffer: Buffer, offset: number) => {
-    const data = _decode(buffer, offset);
+    const data = _decode(buffer, offset) as any;
     return data.chars.toString("utf8");
   };
 

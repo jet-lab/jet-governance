@@ -1,6 +1,6 @@
 import React, { FunctionComponent, useMemo } from "react";
 import { useWallet } from "@solana/wallet-adapter-react";
-import { shortenAddress } from "../utils/utils";
+import { shortenAddress } from "@oyster/common";
 import { useConnectWallet } from "../contexts/connectWallet";
 import { Button } from "antd";
 

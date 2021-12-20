@@ -2,6 +2,7 @@ import { Divider } from "antd";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { useAirdrop } from "../contexts/airdrop";
 import { Available } from "../components/airdrop/Available";
+import React from "react";
 
 export const AirdropView = () => {
   const { connected } = useWallet();

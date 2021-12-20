@@ -1,3 +1,4 @@
+import React from "react"
 import { Divider, Progress, Collapse, Timeline } from "antd";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { useAirdrop } from "../contexts/airdrop";
@@ -11,7 +12,7 @@ interface Airdrop {
   vested: boolean;
 }
 
-export const AirdropView = () => {
+export const AirdropHistory = () => {
   const { connected } = useWallet();
   const { airdrops, claimedAirdrops, vestingAirdrops, totalAirdropped } =
     useAirdrop();

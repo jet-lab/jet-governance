@@ -11,6 +11,7 @@ import { useUser } from "../hooks/useClient";
 import { USER_VOTE_HISTORY } from "../models/USER_VOTE_HISTORY";
 import { TOP_STAKEHOLDERS } from "../models/TOP_STAKEHOLDERS";
 import { INITIAL_STATE } from "../models/INITIAL_PROPOSALS";
+import React from "react";
 
 export const ProposalView = (props: { id: number }) => {
   const [inactive, setInactive] = useState(true);

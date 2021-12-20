@@ -1,12 +1,11 @@
 import React from "react";
 import "../App.less";
-import { Layout, Switch, Menu } from "antd";
-import Logo from "../images/jetgovern_white.png";
-import { WalletModalProvider } from "@solana/wallet-adapter-ant-design";
+import { Layout } from "antd";
 import { ConnectWalletModal } from "./ConnectWalletModal";
 import { Nav } from "./Nav";
+import { WalletModalProvider } from "@oyster/common";
 
-const { Header, Content } = Layout;
+const { Content } = Layout;
 
 export const AppLayout = React.memo(({ children }) => {
   return (

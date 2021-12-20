@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { useConnectWallet } from "../contexts/connectWallet";
-import { shortenAddress } from "../utils/utils";
+import { shortenAddress } from "@oyster/common";
 import { Button, Switch } from "antd";
 import { useDarkTheme } from "../contexts/darkTheme";
 import { useAirdrop } from "../contexts/airdrop";
@@ -16,7 +16,7 @@ export function Nav() {
   const [drawerOpened, setDrawerOpened] = useState(false);
   const { unclaimedAirdrops } = useAirdrop(); 
 
-  const unclaimedBadge = (<div>{}</div>)
+  //const unclaimedBadge = (<div>{}</div>)
 
   const navLinks = [
     {title: 'Voting', route: '/'},

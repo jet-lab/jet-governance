@@ -1,6 +1,4 @@
-import { useEffect, useState } from "react";
-import { cache } from "../contexts/accounts";
-import { fromLamports } from "../utils/utils";
+import { useState } from "react";
 import { useUserAccounts } from "./useUserAccounts";
 
 export function useUserTotalBalance() {

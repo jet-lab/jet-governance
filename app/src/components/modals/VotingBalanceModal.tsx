@@ -1,4 +1,5 @@
 import { Button, Input, Modal } from "antd";
+import React from "react";
 
 export const VotingBalanceModal = (props: {
   showModal: boolean;

@@ -5,16 +5,15 @@ import { Button, Divider, notification } from "antd";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { useUser } from "../hooks/useClient";
 import { Input } from "../components/Input";
-import { makeAirdropTx } from "@jet-lab/jet-engine";
-import { sendTransaction } from "../contexts/connection";
-import { useConnection } from "../contexts/connection";
 import { JET_FAUCET_DEVNET, JET_TOKEN_MINT_DEVNET } from "../utils/ids";
 import { StakeModal } from "../components/modals/StakeModal";
 import { UnstakeModal } from "../components/modals/UnstakeModal";
 import { VotingBalanceModal } from "../components/modals/VotingBalanceModal";
 import { InfoCircleOutlined } from "@ant-design/icons";
 import { useAirdrop } from "../contexts/airdrop";
-import { autoSizeText } from "../utils/utils";
+import React from "react";
+import { sendTransaction, useConnection } from "@oyster/common";
+import { makeAirdropTx } from "@jet-lab/jet-engine"
 
 export const HomeView = () => {
   const [showStakeModal, setShowStakeModal] = useState(false);
