@@ -1,4 +1,3 @@
-import { utils } from '@oyster/common';
 import {
   PublicKey,
   SYSVAR_CLOCK_PUBKEY,
@@ -10,6 +9,7 @@ import { serialize } from 'borsh';
 import { CreateProposalArgs } from './instructions';
 import { GOVERNANCE_PROGRAM_SEED, VoteType } from './accounts';
 import { PROGRAM_VERSION_V1 } from './registry/api';
+import { programIds } from '../utils';
 
 export const withCreateProposal = async (
   instructions: TransactionInstruction[],
@@ -28,7 +28,7 @@ export const withCreateProposal = async (
   useDenyOption: boolean,
   payer: PublicKey,
 ) => {
-  const { system: systemId } = utils.programIds();
+  const { system: systemId } = programIds();
 
   const args = new CreateProposalArgs({
     name,

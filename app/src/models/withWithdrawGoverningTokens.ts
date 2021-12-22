@@ -1,9 +1,9 @@
-import { utils } from '@oyster/common';
 import { PublicKey, TransactionInstruction } from '@solana/web3.js';
 import { GOVERNANCE_SCHEMA } from './serialisation';
 import { serialize } from 'borsh';
 import { WithdrawGoverningTokensArgs } from './instructions';
 import { GOVERNANCE_PROGRAM_SEED } from './accounts';
+import { programIds } from '../utils';
 
 export const withWithdrawGoverningTokens = async (
   instructions: TransactionInstruction[],
@@ -13,7 +13,7 @@ export const withWithdrawGoverningTokens = async (
   governingTokenMint: PublicKey,
   governingTokenOwner: PublicKey,
 ) => {
-  const { token: tokenId } = utils.programIds();
+  const { token: tokenId } = programIds();
 
   const args = new WithdrawGoverningTokensArgs();
   const data = Buffer.from(serialize(GOVERNANCE_SCHEMA, args));

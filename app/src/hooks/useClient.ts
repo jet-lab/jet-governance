@@ -6,7 +6,7 @@ import { useUserBalance } from "./useUserBalance"
 import { JET_FAUCET_DEVNET, JET_TOKEN_MINT_DEVNET } from "../utils/ids";
 import { PublicKey } from "@solana/web3.js";
 import { ConfirmOptions } from '@solana/web3.js';
-import { useConnection } from '@oyster/common';
+import { useConnection } from '../contexts';
 
 /* TODO: Tristyn integration client */
 export const useUser = (walletAddress?: PublicKey) => {

@@ -1,8 +1,8 @@
 import * as d3 from 'd3';
 import React, { useEffect, useState } from 'react';
+import { getExplorerUrl } from '../../../../utils';
 import { VoterDisplayData, VoteType } from '../../oysterProposalView';
-import { utils } from '@oyster/common';
-const { getExplorerUrl } = utils;
+
 //https://observablehq.com/d/86d91b23534992ff
 
 interface IVoterBubbleGraph {
@@ -29,7 +29,6 @@ export function VoterBubbleGraph(props: IVoterBubbleGraph) {
       d.name.slice(d.name.length - 3, d.name.length),
   }));
   //console.log('Data', limitedData);
-
   useEffect(() => {
     if (ref) {
       const format = d3.format(',d');

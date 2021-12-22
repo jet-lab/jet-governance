@@ -1,4 +1,3 @@
-import { notify, sendTransaction } from '@oyster/common';
 import { u64 } from '@solana/spl-token';
 
 import {
@@ -9,6 +8,8 @@ import {
 } from '@solana/web3.js';
 import { WalletContextState } from '@solana/wallet-adapter-react';
 import { withMint } from './generateGovernanceArtifacts';
+import { sendTransaction } from '../../contexts';
+import { notify } from '../../utils';
 
 export const generateMint = async (
   connection: Connection,

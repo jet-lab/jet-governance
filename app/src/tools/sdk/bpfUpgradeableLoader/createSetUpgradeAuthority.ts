@@ -1,12 +1,12 @@
-import { utils } from '@oyster/common';
 import { PublicKey, TransactionInstruction } from '@solana/web3.js';
+import { programIds } from '../../../utils';
 
 export async function createSetUpgradeAuthority(
   programId: PublicKey,
   upgradeAuthority: PublicKey,
   newUpgradeAuthority: PublicKey,
 ) {
-  const { bpf_upgrade_loader: bpfUpgradableLoaderId } = utils.programIds();
+  const { bpf_upgrade_loader: bpfUpgradableLoaderId } = programIds();
 
   const [programDataAddress] = await PublicKey.findProgramAddress(
     [programId.toBuffer()],

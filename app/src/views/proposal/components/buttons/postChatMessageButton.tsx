@@ -1,4 +1,3 @@
-import { ParsedAccount, useWallet } from '@oyster/common';
 import { Button } from 'antd';
 import React from 'react';
 
@@ -11,6 +10,8 @@ import {
   ChatMessageBody,
   ChatMessageBodyType,
 } from '../../../../models/chat/accounts';
+import { useWallet } from '@solana/wallet-adapter-react';
+import { ParsedAccount } from '../../../../contexts';
 
 export function PostChatMessageButton({
   tokenOwnerRecord,

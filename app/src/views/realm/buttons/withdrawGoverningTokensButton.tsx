@@ -1,9 +1,7 @@
-import { ParsedAccount } from '@oyster/common';
 import { Button, Col, Modal, Row } from 'antd';
 import React from 'react';
 import { Realm } from '../../../models/accounts';
 import { LABELS } from '../../../constants';
-import { hooks } from '@oyster/common';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 
 import { withdrawGoverningTokens } from '../../../actions/withdrawGoverningTokens';
@@ -11,8 +9,8 @@ import { withdrawGoverningTokens } from '../../../actions/withdrawGoverningToken
 import { PublicKey } from '@solana/web3.js';
 import { useWalletTokenOwnerRecord } from '../../../hooks/apiHooks';
 import { useRpcContext } from '../../../hooks/useRpcContext';
-
-const { useAccountByMint } = hooks;
+import { ParsedAccount } from '../../../contexts';
+import { useAccountByMint } from '../../../hooks';
 
 const { confirm, error } = Modal;
 export function WithdrawGoverningTokensButton({

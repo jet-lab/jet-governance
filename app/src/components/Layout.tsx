@@ -3,7 +3,7 @@ import "../App.less";
 import { Layout } from "antd";
 import { ConnectWalletModal } from "./ConnectWalletModal";
 import { Nav } from "./Nav";
-import { WalletModalProvider } from "@oyster/common";
+import { WalletModalProvider } from "../contexts";
 
 const { Content } = Layout;
 

@@ -1,10 +1,8 @@
 import { PublicKey, TransactionInstruction, Account } from '@solana/web3.js';
-import { models, TokenAccount } from '@oyster/common';
 import { withDepositGoverningTokens } from '../models/withDepositGoverningTokens';
 import { sendTransactionWithNotifications } from '../tools/transactions';
 import { RpcContext } from '../models/core/api';
-
-const { approve } = models;
+import { TokenAccount, approve } from '../models';
 
 export const depositGoverningTokens = async (
   { connection, wallet, programId, programVersion, walletPubkey }: RpcContext,

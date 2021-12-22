@@ -1,4 +1,3 @@
-import { utils } from '@oyster/common';
 import {
   PublicKey,
   SYSVAR_RENT_PUBKEY,
@@ -15,6 +14,7 @@ import {
   getRealmConfigAddress,
 } from './accounts';
 import BN from 'bn.js';
+import { programIds } from '../utils';
 
 export async function withCreateRealm(
   instructions: TransactionInstruction[],
@@ -29,7 +29,7 @@ export async function withCreateRealm(
   minCommunityTokensToCreateGovernance: BN,
   communityVoterWeightAddin: PublicKey | undefined,
 ) {
-  const { system: systemId, token: tokenId } = utils.programIds();
+  const { system: systemId, token: tokenId } = programIds();
 
   if (communityVoterWeightAddin && programVersion < 2) {
     throw new Error(

@@ -1,10 +1,5 @@
 import { Form, FormInstance, InputNumber } from 'antd';
-import {
-  ExplorerLink,
-  ParsedAccount,
-  useMint,
-  useWallet,
-} from '@oyster/common';
+
 import { Governance, Realm } from '../../../../models/accounts';
 import { TransactionInstruction } from '@solana/web3.js';
 import React from 'react';
@@ -26,6 +21,9 @@ import {
   getMintMinAmountAsDecimal,
 } from '../../../../tools/units';
 import { parseMinTokensToCreate } from '../../../../components/governanceConfigFormItem/governanceConfigFormItem';
+import { useWallet } from '@solana/wallet-adapter-react';
+import { ExplorerLink } from '../../../../components';
+import { ParsedAccount, useMint } from '../../../../contexts';
 
 export interface RealmConfigValues {
   minCommunityTokensToCreateGovernance: number | string;

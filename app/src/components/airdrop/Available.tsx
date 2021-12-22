@@ -3,7 +3,7 @@ import { Button } from "antd";
 import { CheckOutlined } from "@ant-design/icons";
 import { ClaimModal } from "./ClaimModal";
 import React from "react";
-import { getRemainingTime } from "@oyster/common";
+import { getRemainingTime } from "../../utils";
 
 export const Available = (props: {
   name: string,

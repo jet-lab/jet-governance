@@ -1,6 +1,7 @@
-import { useConnectionConfig, useConnection, useWallet } from '@oyster/common';
+import { useWallet } from '@solana/wallet-adapter-react';
 import { PublicKey } from '@solana/web3.js';
 import { useEffect, useState } from 'react';
+import { useConnection, useConnectionConfig } from '../contexts';
 
 import { useProgramInfo } from '../contexts/GovernanceContext';
 import { RpcContext } from '../models/core/api';

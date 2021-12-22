@@ -1,4 +1,3 @@
-import { utils } from '@oyster/common';
 import {
   PublicKey,
   SYSVAR_RENT_PUBKEY,
@@ -12,6 +11,7 @@ import {
   GOVERNANCE_PROGRAM_SEED,
 } from './accounts';
 import BN from 'bn.js';
+import { programIds } from '../utils';
 
 export const withDepositGoverningTokens = async (
   instructions: TransactionInstruction[],
@@ -25,7 +25,7 @@ export const withDepositGoverningTokens = async (
   payer: PublicKey,
   amount: BN,
 ) => {
-  const { system: systemId, token: tokenId } = utils.programIds();
+  const { system: systemId, token: tokenId } = programIds();
 
   const args = new DepositGoverningTokensArgs({ amount });
   const data = Buffer.from(

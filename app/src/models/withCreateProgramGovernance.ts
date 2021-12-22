@@ -1,4 +1,3 @@
-import { utils } from '@oyster/common';
 import {
   PublicKey,
   SYSVAR_RENT_PUBKEY,
@@ -8,6 +7,7 @@ import { GOVERNANCE_SCHEMA } from './serialisation';
 import { serialize } from 'borsh';
 import { GovernanceConfig } from './accounts';
 import { CreateProgramGovernanceArgs } from './instructions';
+import { programIds } from '../utils';
 
 export const withCreateProgramGovernance = async (
   instructions: TransactionInstruction[],
@@ -24,7 +24,7 @@ export const withCreateProgramGovernance = async (
   const {
     system: systemId,
     bpf_upgrade_loader: bpfUpgradableLoaderId,
-  } = utils.programIds();
+  } = programIds();
 
   const args = new CreateProgramGovernanceArgs({
     config,

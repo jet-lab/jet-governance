@@ -2,16 +2,14 @@ import React, { useState } from 'react';
 import { Alert, Button, ButtonProps, Modal, Space, Typography } from 'antd';
 import { Form } from 'antd';
 import './style.less';
-import {
-  ExplorerLink,
-  isTransactionTimeoutError,
-} from '@oyster/common';
 import { formDefaults } from '../../tools/forms';
-import { isSendTransactionError, isSignTransactionError, useWallet } from '@oyster/common';
 import {
   getTransactionErrorMsg,
   isWalletNotConnectedError,
 } from '../../models/errors';
+import { useWallet } from '@solana/wallet-adapter-react';
+import { isSendTransactionError, isSignTransactionError, isTransactionTimeoutError } from '../../utils';
+import { ExplorerLink } from '..';
 
 const { Text } = Typography;
 

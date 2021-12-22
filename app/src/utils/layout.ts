@@ -5,7 +5,7 @@ import * as BufferLayout from "buffer-layout";
 /**
  * Layout for a public key
  */
-export const publicKey = (property = "publicKey"): unknown => {
+export const publicKey = (property = "publicKey") => {
   const layout = BufferLayout.blob(32, property);
   const publicKeyLayout = layout as any as BufferLayout.Layout<PublicKey>
 
@@ -27,7 +27,7 @@ export const publicKey = (property = "publicKey"): unknown => {
 /**
  * Layout for a 64bit unsigned value
  */
-export const uint64 = (property = "uint64"): unknown => {
+export const uint64 = (property = "uint64") => {
   const layout = BufferLayout.blob(8, property);
   const uint64Layout = layout as any as BufferLayout.Layout<BN>;
 
@@ -60,7 +60,7 @@ export const uint64 = (property = "uint64"): unknown => {
 };
 
 // TODO: wrap in BN (what about decimals?)
-export const uint128 = (property = "uint128"): unknown => {
+export const uint128 = (property = "uint128") => {
   const layout = BufferLayout.blob(16, property);
 
   const bnLayout = layout as any as BufferLayout.Layout<BN>;

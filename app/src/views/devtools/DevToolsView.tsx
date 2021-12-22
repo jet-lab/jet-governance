@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 
-import { useConnection, useWallet } from '@oyster/common';
 import { Button, Space } from 'antd';
 import { generateGovernanceArtifacts } from '../../actions/devtools/generateGovernanceArtifacts';
 import './style.less';
 import { CreateMint } from './createMint';
+import { useConnection } from '../../contexts';
+import { useWallet } from '@solana/wallet-adapter-react';
 
 // import { ControlTestBench } from './controlTests';
 

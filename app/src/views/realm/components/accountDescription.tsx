@@ -1,16 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { Governance } from '../../../models/accounts';
-import {
-  deserializeMint,
-  ParsedAccount,
-  useAccount,
-  useConnection,
-  contexts,
-} from '@oyster/common';
 
 import { MintInfo } from '@solana/spl-token';
 import { formatMintNaturalAmountAsDecimal } from '../../../tools/units';
-const { useMint } = contexts.Accounts;
+import { deserializeMint, ParsedAccount, useTokenAccount, useConnection, useMint } from '../../../contexts';
 
 export default function AccountDescription({
   governance,
@@ -20,7 +13,7 @@ export default function AccountDescription({
   const connection = useConnection();
   const [mintAccount, setMintAccount] = useState<MintInfo | null>();
 
-  const tokenAccount = useAccount(governance.info.governedAccount);
+  const tokenAccount = useTokenAccount(governance.info.governedAccount);
   const tokenAccountMint = useMint(tokenAccount?.info.mint);
 
   useEffect(() => {

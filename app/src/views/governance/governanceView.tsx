@@ -6,12 +6,6 @@ import { useGovernance, useProposalsByGovernance } from '../../hooks/apiHooks';
 import './style.less'; // Don't remove this line, it will break dark mode if you do due to weird transpiling conditions
 import { ProposalStateBadge } from '../proposal/components/header/proposalStateBadge';
 import { useHistory } from 'react-router-dom';
-import {
-  ExplorerLink,
-  TokenIcon,
-  useConnectionConfig,
-  useMint,
-} from '@oyster/common';
 import { NewProposalButton } from './buttons/newProposalButton';
 import { useKeyParam } from '../../hooks/useKeyParam';
 import { Proposal, ProposalState } from '../../models/accounts';
@@ -24,6 +18,8 @@ import {
   formatMintSupplyFractionAsDecimalPercentage,
   getDaysFromTimestamp,
 } from '../../tools/units';
+import { TokenIcon, ExplorerLink } from '../../components';
+import { useConnectionConfig, useMint } from '../../contexts';
 
 const { Text } = Typography;
 

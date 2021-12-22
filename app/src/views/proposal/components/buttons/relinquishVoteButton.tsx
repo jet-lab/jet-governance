@@ -1,4 +1,3 @@
-import { ParsedAccount, useWallet } from '@oyster/common';
 import { Button, Col, Modal, Row } from 'antd';
 import React from 'react';
 import { LABELS } from '../../../../constants';
@@ -13,6 +12,8 @@ import {
 import { useAccountChangeTracker } from '../../../../contexts/GovernanceContext';
 import { relinquishVote } from '../../../../actions/relinquishVote';
 import { useRpcContext } from '../../../../hooks/useRpcContext';
+import { useWallet } from '@solana/wallet-adapter-react';
+import { ParsedAccount } from '../../../../contexts';
 
 const { confirm } = Modal;
 export function RelinquishVoteButton({

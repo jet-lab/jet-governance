@@ -4,17 +4,11 @@ import {
   Connection,
   Transaction
 } from '@solana/web3.js';
-import {
-  ExplorerLink,
-  isSendTransactionError,
-  isTransactionTimeoutError,
-  utils,
-} from '@oyster/common';
 import { WalletContextState } from "@solana/wallet-adapter-react";
 import React from 'react';
 import { DEFAULT_TX_TIMEOUT, sendTransaction2 } from './sdk/core/connection';
-
-const { notify } = utils;
+import { ExplorerLink } from '../components';
+import { notify, isTransactionTimeoutError, isSendTransactionError } from '../utils';
 
 export async function sendTransactionWithNotifications(
   connection: Connection,

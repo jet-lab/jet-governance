@@ -1,10 +1,10 @@
 import { Account, PublicKey, TransactionInstruction } from '@solana/web3.js';
-import { ParsedAccount } from '@oyster/common';
 
 import { SignatoryRecord } from '../models/accounts';
 import { withSignOffProposal } from '../models/withSignOffProposal';
 import { sendTransactionWithNotifications } from '../tools/transactions';
 import { RpcContext } from '../models/core/api';
+import { ParsedAccount } from '../contexts';
 
 export const signOffProposal = async (
   { connection, wallet, programId }: RpcContext,

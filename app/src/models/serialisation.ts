@@ -1,6 +1,4 @@
 import { TransactionInstruction } from '@solana/web3.js';
-import { deserializeBorsh } from '@oyster/common';
-
 import { BinaryReader, BinaryWriter } from 'borsh';
 import {
   AddSignatoryArgs,
@@ -55,6 +53,7 @@ import {
 import { serialize } from 'borsh';
 import { BorshAccountParser } from './core/serialisation';
 import { PROGRAM_VERSION_V1 } from './registry/api';
+import { deserializeBorsh } from '../utils';
 
 // ------------ u16 ------------
 

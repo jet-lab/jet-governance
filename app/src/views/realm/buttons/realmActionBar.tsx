@@ -5,9 +5,10 @@ import { DepositGoverningTokensButton } from './depositGoverningTokensButton';
 import { RegisterGovernanceButton } from './registerGovernanceButton';
 import { SetRealmAuthorityButton } from './setRealmAuthorityButton';
 import { WithdrawGoverningTokensButton } from './withdrawGoverningTokensButton';
-import { ParsedAccount, useWallet } from '@oyster/common';
 import { MoreOutlined } from '@ant-design/icons';
 import { CreateTreasuryAccountButton } from './createTreasuryAccountButton';
+import { ParsedAccount } from '../../../contexts';
+import { useWallet } from '@solana/wallet-adapter-react';
 
 export function RealmActionBar({
   realm,

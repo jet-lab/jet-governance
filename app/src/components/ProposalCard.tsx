@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Card, Progress } from "antd";
 import { ProposalState } from "../models/INITIAL_PROPOSALS";
-import { getRemainingTime } from "@oyster/common";
+import { getRemainingTime } from "../utils";
 
 export const ProposalCard = (props: { proposal: ProposalState }) => {
   const [currentTime, setCurrentTime] = useState(Date.now());

@@ -1,5 +1,5 @@
+import { useWallet } from '@solana/wallet-adapter-react';
 import { PublicKey } from '@solana/web3.js';
-import { useWallet } from '@oyster/common';
 import {
   getRealmConfigAddress,
   getSignatoryRecordAddress,

@@ -1,4 +1,3 @@
-import { utils } from '@oyster/common';
 import {
   PublicKey,
   SYSVAR_RENT_PUBKEY,
@@ -8,6 +7,7 @@ import { getGovernanceSchema } from './serialisation';
 import { serialize } from 'borsh';
 import { InsertInstructionArgs } from './instructions';
 import { getProposalInstructionAddress, InstructionData } from './accounts';
+import { programIds } from '../utils';
 
 export const withInsertInstruction = async (
   instructions: TransactionInstruction[],
@@ -22,7 +22,7 @@ export const withInsertInstruction = async (
   instructionData: InstructionData,
   payer: PublicKey,
 ) => {
-  const { system: systemId } = utils.programIds();
+  const { system: systemId } = programIds();
   const optionIndex = 0;
 
   const args = new InsertInstructionArgs({

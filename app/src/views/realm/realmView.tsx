@@ -22,8 +22,8 @@ import { getGovernanceUrl } from '../../tools/routeTools';
 import { RealmPopUpDetails } from './components/realmPopUpDetails';
 
 import { RealmActionBar } from './buttons/realmActionBar';
-import { ExplorerLink } from '@oyster/common';
 import { AppLayout } from '../../components/Layout/layout';
+import { ExplorerLink } from '../../components';
 
 const { Text } = Typography;
 

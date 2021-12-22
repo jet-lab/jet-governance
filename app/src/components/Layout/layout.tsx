@@ -3,13 +3,11 @@ import './../../App.less';
 import { Layout } from 'antd';
 import { Link } from 'react-router-dom';
 
-import { components } from '@oyster/common';
 import { Content, Header } from 'antd/lib/layout/layout';
 import Logo from './dark-horizontal-combined-rainbow.inline.svg';
 import { useRpcContext } from '../../hooks/useRpcContext';
 import { getHomeUrl } from '../../tools/routeTools';
-
-const { AppBar } = components;
+import { AppBar } from '..';
 
 export const AppLayout = React.memo((props: any) => {
   //  const location = useLocation();

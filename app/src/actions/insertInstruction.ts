@@ -1,5 +1,4 @@
 import { Account, PublicKey, TransactionInstruction } from '@solana/web3.js';
-import { ParsedAccount } from '@oyster/common';
 
 import { InstructionData, Proposal } from '../models/accounts';
 
@@ -7,6 +6,7 @@ import { withInsertInstruction } from '../models/withInsertInstruction';
 
 import { sendTransactionWithNotifications } from '../tools/transactions';
 import { RpcContext } from '../models/core/api';
+import { ParsedAccount } from '../contexts';
 
 export const insertInstruction = async (
   { connection, wallet, programId, programVersion, walletPubkey }: RpcContext,

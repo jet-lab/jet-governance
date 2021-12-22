@@ -17,6 +17,8 @@ export const LABELS = {
   WALLET_BALANCE: 'Wallet balance',
   SETTINGS_TOOLTIP: 'Settings',
   DASHBOARD_INFO: 'Connect to a wallet to view proposals.',
+  DASHBOARD_ACTION: 'Go to dashboard',
+  GO_BACK_ACTION: 'Go back',
   DESCRIPTION: 'Description',
   DESCRIPTION_LABEL: 'description',
   PROPOSAL: 'Proposal',

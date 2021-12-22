@@ -1,4 +1,4 @@
-import { ParsedAccount } from '@oyster/common';
+import { ParsedAccount } from '../contexts';
 import { Governance, Proposal } from '../models/accounts';
 import { useIsBeyondTimestamp } from './useIsBeyondTimestamp';
 

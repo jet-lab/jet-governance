@@ -1,5 +1,4 @@
 import { Form, FormInstance, InputNumber, Spin } from 'antd';
-import { ExplorerLink, ParsedAccount, utils } from '@oyster/common';
 import { Governance } from '../../../../models/accounts';
 import {
   AccountInfo,
@@ -12,15 +11,14 @@ import React from 'react';
 import { formDefaults } from '../../../../tools/forms';
 import { AccountFormItem } from '../../../../components/AccountFormItem/accountFormItem';
 
-import { contexts } from '@oyster/common';
 import { validateTokenAccount } from '../../../../tools/validators/accounts/token';
 import {
   getMintMinAmountAsDecimal,
   parseMintNaturalAmountFromDecimal,
 } from '../../../../tools/units';
-
-const { useAccount: useTokenAccount } = contexts.Accounts;
-const { useMint } = contexts.Accounts;
+import { programIds } from "../../../../utils/ids"
+import { ParsedAccount, useMint, useTokenAccount } from '../../../../contexts';
+import { ExplorerLink } from '../../../../components';
 
 export const SplTokenTransferForm = ({
   form,
@@ -31,7 +29,7 @@ export const SplTokenTransferForm = ({
   governance: ParsedAccount<Governance>;
   onCreateInstruction: (instruction: TransactionInstruction) => void;
 }) => {
-  const { token: tokenProgramId } = utils.programIds();
+  const { token: tokenProgramId } = programIds();
   const sourceTokenAccount = useTokenAccount(governance.info.governedAccount);
   const mintInfo = useMint(sourceTokenAccount?.info.mint);
 

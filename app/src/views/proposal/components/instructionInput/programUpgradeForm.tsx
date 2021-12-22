@@ -1,5 +1,4 @@
 import { Form, FormInstance } from 'antd';
-import { ExplorerLink, ParsedAccount, utils, useWallet } from '@oyster/common';
 import { Governance } from '../../../../models/accounts';
 import {
   AccountInfo,
@@ -12,6 +11,11 @@ import { createUpgradeInstruction } from '../../../../tools/sdk/bpfUpgradeableLo
 import { formDefaults } from '../../../../tools/forms';
 import { AccountFormItem } from '../../../../components/AccountFormItem/accountFormItem';
 import { validateProgramBufferAccount } from '../../../../tools/validators/accounts/upgradeable-program';
+import { utils } from '@project-serum/anchor';
+import { useWallet } from '@solana/wallet-adapter-react';
+import { ExplorerLink } from '../../../../components';
+import { ParsedAccount } from '../../../../contexts';
+import { programIds } from '../../../../utils';
 
 export const ProgramUpgradeForm = ({
   form,
@@ -28,7 +32,7 @@ export const ProgramUpgradeForm = ({
     return <div>Wallet not connected</div>;
   }
 
-  const { bpf_upgrade_loader: bpfUpgradableLoaderId } = utils.programIds();
+  const { bpf_upgrade_loader: bpfUpgradableLoaderId } = programIds();
 
   const onCreate = async ({ bufferAddress }: { bufferAddress: string }) => {
     const upgradeIx = await createUpgradeInstruction(

@@ -1,5 +1,4 @@
 import { Form, FormInstance } from 'antd';
-import { ExplorerLink, ParsedAccount } from '@oyster/common';
 import { Governance } from '../../../../models/accounts';
 import { TransactionInstruction } from '@solana/web3.js';
 import React from 'react';
@@ -15,6 +14,8 @@ import {
 import { useRpcContext } from '../../../../hooks/useRpcContext';
 import { createSetGovernanceConfig } from '../../../../models/createSetGovernanceConfig';
 import { useRealm } from '../../../../contexts/GovernanceContext';
+import { ExplorerLink } from '../../../../components';
+import { ParsedAccount } from '../../../../contexts';
 
 export const GovernanceConfigForm = ({
   form,

@@ -1,7 +1,7 @@
 import { InstructionData } from '../models/accounts';
 import { RpcContext } from '../models/core/api';
-import { simulateTransaction } from '@oyster/common';
 import { Transaction } from '@solana/web3.js';
+import { simulateTransaction } from "../contexts"
 
 export async function dryRunInstruction(
   { connection, wallet }: RpcContext,

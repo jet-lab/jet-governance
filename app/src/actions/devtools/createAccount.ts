@@ -1,4 +1,3 @@
-import { sendTransaction, utils } from '@oyster/common';
 import {
   Connection,
   Account,
@@ -6,8 +5,8 @@ import {
   PublicKey,
   SystemProgram,
 } from '@solana/web3.js';
-
-const { notify } = utils;
+import { sendTransaction } from '../../contexts';
+import { notify } from '../../utils';
 
 export const createAccount = async (
   connection: Connection,

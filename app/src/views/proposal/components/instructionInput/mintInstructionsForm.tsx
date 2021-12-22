@@ -1,5 +1,4 @@
 import { Form, FormInstance } from 'antd';
-import { ParsedAccount } from '@oyster/common';
 import { Governance, Realm } from '../../../../models/accounts';
 import { TransactionInstruction } from '@solana/web3.js';
 import React, { useState } from 'react';
@@ -12,6 +11,7 @@ import {
   getGovernanceInstructions,
   GovernanceInstructionForm,
 } from './governanceInstructionForm';
+import { ParsedAccount } from '../../../../contexts';
 
 export const MintInstructionsForm = ({
   form,

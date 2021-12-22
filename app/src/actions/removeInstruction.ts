@@ -1,11 +1,11 @@
 import { Account, PublicKey, TransactionInstruction } from '@solana/web3.js';
-import { ParsedAccount } from '@oyster/common';
 
 import { Proposal } from '../models/accounts';
 
 import { withRemoveInstruction } from '../models/withRemoveInstruction';
 import { sendTransactionWithNotifications } from '../tools/transactions';
 import { RpcContext } from '../models/core/api';
+import { ParsedAccount } from '../contexts';
 
 export const removeInstruction = async (
   { connection, wallet, programId, walletPubkey }: RpcContext,

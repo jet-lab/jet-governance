@@ -1,4 +1,3 @@
-import { ParsedAccount, useWallet } from '@oyster/common';
 import { Button } from 'antd';
 import React from 'react';
 import { LABELS } from '../../../../constants';
@@ -9,6 +8,8 @@ import {
 } from '../../../../models/accounts';
 import { finalizeVote } from '../../../../actions/finalizeVote';
 import { useRpcContext } from '../../../../hooks/useRpcContext';
+import { useWallet } from '@solana/wallet-adapter-react';
+import { ParsedAccount } from '../../../../contexts';
 
 export function FinalizeVoteButton({
   governance,

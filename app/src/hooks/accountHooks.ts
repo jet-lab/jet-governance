@@ -8,12 +8,12 @@ import {
 } from '../models/accounts';
 import { GovernanceAccountParser } from '../models/serialisation';
 
-import { ParsedAccount } from '@oyster/common';
 import { MemcmpFilter } from '../models/core/api';
 import { useAccountChangeTracker } from '../contexts/GovernanceContext';
 import { useRpcContext } from './useRpcContext';
 import { none, Option, some } from '../tools/option';
 import { getGovernanceAccounts } from '../models/api';
+import { ParsedAccount } from '../contexts';
 
 // Fetches Governance program account using the given key and subscribes to updates
 export function useGovernanceAccountByPubkey<

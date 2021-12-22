@@ -2,10 +2,9 @@ import { Form, Input } from 'antd';
 
 import React from 'react';
 
-import { contexts, tryParseKey } from '@oyster/common';
 import { AccountInfo, ParsedAccountData } from '@solana/web3.js';
-
-const { useConnection } = contexts.Connection;
+import { useConnection } from '../../contexts';
+import { tryParseKey } from '../../utils';
 
 export function AccountFormItem({
   name,

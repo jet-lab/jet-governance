@@ -1,4 +1,3 @@
-import { utils } from '@oyster/common';
 import {
   PublicKey,
   SYSVAR_RENT_PUBKEY,
@@ -8,6 +7,7 @@ import { GOVERNANCE_SCHEMA } from './serialisation';
 import { serialize } from 'borsh';
 import { GovernanceConfig } from './accounts';
 import { CreateTokenGovernanceArgs } from './instructions';
+import { programIds } from '../utils';
 
 export const withCreateTokenGovernance = async (
   instructions: TransactionInstruction[],
@@ -21,7 +21,7 @@ export const withCreateTokenGovernance = async (
   payer: PublicKey,
   governanceAuthority: PublicKey,
 ): Promise<{ governanceAddress: PublicKey }> => {
-  const { system: systemId, token: tokenId } = utils.programIds();
+  const { system: systemId, token: tokenId } = programIds();
 
   const args = new CreateTokenGovernanceArgs({
     config,

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Progress } from 'antd';
-import { abbreviateNumber } from "@oyster/common";
+import { abbreviateNumber } from "../../utils";
 
 export const ResultProgressBar = (props: {
   type: string, amount: number, total: number

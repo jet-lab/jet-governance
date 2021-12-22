@@ -1,9 +1,9 @@
-import { utils } from '@oyster/common';
 import { Account, PublicKey, TransactionInstruction } from '@solana/web3.js';
 import { GOVERNANCE_CHAT_SCHEMA } from './serialisation';
 import { serialize } from 'borsh';
 import { PostChatMessageArgs } from './instructions';
 import { governanceChatProgramId, ChatMessageBody } from './accounts';
+import { programIds } from '../../utils';
 
 export async function withPostChatMessage(
   instructions: TransactionInstruction[],
@@ -17,7 +17,7 @@ export async function withPostChatMessage(
   replyTo: PublicKey | undefined,
   body: ChatMessageBody,
 ) {
-  const { system: systemId } = utils.programIds();
+  const { system: systemId } = programIds();
 
   const args = new PostChatMessageArgs({
     body,

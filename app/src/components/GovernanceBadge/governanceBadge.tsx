@@ -1,9 +1,3 @@
-import {
-  ParsedAccount,
-  TokenIcon,
-  useConnectionConfig,
-  useAccount,
-} from '@oyster/common';
 import { Avatar, Badge, Tooltip } from 'antd';
 import React from 'react';
 import { Governance, ProposalState, Realm } from '../../models/accounts';
@@ -12,6 +6,8 @@ import { useProposalsByGovernance } from '../../hooks/apiHooks';
 
 import './style.less';
 import { SafetyCertificateOutlined } from '@ant-design/icons';
+import { ParsedAccount, useConnectionConfig, useTokenAccount } from '../../contexts';
+import { TokenIcon } from '..';
 
 export function GovernanceBadge({
   realm,
@@ -26,7 +22,7 @@ export function GovernanceBadge({
 }) {
   const proposals = useProposalsByGovernance(governance?.pubkey);
   const { tokenMap } = useConnectionConfig();
-  const tokenAccount = useAccount(governance.info.governedAccount);
+  const tokenAccount = useTokenAccount(governance.info.governedAccount);
 
   const color = governance.info.isProgramGovernance() ? 'green' : 'gray';
   const useAvatar =

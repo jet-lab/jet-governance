@@ -5,8 +5,8 @@ import {
   Proposal,
   ProposalState,
 } from '../../../../models/accounts';
-import { ParsedAccount } from '@oyster/common';
 import { useHasVoteTimeExpired } from '../../../../hooks/useHasVoteTimeExpired';
+import { ParsedAccount } from '../../../../contexts';
 
 const STATE_COLOR: Record<string, string> = {
   [ProposalState.Draft]: 'orange',

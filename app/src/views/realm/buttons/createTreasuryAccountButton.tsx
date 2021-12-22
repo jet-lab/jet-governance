@@ -21,10 +21,10 @@ import {
   GovernanceConfigFormItem,
   GovernanceConfigValues,
 } from '../../../components/governanceConfigFormItem/governanceConfigFormItem';
-import { ParsedAccount } from '@oyster/common';
 import { Realm } from '../../../models/accounts';
 import { useWalletTokenOwnerRecord } from '../../../hooks/apiHooks';
 import { createTreasuryAccount } from '../../../actions/createTreasuryAccount';
+import { ParsedAccount } from '../../../contexts';
 
 export function CreateTreasuryAccountButton({
   buttonProps,

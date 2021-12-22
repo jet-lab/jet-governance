@@ -1,7 +1,7 @@
 import { Space } from 'antd';
 import moment from 'moment';
 import React, { useEffect, useState } from 'react';
-import { ParsedAccount } from '@oyster/common';
+import { ParsedAccount } from '../../../../contexts';
 import { Governance, Proposal } from '../../../../models/accounts';
 
 interface CountdownState {

@@ -12,8 +12,8 @@ import { VotingBalanceModal } from "../components/modals/VotingBalanceModal";
 import { InfoCircleOutlined } from "@ant-design/icons";
 import { useAirdrop } from "../contexts/airdrop";
 import React from "react";
-import { sendTransaction, useConnection } from "@oyster/common";
 import { makeAirdropTx } from "@jet-lab/jet-engine"
+import { sendTransaction, useConnection } from "../contexts";
 
 export const HomeView = () => {
   const [showStakeModal, setShowStakeModal] = useState(false);

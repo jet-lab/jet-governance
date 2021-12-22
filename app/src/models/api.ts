@@ -1,6 +1,5 @@
 import { Connection, PublicKey } from '@solana/web3.js';
 
-import { ParsedAccount } from '@oyster/common';
 import {
   getGovernanceSchemaForAccount,
   GovernanceAccountParser,
@@ -15,6 +14,7 @@ import {
 } from './accounts';
 
 import { getBorshProgramAccounts, MemcmpFilter } from './core/api';
+import { ParsedAccount } from '../contexts';
 
 export async function getRealms(endpoint: string, programId: PublicKey) {
   return getBorshProgramAccounts<Realm>(

@@ -9,7 +9,7 @@ import { SetRealmConfigArgs } from './instructions';
 import { getGovernanceSchema } from './serialisation';
 import { serialize } from 'borsh';
 import BN from 'bn.js';
-import { utils } from '@oyster/common';
+import { programIds } from '../utils';
 
 export async function createSetRealmConfig(
   programId: PublicKey,
@@ -22,7 +22,7 @@ export async function createSetRealmConfig(
   communityVoterWeightAddin: PublicKey | undefined,
   payer: PublicKey,
 ) {
-  const { system: systemId } = utils.programIds();
+  const { system: systemId } = programIds();
 
   const configArgs = new RealmConfigArgs({
     useCouncilMint: councilMint !== undefined,

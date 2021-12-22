@@ -1,5 +1,4 @@
 import { DeleteOutlined } from '@ant-design/icons';
-import { ParsedAccount, useWallet } from '@oyster/common';
 import { Card, Button, Space } from 'antd';
 import Meta from 'antd/lib/card/Meta';
 import React, { useMemo, useState } from 'react';
@@ -25,6 +24,8 @@ import {
   ExecuteInstructionButton,
 } from './buttons/executeInstructionButton';
 import { DryRunInstructionButton } from './buttons/dryRunInstructionButton';
+import { useWallet } from '@solana/wallet-adapter-react';
+import { ParsedAccount } from '../../../../contexts';
 
 export function InstructionCard({
   proposalInstruction,

@@ -1,17 +1,11 @@
 import { Card, Col, Row, Spin, Statistic, Tabs } from 'antd';
 import React, { useMemo, useState } from 'react';
-import { LABELS } from '../../constants';
-import {
-  ParsedAccount,
-  TokenIcon,
-  constants,
-  ExplorerLink,
-} from '@oyster/common';
+import { LABELS, ZERO } from '../../constants';
+
 
 import ReactMarkdown from 'react-markdown';
 
 import { ProposalStateBadge } from './components/header/proposalStateBadge';
-import { contexts } from '@oyster/common';
 import { MintInfo } from '@solana/spl-token';
 import { InstructionCard } from './components/instruction/instructionCard';
 import { NewInstructionCard } from './components/instruction/newInstructionCard';
@@ -47,16 +41,14 @@ import { VoteCountdown } from './components/header/voteCountdown';
 import { useRealm } from '../../contexts/GovernanceContext';
 import { getMintMaxVoteWeight } from '../../tools/units';
 import { ProposalActionBar } from './components/buttons/proposalActionBar';
+import { TokenIcon, ExplorerLink } from '../../components';
+import { useConnectionConfig, useMint, ParsedAccount } from '../../contexts';
 
 const { TabPane } = Tabs;
-
-const { ZERO } = constants;
 
 export const urlRegex =
   // eslint-disable-next-line
   /[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/;
-const { useMint } = contexts.Accounts;
-const { useConnectionConfig } = contexts.Connection;
 
 export enum VoteType {
   Undecided = 'Undecided',

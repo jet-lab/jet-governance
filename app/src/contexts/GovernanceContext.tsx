@@ -6,12 +6,6 @@ import {
   KeyedAccountInfo,
   PublicKey,
 } from '@solana/web3.js';
-
-import {
-  ParsedAccount,
-  useConnection,
-  useConnectionConfig,
-} from '@oyster/common';
 import { GovernanceAccountParser } from '../models/serialisation';
 import { GovernanceAccountType, Realm } from '../models/accounts';
 import { getRealms } from '../models/api';
@@ -19,6 +13,7 @@ import { EventEmitter } from 'eventemitter3';
 
 import { useLocation } from 'react-router-dom';
 import { getProgramVersion, PROGRAM_VERSION } from '../models/registry/api';
+import { ParsedAccount, useConnection, useConnectionConfig } from '.';
 
 export interface GovernanceContextState {
   realms: Record<string, ParsedAccount<Realm>>;

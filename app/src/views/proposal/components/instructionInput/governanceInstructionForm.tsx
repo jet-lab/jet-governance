@@ -1,11 +1,11 @@
 import { FormInstance } from 'antd';
 import React from 'react';
-import { ParsedAccount } from '@oyster/common';
 import { Governance, Realm } from '../../../../models/accounts';
 import { GovernanceConfigForm } from './governanceConfigForm';
 import { InstructionType } from './instructionSelector';
 import { TransactionInstruction } from '@solana/web3.js';
 import { RealmConfigForm } from './realmConfigForm';
+import { ParsedAccount } from '../../../../contexts';
 
 export function getGovernanceInstructions(
   realm: ParsedAccount<Realm>,

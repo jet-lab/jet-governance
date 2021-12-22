@@ -1,5 +1,3 @@
-import { ParsedAccount } from '@oyster/common';
-
 import React from 'react';
 import { Realm } from '../../../models/accounts';
 
@@ -10,6 +8,7 @@ import { ModalFormAction } from '../../../components/ModalFormAction/modalFormAc
 import { setRealmAuthority } from '../../../actions/setRealmAuthority';
 import { Form, Select } from 'antd';
 import { useGovernancesByRealm } from '../../../hooks/apiHooks';
+import { ParsedAccount } from '../../../contexts';
 
 export function SetRealmAuthorityButton({
   realm,

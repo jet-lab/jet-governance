@@ -5,10 +5,8 @@ import { Table, Grid } from 'antd';
 import { VoterDisplayData, VoteType } from '../../oysterProposalView';
 import BN from 'bn.js';
 import { BigNumber } from 'bignumber.js';
-import { utils } from '@oyster/common';
 import { formatPercentage } from '../../../../tools/units';
-
-const { getExplorerUrl } = utils;
+import { getExplorerUrl } from '../../../../utils';
 
 const { useBreakpoint } = Grid;
 interface VoterTableProps {

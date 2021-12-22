@@ -22,9 +22,9 @@ import {
   GovernanceConfigFormItem,
   GovernanceConfigValues,
 } from '../../../components/governanceConfigFormItem/governanceConfigFormItem';
-import { ParsedAccount } from '../../../../../common/dist/lib';
 import { Realm } from '../../../models/accounts';
 import { useWalletTokenOwnerRecord } from '../../../hooks/apiHooks';
+import { ParsedAccount } from '../../../contexts';
 
 export function RegisterGovernanceButton({
   buttonProps,

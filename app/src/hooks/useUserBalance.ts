@@ -1,7 +1,7 @@
-import { fromLamports } from "@oyster/common";
 import { PublicKey } from "@solana/web3.js";
 import { useMemo, useState } from "react";
-import { useMint } from "@oyster/common";
+import { useMint } from "../contexts";
+import { fromLamports } from "../utils";
 import { useUserAccounts } from "./useUserAccounts";
 
 export function useUserBalance(

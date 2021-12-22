@@ -1,4 +1,3 @@
-import { ParsedAccount } from '@oyster/common';
 import { Button, Col, Modal, Row } from 'antd';
 import React from 'react';
 
@@ -22,6 +21,7 @@ import { castVote } from '../../../../actions/castVote';
 
 import { useRpcContext } from '../../../../hooks/useRpcContext';
 import { Option } from '../../../../tools/option';
+import { ParsedAccount } from '../../../../contexts';
 
 const { confirm } = Modal;
 export function CastVoteButton({

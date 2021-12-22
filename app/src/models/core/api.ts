@@ -1,14 +1,12 @@
 import { Connection, PublicKey } from '@solana/web3.js';
 import bs58 from 'bs58';
-import {
-  deserializeBorsh,
-  ParsedAccount,
-  WalletNotConnectedError,
-} from '@oyster/common';
 import { ProgramAccountWithType } from '../core/accounts';
 import { Schema } from 'borsh';
 import { getErrorMessage } from '../../tools/script';
 import { WalletContextState } from "@solana/wallet-adapter-react"
+import { WalletNotConnectedError } from '@solana/wallet-adapter-base';
+import { ParsedAccount } from '../../contexts';
+import { deserializeBorsh } from '../../utils';
 
 // Context to make RPC calls for given clone programId, current connection, endpoint and wallet
 export class RpcContext {

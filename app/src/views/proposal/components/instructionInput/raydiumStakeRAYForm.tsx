@@ -1,19 +1,15 @@
 import { Form, FormInstance, Spin } from 'antd';
-import { ExplorerLink, ParsedAccount } from '@oyster/common';
 import { Governance } from '../../../../models/accounts';
 import { PublicKey, TransactionInstruction } from '@solana/web3.js';
 
 import React from 'react';
 import { formDefaults } from '../../../../tools/forms';
 
-import { contexts } from '@oyster/common';
 
 import { depositInstruction } from '../../../../tools/raydium/raydium';
 import { getRayFarmUserAccount, getRAYGovernanceAta } from './yieldFarming';
-
-const { useAccount: useTokenAccount } = contexts.Accounts;
-const { useMint } = contexts.Accounts;
-const { useConnection } = contexts.Connection;
+import { ParsedAccount, useConnection, useMint, useTokenAccount } from '../../../../contexts';
+import { ExplorerLink } from '../../../../components';
 
 export const RaydiumStakeRAYForm = ({
   form,

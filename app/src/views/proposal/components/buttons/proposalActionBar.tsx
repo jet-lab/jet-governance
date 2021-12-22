@@ -6,7 +6,6 @@ import {
   TokenOwnerRecord,
 } from '../../../../models/accounts';
 import CancelButton from './cancelButton';
-import { ParsedAccount } from '@oyster/common';
 import SignOffButton from './signOffButton';
 import { FinalizeVoteButton } from './finalizeVoteButton';
 import { RelinquishVoteButton } from './relinquishVoteButton';
@@ -18,6 +17,7 @@ import {
   useTokenOwnerVoteRecord,
 } from '../../../../hooks/apiHooks';
 import { useHasVoteTimeExpired } from '../../../../hooks/useHasVoteTimeExpired';
+import { ParsedAccount } from '../../../../contexts';
 
 export function ProposalActionBar({
   governance,

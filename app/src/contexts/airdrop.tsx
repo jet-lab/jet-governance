@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 import { useWallet } from "@solana/wallet-adapter-react";
-import { shortenAddress } from "@oyster/common";
+import { shortenAddress } from "../utils";
 
 interface AirdropConfig {
   airdrops?: {

@@ -1,15 +1,14 @@
-import { ParsedAccount, useWallet } from '@oyster/common';
+import { useWallet } from '@solana/wallet-adapter-react';
 import { Button, Modal, Input, Form, Progress } from 'antd';
 import React, { useState } from 'react';
-import { utils, contexts, hooks } from '@oyster/common';
 
 import { LABELS } from '../../../../constants';
+import { ParsedAccount, useConnection } from '../../../../contexts';
+import { useAccountByMint } from '../../../../hooks';
 import { Proposal } from '../../../../models/accounts';
+import { notify } from '../../../../utils';
 
-const { notify } = utils;
 const { TextArea } = Input;
-const { useConnection } = contexts.Connection;
-const { useAccountByMint } = hooks;
 
 const layout = {
   labelCol: { span: 5 },

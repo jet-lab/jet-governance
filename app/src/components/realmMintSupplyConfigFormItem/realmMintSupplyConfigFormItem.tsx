@@ -6,13 +6,12 @@ import {
 } from '../../models/accounts';
 import { BigNumber } from 'bignumber.js';
 import { MintInfo } from '@solana/spl-token';
-import { contexts } from '@oyster/common';
 import { PublicKey } from '@solana/web3.js';
 import BN from 'bn.js';
 import { getNameOf } from '../../tools/script';
+import { useMint } from '../../contexts';
 
 const { Text } = Typography;
-const { useMint } = contexts.Accounts;
 
 const getMinSupplyFractionStep = () =>
   new BigNumber(1)

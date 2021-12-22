@@ -1,10 +1,7 @@
 import { AccountInfo, PublicKey } from '@solana/web3.js';
 import { useEffect, useState } from 'react';
+import { useConnection } from '../../contexts';
 import { idlAddress as getIdlAddress } from './idlInstructions';
-
-import { contexts } from '@oyster/common';
-
-const { useConnection } = contexts.Connection;
 
 export function useAnchorIdlAddress(programId: PublicKey) {
   const [idlAddress, setIdlAddress] = useState<PublicKey | undefined>();

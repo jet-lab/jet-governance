@@ -1,5 +1,4 @@
 import React from 'react';
-import { contexts, ParsedAccount } from '@oyster/common';
 import { TokenOwnerRecord } from '../../models/accounts';
 
 import {
@@ -7,8 +6,7 @@ import {
   formatMintVoteWeight,
 } from '../../tools/units';
 import { MintInfo } from '@solana/spl-token';
-
-const { useMint } = contexts.Accounts;
+import { ParsedAccount, useMint } from '../../contexts';
 
 export function RealmDepositBadge({
   councilTokenOwnerRecord,

@@ -1,9 +1,9 @@
+import { MintLayout } from '@solana/spl-token';
 import { Form, Input } from 'antd';
 
 import React from 'react';
-
-import { contexts, MintParser, tryParseKey } from '@oyster/common';
-const { useConnection } = contexts.Connection;
+import { useConnection } from '../../contexts';
+import { tryParseKey } from '../../utils';
 
 export function MintFormItem({
   name,
@@ -33,10 +33,7 @@ export function MintFormItem({
         if (!data) {
           throw new Error('Account not found');
         }
-
-        try {
-          MintParser(pubkey, data);
-        } catch {
+        if(data.data.length !== MintLayout.span) {
           throw new Error('Account is not a valid mint');
         }
       });

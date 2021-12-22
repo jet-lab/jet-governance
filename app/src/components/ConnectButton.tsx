@@ -1,8 +1,8 @@
 import React, { FunctionComponent, useMemo } from "react";
 import { useWallet } from "@solana/wallet-adapter-react";
-import { shortenAddress } from "@oyster/common";
 import { useConnectWallet } from "../contexts/connectWallet";
 import { Button } from "antd";
+import { shortenAddress } from "../utils";
 
 export const ConnectButton: FunctionComponent = () => {
   const { connected, wallet, publicKey, disconnect } = useWallet();

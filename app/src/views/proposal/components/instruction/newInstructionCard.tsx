@@ -2,8 +2,6 @@ import React, { useState } from 'react';
 import { Card, InputNumber } from 'antd';
 import { Form } from 'antd';
 
-import { ParsedAccount } from '@oyster/common';
-
 import { SaveOutlined } from '@ant-design/icons';
 import { LABELS } from '../../../../constants';
 import {
@@ -27,6 +25,7 @@ import {
   getTimestampFromDays,
 } from '../../../../tools/units';
 import { useAccountChangeTracker } from '../../../../contexts/GovernanceContext';
+import { ParsedAccount } from '../../../../contexts';
 
 export function NewInstructionCard({
   realm,

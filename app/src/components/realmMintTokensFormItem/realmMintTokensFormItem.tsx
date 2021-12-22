@@ -1,7 +1,7 @@
 import { PublicKey } from '@solana/web3.js';
 import { Form, InputNumber, Space, Typography } from 'antd';
 import React, { useState } from 'react';
-import { contexts } from '@oyster/common';
+import { useMint } from '../../contexts';
 import {
   formatPercentage,
   getMintMinAmountAsDecimal,
@@ -11,7 +11,6 @@ import {
 } from '../../tools/units';
 import { parseMinTokensToCreate } from '../governanceConfigFormItem/governanceConfigFormItem';
 
-const { useMint } = contexts.Accounts;
 const { Text } = Typography;
 
 export function RealmMintTokensFormItem({

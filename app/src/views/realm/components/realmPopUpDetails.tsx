@@ -1,6 +1,5 @@
 import { Space, Typography } from 'antd';
 import React from 'react';
-import { ExplorerLink, ParsedAccount, contexts } from '@oyster/common';
 import { Realm } from '../../../models/accounts';
 import { PublicKey } from '@solana/web3.js';
 import {
@@ -9,8 +8,9 @@ import {
   formatMintNaturalAmountAsDecimal,
   formatMintSupplyAsDecimal,
 } from '../../../tools/units';
+import { ParsedAccount, useMint } from '../../../contexts';
+import { ExplorerLink } from '../../../components';
 
-const { useMint } = contexts.Accounts;
 const { Text } = Typography;
 
 export function RealmPopUpDetails({ realm }: { realm: ParsedAccount<Realm> }) {

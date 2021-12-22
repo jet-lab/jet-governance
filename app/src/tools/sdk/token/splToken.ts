@@ -1,8 +1,6 @@
-import {
-  SPL_ASSOCIATED_TOKEN_ACCOUNT_PROGRAM_ID,
-  TOKEN_PROGRAM_ID,
-} from '@oyster/common';
+import { TOKEN_PROGRAM_ID } from '@solana/spl-token';
 import { PublicKey } from '@solana/web3.js';
+import { SPL_ASSOCIATED_TOKEN_ACCOUNT_PROGRAM_ID } from '../../../utils';
 
 /**
  * Get the address for the associated token account

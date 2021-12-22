@@ -1,6 +1,5 @@
 import { HashRouter, Route, Switch } from 'react-router-dom';
 import React, { useState } from 'react';
-import { contexts } from '@oyster/common';
 import GovernanceProvider from './contexts/GovernanceContext';
 import { AllRealmsView } from './views';
 import { OysterProposalView } from './views/proposal/oysterProposalView';
@@ -21,10 +20,7 @@ import { DarkThemeProvider } from './contexts/darkTheme';
 import { ConnectWalletProvider } from './contexts/connectWallet';
 import { AirdropProvider } from './contexts/airdrop';
 import { AppLayout } from './components/Layout';
-
-const { WalletProvider } = contexts.Wallet;
-const { ConnectionProvider } = contexts.Connection;
-const { AccountsProvider } = contexts.Accounts;
+import { AccountsProvider, ConnectionProvider, WalletProvider } from './contexts';
 
 export function Routes() {
 

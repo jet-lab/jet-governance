@@ -1,6 +1,6 @@
 import React from "react";
 import { Select } from "antd";
-import { ENDPOINTS, useConnectionConfig } from "@oyster/common";
+import { useConnectionConfig, ENDPOINTS } from "../contexts";
 
 export const Settings = () => {
   const { endpoint, setEndpoint } = useConnectionConfig();

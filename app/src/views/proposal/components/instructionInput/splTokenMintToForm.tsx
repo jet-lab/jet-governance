@@ -1,5 +1,4 @@
 import { Form, FormInstance, InputNumber, Spin } from 'antd';
-import { ExplorerLink, ParsedAccount, utils } from '@oyster/common';
 import { Governance } from '../../../../models/accounts';
 import {
   AccountInfo,
@@ -12,13 +11,14 @@ import React from 'react';
 import { formDefaults } from '../../../../tools/forms';
 import { validateTokenAccount } from '../../../../tools/validators/accounts/token';
 import { AccountFormItem } from '../../../../components/AccountFormItem/accountFormItem';
-import { contexts } from '@oyster/common';
 import {
   getMintMinAmountAsDecimal,
   parseMintNaturalAmountFromDecimal,
 } from '../../../../tools/units';
-
-const { useMint } = contexts.Accounts;
+import { utils } from '@project-serum/anchor';
+import { ExplorerLink } from '../../../../components';
+import { ParsedAccount, useMint } from '../../../../contexts';
+import { programIds } from '../../../../utils';
 
 export const SplTokenMintToForm = ({
   form,
@@ -35,7 +35,7 @@ export const SplTokenMintToForm = ({
     return <Spin />;
   }
 
-  const { token: tokenProgramId } = utils.programIds();
+  const { token: tokenProgramId } = programIds();
 
   const onCreate = async ({
     destination,

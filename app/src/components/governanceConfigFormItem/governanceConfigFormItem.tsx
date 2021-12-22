@@ -1,8 +1,8 @@
 import { Form, InputNumber, Space, Spin, Typography } from 'antd';
 import BN from 'bn.js';
 import React, { useState } from 'react';
-import { contexts, ParsedAccount, constants } from '@oyster/common';
-import { LABELS } from '../../constants';
+import { LABELS, ZERO } from '../../constants';
+import { ParsedAccount, useMint } from '../../contexts';
 import {
   GovernanceConfig,
   Realm,
@@ -23,10 +23,7 @@ import {
   formatPercentage,
 } from '../../tools/units';
 
-const { ZERO } = constants;
-
 const { Text } = Typography;
-const { useMint } = contexts.Accounts;
 
 export interface GovernanceConfigValues {
   minTokensToCreateProposal: number | string;

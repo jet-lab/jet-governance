@@ -1,5 +1,4 @@
 import { PlusCircleOutlined } from '@ant-design/icons';
-import { ParsedAccount } from '@oyster/common';
 
 import { TransactionInstruction } from '@solana/web3.js';
 import { Button, Col, Form, Input, Modal, Row } from 'antd';
@@ -14,6 +13,7 @@ import { AccountInstructionsForm } from './accountInstructionsForm';
 import { ProgramInstructionsForm } from './programInstructionsForm';
 import { TokenInstructionsForm } from './tokenInstructionsForm';
 import { MintInstructionsForm } from './mintInstructionsForm';
+import { ParsedAccount } from '../../../../contexts';
 
 export default function InstructionInput({
   realm,

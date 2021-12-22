@@ -15,7 +15,7 @@ import { ModalFormAction } from '../../../components/ModalFormAction/modalFormAc
 import BN from 'bn.js';
 import { useRpcContext } from '../../../hooks/useRpcContext';
 import { getProposalUrl } from '../../../tools/routeTools';
-import { ParsedAccount, useMint } from "@oyster/common";
+import { ParsedAccount, useMint } from '../../../contexts';
 
 export function NewProposalButton({
   realm,

@@ -6,17 +6,14 @@ import {
   TransactionInstruction,
 } from '@solana/web3.js';
 import {
-  utils,
-  createMint,
-  createTokenAccount,
-  sendTransactions,
-  SequenceType,
   WalletNotConnectedError,
-} from '@oyster/common';
+} from '@solana/wallet-adapter-base';
 import {WalletContextState } from "@solana/wallet-adapter-react"
 import { AccountLayout, MintLayout, Token, u64 } from '@solana/spl-token';
+import { sendTransactions, SequenceType } from '../../contexts';
+import { notify, programIds } from '../../utils';
+import { createMint, createTokenAccount } from '..';
 
-const { notify } = utils;
 export interface SourceEntryInterface {
   owner: PublicKey;
   sourceAccount: PublicKey | undefined;
@@ -124,7 +121,7 @@ const withTokenGovernance = async (
   const { publicKey } = wallet;
   if (!publicKey) throw new WalletNotConnectedError();
 
-  const { token: tokenId } = utils.programIds();
+  const { token: tokenId } = programIds();
 
   const mintRentExempt = await connection.getMinimumBalanceForRentExemption(
     MintLayout.span,
@@ -192,7 +189,7 @@ export const withMint = async (
   const { publicKey } = wallet;
   if (!publicKey) throw new WalletNotConnectedError();
 
-  const { system: systemId, token: tokenId } = utils.programIds();
+  const { system: systemId, token: tokenId } = programIds();
 
   const mintRentExempt = await connection.getMinimumBalanceForRentExemption(
     MintLayout.span,

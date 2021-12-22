@@ -4,13 +4,13 @@ import React from 'react';
 import { flagInstructionError } from '../../../../../actions/flagInstructionError';
 import { useRpcContext } from '../../../../../hooks/useRpcContext';
 import { PlayState } from './executeInstructionButton';
-import { ParsedAccount } from '@oyster/common';
 import {
   InstructionExecutionStatus,
   Proposal,
   ProposalInstruction,
   TokenOwnerRecord,
 } from '../../../../../models/accounts';
+import { ParsedAccount } from '../../../../../contexts';
 
 export function FlagInstructionErrorButton({
   proposal,

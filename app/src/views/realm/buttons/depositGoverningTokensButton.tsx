@@ -1,15 +1,13 @@
-import { ParsedAccount } from '@oyster/common';
 import { Button, Col, Modal, Row } from 'antd';
 import React from 'react';
 import { Realm } from '../../../models/accounts';
 import { LABELS } from '../../../constants';
-import { hooks } from '@oyster/common';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { depositGoverningTokens } from '../../../actions/depositGoverningTokens';
 import { PublicKey } from '@solana/web3.js';
 import { useRpcContext } from '../../../hooks/useRpcContext';
-
-const { useAccountByMint } = hooks;
+import { ParsedAccount } from '../../../contexts';
+import { useAccountByMint } from '../../../hooks';
 
 const { confirm } = Modal;
 export function DepositGoverningTokensButton({

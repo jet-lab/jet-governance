@@ -1,10 +1,10 @@
-import { utils } from '@oyster/common';
 import {
   PublicKey,
   SYSVAR_CLOCK_PUBKEY,
   SYSVAR_RENT_PUBKEY,
   TransactionInstruction,
 } from '@solana/web3.js';
+import { programIds } from '../../../utils';
 
 export async function createUpgradeInstruction(
   programId: PublicKey,
@@ -12,7 +12,7 @@ export async function createUpgradeInstruction(
   upgradeAuthority: PublicKey,
   spillAddress: PublicKey,
 ) {
-  const { bpf_upgrade_loader: bpfUpgradableLoaderId } = utils.programIds();
+  const { bpf_upgrade_loader: bpfUpgradableLoaderId } = programIds();
 
   const [programDataAddress] = await PublicKey.findProgramAddress(
     [programId.toBuffer()],

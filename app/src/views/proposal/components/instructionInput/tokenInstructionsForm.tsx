@@ -1,5 +1,4 @@
 import { Form, FormInstance } from 'antd';
-import { ParsedAccount } from '@oyster/common';
 import { Governance, Realm } from '../../../../models/accounts';
 import { TransactionInstruction } from '@solana/web3.js';
 import React, { useState } from 'react';
@@ -16,6 +15,7 @@ import { RaydiumAddLiquidityForm } from './raydiumAddLiquidityForm';
 import { RaydiumStakeLPForm } from './raydiumStakeLPForm';
 import { isYieldFarmingGovernance } from './yieldFarming';
 import { RaydiumStakeRAYForm } from './raydiumStakeRAYForm';
+import { ParsedAccount } from '../../../../contexts';
 
 export const TokenInstructionsForm = ({
   form,

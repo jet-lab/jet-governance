@@ -1,6 +1,6 @@
 import { PublicKey } from '@solana/web3.js';
 import React from 'react';
-import { TokenIcon } from '@oyster/common';
+import { TokenIcon } from '..';
 import './style.less';
 
 export function RealmBadge({

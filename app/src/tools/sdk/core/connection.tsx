@@ -1,19 +1,16 @@
 import {
-  SendTransactionError,
-  SignTransactionError,
-  TransactionTimeoutError,
-  WalletNotConnectedError,
-} from '@oyster/common';
-import {
   Account,
   Commitment,
   Connection,
   RpcResponseAndContext,
+  SendTransactionError,
   SimulatedTransactionResponse,
   Transaction,
   TransactionSignature,
 } from '@solana/web3.js';
 import { WalletContextState } from "@solana/wallet-adapter-react";
+import { WalletNotConnectedError } from '@solana/wallet-adapter-base';
+import { SignTransactionError, TransactionTimeoutError } from '../../../utils';
 
 export async function sleep(ms: number) {
   return new Promise(resolve => setTimeout(resolve, ms));
@@ -175,20 +172,18 @@ export async function sendSignedTransaction({
           if (line.startsWith('Program log: ')) {
             throw new SendTransactionError(
               'Transaction failed: ' + line.slice('Program log: '.length),
-              txid,
-              simulateResult.err,
+              [txid, JSON.stringify(simulateResult.err)],
             );
           }
         }
       }
       throw new SendTransactionError(
         JSON.stringify(simulateResult.err),
-        txid,
-        simulateResult.err,
+        [txid]
       );
     }
 
-    throw new SendTransactionError('Transaction failed', txid);
+    throw new SendTransactionError('Transaction failed', [txid]);
   } finally {
     done = true;
   }

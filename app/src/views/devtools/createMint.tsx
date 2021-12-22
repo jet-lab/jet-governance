@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import { Button, Form, Input, InputNumber, Space, Typography } from 'antd';
 
-import { useConnection, useWallet } from '@oyster/common';
 import { generateMint } from '../../actions/devtools/generateMint';
 
 import { PublicKey } from '@solana/web3.js';
 import { u64 } from '@solana/spl-token';
 import { BigNumber } from 'bignumber.js';
+import { useConnection } from '../../contexts';
+import { useWallet } from '@solana/wallet-adapter-react';
 
 const { Text } = Typography;
 

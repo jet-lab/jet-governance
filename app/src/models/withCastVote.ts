@@ -1,4 +1,3 @@
-import { utils } from '@oyster/common';
 import {
   PublicKey,
   SYSVAR_CLOCK_PUBKEY,
@@ -10,6 +9,7 @@ import { serialize } from 'borsh';
 import { CastVoteArgs, Vote } from './instructions';
 import { getVoteRecordAddress } from './accounts';
 import { PROGRAM_VERSION_V1 } from './registry/api';
+import { programIds } from '../utils';
 
 export const withCastVote = async (
   instructions: TransactionInstruction[],
@@ -25,7 +25,7 @@ export const withCastVote = async (
   vote: Vote,
   payer: PublicKey,
 ) => {
-  const { system: systemId } = utils.programIds();
+  const { system: systemId } = programIds();
 
   const args = new CastVoteArgs(
     programVersion === PROGRAM_VERSION_V1

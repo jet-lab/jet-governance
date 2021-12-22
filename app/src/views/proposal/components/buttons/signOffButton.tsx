@@ -1,8 +1,9 @@
 import { ExclamationCircleOutlined } from '@ant-design/icons';
-import { ParsedAccount, useWallet } from '@oyster/common';
+import { useWallet } from '@solana/wallet-adapter-react';
 import { Button, Modal } from 'antd';
 import React from 'react';
 import { signOffProposal } from '../../../../actions/signOffProposal';
+import { ParsedAccount } from '../../../../contexts';
 import { useRpcContext } from '../../../../hooks/useRpcContext';
 
 import { Proposal, SignatoryRecord } from '../../../../models/accounts';
