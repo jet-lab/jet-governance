@@ -3,7 +3,7 @@ import React, { useMemo, useState } from 'react';
 import { useRealm } from '../../contexts/GovernanceContext';
 
 import { useGovernance, useProposalsByGovernance } from '../../hooks/apiHooks';
-import './style.less'; // Don't remove this line, it will break dark mode if you do due to weird transpiling conditions
+ // Don't remove this line, it will break dark mode if you do due to weird transpiling conditions
 import { ProposalStateBadge } from '../proposal/components/header/proposalStateBadge';
 import { useHistory } from 'react-router-dom';
 import { NewProposalButton } from './buttons/newProposalButton';

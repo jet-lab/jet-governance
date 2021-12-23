@@ -6,7 +6,7 @@ import {
   useGovernancesByRealm,
   useWalletTokenOwnerRecord,
 } from '../../hooks/apiHooks';
-import './style.less'; // Don't remove this line, it will break dark mode if you do due to weird transpiling conditions
+ // Don't remove this line, it will break dark mode if you do due to weird transpiling conditions
 
 import { Background } from '../../components/Background';
 import { useHistory } from 'react-router-dom';

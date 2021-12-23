@@ -12,8 +12,6 @@ import {
 import { GOVERNANCE_SCHEMA } from '../../../../models/serialisation';
 import { serialize } from 'borsh';
 
-import '../style.less';
-
 import { removeInstruction } from '../../../../actions/removeInstruction';
 import { useAccountChangeTracker } from '../../../../contexts/GovernanceContext';
 import { useProposalAuthority } from '../../../../hooks/apiHooks';

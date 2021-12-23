@@ -1,7 +1,6 @@
 import React, { useMemo } from 'react';
 import { LAMPORTS_PER_SOL } from '@solana/web3.js';
 import { formatNumber } from '../../utils';
-import './styles.less';
 import { Popover } from 'antd';
 import { Settings } from '../Settings';
 import { useWallet } from '@solana/wallet-adapter-react';

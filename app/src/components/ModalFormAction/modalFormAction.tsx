@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Alert, Button, ButtonProps, Modal, Space, Typography } from 'antd';
 import { Form } from 'antd';
-import './style.less';
+
 import { formDefaults } from '../../tools/forms';
 import {
   getTransactionErrorMsg,

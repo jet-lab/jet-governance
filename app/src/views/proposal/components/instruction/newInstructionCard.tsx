@@ -13,7 +13,6 @@ import {
 
 import { useProposalAuthority } from '../../../../hooks/apiHooks';
 import { insertInstruction } from '../../../../actions/insertInstruction';
-import '../style.less';
 
 import { formDefaults } from '../../../../tools/forms';
 import InstructionInput from '../instructionInput/instructionInput';

@@ -1,11 +1,7 @@
 import { Button, Col, Modal, Row } from 'antd';
 import React from 'react';
-
 import { LABELS } from '../../../../constants';
-
 import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
-
-import '../style.less';
 
 import {
   Governance,

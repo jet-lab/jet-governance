@@ -10,7 +10,7 @@ import { MintInfo } from '@solana/spl-token';
 import { InstructionCard } from './components/instruction/instructionCard';
 import { NewInstructionCard } from './components/instruction/newInstructionCard';
 
-import './style.less';
+
 
 import { VoterBubbleGraph } from './components/vote/voterBubbleGraph';
 import { VoterTable } from './components/vote/voterTable';

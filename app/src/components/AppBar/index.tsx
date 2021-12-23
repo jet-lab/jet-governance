@@ -3,7 +3,7 @@ import { Button, Popover } from 'antd';
 import { CurrentUserBadge } from '../CurrentUserBadge';
 import { SettingOutlined } from '@ant-design/icons';
 import { LABELS } from '../../constants/labels';
-import './style.less';
+
 import { useWallet } from '@solana/wallet-adapter-react';
 import { ConnectButton } from "../ConnectButton/index" 
 import { Settings } from "../Settings/index" 

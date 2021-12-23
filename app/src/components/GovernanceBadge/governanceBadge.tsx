@@ -4,7 +4,7 @@ import { Governance, ProposalState, Realm } from '../../models/accounts';
 
 import { useProposalsByGovernance } from '../../hooks/apiHooks';
 
-import './style.less';
+
 import { SafetyCertificateOutlined } from '@ant-design/icons';
 import { ParsedAccount, useConnectionConfig, useTokenAccount } from '../../contexts';
 import { TokenIcon } from '..';
