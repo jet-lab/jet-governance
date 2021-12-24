@@ -14,7 +14,7 @@ import { useWalletTokenOwnerRecord } from '../../../hooks/apiHooks';
 import { ModalFormAction } from '../../../components/ModalFormAction/modalFormAction';
 import BN from 'bn.js';
 import { useRpcContext } from '../../../hooks/useRpcContext';
-import { getProposalUrl } from '../../../tools/routeTools';
+import { getOysterProposalUrl } from '../../../tools/routeTools';
 import { ParsedAccount, useMint } from '../../../contexts';
 
 export function NewProposalButton({
@@ -107,7 +107,7 @@ export function NewProposalButton({
   };
 
   if (redirectTo) {
-    return <Redirect push to={getProposalUrl(redirectTo, programId)} />;
+    return <Redirect push to={getOysterProposalUrl(redirectTo, programId)} />;
   }
 
   return (

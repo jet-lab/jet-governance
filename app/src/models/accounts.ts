@@ -1,5 +1,6 @@
 import { PublicKey } from '@solana/web3.js';
 import BN from 'bn.js';
+import { bnToIntLossy } from '../tools/units';
 import { Vote, VoteKind } from './instructions';
 import { PROGRAM_VERSION_V1, PROGRAM_VERSION_V2 } from './registry/api';
 
@@ -715,6 +716,17 @@ export class Proposal {
         throw new Error(`Invalid account type ${this.accountType}`);
     }
   }
+
+  getVoteCounts() {
+    const yes = this.getYesVoteCount();
+    const no = this.getNoVoteCount();
+    const abstain = new BN(0); // FIXME: multiple choice votes
+
+    const total = yes.add(no).add(abstain)
+    const yesPercent = bnToIntLossy(yes) / bnToIntLossy(total) * 100
+    const yesAbstainPercent = bnToIntLossy(abstain.add(yes)) / bnToIntLossy(total) * 100
+    return { yes, no, abstain, total, yesPercent: yesPercent, yesAbstainPercent: yesAbstainPercent }
+  }
 }
 
 export class SignatoryRecord {
@@ -939,16 +951,16 @@ export async function getProposalInstructionAddress(
   const seeds =
     programVersion === PROGRAM_VERSION_V1
       ? [
-          Buffer.from(GOVERNANCE_PROGRAM_SEED),
-          proposal.toBuffer(),
-          instructionIndexBuffer,
-        ]
+        Buffer.from(GOVERNANCE_PROGRAM_SEED),
+        proposal.toBuffer(),
+        instructionIndexBuffer,
+      ]
       : [
-          Buffer.from(GOVERNANCE_PROGRAM_SEED),
-          proposal.toBuffer(),
-          optionIndexBuffer,
-          instructionIndexBuffer,
-        ];
+        Buffer.from(GOVERNANCE_PROGRAM_SEED),
+        proposal.toBuffer(),
+        optionIndexBuffer,
+        instructionIndexBuffer,
+      ];
 
   const [instructionAddress] = await PublicKey.findProgramAddress(
     seeds,

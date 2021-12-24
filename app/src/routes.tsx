@@ -12,7 +12,7 @@ import { ErrorBoundary } from 'react-error-boundary';
 import { AppErrorBanner } from './components/appErrorBanner/appErrorBanner';
 import { HomeView } from './views/Home';
 import { FlightLogView } from './views/FlightLog';
-import { useProposal } from './contexts/proposal';
+import { useProposalContext } from './contexts/proposal';
 import { AirdropView } from './views/Airdrop';
 import { AirdropHistory } from './views/AirdropHistory';
 import { ProposalView } from './views/Proposal';
@@ -24,8 +24,7 @@ import { AccountsProvider, ConnectionProvider, WalletProvider } from './contexts
 
 export function Routes() {
 
-  const [geobanned, setGeobanned] = useState(false);
-  const { allProposals } = useProposal();
+  //   const [geobanned, setGeobanned] = useState(false);
 
   //   const getGeobanned = async () => {
   //     const resp = await fetch("https://ipinfo.io/json?token=46ceefa5641a93", {
@@ -60,35 +59,28 @@ export function Routes() {
                       <GovernanceProvider>
                         <AppLayout>
                           <Switch>
-                            <Route exact path="/">
-                              <HomeView />
-                            </Route>
-                            <Route exact path="/airdrop">
-                              <AirdropView />
-                            </Route>
-                            <Route exact path="/airdrop/history">
-                              <AirdropHistory />
-                            </Route>
-                            <Route exact path="/flight-log">
-                              <FlightLogView />
-                            </Route>
-                            {geobanned
-                              ? null
-                              : allProposals.map((proposal) => (
-                                <Route
-                                  exact
-                                  path={`/proposal/${proposal.id
-                                    }/${proposal.headline.substring(0, 7)}`}
-                                  key={`/proposal/${proposal.id}`}
-                                >
-                                  <ProposalView id={proposal.id} />
-                                </Route>
-                              ))}
+                            <Route 
+                              exact path="/"
+                              children={<HomeView />}
+                              />
+                            <Route
+                              path={"/proposal/:key"}
+                              children={<ProposalView />}
+                            />
+                            <Route 
+                              exact path="/airdrop"
+                              children={<AirdropView/>}/>
+                            <Route 
+                              exact path="/airdrop/history"
+                              children={<AirdropHistory />}/>
+                            <Route 
+                              exact path="/flight-log"
+                              children={<FlightLogView />}/>
 
                             {/** Old oyster paths */}
                             <Route exact path="/realms" component={() => <AllRealmsView />} />
                             <Route
-                              path="/proposal/:key"
+                              path="/proposal-oyster/:key"
                               children={<OysterProposalView />}
                             />
                             <Route
@@ -96,7 +88,6 @@ export function Routes() {
                               children={<GovernanceView />}
                             />
                             <Route path="/realm/:key" children={<RealmView />} />
-
                             <Route
                               exact
                               path="/devtools"

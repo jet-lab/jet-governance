@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { useProposal } from "../contexts/proposal";
 import { ResultProgressBar } from "../components/proposal/ResultProgressBar";
 import { Button, Divider, Tag } from "antd";
 import { ProposalCard } from "../components/ProposalCard";
@@ -12,8 +11,12 @@ import { USER_VOTE_HISTORY } from "../models/USER_VOTE_HISTORY";
 import { TOP_STAKEHOLDERS } from "../models/TOP_STAKEHOLDERS";
 import { INITIAL_STATE } from "../models/INITIAL_PROPOSALS";
 import React from "react";
+import { useProposalsByGovernance } from "../hooks/apiHooks";
+import { JET_GOVERNANCE } from "../utils";
+import { useProposalFilters } from "../hooks/proposalHooks";
+import { useKeyParam } from "../hooks/useKeyParam";
 
-export const ProposalView = (props: { id: number }) => {
+export const ProposalView = () => {
   const [inactive, setInactive] = useState(true);
   const [isVoteModalVisible, setIsVoteModalVisible] = useState(false);
   const [isStakeRedirectModalVisible, setIsStakeRedirectModalVisible] =
@@ -22,13 +25,15 @@ export const ProposalView = (props: { id: number }) => {
   const [vote, setVote] = useState("");
 
   // TODO: Fetch user's stake from blockchain
-  const { activeProposals } = useProposal();
+  const proposalAddress = useKeyParam();
+  const proposals = useProposalsByGovernance(JET_GOVERNANCE);
+  const filteredProposals = useProposalFilters(proposals);
   const { connected } = useWallet();
   const { stakedBalance } = useUser();
 
   //TODO: Fix this temporary fix from the proposal being possibly undefined
   const proposal =
-    INITIAL_STATE.find((proposal) => proposal.id === props.id) ??
+    INITIAL_STATE.find((proposal) => proposal.id == 0) ??
     INITIAL_STATE[0];
 
   const {
@@ -217,7 +222,7 @@ export const ProposalView = (props: { id: number }) => {
       <div className="other-proposals">
         <h3>Other active proposals</h3>
         <div className="flex">
-          {activeProposals.map((proposal: any) => (
+          {filteredProposals.map((proposal: any) => (
             <ProposalCard
               proposal={proposal}
             />

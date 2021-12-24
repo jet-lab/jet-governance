@@ -4,11 +4,8 @@ import { TokenSwapLayout, TokenSwapLayoutV1 } from '../models/tokenSwap';
 export const WRAPPED_SOL_MINT = new PublicKey(
   "So11111111111111111111111111111111111111112"
 );
-export const JET_TOKEN_MINT = new PublicKey(
+export let JET_TOKEN_MINT = new PublicKey(
   "JET6zMJWkCN9tpRT2v2jfAmm5VnQFDpUBCyaKojmGtz"
-);
-export const JET_TOKEN_MINT_DEVNET = new PublicKey(
-  "FRuFWBrp1Kh6LpAi9CRvjk97C6YpCR7AERq62N2CZFUg"
 );
 export const JET_FAUCET_DEVNET = new PublicKey(
   "4RqY4p1xXMcMF1xrGYtJG8aaQDR7s8GHkjfSHFqcBmQV"
@@ -17,17 +14,18 @@ export const JET_FAUCET_DEVNET = new PublicKey(
 export const JET_GOV_PROGRAM_ID = new PublicKey(
   "5TBwvU5xoA13fzmZgWVgFBUmBz1YCdiq2AshDZpPn3AL"
 );
-
-// // TODO: what is the realm public key?
-// export const GOV_REALM_ADDRESS = new PublicKey(
-//   "Realm11111111111111111111111111111111111111"
-// );
+export let JET_REALM = new PublicKey(
+  PublicKey.default // FIXME !
+);
+export let JET_GOVERNANCE = new PublicKey(
+  PublicKey.default // FIXME !
+);
 
 export let TOKEN_PROGRAM_ID = new PublicKey(
   'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA',
 );
 
-export let LENDING_PROGRAM_ID = new PublicKey(
+export const LENDING_PROGRAM_ID = new PublicKey(
   'LendZqTs7gn5CTSJU1jWKhKuVpjJGom45nnwPb2AMTi',
 );
 
@@ -163,9 +161,22 @@ export const setProgramIds = (envName: string) => {
   SWAP_PROGRAM_LAYOUT = swap.current.layout;
   SWAP_PROGRAM_LEGACY_IDS = swap.legacy;
 
+
   if (envName === 'mainnet-beta') {
-    LENDING_PROGRAM_ID = new PublicKey(
-      'LendZqTs7gn5CTSJU1jWKhKuVpjJGom45nnwPb2AMTi',
+    JET_REALM = PublicKey.default; // FIXME!
+    JET_GOVERNANCE = PublicKey.default; // FIXME!
+    JET_TOKEN_MINT = new PublicKey(
+      "JET6zMJWkCN9tpRT2v2jfAmm5VnQFDpUBCyaKojmGtz"
+    );
+  } else if (envName === "devnet") {
+    JET_REALM = new PublicKey(
+      "AirPnqSFcEjHhC4z6mA9eoXYjjwQojCr7gV89FFds6T8"
+    );
+    JET_GOVERNANCE = new PublicKey(
+      "AeZg3yTkWKU4a1WV21J9kH8wR67uxPTNbTxxU5AfR6eJ"
+    );
+    JET_TOKEN_MINT = new PublicKey(
+      "FRuFWBrp1Kh6LpAi9CRvjk97C6YpCR7AERq62N2CZFUg"
     );
   }
 };

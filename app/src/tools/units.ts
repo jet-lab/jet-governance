@@ -201,3 +201,8 @@ export function getMintMaxVoteWeight(
 
   return new BN(maxVoteWeight.dp(0, BigNumber.ROUND_DOWN).toString());
 }
+
+/** Converts a BN to a number that will be imprecise when greater than 2^53 */
+export function bnToIntLossy(bigNum: BN) {
+  return parseFloat(bigNum.toString());
+}

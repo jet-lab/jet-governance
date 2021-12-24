@@ -10,8 +10,16 @@ export function getRealmUrl(
 export function getProposalUrl(
   proposal: PublicKey | string,
   programId: PublicKey | string,
+  title?: string,
 ) {
-  return getItemUrl('proposal', proposal, programId);
+  return getItemUrl('proposal', proposal, programId, title)
+}
+
+export function getOysterProposalUrl(
+  proposal: PublicKey | string,
+  programId: PublicKey | string,
+) {
+  return getItemUrl('proposal-oyster', proposal, programId);
 }
 
 export function getGovernanceUrl(
@@ -29,10 +37,9 @@ export function getItemUrl(
   itemName: string,
   itemId: PublicKey | string,
   programId: PublicKey | string,
+  title?: string,
 ) {
-  return `/${itemName}/${
-    itemId instanceof PublicKey ? itemId.toBase58() : itemId
-  }?programId=${
-    programId instanceof PublicKey ? programId.toBase58() : programId
-  }`;
+  return `/${itemName}/${itemId instanceof PublicKey ? itemId.toBase58() : itemId
+    }${title ? `/${title}` : ""}?programId=${programId instanceof PublicKey ? programId.toBase58() : programId
+    }`;
 }

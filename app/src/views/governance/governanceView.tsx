@@ -11,7 +11,7 @@ import { useKeyParam } from '../../hooks/useKeyParam';
 import { Proposal, ProposalState } from '../../models/accounts';
 import { ClockCircleOutlined } from '@ant-design/icons';
 import { GovernanceBadge } from '../../components/GovernanceBadge/governanceBadge';
-import { getProposalUrl } from '../../tools/routeTools';
+import { getOysterProposalUrl } from '../../tools/routeTools';
 import { useRpcContext } from '../../hooks/useRpcContext';
 import {
   formatMintNaturalAmountAsDecimal,
@@ -66,7 +66,7 @@ export const GovernanceView = () => {
       .sort((p1, p2) => compareProposals(p2.info, p1.info))
       .map(p => ({
         key: p.pubkey.toBase58(),
-        href: getProposalUrl(p.pubkey, programIdBase58),
+        href: getOysterProposalUrl(p.pubkey, programIdBase58),
         title: p.info.name,
         badge:
           p.info.state === ProposalState.Voting ? (

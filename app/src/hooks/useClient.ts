@@ -1,20 +1,20 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useWallet } from "@solana/wallet-adapter-react";
 import { Provider /*, Idl*/ } from '@project-serum/anchor';
-import { GovClient, GovProposal, GovProposalData, GovRealm, GovRealmData, GovVoter, GovVoterData, GovVoteRecord, GovVoteRecordData, /*makeAirdropTx*/ } from "@jet-lab/jet-engine";
+import { GovClient, GovProposal, GovVoter, GovVoteRecord, /*makeAirdropTx*/ } from "@jet-lab/jet-engine";
 import { useUserBalance } from "./useUserBalance"
-import { JET_FAUCET_DEVNET, JET_TOKEN_MINT_DEVNET } from "../utils/ids";
+import { JET_TOKEN_MINT } from "../utils/ids";
 import { PublicKey } from "@solana/web3.js";
 import { ConfirmOptions } from '@solana/web3.js';
 import { useConnection } from '../contexts';
 
 /* TODO: Tristyn integration client */
 export const useUser = (walletAddress?: PublicKey) => {
-  const jetBalance = useUserBalance(JET_TOKEN_MINT_DEVNET);
+  const jetBalance = useUserBalance(JET_TOKEN_MINT);
   const votingBalance = 10000;
   const stakedBalance = 71358;
 
-  return {jetBalance, votingBalance, stakedBalance};
+  return { jetBalance, votingBalance, stakedBalance };
 };
 
 export const proposals = [

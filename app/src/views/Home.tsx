@@ -1,47 +1,45 @@
-import { useState, useEffect } from "react";
-import { useProposal } from "../contexts/proposal";
+import { useState } from "react";
+import { useProposalContext } from "../contexts/proposal";
 import { ProposalCard } from "../components/ProposalCard";
 import { Button, Divider, notification } from "antd";
-import { useWallet } from "@solana/wallet-adapter-react";
 import { useUser } from "../hooks/useClient";
 import { Input } from "../components/Input";
-import { JET_FAUCET_DEVNET, JET_TOKEN_MINT_DEVNET } from "../utils/ids";
 import { StakeModal } from "../components/modals/StakeModal";
 import { UnstakeModal } from "../components/modals/UnstakeModal";
 import { VotingBalanceModal } from "../components/modals/VotingBalanceModal";
 import { InfoCircleOutlined } from "@ant-design/icons";
 import { useAirdrop } from "../contexts/airdrop";
 import React from "react";
-import { makeAirdropTx } from "@jet-lab/jet-engine"
-import { sendTransaction, useConnection } from "../contexts";
+import { useRpcContext } from "../hooks/useRpcContext";
+import { jetFaucet } from "../actions/jetFaucet";
+import { useProposalsByGovernance } from "../hooks/apiHooks";
+import { JET_GOVERNANCE } from "../utils";
+import { useProposalFilters } from "../hooks/proposalHooks";
 
 export const HomeView = () => {
   const [showStakeModal, setShowStakeModal] = useState(false);
   const [showUnstakeModal, setShowUnstakeModal] = useState(false);
   const [showVotingBalanceModal, setShowVotingBalanceModal] = useState(false);
 
-  const wallet = useWallet();
-  const { connected, publicKey } = useWallet();
-  const connection = useConnection();
-  const { showing, setShowing, shownProposals } = useProposal();
+  const { showing, setShowing } = useProposalContext();
   const [inputAmount, setInputAmount] = useState<number | null>(null);
   const { votingBalance, stakedBalance } = useUser();
   const { vestedAirdrops } = useAirdrop();
+  const rpcContext = useRpcContext();
+  const connected = rpcContext.wallet.connected
 
-  useEffect(() => openNotification(), []);
+  const proposals = useProposalsByGovernance(JET_GOVERNANCE);
+  const filteredProposals = useProposalFilters(proposals);
+
+  const totalDailyReward = 1000000
+  const totalStake = 1500000
+  const userDailyReward = totalDailyReward * stakedBalance / totalStake
 
   // Devnet only: airdrop JET tokens
   const getAirdrop = async () => {
-    if (!publicKey) {
-      return alert("Connect your wallet!");
-    }
-    let transactionInstruction = await makeAirdropTx(
-      JET_TOKEN_MINT_DEVNET,
-      JET_FAUCET_DEVNET,
-      publicKey,
-      connection
-    );
-    await sendTransaction(connection, wallet, transactionInstruction, []);
+    try {
+      await jetFaucet(rpcContext)
+    } catch { }
   };
 
   const openNotification = () => {
@@ -65,10 +63,6 @@ export const HomeView = () => {
     );
   };
 
-  const totalDailyReward = 1000000
-  const totalStake = 1500000
-  const userDailyReward = totalDailyReward * stakedBalance / totalStake
-
   return (
     <div className="view-container content-body">
       <div className="panel">
@@ -80,10 +74,10 @@ export const HomeView = () => {
           <h3>Votes{" "}
             <InfoCircleOutlined onClick={() => setShowVotingBalanceModal(true)} />
           </h3>
-            <VotingBalanceModal
-          showModal={showVotingBalanceModal}
-          setShowModal={setShowVotingBalanceModal}
-        />
+          <VotingBalanceModal
+            showModal={showVotingBalanceModal}
+            setShowModal={setShowVotingBalanceModal}
+          />
 
           <div className="text-gradient staked-balance" id="resize">
             {connected ? new Intl.NumberFormat().format(votingBalance) : 0}
@@ -108,7 +102,7 @@ export const HomeView = () => {
           <Divider />
           <div className="flex column">
             <div className="flex justify-between">
-            <span>Staked Tokens</span>
+              <span>Staked Tokens</span>
               <span>
                 {new Intl.NumberFormat().format(stakedBalance)}
               </span>
@@ -162,7 +156,7 @@ export const HomeView = () => {
         </div>
 
         <div className="show-proposals">
-          {shownProposals.map((proposal: any) => (
+          {filteredProposals.map((proposal: any) => (
             <ProposalCard
               proposal={proposal}
             />

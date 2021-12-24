@@ -1,16 +1,31 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { Card, Progress } from "antd";
-import { ProposalState } from "../models/INITIAL_PROPOSALS";
 import { getRemainingTime } from "../utils";
+import { Proposal } from "../models/accounts";
+import { ParsedAccount } from "../contexts";
+import { getProposalUrl } from "../tools/routeTools";
+import { useRpcContext } from "../hooks/useRpcContext";
 
-export const ProposalCard = (props: { proposal: ProposalState }) => {
+export const ProposalCard = (props: { proposal: ParsedAccount<Proposal> }) => {
   const [currentTime, setCurrentTime] = useState(Date.now());
-  const { proposal } = props;
-  const { headline, end, id, inFavor, against, abstain } = proposal;
+  const {
+    info: proposal,
+    pubkey: proposalAddress,
+    info: { name: headline }
+  } = props.proposal;
+
+  const { programId } = useRpcContext();
+  const { end } = { end: new Date() }; // FIXME
 
   // Truncate headline if too long
-  var headlineTruncated = headline.substr(0, 25) + "\u2026";
+  var headlineTruncated = useMemo(() => headline.substr(0, 25) + "…", [headline]);
+  var headlineUrl = useMemo(() => getProposalUrl(
+    proposalAddress,
+    programId,
+    headline.substring(0, 15).replace(" ", "-")),
+    [proposalAddress, programId, headline])
+  const proposalAddressStr = useMemo(() => proposalAddress.toBase58(), [proposalAddress])
 
   // Update current time every second
   useEffect(() => {
@@ -23,24 +38,22 @@ export const ProposalCard = (props: { proposal: ProposalState }) => {
   const active = end.getTime() > Date.now();
 
   // Active votes show progress bar
-  const total = inFavor + against + abstain
-  const inFavorProgress = inFavor / total * 100
-  const abstainProgress = (abstain + inFavor) / total * 100
+  const { yesPercent, yesAbstainPercent } = proposal.getVoteCounts();
 
   return (
-    <Link to={`/proposal/${id}/${headline.substring(0, 7)}`}>
+    <Link to={headlineUrl}>
       <Card bordered={false} className="proposal-card">
         <div>
-          <div className="header">Proposal {id}</div>
+          <div className="header">Proposal {proposalAddressStr}</div>
           <h1>{headline.length > 25 ? headlineTruncated : headline}</h1>
         </div>
         <div className="details">
           {active ? (`Ends in ${getRemainingTime(currentTime, end.valueOf())}`) : ""}
           {active ? (<Progress
-            percent={abstainProgress}
-            success={{ percent: inFavorProgress }}
+            percent={yesAbstainPercent}
+            success={{ percent: yesPercent }}
             showInfo={false} />) : ""}
-          
+
         </div>
       </Card>
     </Link>
