@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { Progress } from 'antd';
 import { abbreviateNumber } from "../../utils";
 
@@ -10,6 +10,7 @@ export const ResultProgressBar = (props: {
   const [vote, setVote] = useState("inFavor")
   const [gradient, setGradient] = useState(true);
   const [symbol, setSymbol] = useState("fas fa-thumbs-up");
+  const divClass = useMemo(() => `results-header ${gradient ? "text-gradient" : ""}`, [gradient]);
 
   useEffect(() => {
     if (type === "against") {
@@ -18,17 +19,17 @@ export const ResultProgressBar = (props: {
       setSymbol("fas fa-thumbs-down")
       setGradient(false)
     } else if (type === "abstain") {
-    setVote("abstain")
-    setColor("var(--grey)")
+      setVote("abstain")
+      setColor("var(--grey)")
       setSymbol("")
       setGradient(false)
-  }
-}, [type])
+    }
+  }, [type]);
 
-  const percent = (amount / total) * 100
+  const percent = total === 0 ? 0 : (amount / total) * 100
 
   return (
-    <div style={{color: color}} className={`results-header ${gradient ? "text-gradient" : ""}`}>
+    <div style={{ color: color }} className={divClass}>
       {percent.toFixed(0)}% {" "}
       {vote.toUpperCase()} <i className={symbol}></i>
       <span>{abbreviateNumber(amount, 1)} JET</span>

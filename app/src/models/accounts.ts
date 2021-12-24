@@ -1,8 +1,10 @@
 import { PublicKey } from '@solana/web3.js';
 import BN from 'bn.js';
+import { VoterDisplayData } from '../hooks/proposalHooks';
 import { bnToIntLossy } from '../tools/units';
 import { Vote, VoteKind } from './instructions';
 import { PROGRAM_VERSION_V1, PROGRAM_VERSION_V2 } from './registry/api';
+import { VoteType as DisplayVoteType } from "../hooks/proposalHooks"
 
 /// Seed  prefix for Governance Program PDAs
 export const GOVERNANCE_PROGRAM_SEED = 'governance';
@@ -723,9 +725,9 @@ export class Proposal {
     const abstain = new BN(0); // FIXME: multiple choice votes
 
     const total = yes.add(no).add(abstain)
-    const yesPercent = bnToIntLossy(yes) / bnToIntLossy(total) * 100
-    const yesAbstainPercent = bnToIntLossy(abstain.add(yes)) / bnToIntLossy(total) * 100
-    return { yes, no, abstain, total, yesPercent: yesPercent, yesAbstainPercent: yesAbstainPercent }
+    const yesPercent = total.isZero() ? 0 : bnToIntLossy(yes) / bnToIntLossy(total) * 100
+    const yesAbstainPercent = total.isZero() ? 0 : bnToIntLossy(abstain.add(yes)) / bnToIntLossy(total) * 100
+    return { yes, no, abstain, total, yesPercent: yesPercent, yesAbstainPercent }
   }
 }
 
@@ -810,7 +812,6 @@ export class VoteRecord {
     this.vote = args.vote;
     // -------------------------------
   }
-
   getNoVoteWeight() {
     switch (this.accountType) {
       case GovernanceAccountType.VoteRecordV1: {
@@ -851,6 +852,38 @@ export class VoteRecord {
       }
       default:
         throw new Error(`Invalid account type ${this.accountType} `);
+    }
+  }
+  getVoteKind(): VoteKind {
+    switch (this.accountType) {
+      case GovernanceAccountType.VoteRecordV1: {
+        return this.voteWeight?.yes.isZero() ? VoteKind.Deny : VoteKind.Approve;
+      }
+      case GovernanceAccountType.VoteRecordV2: {
+        switch (this.vote?.voteType) {
+          case VoteKind.Approve: {
+            return VoteKind.Approve;
+          }
+          case VoteKind.Deny: {
+            return VoteKind.Approve;
+          }
+          default:
+            throw new Error('Invalid voteKind');
+        }
+      }
+      default:
+        throw new Error(`Invalid account type ${this.accountType} `);
+    }
+  }
+  
+  getVoterDisplayData(): VoterDisplayData {
+    const yesVoteWeight = this.getYesVoteWeight();
+    const noVoteWeight = this.getNoVoteWeight();
+    return {
+      name: this.governingTokenOwner.toBase58(),
+      title: this.governingTokenOwner.toBase58(),
+      group: this.getVoteKind() === VoteKind.Approve ? DisplayVoteType.Yes : DisplayVoteType.No,
+      value: yesVoteWeight ?? noVoteWeight ?? new BN(0)
     }
   }
 }

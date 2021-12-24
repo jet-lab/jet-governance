@@ -1,20 +1,40 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { ResultProgressBar } from "../components/proposal/ResultProgressBar";
-import { Button, Divider, Tag } from "antd";
+import { Button, Divider, Spin, Tag } from "antd";
 import { ProposalCard } from "../components/ProposalCard";
 import { VoterList } from "../components/proposal/VoterList";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { VoteModal } from "../components/proposal/VoteModal";
-import { useUser } from "../hooks/useClient";
+import { useUser, useVoteRecord } from "../hooks/useClient";
 import { USER_VOTE_HISTORY } from "../models/USER_VOTE_HISTORY";
 import { TOP_STAKEHOLDERS } from "../models/TOP_STAKEHOLDERS";
 import { INITIAL_STATE } from "../models/INITIAL_PROPOSALS";
 import React from "react";
-import { useProposalsByGovernance } from "../hooks/apiHooks";
-import { JET_GOVERNANCE } from "../utils";
-import { useProposalFilters } from "../hooks/proposalHooks";
+import {
+  useGovernance,
+  useProposal,
+  useProposalsByGovernance,
+  useTokenOwnerRecords,
+  useVoteRecordsByProposal,
+  useWalletTokenOwnerRecord,
+  useInstructionsByProposal,
+  useSignatoriesByProposal,
+  useTokenOwnerVoteRecord,
+} from "../hooks/apiHooks";
+import { JET_GOVERNANCE, shortenAddress } from "../utils";
+import { useProposalFilters, useVoterDisplayData, VoterDisplayData, VoteType } from "../hooks/proposalHooks";
 import { useKeyParam } from "../hooks/useKeyParam";
+import { useRealm } from "../contexts/GovernanceContext";
+import { ParsedAccount, useMint } from "../contexts";
+import { Governance, Proposal, Realm } from "../models/accounts";
+import { MintInfo } from "@solana/spl-token";
+import { useIsUrl, useLoadGist } from "../hooks/useLoadGist";
+import { bnToIntLossy } from "../tools/units";
+import { LABELS } from "../constants";
+import ReactMarkdown from "react-markdown";
+import { voteRecordCsvDownload } from "../actions/voteRecordCsvDownload";
+import BN from "bn.js";
 
 export const ProposalView = () => {
   const [inactive, setInactive] = useState(true);
@@ -26,29 +46,40 @@ export const ProposalView = () => {
 
   // TODO: Fetch user's stake from blockchain
   const proposalAddress = useKeyParam();
+  const proposal = useProposal(proposalAddress);
+
+  let governance = useGovernance(proposal?.info.governance);
+  let realm = useRealm(governance?.info.realm);
+
+  const governingTokenMint = useMint(proposal?.info.governingTokenMint);
+
+  const voteRecords = useVoteRecordsByProposal(proposal?.pubkey);
+
+  const tokenOwnerRecords = useTokenOwnerRecords(
+    governance?.info.realm,
+    proposal?.info.isVoteFinalized() // TODO: for finalized votes show a single item for abstained votes
+      ? undefined
+      : proposal?.info.governingTokenMint,
+  );
+
+  const voterDisplayData = useVoterDisplayData(voteRecords, tokenOwnerRecords)
+
   const proposals = useProposalsByGovernance(JET_GOVERNANCE);
   const filteredProposals = useProposalFilters(proposals);
   const { connected } = useWallet();
   const { stakedBalance } = useUser();
 
   //TODO: Fix this temporary fix from the proposal being possibly undefined
-  const proposal =
+  const proposalOld =
     INITIAL_STATE.find((proposal) => proposal.id == 0) ??
     INITIAL_STATE[0];
 
   const {
-    id,
-    headline,
     start,
     end,
-    description,
-    result,
-    hash,
     type,
-    inFavor,
-    against,
-    abstain,
-  } = proposal;
+  } = proposalOld;
+  const id = 0;
 
   useEffect(() => {
     if (end.getTime() > Date.now()) {
@@ -71,32 +102,71 @@ export const ProposalView = () => {
   };
 
   // Find matching user vote within USER_VOTE_HISTORY
-  const userVote = USER_VOTE_HISTORY.find((x) => x.id === id);
-
-  const handleCsvDownload = () => {
-    // Convert array of objects to array of arrays
-    const voteHistoryCsv = TOP_STAKEHOLDERS.map(Object.values);
-
-    //define the heading for each row of the data
-    var csv = "Address,Amount,Vote\n";
-
-    //merge the data with CSV
-    voteHistoryCsv.forEach(function (row) {
-      csv += row.join(",");
-      csv += "\n";
-    });
-
-    var hiddenElement = document.createElement("a");
-    hiddenElement.href = "data:text/csv;charset=utf-8," + encodeURI(csv);
-    hiddenElement.target = "_blank";
-
-    //provide the name for the CSV file to be downloaded
-    hiddenElement.download = `JetGovern_${id}_Votes.csv'`;
-    hiddenElement.click();
-  };
+  const userVote = USER_VOTE_HISTORY.find((x) => x.id === 0);
 
   return (
-    <div className="view-container proposal flex column flex-start">
+    <>
+      {proposal && governance && governingTokenMint && realm ?
+        <InnerProposalView
+          proposal={proposal}
+          governance={governance}
+          realm={realm}
+          governingTokenMint={governingTokenMint}
+          voterDisplayData={voterDisplayData} /> :
+        <Spin />}
+    </>
+  )
+
+  function InnerProposalView(props: {
+    proposal: ParsedAccount<Proposal>,
+    governance: ParsedAccount<Governance>,
+    realm: ParsedAccount<Realm>,
+    governingTokenMint: MintInfo,
+    voterDisplayData: VoterDisplayData[],
+  }) {
+    const {
+      proposal,
+      governance,
+      realm,
+      governingTokenMint,
+      voterDisplayData
+    } = props;
+
+    const tokenOwnerRecord = useWalletTokenOwnerRecord(
+      governance.info.realm,
+      proposal.info.governingTokenMint,
+    );
+    const walletVoteRecordInfo = useTokenOwnerVoteRecord(proposal.pubkey, tokenOwnerRecord?.pubkey);
+    let walletVoteRecord = walletVoteRecordInfo?.tryUnwrap()?.info.getVoterDisplayData();
+    
+    const instructions = useInstructionsByProposal(proposal.pubkey);
+    const signatories = useSignatoriesByProposal(proposal.pubkey);
+
+    const isDescriptionUrl = useIsUrl(proposal.info.descriptionLink);
+    const isGist =
+      !!proposal.info.descriptionLink.match(/gist/i) &&
+      !!proposal.info.descriptionLink.match(/github/i);
+    const [content, setContent] = useState(proposal.info.descriptionLink);
+    const [loading, setLoading] = useState(isDescriptionUrl);
+    const [failed, setFailed] = useState(false);
+    const [msg, setMsg] = useState('');
+    const [width, setWidth] = useState<number>();
+    const [height, setHeight] = useState<number>();
+    const addressStr = useMemo(() => proposalAddress.toBase58(), [proposalAddress]);
+    const shortAddress = useMemo(() => shortenAddress(proposalAddress), [proposalAddress])
+    const { yes, no, abstain, total, yesPercent, yesAbstainPercent } = proposal.info.getVoteCounts();
+
+    useLoadGist({
+      loading,
+      setLoading,
+      setFailed,
+      setMsg,
+      setContent,
+      isGist,
+      proposal,
+    });
+
+    return (<div className="view-container proposal flex column flex-start">
       <Link to="/">
         <i className="fas fa-arrow-left"></i> All Proposals
       </Link>
@@ -106,15 +176,37 @@ export const ProposalView = () => {
           <h2>Proposal Details</h2>
           <div className="description neu-container ">
             <div className="flex">
-              <h3>Proposal {id}</h3>
+              <h3>Proposal {shortAddress}</h3>
             </div>
-            <h1 className="view-header">{headline}</h1>
-            <p>{description}</p>
+            <h1 className="view-header">{proposal.info.name}</h1>
+
+            {/* Description; Github Gist or text */
+              loading ? (
+                <Spin />
+              ) : isDescriptionUrl ? (
+                failed ? (
+                  <p>
+                    {LABELS.DESCRIPTION}:{' '}
+                    <a
+                      href={proposal.info.descriptionLink}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      {msg ? msg : LABELS.NO_LOAD}
+                    </a>
+                  </p>
+                ) : (
+                  <ReactMarkdown children={content} />
+                )
+              ) : (
+                content
+              )
+            }
 
             <div className="neu-inset flex column">
               <div>
                 <span>Proposal ID:</span>
-                <span>{hash}</span>
+                <span>{addressStr}</span>
               </div>
               <div>
                 <span>Type:</span>
@@ -136,36 +228,32 @@ export const ProposalView = () => {
             <div className="results">
               <ResultProgressBar
                 type="inFavor"
-                amount={inFavor}
-                total={inFavor + against + abstain}
+                amount={bnToIntLossy(yes)}
+                total={bnToIntLossy(total)}
               />
               <ResultProgressBar
                 type="against"
-                amount={against}
-                total={inFavor + against + abstain}
+                amount={bnToIntLossy(no)}
+                total={bnToIntLossy(total)}
               />
               <ResultProgressBar
                 type="abstain"
-                amount={abstain}
-                total={inFavor + against + abstain}
+                amount={bnToIntLossy(abstain)}
+                total={bnToIntLossy(total)}
               />
             </div>
             <div className="voters">
               <div className="flex justify-between">
                 <span />
-                <span onClick={handleCsvDownload} id="csv">Download CSV</span>
+                <span onClick={() => voteRecordCsvDownload(proposal.pubkey, voterDisplayData)} id="csv">Download CSV</span>
               </div>
               <div className={`stakeholders`} >
-      <span className="voter title"></span>
-      <span className="address title">WALLET</span>
-      <span className="amount title">vJET</span>
-      <span className="vote title">VOTE</span>
-    </div>
-              <VoterList
-                id={id}
-                userVote={userVote?.vote}
-                amount={userVote?.amount}
-              />
+                <span className="voter title"></span>
+                <span className="address title">WALLET</span>
+                <span className="amount title">vJET</span>
+                <span className="vote title">VOTE</span>
+              </div>
+              <VoterList voteRecords={voterDisplayData} userVoteRecord={walletVoteRecord} />
             </div>
           </div>
         </div>
@@ -178,28 +266,28 @@ export const ProposalView = () => {
           >
             <Button
               onClick={() => setVote("inFavor")}
-              disabled={(!connected || inactive) && true}
+              disabled={(!connected || inactive)}
               className="vote-select"
             >
               In favor
             </Button>
             <Button
               onClick={() => setVote("against")}
-              disabled={(!connected || inactive) && true}
+              disabled={(!connected || inactive)}
               className="vote-select"
             >
               Against
             </Button>
-            <Button
+            {/* <Button
               onClick={() => setVote("abstain")}
-              disabled={(!connected || inactive) && true}
+              disabled={(!connected || inactive)}
               className="vote-select"
             >
               Abstain
-            </Button>
+            </Button> */}
             <Button
               type="primary"
-              disabled={(!connected || inactive) && true}
+              disabled={(!connected || inactive)}
               onClick={handleVoteModal}
             >
               Vote
@@ -222,7 +310,7 @@ export const ProposalView = () => {
       <div className="other-proposals">
         <h3>Other active proposals</h3>
         <div className="flex">
-          {filteredProposals.map((proposal: any) => (
+          {filteredProposals.filter(otherProp => !otherProp.pubkey.equals(proposal.pubkey)).map((proposal: any) => (
             <ProposalCard
               proposal={proposal}
             />
@@ -230,5 +318,6 @@ export const ProposalView = () => {
         </div>
       </div>
     </div>
-  );
+    );
+  }
 };

@@ -8,7 +8,7 @@ export const Stakeholders = (props: {
   thisUser?: boolean
 }) => {
   const { type, amount, address, thisUser } = props;
-  const [vote, setVote] = useState("abstain")
+  const [vote, setVote] = useState("undecided")
 
   useEffect(() => {
     if (type === "inFavor") {

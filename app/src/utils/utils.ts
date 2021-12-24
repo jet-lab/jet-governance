@@ -44,8 +44,11 @@ export function useLocalStorageState(key: string, defaultState?: string) {
   return [state, setLocalStorageState];
 }
 
-// shorten the checksummed version of the input address to have 4 characters at start and end
-export function shortenAddress(address: string, chars = 4): string {
+/** shorten the checksummed version of the input address to have 4 characters at start and end */
+export function shortenAddress(address: PublicKey | string, chars = 4): string {
+  if(address instanceof PublicKey){
+    address = address.toBase58();
+  }
   return `${address.slice(0, chars)}...${address.slice(-chars)}`;
 }
 

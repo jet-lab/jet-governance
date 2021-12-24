@@ -4,76 +4,64 @@ import { Voter, TOP_STAKEHOLDERS } from "../../models/TOP_STAKEHOLDERS";
 import { Stakeholders } from "./Stakeholders";
 import { useUser } from "../../hooks/useClient";
 import { useWallet } from "@solana/wallet-adapter-react";
+import { VoteRecord } from "../../models/accounts";
+import { VoterDisplayData } from "../../hooks/proposalHooks";
+import { bnToIntLossy } from "../../tools/units";
 
 export const VoterList = (props: {
-  id: number;
-  userVote?: string;
-  amount?: number;
+  voteRecords: VoterDisplayData[],
+  userVoteRecord?: VoterDisplayData
 }) => {
-  const [initLoading, setInitLoading] = useState(false);
-  const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(1);
-  const [data, setData] = useState<Voter[]>(TOP_STAKEHOLDERS);
-  const [list, setList] = useState<Voter[]>([]);
-
-  const { publicKey } = useWallet();
-  const { id, userVote, amount } = props;
+  const [list, setList] = useState<VoterDisplayData[]>([]);
 
   const count = 5;
 
   useEffect(() => {
-    setList(data.slice(0, count * page));
-  }, [data, page]);
+    setList(props.voteRecords.slice(0, count * page));
+  }, [props.voteRecords, page]);
 
- // Function to fake lazy loading
+  // Function to fake lazy loading
   const onLoadMore = () => {
-    setLoading(true);
-    setList(() =>
-      list.concat(data.slice(count * page, count * page + 1))
-    );
     setPage(page + 1);
-
-    setLoading(false);
-    setInitLoading(false);
   };
 
   const loadMore =
-    !initLoading && !loading ? (
+    (
       <div
         style={{
           textAlign: "center",
           marginTop: 12,
           height: 32,
           lineHeight: "32px",
+          visibility: count * page < list.length ? "visible" : "collapse"
         }}
       >
         <Button onClick={onLoadMore}>Load more</Button>
       </div>
-    ) : null;
+    );
 
   return (
     <>
-      {amount && userVote && publicKey && (
-          <Stakeholders
-            type={userVote}
-            amount={amount}
-            address={publicKey.toString()}
-            thisUser={true}
-          />
+      {props.userVoteRecord && (
+        <Stakeholders
+          type={props.userVoteRecord.group}
+          amount={bnToIntLossy(props.userVoteRecord.value)}
+          address={props.userVoteRecord.title}
+          thisUser={true}
+        />
       )}
       <List
-        loading={initLoading}
         itemLayout="horizontal"
         loadMore={loadMore}
         dataSource={list}
         renderItem={(item) => (
-          <List.Item
-          >
-            <Skeleton avatar title={false} loading={loading} active>
+          <List.Item>
+            <Skeleton avatar title={false} loading={false} active>
               <Stakeholders
-                type={item.vote}
-                amount={item.amount ?? 0}
-                address={item.address}
+                type={item.group}
+                amount={bnToIntLossy(item.value)}
+                address={item.title}
               />
             </Skeleton>
           </List.Item>

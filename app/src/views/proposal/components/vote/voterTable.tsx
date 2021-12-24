@@ -2,11 +2,11 @@ import React from 'react';
 import { LABELS } from '../../../../constants';
 
 import { Table, Grid } from 'antd';
-import { VoterDisplayData, VoteType } from '../../oysterProposalView';
 import BN from 'bn.js';
 import { BigNumber } from 'bignumber.js';
 import { formatPercentage } from '../../../../tools/units';
 import { getExplorerUrl } from '../../../../utils';
+import { VoterDisplayData, VoteType } from '../../../../hooks/proposalHooks';
 
 const { useBreakpoint } = Grid;
 interface VoterTableProps {

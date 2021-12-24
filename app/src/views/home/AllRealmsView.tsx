@@ -1,7 +1,6 @@
 import { Col, List, Row } from 'antd';
 import React, { useMemo } from 'react';
 import { useRealms } from '../../contexts/GovernanceContext';
- // Don't remove this line, it will break dark mode if you do due to weird transpiling conditions
 
 import { Background } from '../../components/Background';
 import { useHistory } from 'react-router-dom';

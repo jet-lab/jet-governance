@@ -1,7 +1,7 @@
 import * as d3 from 'd3';
 import React, { useEffect, useState } from 'react';
+import { VoterDisplayData, VoteType } from '../../../../hooks/proposalHooks';
 import { getExplorerUrl } from '../../../../utils';
-import { VoterDisplayData, VoteType } from '../../oysterProposalView';
 
 //https://observablehq.com/d/86d91b23534992ff
 

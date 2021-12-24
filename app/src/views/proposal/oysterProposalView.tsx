@@ -1,6 +1,6 @@
 import { Card, Col, Row, Spin, Statistic, Tabs } from 'antd';
-import React, { useMemo, useState } from 'react';
-import { LABELS, ZERO } from '../../constants';
+import React, { useState } from 'react';
+import { LABELS } from '../../constants';
 
 
 import ReactMarkdown from 'react-markdown';
@@ -19,8 +19,6 @@ import {
   Proposal,
   ProposalState,
   Realm,
-  TokenOwnerRecord,
-  VoteRecord,
 } from '../../models/accounts';
 import { useKeyParam } from '../../hooks/useKeyParam';
 
@@ -33,7 +31,6 @@ import {
   useVoteRecordsByProposal,
   useSignatoriesByProposal,
 } from '../../hooks/apiHooks';
-import BN from 'bn.js';
 
 import { VoteScore } from './components/vote/voteScore';
 
@@ -43,18 +40,10 @@ import { getMintMaxVoteWeight } from '../../tools/units';
 import { ProposalActionBar } from './components/buttons/proposalActionBar';
 import { TokenIcon, ExplorerLink } from '../../components';
 import { useConnectionConfig, useMint, ParsedAccount } from '../../contexts';
+import { useVoterDisplayData, VoterDisplayData } from '../../hooks/proposalHooks';
+import { useIsUrl, useLoadGist } from '../../hooks/useLoadGist';
 
 const { TabPane } = Tabs;
-
-export const urlRegex =
-  // eslint-disable-next-line
-  /[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/;
-
-export enum VoteType {
-  Undecided = 'Undecided',
-  Yes = 'Yay',
-  No = 'Nay',
-}
 
 export const OysterProposalView = () => {
   const { endpoint } = useConnectionConfig();
@@ -76,152 +65,31 @@ export const OysterProposalView = () => {
       : proposal?.info.governingTokenMint,
   );
 
-  if (!realm) {
-    return <Spin></Spin>;
-  }
+  const voterDisplayData = useVoterDisplayData(voteRecords, tokenOwnerRecords)
 
-  return (
-    <div className="flexColumn">
-      {proposal && governance && governingTokenMint ? (
-        <InnerProposalView
-          proposal={proposal}
-          realm={realm}
-          governance={governance}
-          voterDisplayData={mapVoterDisplayData(
-            voteRecords,
-            tokenOwnerRecords,
-          )}
-          governingTokenMint={governingTokenMint}
-          endpoint={endpoint}
-          hasVotes={voteRecords.length > 0}
-        />
-      ) : (
-        <Spin />
-      )}
-    </div>
-  );
+  if (!proposal || !governance || !governingTokenMint || !realm) {
+    return <Spin/>;
+  } else {
+    return (
+      <div className="flexColumn">
+        {proposal && governance && governingTokenMint && realm ? (
+          <InnerProposalView
+            proposal={proposal}
+            realm={realm}
+            governance={governance}
+            voterDisplayData={voterDisplayData}
+            governingTokenMint={governingTokenMint}
+            endpoint={endpoint}
+            hasVotes={voteRecords.length > 0}
+          />
+        ) : (
+          <Spin />
+        )}
+      </div>
+    );
+  }
 };
 
-function useLoadGist({
-  loading,
-  setLoading,
-  setFailed,
-  setMsg,
-  setContent,
-  isGist,
-  proposal,
-}: {
-  loading: boolean;
-  setLoading: (b: boolean) => void;
-  setMsg: (b: string) => void;
-  setFailed: (b: boolean) => void;
-  setContent: (b: string) => void;
-  isGist: boolean;
-  proposal: ParsedAccount<Proposal>;
-}) {
-  useMemo(() => {
-    if (loading) {
-      let toFetch = proposal.info.descriptionLink;
-      const pieces = toFetch.match(urlRegex);
-      if (isGist && pieces) {
-        const justIdWithoutUser = pieces[1].split('/')[2];
-        toFetch = 'https://api.github.com/gists/' + justIdWithoutUser;
-      }
-      fetch(toFetch)
-        .then(async resp => {
-          if (resp.status === 200) {
-            if (isGist) {
-              const jsonContent = await resp.json();
-              const nextUrlFileName = Object.keys(jsonContent['files'])[0];
-              const nextUrl = jsonContent['files'][nextUrlFileName]['raw_url'];
-              fetch(nextUrl).then(async response =>
-                setContent(await response.text()),
-              );
-            } else setContent(await resp.text());
-          } else {
-            if (resp.status === 403 && isGist)
-              setMsg(LABELS.GIT_CONTENT_EXCEEDED);
-            setFailed(true);
-          }
-          setLoading(false);
-        })
-        .catch(_ => {
-          setFailed(true);
-          setLoading(false);
-        });
-    }
-  }, [loading]); //eslint-disable-line
-}
-
-export interface VoterDisplayData {
-  name: string;
-  title: string;
-  group: string;
-  value: BN;
-}
-
-function mapVoterDisplayData(
-  voteRecords: ParsedAccount<VoteRecord>[],
-  tokenOwnerRecords: ParsedAccount<TokenOwnerRecord>[],
-): Array<VoterDisplayData> {
-  const mapper = (key: string, amount: BN, label: string) => ({
-    name: key,
-    title: key,
-    group: label,
-    value: amount,
-    key: key,
-  });
-
-  const undecidedData = [
-    ...tokenOwnerRecords
-      .filter(
-        tor =>
-          !tor.info.governingTokenDepositAmount.isZero() &&
-          !voteRecords.some(
-            vt =>
-              vt.info.governingTokenOwner.toBase58() ===
-              tor.info.governingTokenOwner.toBase58(),
-          ),
-      )
-      .map(tor =>
-        mapper(
-          tor.info.governingTokenOwner.toBase58(),
-          tor.info.governingTokenDepositAmount,
-          VoteType.Undecided,
-        ),
-      ),
-  ];
-
-  const noVoteData = [
-    ...voteRecords
-      .filter(vr => vr.info.getNoVoteWeight()?.gt(ZERO))
-      .map(vr =>
-        mapper(
-          vr.info.governingTokenOwner.toBase58(),
-          vr.info.getNoVoteWeight()!,
-          VoteType.No,
-        ),
-      ),
-  ];
-
-  const yesVoteData = [
-    ...voteRecords
-      .filter(vr => vr.info.getYesVoteWeight()?.gt(ZERO))
-      .map(vr =>
-        mapper(
-          vr.info.governingTokenOwner.toBase58(),
-          vr.info.getYesVoteWeight()!,
-          VoteType.Yes,
-        ),
-      ),
-  ];
-
-  const data = [...undecidedData, ...yesVoteData, ...noVoteData].sort((a, b) =>
-    b.value.cmp(a.value),
-  );
-
-  return data;
-}
 
 function InnerProposalView({
   realm,
@@ -236,7 +104,7 @@ function InnerProposalView({
   proposal: ParsedAccount<Proposal>;
   governance: ParsedAccount<Governance>;
   governingTokenMint: MintInfo;
-  voterDisplayData: Array<VoterDisplayData>;
+  voterDisplayData: VoterDisplayData[];
   endpoint: string;
   hasVotes: boolean;
 }) {
@@ -247,12 +115,12 @@ function InnerProposalView({
   const instructions = useInstructionsByProposal(proposal.pubkey);
   const signatories = useSignatoriesByProposal(proposal.pubkey);
 
-  const isUrl = !!proposal.info.descriptionLink.match(urlRegex);
+  const isDescriptionUrl = useIsUrl(proposal.info.descriptionLink);
   const isGist =
     !!proposal.info.descriptionLink.match(/gist/i) &&
     !!proposal.info.descriptionLink.match(/github/i);
   const [content, setContent] = useState(proposal.info.descriptionLink);
-  const [loading, setLoading] = useState(isUrl);
+  const [loading, setLoading] = useState(isDescriptionUrl);
   const [failed, setFailed] = useState(false);
   const [msg, setMsg] = useState('');
   const [width, setWidth] = useState<number>();
@@ -266,7 +134,7 @@ function InnerProposalView({
     setMsg,
     setContent,
     isGist,
-    proposal: proposal,
+    proposal,
   });
 
   return (
@@ -418,7 +286,7 @@ function InnerProposalView({
                 <TabPane tab="Description" key="description">
                   {loading ? (
                     <Spin />
-                  ) : isUrl ? (
+                  ) : isDescriptionUrl ? (
                     failed ? (
                       <p>
                         {LABELS.DESCRIPTION}:{' '}
