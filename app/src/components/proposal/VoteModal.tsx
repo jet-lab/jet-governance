@@ -10,7 +10,7 @@ export const VoteModal = (props: {
   setIsStakeRedirectModalVisible: Function;
   isStakeRedirectModalVisible: boolean;
   proposalNumber: number;
-  endDate: Date;
+  endDate: string;
 }) => {
   const [voteType, setVoteType] = useState("")
   const { stakedBalance } = useUser()
@@ -56,7 +56,7 @@ export const VoteModal = (props: {
         onCancel={() => setIsVoteModalVisible(false)}
         closable={false}
       >
-        <p>You have {stakedBalance} JET staked, and will be able to unstake these funds when voting ends on {endDate.toLocaleDateString()}.</p>
+        <p>You have {stakedBalance} JET staked, and will be able to unstake these funds when voting ends at {endDate}.</p>
       </Modal>
 
       <Modal

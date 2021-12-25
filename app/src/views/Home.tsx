@@ -12,7 +12,7 @@ import { useAirdrop } from "../contexts/airdrop";
 import React from "react";
 import { useRpcContext } from "../hooks/useRpcContext";
 import { jetFaucet } from "../actions/jetFaucet";
-import { useProposalsByGovernance } from "../hooks/apiHooks";
+import { useGovernance, useProposalsByGovernance } from "../hooks/apiHooks";
 import { JET_GOVERNANCE } from "../utils";
 import { useProposalFilters } from "../hooks/proposalHooks";
 
@@ -30,6 +30,8 @@ export const HomeView = () => {
 
   const proposals = useProposalsByGovernance(JET_GOVERNANCE);
   const filteredProposals = useProposalFilters(proposals);
+
+  let governance = useGovernance(JET_GOVERNANCE);
 
   const totalDailyReward = 1000000
   const totalStake = 1500000
@@ -156,9 +158,11 @@ export const HomeView = () => {
         </div>
 
         <div className="show-proposals">
-          {filteredProposals.map((proposal: any) => (
+          {filteredProposals.map((proposal) => governance && (
             <ProposalCard
               proposal={proposal}
+              governance={governance}
+              key={proposal.pubkey.toBase58()}
             />
           ))}
         </div>

@@ -442,23 +442,23 @@ export async function getTokenOwnerRecordAddress(
 }
 
 export enum ProposalState {
-  Draft,
+  Draft = 0,
 
-  SigningOff,
+  SigningOff = - 1,
 
-  Voting,
+  Voting = 2,
 
-  Succeeded,
+  Succeeded = 3,
 
-  Executing,
+  Executing = 4,
 
-  Completed,
+  Completed = 5,
 
-  Cancelled,
+  Cancelled = 6,
 
-  Defeated,
+  Defeated = 7,
 
-  ExecutingWithErrors,
+  ExecutingWithErrors = 8,
 }
 
 export enum OptionVoteResult {
@@ -634,6 +634,22 @@ export class Proposal {
     }
   }
 
+  isVoting(): boolean {
+    switch (this.state) {
+      case ProposalState.Voting:
+        return true;
+      case ProposalState.Succeeded:
+      case ProposalState.Executing:
+      case ProposalState.Completed:
+      case ProposalState.Cancelled:
+      case ProposalState.Defeated:
+      case ProposalState.ExecutingWithErrors:
+      case ProposalState.Draft:
+      case ProposalState.SigningOff:
+        return false;
+    }
+  }
+
   isFinalState(): boolean {
     // 1) ExecutingWithErrors is not really a final state, it's undefined.
     //    However it usually indicates none recoverable execution error so we treat is as final for the ui purposes
@@ -687,6 +703,17 @@ export class Proposal {
   /// Returns true if Proposal has not been voted on yet
   isPreVotingState() {
     return !this.votingAtSlot;
+  }
+
+  /** 
+   * Returns the time voting ended.
+   * Returns the estimated end time if voting is ongoing.
+   * Returns undefined if in the Draft state. */
+  getVotingDeadline(governance: Governance): BN | undefined {
+    if (this.votingCompletedAt) {
+      return this.votingCompletedAt;
+    }
+    return this.votingAt?.addn(governance.config.maxVotingTime);
   }
 
   getYesVoteOption() {
@@ -875,7 +902,7 @@ export class VoteRecord {
         throw new Error(`Invalid account type ${this.accountType} `);
     }
   }
-  
+
   getVoterDisplayData(): VoterDisplayData {
     const yesVoteWeight = this.getYesVoteWeight();
     const noVoteWeight = this.getNoVoteWeight();

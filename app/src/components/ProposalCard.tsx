@@ -2,21 +2,27 @@ import React, { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { Card, Progress } from "antd";
 import { getRemainingTime, shortenAddress } from "../utils";
-import { Proposal } from "../models/accounts";
+import { Governance, Proposal } from "../models/accounts";
 import { ParsedAccount } from "../contexts";
 import { getProposalUrl } from "../tools/routeTools";
 import { useRpcContext } from "../hooks/useRpcContext";
+import { useCountdown } from "../hooks/proposalHooks";
 
-export const ProposalCard = (props: { proposal: ParsedAccount<Proposal> }) => {
+export const ProposalCard = (props: { proposal: ParsedAccount<Proposal>, governance: ParsedAccount<Governance> }) => {
   const [currentTime, setCurrentTime] = useState(Date.now());
   const {
-    info: proposal,
-    pubkey: proposalAddress,
-    info: { name: headline }
-  } = props.proposal;
+    proposal: {
+      info: proposal,
+      pubkey: proposalAddress,
+      info: { name: headline }
+    },
+    governance: {
+      info: governance
+    }
+  } = props;
+
 
   const { programId } = useRpcContext();
-  const { end } = { end: new Date() }; // FIXME
 
   // Truncate headline if too long
   var shortHeadline = useMemo(() => headline.length < 25 ? headline : headline.substr(0, 25) + "…", [headline]);
@@ -35,25 +41,31 @@ export const ProposalCard = (props: { proposal: ParsedAccount<Proposal> }) => {
     return () => clearInterval(secondInterval);
   });
 
-  const active = end.getTime() > Date.now();
-
   // Active votes show progress bar
   const { yesPercent, yesAbstainPercent } = proposal.getVoteCounts();
+  const { startDate, endDate, countdown } = useCountdown(proposal, governance);
 
   return (
     <Link to={headlineUrl}>
-      <Card bordered={false} className="proposal-card">
+      <Card
+        bordered={false}
+        className="proposal-card"
+        style={{}}>
         <div>
           <div className="header">Proposal {proposalAddressStr}</div>
           <h1>{shortHeadline}</h1>
         </div>
         <div className="details">
-          {active ? (`Ends in ${getRemainingTime(currentTime, end.valueOf())}`) : ""}
-          {active ? (<Progress
-            percent={yesAbstainPercent}
-            success={{ percent: yesPercent }}
-            showInfo={false} />) : ""}
-
+          {proposal.isVoting() &&
+            <>
+              Ends in {countdown}
+              <Progress
+                  percent={yesAbstainPercent}
+                  success={{ percent: yesPercent }}
+                  showInfo={false}
+                  key={proposalAddress.toBase58()} />
+            </>
+          }
         </div>
       </Card>
     </Link>

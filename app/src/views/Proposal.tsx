@@ -6,9 +6,8 @@ import { ProposalCard } from "../components/ProposalCard";
 import { VoterList } from "../components/proposal/VoterList";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { VoteModal } from "../components/proposal/VoteModal";
-import { useUser, useVoteRecord } from "../hooks/useClient";
+import { useUser } from "../hooks/useClient";
 import { USER_VOTE_HISTORY } from "../models/USER_VOTE_HISTORY";
-import { TOP_STAKEHOLDERS } from "../models/TOP_STAKEHOLDERS";
 import { INITIAL_STATE } from "../models/INITIAL_PROPOSALS";
 import React from "react";
 import {
@@ -23,7 +22,7 @@ import {
   useTokenOwnerVoteRecord,
 } from "../hooks/apiHooks";
 import { JET_GOVERNANCE, shortenAddress } from "../utils";
-import { useProposalFilters, useVoterDisplayData, VoterDisplayData, VoteType } from "../hooks/proposalHooks";
+import { useCountdown, useProposalFilters, useVoterDisplayData, VoterDisplayData } from "../hooks/proposalHooks";
 import { useKeyParam } from "../hooks/useKeyParam";
 import { useRealm } from "../contexts/GovernanceContext";
 import { ParsedAccount, useMint } from "../contexts";
@@ -34,7 +33,6 @@ import { bnToIntLossy } from "../tools/units";
 import { LABELS } from "../constants";
 import ReactMarkdown from "react-markdown";
 import { voteRecordCsvDownload } from "../actions/voteRecordCsvDownload";
-import BN from "bn.js";
 
 export const ProposalView = () => {
   const [inactive, setInactive] = useState(true);
@@ -75,17 +73,9 @@ export const ProposalView = () => {
     INITIAL_STATE[0];
 
   const {
-    start,
-    end,
     type,
   } = proposalOld;
-  const id = 0;
-
-  useEffect(() => {
-    if (end.getTime() > Date.now()) {
-      setInactive(false);
-    }
-  }, [end]);
+  const id = 0;// FIXME delete
 
   useEffect(() => {
     if (stakedBalance !== 0) {
@@ -138,7 +128,7 @@ export const ProposalView = () => {
     );
     const walletVoteRecordInfo = useTokenOwnerVoteRecord(proposal.pubkey, tokenOwnerRecord?.pubkey);
     let walletVoteRecord = walletVoteRecordInfo?.tryUnwrap()?.info.getVoterDisplayData();
-    
+
     const instructions = useInstructionsByProposal(proposal.pubkey);
     const signatories = useSignatoriesByProposal(proposal.pubkey);
 
@@ -155,6 +145,7 @@ export const ProposalView = () => {
     const addressStr = useMemo(() => proposalAddress.toBase58(), [proposalAddress]);
     const shortAddress = useMemo(() => shortenAddress(proposalAddress), [proposalAddress])
     const { yes, no, abstain, total, yesPercent, yesAbstainPercent } = proposal.info.getVoteCounts();
+    const { startDate, endDate, countdown } = useCountdown(proposal.info, governance.info);
 
     useLoadGist({
       loading,
@@ -213,12 +204,16 @@ export const ProposalView = () => {
                 <span>{type.map((type) => <Tag>{type}</Tag>)}</span>
               </div>
               <div>
+                <span>Voting time left:</span>
+                <span>{countdown}</span>
+              </div>
+              <div>
                 <span>Start date:</span>
-                <span>{start.toString()}</span>
+                <span> {startDate ? startDate : "To be determined."}</span>
               </div>
               <div>
                 <span>End date:</span>
-                <span>{end.toString()}</span>
+                <span>{endDate ? endDate : "To be determined"}</span>
               </div>
             </div>
           </div>
@@ -299,7 +294,7 @@ export const ProposalView = () => {
               isStakeRedirectModalVisible={isStakeRedirectModalVisible}
               setIsStakeRedirectModalVisible={setIsStakeRedirectModalVisible}
               proposalNumber={id}
-              endDate={end}
+              endDate={endDate ?? ""}
             />
           </div>
         </div>
@@ -313,6 +308,7 @@ export const ProposalView = () => {
           {filteredProposals.filter(otherProp => !otherProp.pubkey.equals(proposal.pubkey)).map((proposal: any) => (
             <ProposalCard
               proposal={proposal}
+              governance={governance}
             />
           ))}
         </div>

@@ -22,6 +22,7 @@ import {
   Wallet,
   WalletName,
 } from '@solana/wallet-adapter-wallets';
+import { PublicKey, Transaction } from '@solana/web3.js';
 import { Button, Modal } from "antd";
 import React, { createContext, FC, ReactNode, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { notify } from "../utils";
