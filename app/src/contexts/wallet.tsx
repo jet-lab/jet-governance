@@ -158,12 +158,7 @@ export const WalletProvider = ({ children }: {children: ReactNode }) => {
       getPhantomWallet(),
       getSlopeWallet(),
       getSolflareWallet(),
-      getTorusWallet({
-        options: { clientId: 'Get a client ID @ https://developer.tor.us' }
-      }),
-      getLedgerWallet(),
       getSolletWallet({ network }),
-      getSolletExtensionWallet({ network }),
     ],
     []
   );

@@ -57,11 +57,11 @@ export function CastVoteButton({
         <CloseOutlined />,
       ];
 
-  return isVisible ? (
+  return (
     <Button
       type="primary"
       className="vote-select"
-      disabled={disabled || !tokenOwnerRecord}
+      disabled={isVisible ? !tokenOwnerRecord : true }
       onClick={() =>
         confirm({
           title: title,
@@ -91,5 +91,5 @@ export function CastVoteButton({
     >
       {btnLabel}
     </Button>
-  ) : null;
+  );
 }

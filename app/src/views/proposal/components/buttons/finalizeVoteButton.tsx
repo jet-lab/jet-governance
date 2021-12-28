@@ -28,9 +28,10 @@ export function FinalizeVoteButton({
     connected &&
     proposal.info.state === ProposalState.Voting;
 
-  return isVisible ? (
+  return (
     <Button
       type="primary"
+      disabled={isVisible ? false : true}
       onClick={async () => {
         try {
           await finalizeVote(rpcContext, governance.info.realm, proposal);
@@ -41,5 +42,5 @@ export function FinalizeVoteButton({
     >
       {LABELS.FINALIZE_VOTE}
     </Button>
-  ) : null;
+  );
 }

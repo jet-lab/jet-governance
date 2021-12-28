@@ -46,11 +46,11 @@ export function RelinquishVoteButton({
   const isVoting =
     proposal.info.state === ProposalState.Voting && !hasVoteTimeExpired;
 
-  return isVisible ? (
+  return (
     <Button
       type="primary"
       className="vote-select"
-      disabled={!tokenOwnerRecord}
+      disabled={isVisible ? !tokenOwnerRecord : true}
       onClick={async () => {
         if (!isVoting && tokenOwnerRecord) {
           try {
@@ -106,5 +106,5 @@ export function RelinquishVoteButton({
     >
       {isVoting ? LABELS.WITHDRAW_VOTE : LABELS.RELEASE_MY_TOKENS}
     </Button>
-  ) : null;
+  );
 }

@@ -37,9 +37,10 @@ export function WithdrawGoverningTokensButton({
     tokenOwnerRecord &&
     !tokenOwnerRecord.info.governingTokenDepositAmount.isZero();
 
-  return isVisible ? (
+  return (
     <Button
       type="ghost"
+      disabled={isVisible ? false : true}
       onClick={() => {
         if (tokenOwnerRecord.info.unrelinquishedVotesCount > 0) {
           error({
@@ -76,5 +77,5 @@ export function WithdrawGoverningTokensButton({
     >
       {LABELS.WITHDRAW_TOKENS(tokenName)}
     </Button>
-  ) : null;
+  );
 }

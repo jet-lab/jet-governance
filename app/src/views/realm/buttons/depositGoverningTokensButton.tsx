@@ -32,9 +32,10 @@ export function DepositGoverningTokensButton({
     governingTokenAccount &&
     !governingTokenAccount.info.amount.isZero();
 
-  return isVisible ? (
+  return (
     <Button
       type="primary"
+      disabled={isVisible ? false : true}
       onClick={() =>
         confirm({
           title: LABELS.DEPOSIT_TOKENS,
@@ -63,5 +64,5 @@ export function DepositGoverningTokensButton({
     >
       {LABELS.DEPOSIT_TOKENS(tokenName)}
     </Button>
-  ) : null;
+  );
 }
