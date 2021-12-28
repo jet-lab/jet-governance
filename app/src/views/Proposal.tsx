@@ -1,14 +1,12 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { ResultProgressBar } from "../components/proposal/ResultProgressBar";
-import { Button, Divider, Spin, Tag } from "antd";
+import { Divider, Spin, Tag } from "antd";
 import { ProposalCard } from "../components/ProposalCard";
 import { VoterList } from "../components/proposal/VoterList";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { VoteModal } from "../components/proposal/VoteModal";
 import { useUser } from "../hooks/useClient";
-import { USER_VOTE_HISTORY } from "../models/USER_VOTE_HISTORY";
-import { INITIAL_STATE } from "../models/INITIAL_PROPOSALS";
 import React from "react";
 import {
   useGovernance,
@@ -17,8 +15,6 @@ import {
   useTokenOwnerRecords,
   useVoteRecordsByProposal,
   useWalletTokenOwnerRecord,
-  useInstructionsByProposal,
-  useSignatoriesByProposal,
   useTokenOwnerVoteRecord,
 } from "../hooks/apiHooks";
 import { JET_GOVERNANCE, shortenAddress } from "../utils";
@@ -28,19 +24,22 @@ import { useRealm } from "../contexts/GovernanceContext";
 import { ParsedAccount, useMint } from "../contexts";
 import { Governance, Proposal, Realm } from "../models/accounts";
 import { MintInfo } from "@solana/spl-token";
-import { useIsUrl, useLoadGist } from "../hooks/useLoadGist";
+import { useLoadGist } from "../hooks/useLoadGist";
 import { bnToIntLossy } from "../tools/units";
 import { LABELS } from "../constants";
 import ReactMarkdown from "react-markdown";
 import { voteRecordCsvDownload } from "../actions/voteRecordCsvDownload";
+import { StakeRedirectModal } from "../components/Stake/StakeRedirectModal";
+import { YesNoVote } from "../models/instructions";
+import { RelinquishVoteButton } from "./proposal/components/buttons/relinquishVoteButton";
+import { CastVoteButton } from "./proposal/components/buttons/castVoteButton";
+import { useHasVoteTimeExpired } from "../hooks/useHasVoteTimeExpired";
 
 export const ProposalView = () => {
   const [inactive, setInactive] = useState(true);
   const [isVoteModalVisible, setIsVoteModalVisible] = useState(false);
-  const [isStakeRedirectModalVisible, setIsStakeRedirectModalVisible] =
-    useState(false);
-  const [ifStaked, setIfStaked] = useState(false);
-  const [vote, setVote] = useState("");
+  const [isStakeRedirectModalVisible, setIsStakeRedirectModalVisible] = useState(false);
+  const [vote, setVote] = useState<YesNoVote>(YesNoVote.No);
 
   // TODO: Fetch user's stake from blockchain
   const proposalAddress = useKeyParam();
@@ -66,46 +65,25 @@ export const ProposalView = () => {
   const filteredProposals = useProposalFilters(proposals);
   const { connected } = useWallet();
   const { stakedBalance } = useUser();
-
-  //TODO: Fix this temporary fix from the proposal being possibly undefined
-  const proposalOld =
-    INITIAL_STATE.find((proposal) => proposal.id == 0) ??
-    INITIAL_STATE[0];
-
-  const {
-    type,
-  } = proposalOld;
-  const id = 0;// FIXME delete
-
-  useEffect(() => {
-    if (stakedBalance !== 0) {
-      return setIfStaked(true);
-    }
-  }, [stakedBalance]);
+  const isStaked = stakedBalance > 0;
 
   const handleVoteModal = () => {
-    if (!ifStaked) {
-      return setIsStakeRedirectModalVisible(true);
-    } else {
-      return setIsVoteModalVisible(true);
-    }
+    setIsVoteModalVisible(true); // Fixme!
+    // if (!isStaked) {
+    //   setIsStakeRedirectModalVisible(true);
+    // } else {
+    //   setIsVoteModalVisible(true);
+    // }
   };
 
-  // Find matching user vote within USER_VOTE_HISTORY
-  const userVote = USER_VOTE_HISTORY.find((x) => x.id === 0);
-
-  return (
-    <>
-      {proposal && governance && governingTokenMint && realm ?
-        <InnerProposalView
-          proposal={proposal}
-          governance={governance}
-          realm={realm}
-          governingTokenMint={governingTokenMint}
-          voterDisplayData={voterDisplayData} /> :
-        <Spin />}
-    </>
-  )
+  return proposal && governance && governingTokenMint && realm ?
+    <InnerProposalView
+      proposal={proposal}
+      governance={governance}
+      realm={realm}
+      governingTokenMint={governingTokenMint}
+      voterDisplayData={voterDisplayData} /> :
+    <Spin />
 
   function InnerProposalView(props: {
     proposal: ParsedAccount<Proposal>,
@@ -117,8 +95,8 @@ export const ProposalView = () => {
     const {
       proposal,
       governance,
-      realm,
-      governingTokenMint,
+      // realm,
+      // governingTokenMint,
       voterDisplayData
     } = props;
 
@@ -126,38 +104,38 @@ export const ProposalView = () => {
       governance.info.realm,
       proposal.info.governingTokenMint,
     );
-    const walletVoteRecordInfo = useTokenOwnerVoteRecord(proposal.pubkey, tokenOwnerRecord?.pubkey);
-    let walletVoteRecord = walletVoteRecordInfo?.tryUnwrap()?.info.getVoterDisplayData();
+    const voteRecord = useTokenOwnerVoteRecord(proposal.pubkey, tokenOwnerRecord?.pubkey);
+    const hasVoteTimeExpired = useHasVoteTimeExpired(governance, proposal);
 
-    const instructions = useInstructionsByProposal(proposal.pubkey);
-    const signatories = useSignatoriesByProposal(proposal.pubkey);
+    // const instructions = useInstructionsByProposal(proposal.pubkey);
+    // const signatories = useSignatoriesByProposal(proposal.pubkey);
 
-    const isDescriptionUrl = useIsUrl(proposal.info.descriptionLink);
-    const isGist =
-      !!proposal.info.descriptionLink.match(/gist/i) &&
-      !!proposal.info.descriptionLink.match(/github/i);
-    const [content, setContent] = useState(proposal.info.descriptionLink);
-    const [loading, setLoading] = useState(isDescriptionUrl);
-    const [failed, setFailed] = useState(false);
-    const [msg, setMsg] = useState('');
-    const [width, setWidth] = useState<number>();
-    const [height, setHeight] = useState<number>();
     const addressStr = useMemo(() => proposalAddress.toBase58(), [proposalAddress]);
     const shortAddress = useMemo(() => shortenAddress(proposalAddress), [proposalAddress])
     const { yes, no, abstain, total, yesPercent, yesAbstainPercent } = proposal.info.getVoteCounts();
     const { startDate, endDate, countdown } = useCountdown(proposal.info, governance.info);
 
-    useLoadGist({
+    const {
       loading,
-      setLoading,
-      setFailed,
-      setMsg,
-      setContent,
-      isGist,
-      proposal,
-    });
+      failed,
+      msg,
+      content,
+      isUrl: isDescriptionUrl
+    } = useLoadGist(proposal.info.descriptionLink);
 
     return (<div className="view-container proposal flex column flex-start">
+      {tokenOwnerRecord && <VoteModal
+        vote={vote}
+        visible={isVoteModalVisible}
+        onClose={() => setIsVoteModalVisible(false)}
+        governance={governance}
+        proposal={proposal}
+        tokenOwnerRecord={tokenOwnerRecord}
+      />}
+      <StakeRedirectModal
+        visible={isStakeRedirectModalVisible}
+        onClose={() => setIsStakeRedirectModalVisible(false)}
+      />
       <Link to="/">
         <i className="fas fa-arrow-left"></i> All Proposals
       </Link>
@@ -200,11 +178,7 @@ export const ProposalView = () => {
                 <span>{addressStr}</span>
               </div>
               <div>
-                <span>Type:</span>
-                <span>{type.map((type) => <Tag>{type}</Tag>)}</span>
-              </div>
-              <div>
-                <span>Voting time left:</span>
+                <span>{proposal.info.isVoting() ? "Voting time left:" : "Voting time:"} </span>
                 <span>{countdown}</span>
               </div>
               <div>
@@ -248,7 +222,9 @@ export const ProposalView = () => {
                 <span className="amount title">vJET</span>
                 <span className="vote title">VOTE</span>
               </div>
-              <VoterList voteRecords={voterDisplayData} userVoteRecord={walletVoteRecord} />
+              <VoterList
+                voteRecords={voterDisplayData}
+                userVoteRecord={voteRecord?.tryUnwrap()?.info.getVoterDisplayData()} />
             </div>
           </div>
         </div>
@@ -259,43 +235,32 @@ export const ProposalView = () => {
             className="neu-container view-container flex column"
             id="your-vote"
           >
-            <Button
-              onClick={() => setVote("inFavor")}
-              disabled={(!connected || inactive)}
-              className="vote-select"
-            >
-              In favor
-            </Button>
-            <Button
-              onClick={() => setVote("against")}
-              disabled={(!connected || inactive)}
-              className="vote-select"
-            >
-              Against
-            </Button>
-            {/* <Button
-              onClick={() => setVote("abstain")}
-              disabled={(!connected || inactive)}
-              className="vote-select"
-            >
-              Abstain
-            </Button> */}
-            <Button
-              type="primary"
-              disabled={(!connected || inactive)}
-              onClick={handleVoteModal}
-            >
-              Vote
-            </Button>
-            <VoteModal
-              vote={vote}
-              isVoteModalVisible={isVoteModalVisible}
-              setIsVoteModalVisible={setIsVoteModalVisible}
-              isStakeRedirectModalVisible={isStakeRedirectModalVisible}
-              setIsStakeRedirectModalVisible={setIsStakeRedirectModalVisible}
-              proposalNumber={id}
-              endDate={endDate ?? ""}
+            <RelinquishVoteButton
+              proposal={proposal}
+              tokenOwnerRecord={tokenOwnerRecord}
+              voteRecord={voteRecord?.tryUnwrap()}
+              hasVoteTimeExpired={hasVoteTimeExpired}
             />
+            <CastVoteButton
+              governance={governance}
+              proposal={proposal}
+              tokenOwnerRecord={tokenOwnerRecord}
+              vote={YesNoVote.Yes}
+              voteRecord={voteRecord}
+              hasVoteTimeExpired={hasVoteTimeExpired}
+            />
+            <CastVoteButton
+              governance={governance}
+              proposal={proposal}
+              vote={YesNoVote.No}
+              tokenOwnerRecord={tokenOwnerRecord}
+              voteRecord={voteRecord}
+              hasVoteTimeExpired={hasVoteTimeExpired}
+            />
+            {/* <PostMessageButton
+            proposal={proposal}
+            tokenOwnerRecord={tokenOwnerRecord}
+          ></PostMessageButton> */}
           </div>
         </div>
       </div>
@@ -305,10 +270,11 @@ export const ProposalView = () => {
       <div className="other-proposals">
         <h3>Other active proposals</h3>
         <div className="flex">
-          {filteredProposals.filter(otherProp => !otherProp.pubkey.equals(proposal.pubkey)).map((proposal: any) => (
+          {filteredProposals.filter(otherProp => !otherProp.pubkey.equals(proposal.pubkey)).map((proposal) => (
             <ProposalCard
               proposal={proposal}
               governance={governance}
+              key={proposal.pubkey.toBase58()}
             />
           ))}
         </div>

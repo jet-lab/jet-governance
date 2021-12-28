@@ -23,7 +23,7 @@ export function RelinquishVoteButton({
   hasVoteTimeExpired,
 }: {
   proposal: ParsedAccount<Proposal>;
-  tokenOwnerRecord: ParsedAccount<TokenOwnerRecord>;
+  tokenOwnerRecord: ParsedAccount<TokenOwnerRecord> | undefined;
   voteRecord: ParsedAccount<VoteRecord> | undefined;
   hasVoteTimeExpired: boolean | undefined;
 }) {
@@ -49,8 +49,10 @@ export function RelinquishVoteButton({
   return isVisible ? (
     <Button
       type="primary"
+      className="vote-select"
+      disabled={!tokenOwnerRecord}
       onClick={async () => {
-        if (!isVoting) {
+        if (!isVoting && tokenOwnerRecord) {
           try {
             await relinquishVote(
               rpcContext,
@@ -80,6 +82,9 @@ export function RelinquishVoteButton({
           cancelText: LABELS.CANCEL,
           onOk: async () => {
             try {
+              if (!tokenOwnerRecord) {
+                return;
+              }
               await relinquishVote(
                 rpcContext,
                 proposal,

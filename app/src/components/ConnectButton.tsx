@@ -5,7 +5,7 @@ import { Button } from "antd";
 import { shortenAddress } from "../utils";
 
 export const ConnectButton: FunctionComponent = () => {
-  const { connected, wallet, publicKey, disconnect } = useWallet();
+  const { connected, publicKey, disconnect } = useWallet();
   const { setConnecting } = useConnectWallet();
 
   // Dynamic connection properties for the button

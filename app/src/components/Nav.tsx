@@ -47,7 +47,11 @@ export function Nav() {
         <div className="right-container flex-centered">
           <Switch onChange={() => toggleDarkTheme()} />
           {navLinks.map((link) =>
-            <Link to={link.route} className={`nav-link ${pathname === link.route ? 'active' : ''}`}>
+            <Link
+              to={link.route}
+              className={`nav-link ${pathname === link.route ? 'active' : ''}`}
+              key={link.route}
+            >
               {link.title} {link.badge ? (<span className="badge">{link.badge}</span>) : ""}
             </Link>
           )}
@@ -63,7 +67,11 @@ export function Nav() {
       </nav>
       <div className={`navbar-container-drawer flex align-end column ${drawerOpened ? 'open' : ''}`}>
         {navLinks.map((link) =>
-          <Link to={link.route} className={`nav-link ${pathname === link.route ? 'active' : ''}`}>
+          <Link
+            to={link.route}
+            className={`nav-link ${pathname === link.route ? 'active' : ''}`}
+            key={link.route}
+          >
             {link.title}
           </Link>
         )}

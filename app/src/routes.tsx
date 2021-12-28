@@ -1,5 +1,5 @@
 import { HashRouter, Route, Switch } from 'react-router-dom';
-import React, { useState } from 'react';
+import React from 'react';
 import GovernanceProvider from './contexts/GovernanceContext';
 import { AllRealmsView } from './views';
 import { OysterProposalView } from './views/proposal/oysterProposalView';
@@ -12,7 +12,6 @@ import { ErrorBoundary } from 'react-error-boundary';
 import { AppErrorBanner } from './components/appErrorBanner/appErrorBanner';
 import { HomeView } from './views/Home';
 import { FlightLogView } from './views/FlightLog';
-import { useProposalContext } from './contexts/proposal';
 import { AirdropView } from './views/Airdrop';
 import { AirdropHistory } from './views/AirdropHistory';
 import { ProposalView } from './views/Proposal';

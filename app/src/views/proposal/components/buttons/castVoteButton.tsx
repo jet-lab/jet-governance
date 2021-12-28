@@ -2,7 +2,6 @@ import { Button, Col, Modal, Row } from 'antd';
 import React from 'react';
 import { LABELS } from '../../../../constants';
 import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
-
 import {
   Governance,
   Proposal,
@@ -10,11 +9,8 @@ import {
   TokenOwnerRecord,
   VoteRecord,
 } from '../../../../models/accounts';
-
 import { YesNoVote } from '../../../../models/instructions';
-
 import { castVote } from '../../../../actions/castVote';
-
 import { useRpcContext } from '../../../../hooks/useRpcContext';
 import { Option } from '../../../../tools/option';
 import { ParsedAccount } from '../../../../contexts';
@@ -27,13 +23,15 @@ export function CastVoteButton({
   vote,
   voteRecord,
   hasVoteTimeExpired,
+  disabled,
 }: {
   proposal: ParsedAccount<Proposal>;
   governance: ParsedAccount<Governance>;
-  tokenOwnerRecord: ParsedAccount<TokenOwnerRecord>;
+  tokenOwnerRecord: ParsedAccount<TokenOwnerRecord> | undefined;
   vote: YesNoVote;
   voteRecord: Option<ParsedAccount<VoteRecord>> | undefined;
   hasVoteTimeExpired: boolean | undefined;
+  disabled?: boolean;
 }) {
   const rpcContext = useRpcContext();
 
@@ -47,22 +45,23 @@ export function CastVoteButton({
   const [btnLabel, title, msg, icon] =
     vote === YesNoVote.Yes
       ? [
-          LABELS.VOTE_YEAH,
-          LABELS.VOTE_YEAH_QUESTION,
-          LABELS.VOTE_YEAH_MSG,
-          <CheckOutlined />,
-        ]
+        LABELS.VOTE_YEAH,
+        LABELS.VOTE_YEAH_QUESTION,
+        LABELS.VOTE_YEAH_MSG,
+        <CheckOutlined />,
+      ]
       : [
-          LABELS.VOTE_NAY,
-          LABELS.VOTE_NAY_QUESTION,
-          LABELS.VOTE_NAY_MSG,
-          <CloseOutlined />,
-        ];
+        LABELS.VOTE_NAY,
+        LABELS.VOTE_NAY_QUESTION,
+        LABELS.VOTE_NAY_MSG,
+        <CloseOutlined />,
+      ];
 
   return isVisible ? (
     <Button
       type="primary"
-      icon={icon}
+      className="vote-select"
+      disabled={disabled || !tokenOwnerRecord}
       onClick={() =>
         confirm({
           title: title,
@@ -77,13 +76,15 @@ export function CastVoteButton({
           okText: LABELS.CONFIRM,
           cancelText: LABELS.CANCEL,
           onOk: async () => {
-            castVote(
-              rpcContext,
-              governance.info.realm,
-              proposal,
-              tokenOwnerRecord.pubkey,
-              vote,
-            );
+            if (tokenOwnerRecord) {
+              castVote(
+                rpcContext,
+                governance.info.realm,
+                proposal,
+                tokenOwnerRecord.pubkey,
+                vote,
+              );
+            }
           },
         })
       }

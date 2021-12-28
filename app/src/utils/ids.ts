@@ -67,7 +67,7 @@ let SWAP_PROGRAM_ID: PublicKey;
 let SWAP_PROGRAM_LEGACY_IDS: PublicKey[];
 let SWAP_PROGRAM_LAYOUT: any;
 
-export const LEND_HOST_FEE_ADDRESS = process.env.REACT_APP_LEND_HOST_FEE_ADDRESS
+export const LEND_HOST_FEE_ADDRESS = process && process.env.REACT_APP_LEND_HOST_FEE_ADDRESS
   ? new PublicKey(`${process.env.REACT_APP_LEND_HOST_FEE_ADDRESS}`)
   : undefined;
 

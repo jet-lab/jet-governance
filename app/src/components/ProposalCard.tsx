@@ -1,8 +1,8 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { Card, Progress } from "antd";
-import { getRemainingTime, shortenAddress } from "../utils";
-import { Governance, Proposal } from "../models/accounts";
+import { shortenAddress } from "../utils";
+import { Governance, Proposal, ProposalState } from "../models/accounts";
 import { ParsedAccount } from "../contexts";
 import { getProposalUrl } from "../tools/routeTools";
 import { useRpcContext } from "../hooks/useRpcContext";
@@ -56,15 +56,16 @@ export const ProposalCard = (props: { proposal: ParsedAccount<Proposal>, governa
           <h1>{shortHeadline}</h1>
         </div>
         <div className="details">
-          {proposal.isVoting() &&
+          {!proposal.isPreVotingState() ?
             <>
-              Ends in {countdown}
+              {proposal.isVoting() ? `Ends in ${countdown}.` : "Voting ended."}
               <Progress
                   percent={yesAbstainPercent}
                   success={{ percent: yesPercent }}
                   showInfo={false}
                   key={proposalAddress.toBase58()} />
-            </>
+            </> :
+            ProposalState[proposal.state]
           }
         </div>
       </Card>

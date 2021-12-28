@@ -115,27 +115,17 @@ function InnerProposalView({
   const instructions = useInstructionsByProposal(proposal.pubkey);
   const signatories = useSignatoriesByProposal(proposal.pubkey);
 
-  const isDescriptionUrl = useIsUrl(proposal.info.descriptionLink);
-  const isGist =
-    !!proposal.info.descriptionLink.match(/gist/i) &&
-    !!proposal.info.descriptionLink.match(/github/i);
-  const [content, setContent] = useState(proposal.info.descriptionLink);
-  const [loading, setLoading] = useState(isDescriptionUrl);
-  const [failed, setFailed] = useState(false);
-  const [msg, setMsg] = useState('');
   const [width, setWidth] = useState<number>();
   const [height, setHeight] = useState<number>();
   //  const breakpoint = useBreakpoint();
 
-  useLoadGist({
+  const {
     loading,
-    setLoading,
-    setFailed,
-    setMsg,
-    setContent,
-    isGist,
-    proposal,
-  });
+    failed,
+    msg,
+    content,
+    isUrl: isDescriptionUrl
+  } = useLoadGist(proposal.info.descriptionLink);
 
   return (
     <Row>

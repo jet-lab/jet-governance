@@ -89,7 +89,7 @@ export function useCountdown(proposal: Proposal, governance: Governance) {
     return deadline ?
       new Date(deadline.toNumber() * 1000).toLocaleString() :
       undefined
-  }, [proposal.votingCompletedAt, governance])
+  }, [proposal, governance])
 
   return { startDate, endDate, countdown};
 }

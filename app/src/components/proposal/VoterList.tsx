@@ -55,7 +55,7 @@ export const VoterList = (props: {
         itemLayout="horizontal"
         loadMore={loadMore}
         dataSource={list}
-        renderItem={(item) => (
+        renderItem={(item) => item.title !== props.userVoteRecord?.title && (
           <List.Item>
             <Skeleton avatar title={false} loading={false} active>
               <Stakeholders

@@ -19,7 +19,7 @@ export const Stakeholders = (props: {
   }, [type])
 
   return (
-    <div className={`stakeholders ${thisUser && 'your-vote'}`} >
+    <div className={`stakeholders ${thisUser ? 'your-vote' : ""}`} >
       <span className="voter">{thisUser && 'Your Vote'}</span>
       <span className="address">{shortenAddress(address)}</span>
       <span className="amount">{abbreviateNumber(amount, 2)} JET</span>

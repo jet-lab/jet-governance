@@ -5,7 +5,6 @@ import { InfoCircleOutlined } from "@ant-design/icons";
 import React from "react";
 
 export const FlightLogView = () => {
-  const { connected, publicKey } = useWallet();
   const { pendingTransactions, completeTransactions } = useAirdrop();
 
   // Formatters for historical txns

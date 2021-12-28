@@ -81,11 +81,16 @@ export function useGovernanceAccountByPda<TAccount extends GovernanceAccount>(
   const pdaArgsKey = JSON.stringify(pdaArgs);
 
   useEffect(() => {
-    (async () => {
-      const resolvedPda = await getPda();
-      setPda(resolvedPda);
-    })();
+    let isCancelled = false;
+
+    getPda().then(resolvedPda => {
+      if (!isCancelled) {
+        setPda(resolvedPda);
+      }
+    });
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
+    return () => { isCancelled = true; }
   }, [pdaArgsKey]);
 
   return useGovernanceAccountByPubkey<TAccount>(accountClass, pda);

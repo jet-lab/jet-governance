@@ -65,7 +65,7 @@ export const CurrentUserBadge = (props: {
       >
         <div className="wallet-key" style={walletKeyStyle}>
           <span style={{ marginRight: '0.5rem' }}>{address}</span>
-          <img src={wallet.icon} style={iconStyle} />
+          <img src={wallet.icon} alt={wallet.name} style={iconStyle} />
         </div>
       </Popover>
     </div>

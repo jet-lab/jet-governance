@@ -884,7 +884,7 @@ export class VoteRecord {
   getVoteKind(): VoteKind {
     switch (this.accountType) {
       case GovernanceAccountType.VoteRecordV1: {
-        return this.voteWeight?.yes.isZero() ? VoteKind.Deny : VoteKind.Approve;
+        return this.voteWeight?.yes?.isZero() ? VoteKind.Deny : VoteKind.Approve;
       }
       case GovernanceAccountType.VoteRecordV2: {
         switch (this.vote?.voteType) {

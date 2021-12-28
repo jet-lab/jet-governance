@@ -1,9 +1,8 @@
-import { useState } from "react";
 import { useUserAccounts } from "./useUserAccounts";
 
 export function useUserTotalBalance() {
   const { userAccounts } = useUserAccounts();
-  const [balanceInUSD, setBalanceInUSD] = useState(0);
+  const balanceInUSD = 0;
 
   return {
     balanceInUSD,
