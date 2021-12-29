@@ -1,6 +1,5 @@
 @import "~@jet-lab/jet-antd/lib/jet-antd.less";
 @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap");
-@import "./app-oyster.less";
 
 :root {
   @grey: #949494;
@@ -14,6 +13,11 @@ button.inactive {
 }
 .ant-modal-content {
   min-height: 300px !important;
+  max-width: 300px !important;
+  padding: @spacing-xl !important;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 /* Styles between these lines should be included at the next version of the jet-antd library */
 
@@ -21,6 +25,11 @@ button.inactive {
 /* This is an extension of the jet-antd library for the purposes of this UI only */
 .italics {
   font-style: italic;
+}
+
+.nav-link {
+  display: flex;
+  align-items: center;
 }
 
 .badge {

@@ -1,5 +1,6 @@
 import React from "react";
 import "./App.less";
+import "./DarkTheme.less";
 import { ProposalProvider } from "./contexts/proposal";
 import { Routes } from "./routes";
 

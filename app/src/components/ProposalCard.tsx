@@ -31,7 +31,7 @@ export const ProposalCard = (props: { proposal: ParsedAccount<Proposal>, governa
     programId,
     headline.substring(0, 15).replace(" ", "-")),
     [proposalAddress, programId, headline])
-  const proposalAddressStr = useMemo(() => shortenAddress(proposalAddress), [proposalAddress])
+  const proposalAddressStr = useMemo(() => shortenAddress(proposalAddress.toString()), [proposalAddress])
 
   // Update current time every second
   useEffect(() => {

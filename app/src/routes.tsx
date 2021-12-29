@@ -20,6 +20,7 @@ import { ConnectWalletProvider } from './contexts/connectWallet';
 import { AirdropProvider } from './contexts/airdrop';
 import { AppLayout } from './components/Layout';
 import { AccountsProvider, ConnectionProvider, WalletProvider } from './contexts';
+import { ScrollToTop } from './contexts/scrollToTop';
 
 export function Routes() {
 
@@ -58,6 +59,7 @@ export function Routes() {
                       <GovernanceProvider>
                         <AppLayout>
                           <Switch>
+                          <ScrollToTop>
                             <Route 
                               exact path="/"
                               children={<HomeView />}
@@ -91,7 +93,8 @@ export function Routes() {
                               exact
                               path="/devtools"
                               children={<DevToolsView />}
-                            />
+                              />
+                            </ScrollToTop>
                           </Switch>
                         </AppLayout>
                       </GovernanceProvider>

@@ -5,21 +5,21 @@ import React from "react";
 export const StakeModal = (props: {
   showModal: boolean;
   stakeAmount: number | null;
-  setShowStakeModal: Function;
+  onClose: () => void;
 }) => {
   const [showSuccessfulModal, setShowSuccessfulModal] = useState(false);
 
-  const { showModal, stakeAmount, setShowStakeModal } = props;
+  const { showModal, stakeAmount, onClose } = props;
 
   // Handlers for staking info modal
 
   const handleSubmitTx = () => {
-    setShowStakeModal(false);
+    onClose();
     setShowSuccessfulModal(true);
   };
 
   const handleCancel = () => {
-    setShowStakeModal(false);
+    onClose();
   };
 
   // Handlers for Tx successful modal
@@ -35,7 +35,6 @@ export const StakeModal = (props: {
         okText="I understand."
         onOk={handleSubmitTx}
         onCancel={handleCancel}
-        closable={true}
         cancelButtonProps={{ style: { display: "none " } }}
       >
         <p>Staking tokens yields X% APR.</p>
@@ -58,7 +57,6 @@ export const StakeModal = (props: {
         okText="Okay"
         onOk={handleOk}
         onCancel={handleCancel}
-        closable={true}
         cancelButtonProps={{ style: { display: "none " } }}
       >
         <p>

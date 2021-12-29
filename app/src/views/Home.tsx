@@ -78,7 +78,7 @@ export const HomeView = () => {
           </h3>
           <VotingBalanceModal
             showModal={showVotingBalanceModal}
-            setShowModal={setShowVotingBalanceModal}
+            onClose={() => setShowVotingBalanceModal(false)}
           />
 
           <div className="text-gradient staked-balance" id="resize">
@@ -127,7 +127,7 @@ export const HomeView = () => {
             <StakeModal
               showModal={showStakeModal}
               stakeAmount={inputAmount ?? 0}
-              setShowStakeModal={setShowStakeModal}
+              onClose={() => setShowStakeModal(false)}
             />
             <Button
               onClick={() => setShowUnstakeModal(true)}

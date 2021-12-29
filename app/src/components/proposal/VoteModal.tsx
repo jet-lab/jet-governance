@@ -16,7 +16,7 @@ export const VoteModal = (props: {
   onClose: () => void;
   governance: ParsedAccount<Governance>;
   proposal: ParsedAccount<Proposal>;
-  tokenOwnerRecord: ParsedAccount<TokenOwnerRecord>;
+  tokenOwnerRecord?: ParsedAccount<TokenOwnerRecord>;
 }) => {
   const {
     vote,

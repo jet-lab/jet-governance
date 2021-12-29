@@ -2,12 +2,12 @@
 
 // Swap theming colors
 @black: #fff;
-@dark-grey: #e1e7f1;
-@grey: #504f4f;
-@light-grey: #494848;
-@white: #444;
-@light-shadow: rgb(82, 82, 82);
-@dark-shadow: rgb(60, 60, 60);
+@dark-grey: #6b6868;
+@grey: #2c2b2b;
+@light-grey: #2b2a2a;
+@white: #242424;
+@light-shadow: rgba(255, 255, 255, 0.1);
+@dark-shadow: rgba(0, 0, 0, 0.4);
 
 // Specific overrides
 .navbar-container {
@@ -26,6 +26,14 @@
   .secondary-btn {
     color: @black !important;
     border-color: @black !important;
+  }
+}
+
+.ant-notification-notice {
+  color: @black !important;
+
+  &-close span {
+    color: @black !important;
   }
 }
 

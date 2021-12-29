@@ -12,7 +12,7 @@ export function Nav() {
   const { pathname } = useLocation();
   const { connected, disconnect, publicKey } = useWallet();
   const { setConnecting } = useConnectWallet();
-  const { toggleDarkTheme } = useDarkTheme();
+  const { darkTheme, toggleDarkTheme } = useDarkTheme();
   const [drawerOpened, setDrawerOpened] = useState(false);
   const { unclaimedAirdrops } = useAirdrop(); 
 
@@ -45,7 +45,7 @@ export function Nav() {
           </a>
         </div>
         <div className="right-container flex-centered">
-          <Switch onChange={() => toggleDarkTheme()} />
+          <Switch onChange={() => toggleDarkTheme()} checked={darkTheme} />
           {navLinks.map((link) =>
             <Link
               to={link.route}

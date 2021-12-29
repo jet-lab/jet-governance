@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { ResultProgressBar } from "../components/proposal/ResultProgressBar";
-import { Divider, Spin, Tag } from "antd";
+import { Divider, Spin, Tag, Button } from "antd";
 import { ProposalCard } from "../components/ProposalCard";
 import { VoterList } from "../components/proposal/VoterList";
 import { useWallet } from "@solana/wallet-adapter-react";
@@ -111,7 +111,7 @@ export const ProposalView = () => {
     // const signatories = useSignatoriesByProposal(proposal.pubkey);
 
     const addressStr = useMemo(() => proposalAddress.toBase58(), [proposalAddress]);
-    const shortAddress = useMemo(() => shortenAddress(proposalAddress), [proposalAddress])
+    const shortAddress = useMemo(() => shortenAddress(proposalAddress.toString()), [proposalAddress])
     const { yes, no, abstain, total, yesPercent, yesAbstainPercent } = proposal.info.getVoteCounts();
     const { startDate, endDate, countdown } = useCountdown(proposal.info, governance.info);
 
@@ -168,7 +168,7 @@ export const ProposalView = () => {
                   <ReactMarkdown children={content} />
                 )
               ) : (
-                content
+                <p>{content}</p>
               )
             }
 
@@ -256,6 +256,25 @@ export const ProposalView = () => {
               tokenOwnerRecord={tokenOwnerRecord}
               voteRecord={voteRecord}
               hasVoteTimeExpired={hasVoteTimeExpired}
+            />
+            <Button
+              type="primary"
+              disabled={(!connected || inactive) && true}
+              onClick={handleVoteModal}
+            >
+              Vote
+            </Button>
+            <VoteModal
+              vote={vote}
+              visible={isVoteModalVisible}
+              onClose={() => setIsVoteModalVisible(false)}
+              governance={governance}
+              proposal={proposal}
+              tokenOwnerRecord={tokenOwnerRecord}
+              // isStakeRedirectModalVisible={isStakeRedirectModalVisible}
+              // setIsStakeRedirectModalVisible={setIsStakeRedirectModalVisible}
+              // proposalNumber={id}
+              // endDate={end}
             />
             {/* <PostMessageButton
             proposal={proposal}

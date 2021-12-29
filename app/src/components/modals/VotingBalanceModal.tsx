@@ -3,23 +3,19 @@ import React from "react";
 
 export const VotingBalanceModal = (props: {
   showModal: boolean;
-  setShowModal: Function;
+  onClose: () => void;
 }) => {
-  const { showModal, setShowModal } = props;
+  const { showModal, onClose } = props;
 
   // Handlers for Tx successful modal
-  const handleOk = () => {
-    setShowModal(false);
-  };
-
   return (
     <>
       <Modal
         title={`What is a voting balance?`}
         visible={showModal}
         okText="Okay"
-        onOk={handleOk}
-        closable={true}
+        onOk={onClose}
+        onCancel={onClose}
         cancelButtonProps={{ style: { display: "none " } }}
       >
         <p>
