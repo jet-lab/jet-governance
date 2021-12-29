@@ -1610,10 +1610,10 @@
     "@types/yargs" "^16.0.0"
     chalk "^4.0.0"
 
-"@jet-lab/jet-antd@^0.1.4":
-  version "0.1.8"
-  resolved "https://registry.yarnpkg.com/@jet-lab/jet-antd/-/jet-antd-0.1.8.tgz#f50aac468646ff6a1afdfb521c2244243b7064d0"
-  integrity sha512-D8PXrxfhuxngCJZ2ApcJS647qknlP2ha+xDg6rOnVzEXCOGxo4xOvjPYLPoCZhXYHGiLhgdEEJiTKk7YE/FO1w==
+"@jet-lab/jet-antd@^0.2.1":
+  version "0.2.1"
+  resolved "https://registry.yarnpkg.com/@jet-lab/jet-antd/-/jet-antd-0.2.1.tgz#2b69ce56745cad799e187643b8eb368262fade22"
+  integrity sha512-MduP/CkFD67icP8NKsh44n7fDMnSSg6wjSQ0yL8/CSYGVH1ffWty+ZtOkywZ+uE9f1wD0rBCS3h/IELsmNa+Fg==
 
 "@jet-lab/jet-engine@^0.2.1":
   version "0.2.1"
