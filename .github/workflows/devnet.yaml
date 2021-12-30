@@ -17,7 +17,7 @@ defaults:
     shell: bash
 
 jobs:
-  install_and_build:
+  install:
     name: Install Dependencies
     runs-on: ubuntu-latest
     steps:
@@ -28,8 +28,10 @@ jobs:
         name: Cache Dependency Paths
         uses: actions/cache@v2
         with:
-          key: cache-${{ runner.os }}-${{ env.ANCHOR_CLI_VERSION }}
+          key: cache-${{ runner.os }}-a${{ env.ANCHOR_CLI_VERSION }}-s${{ env.SOLANA_CLI_VERSION }}
           path: |
+            /usr/local/lib/node_modules
+            /usr/local/bin/anchor
             ~/.cache/solana
             ~/.cargo/bin/
             ~/.cargo/registry/index/
@@ -41,6 +43,12 @@ jobs:
       - name: Install Linux Dependencies
         run: sudo apt-get update && sudo apt-get -y install pkg-config build-essential libudev-dev
 
+      - name: Install Rust
+        if: steps.cache-deps.outputs.cache-hit != 'true'
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+
       - name: Install Solana
         if: steps.cache-deps.outputs.cache-hit != 'true'
         run: sh -c "$(curl -sSfL https://release.solana.com/v${{ env.SOLANA_CLI_VERSION }}/install)"
@@ -51,20 +59,22 @@ jobs:
       - name: Install Anchor CLI
         run: npm i -g @project-serum/anchor-cli@${{ env.ANCHOR_CLI_VERSION }}
 
-      - name: Build Programs
-        run: anchor build
-
-  deploy:
-    name: Deploy
+  build:
+    name: Build Programs
     runs-on: ubuntu-latest
-    needs: [install_and_build]
+    needs: [install]
     steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
       - id: cache-deps
         name: Cache Dependency Paths
         uses: actions/cache@v2
         with:
-          key: cache-${{ runner.os }}-${{ env.ANCHOR_CLI_VERSION }}
+          key: cache-${{ runner.os }}-a${{ env.ANCHOR_CLI_VERSION }}-s${{ env.SOLANA_CLI_VERSION }}
           path: |
+            /usr/local/lib/node_modules
+            /usr/local/bin/anchor
             ~/.cache/solana
             ~/.cargo/bin/
             ~/.cargo/registry/index/
@@ -73,5 +83,31 @@ jobs:
             ~/.local/share/solana
             ./target/
 
-      - name: Test
-        run: anchor --version
+      - name: Update PATH
+        run: echo "PATH=$HOME/.local/share/solana/install/active_release/bin:$HOME/.cargo/bin:$PATH" >> $GITHUB_ENV
+          
+      - name: Build Programs
+        run: anchor build
+
+  # deploy:
+  #   name: Deploy
+  #   runs-on: ubuntu-latest
+  #   needs: [install, build]
+  #   steps:
+  #     - id: cache-deps
+  #       name: Cache Dependency Paths
+  #       uses: actions/cache@v2
+  #       with:
+  #         key: cache-${{ runner.os }}-a${{ env.ANCHOR_CLI_VERSION }}-s${{ env.SOLANA_CLI_VERSION }}
+  #         path: |
+  #           /usr/local/bin/anchor
+  #           ~/.cache/solana
+  #           ~/.cargo/bin/
+  #           ~/.cargo/registry/index/
+  #           ~/.cargo/registry/cache/
+  #           ~/.cargo/git/db/
+  #           ~/.local/share/solana
+  #           ./target/
+
+  #     - name: Test
+  #       run: anchor --version
