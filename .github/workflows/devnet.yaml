@@ -53,3 +53,25 @@ jobs:
 
       - name: Build Programs
         run: anchor build
+
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    needs: [install_and_build]
+    steps:
+      - id: cache-deps
+        name: Cache Dependency Paths
+        uses: actions/cache@v2
+        with:
+          key: cache-${{ runner.os }}-${{ env.ANCHOR_CLI_VERSION }}
+          path: |
+            ~/.cache/solana
+            ~/.cargo/bin/
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+            ~/.local/share/solana
+            ./target/
+
+      - name: Test
+        run: anchor --version
