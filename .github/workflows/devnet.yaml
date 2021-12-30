@@ -1,0 +1,55 @@
+name: Devnet Deployment
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - 'programs/**/*.rs'
+      - 'programs/**/*.toml'
+  workflow_dispatch: {}
+
+env:
+  ANCHOR_CLI_VERSION: 0.19.0
+  SOLANA_CLI_VERSION: 1.9.2
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  install_and_build:
+    name: Install Dependencies
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - id: cache-deps
+        name: Cache Dependency Paths
+        uses: actions/cache@v2
+        with:
+          key: cache-${{ runner.os }}-${{ env.ANCHOR_CLI_VERSION }}
+          path: |
+            ~/.cache/solana
+            ~/.cargo/bin/
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+            ~/.local/share/solana
+            ./target/
+
+      - name: Install Linux Dependencies
+        run: sudo apt-get update && sudo apt-get -y install pkg-config build-essential libudev-dev
+
+      - name: Install Solana
+        if: steps.cache-deps.outputs.cache-hit != 'true'
+        run: sh -c "$(curl -sSfL https://release.solana.com/v${{ env.SOLANA_CLI_VERSION }}/install)"
+
+      - name: Setup NPM
+        uses: actions/setup-node@v2
+
+      - name: Install Anchor CLI
+        run: npm i -g @project-serum/anchor-cli@${{ env.ANCHOR_CLI_VERSION }}
+
+      - name: Build Programs
+        run: anchor build
