@@ -7,13 +7,13 @@ export const ResultProgressBar = (props: {
 }) => {
   const { type, amount, total } = props;
   const [color, setColor] = useState("")
-  const [vote, setVote] = useState("inFavor")
+  const [vote, setVote] = useState("yea")
   const [gradient, setGradient] = useState(true);
   const [symbol, setSymbol] = useState("fas fa-thumbs-up");
   const divClass = useMemo(() => `results-header ${gradient ? "text-gradient" : ""}`, [gradient]);
 
   useEffect(() => {
-    if (type === "against") {
+    if (type === "nea") {
       setVote("against")
       setColor("var(--failure)")
       setSymbol("fas fa-thumbs-down")

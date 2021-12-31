@@ -17,7 +17,7 @@ import {
   useWalletTokenOwnerRecord,
   useTokenOwnerVoteRecord,
 } from "../hooks/apiHooks";
-import { JET_GOVERNANCE, shortenAddress } from "../utils";
+import { fromLamports, JET_GOVERNANCE, shortenAddress } from "../utils";
 import { useCountdown, useProposalFilters, useVoterDisplayData, VoterDisplayData } from "../hooks/proposalHooks";
 import { useKeyParam } from "../hooks/useKeyParam";
 import { useRealm } from "../contexts/GovernanceContext";
@@ -36,7 +36,6 @@ import { CastVoteButton } from "./proposal/components/buttons/castVoteButton";
 import { useHasVoteTimeExpired } from "../hooks/useHasVoteTimeExpired";
 
 export const ProposalView = () => {
-  const [inactive, setInactive] = useState(true);
   const [isVoteModalVisible, setIsVoteModalVisible] = useState(false);
   const [isStakeRedirectModalVisible, setIsStakeRedirectModalVisible] = useState(false);
   const [vote, setVote] = useState<YesNoVote>(YesNoVote.No);
@@ -62,13 +61,14 @@ export const ProposalView = () => {
   const voterDisplayData = useVoterDisplayData(voteRecords, tokenOwnerRecords)
 
   const proposals = useProposalsByGovernance(JET_GOVERNANCE);
-  const filteredProposals = useProposalFilters(proposals);
+  const activeProposals = proposals.filter((p) => p.info.isVoting());
   const { connected } = useWallet();
   const { stakedBalance } = useUser();
   const isStaked = stakedBalance > 0;
 
   const handleVoteModal = () => {
     setIsVoteModalVisible(true); // Fixme!
+    console.log("clicked")
     // if (!isStaked) {
     //   setIsStakeRedirectModalVisible(true);
     // } else {
@@ -196,12 +196,12 @@ export const ProposalView = () => {
           <div className="neu-container flex justify-evenly" id="vote-turnout">
             <div className="results">
               <ResultProgressBar
-                type="inFavor"
+                type="yea"
                 amount={bnToIntLossy(yes)}
                 total={bnToIntLossy(total)}
               />
               <ResultProgressBar
-                type="against"
+                type="nea"
                 amount={bnToIntLossy(no)}
                 total={bnToIntLossy(total)}
               />
@@ -241,7 +241,7 @@ export const ProposalView = () => {
               voteRecord={voteRecord?.tryUnwrap()}
               hasVoteTimeExpired={hasVoteTimeExpired}
             />
-            <CastVoteButton
+            {/* <CastVoteButton
               governance={governance}
               proposal={proposal}
               tokenOwnerRecord={tokenOwnerRecord}
@@ -256,11 +256,26 @@ export const ProposalView = () => {
               tokenOwnerRecord={tokenOwnerRecord}
               voteRecord={voteRecord}
               hasVoteTimeExpired={hasVoteTimeExpired}
-            />
+            /> */}
+
+            <Button
+              onClick={() => setVote(YesNoVote.Yes)}
+              disabled={!connected || proposal.info.isVoting()}
+              className="vote-select"
+            >
+              In favor
+            </Button>
+            <Button
+              onClick={() => setVote(YesNoVote.No)}
+              disabled={!connected || proposal.info.isVoting()}
+              className="vote-select"
+            >
+              Against
+            </Button>
             <Button
               type="primary"
-              disabled={(!connected || inactive) && true}
-              onClick={handleVoteModal}
+              disabled={!connected || proposal.info.isVoting()}
+              onClick={() => handleVoteModal()}
             >
               Vote
             </Button>
@@ -289,13 +304,13 @@ export const ProposalView = () => {
       <div className="other-proposals">
         <h3>Other active proposals</h3>
         <div className="flex">
-          {filteredProposals.filter(otherProp => !otherProp.pubkey.equals(proposal.pubkey)).map((proposal) => (
+          {activeProposals.length > 0 ? activeProposals.map((proposal) => (
             <ProposalCard
               proposal={proposal}
               governance={governance}
               key={proposal.pubkey.toBase58()}
             />
-          ))}
+          )) : "There are no active proposals at this time."}
         </div>
       </div>
     </div>

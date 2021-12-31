@@ -18,7 +18,7 @@ export function voteRecordCsvDownload(itemAddress: PublicKey, votes: VoterDispla
   hiddenElement.target = "_blank";
 
   //provide the name for the CSV file to be downloaded
-  hiddenElement.download = `JetGovern_${itemAddress.toBase58()}_Votes.csv'`;
+  hiddenElement.download = `JetGovern_${itemAddress.toBase58()}_Votes.csv`;
   hiddenElement.click();
   hiddenElement.remove();
 };

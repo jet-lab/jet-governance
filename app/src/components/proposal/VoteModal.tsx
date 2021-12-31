@@ -7,8 +7,10 @@ import { YesNoVote } from "../../models/instructions";
 import {
   useTokenOwnerVoteRecord,
 } from '../../hooks/apiHooks';
-import { CastVoteButton } from "../../views/proposal/components/buttons/castVoteButton";
+// import { CastVoteButton } from "../../views/proposal/components/buttons/castVoteButton";
+import { castVote } from "../../actions/castVote";
 import { useHasVoteTimeExpired } from "../../hooks/useHasVoteTimeExpired";
+import { useRpcContext } from "../../hooks/useRpcContext";
 
 export const VoteModal = (props: {
   vote: YesNoVote;
@@ -43,30 +45,40 @@ export const VoteModal = (props: {
     voteType = "to abstain from";
   }
   const { endDate } = useCountdown(proposal.info, governance.info);
+  const rpcContext = useRpcContext();
 
   // Handlers for vote modal
-  const confirmVote = () => {
-    onClose();
-  };
+  const confirmVote = async () => {
+    if (tokenOwnerRecord) {
+      castVote(
+        rpcContext,
+        governance.info.realm,
+        proposal,
+        tokenOwnerRecord.pubkey,
+        vote,
+      );
+    }
+  }
 
   return (
     <Modal
-      title={`You are about to vote ${voteType} proposal #${proposal.pubkey.toBase58()}`}
+      title={`You are about to vote ${voteType} proposal "${proposal.info.name}"`}
       visible={visible}
       okText="Confirm vote"
       onOk={confirmVote}
       onCancel={() => onClose()}
       closable={false}
     >
+      <p>This proposal hash is {proposal.pubkey.toBase58()}.</p>
       <p>You have {stakedBalance} JET staked, and will be able to unstake these funds when voting ends at {endDate}.</p> {/** FIXME */}
-      <CastVoteButton
+      {/* <CastVoteButton
         governance={governance}
         proposal={proposal}
         tokenOwnerRecord={tokenOwnerRecord}
         vote={vote}
         voteRecord={voteRecord}
         hasVoteTimeExpired={hasVoteTimeExpired}
-      />
+      /> */}
     </Modal>
   );
 };

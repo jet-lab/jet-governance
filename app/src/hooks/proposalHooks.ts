@@ -103,7 +103,7 @@ export interface VoterDisplayData {
 
 export enum VoteType {
   Undecided = 'Undecided',
-  Yes = 'Yay',
+  Yes = 'Yea',
   No = 'Nay',
 }
 
