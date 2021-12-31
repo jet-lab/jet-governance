@@ -40,6 +40,7 @@
     "d3": "6.6.0",
     "echarts": "^4.9.0",
     "eventemitter3": "^4.0.7",
+    "fitty": "^2.3.5",
     "identicon.js": "^2.3.3",
     "jazzicon": "^1.5.0",
     "lodash": "^4.17.20",

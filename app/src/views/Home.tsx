@@ -15,6 +15,7 @@ import { jetFaucet } from "../actions/jetFaucet";
 import { useGovernance, useProposalsByGovernance } from "../hooks/apiHooks";
 import { JET_GOVERNANCE } from "../utils";
 import { useProposalFilters } from "../hooks/proposalHooks";
+import fitty from "fitty";
 
 export const HomeView = () => {
   const [showStakeModal, setShowStakeModal] = useState(false);
@@ -65,6 +66,8 @@ export const HomeView = () => {
     );
   };
 
+  fitty('#resize');
+
   return (
     <div className="view-container content-body">
       <div className="panel">
@@ -81,8 +84,11 @@ export const HomeView = () => {
             onClose={() => setShowVotingBalanceModal(false)}
           />
 
-          <div className="text-gradient staked-balance" id="resize">
+          {/* Extra div wrapper to make fitty work */}
+          <div>
+            <div className="text-gradient staked-balance" id="resize">
             {connected ? new Intl.NumberFormat().format(votingBalance) : 0}
+            </div>
           </div>
 
           <Button onClick={getAirdrop}>GET JET</Button>
