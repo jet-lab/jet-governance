@@ -89,25 +89,35 @@ jobs:
       - name: Build Programs
         run: anchor build
 
-  # deploy:
-  #   name: Deploy
-  #   runs-on: ubuntu-latest
-  #   needs: [install, build]
-  #   steps:
-  #     - id: cache-deps
-  #       name: Cache Dependency Paths
-  #       uses: actions/cache@v2
-  #       with:
-  #         key: cache-${{ runner.os }}-a${{ env.ANCHOR_CLI_VERSION }}-s${{ env.SOLANA_CLI_VERSION }}
-  #         path: |
-  #           /usr/local/bin/anchor
-  #           ~/.cache/solana
-  #           ~/.cargo/bin/
-  #           ~/.cargo/registry/index/
-  #           ~/.cargo/registry/cache/
-  #           ~/.cargo/git/db/
-  #           ~/.local/share/solana
-  #           ./target/
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    needs: [install, build]
+    steps:
+      - id: cache-deps
+        name: Cache Dependency Paths
+        uses: actions/cache@v2
+        with:
+          key: cache-${{ runner.os }}-a${{ env.ANCHOR_CLI_VERSION }}-s${{ env.SOLANA_CLI_VERSION }}
+          path: |
+            /usr/local/lib/node_modules
+            /usr/local/bin/anchor
+            ~/.cache/solana
+            ~/.cargo/bin/
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+            ~/.local/share/solana
+            ./target/
+      
+      - name: Setup Environment
+        run: |
+          echo "PATH=$HOME/.local/share/solana/install/active_release/bin:$HOME/.cargo/bin:$PATH" >> $GITHUB_ENV \
+          && mkdir ~/.config/solana \
+          && echo ${{ secrets.SOLANA_DEVNET_DEPLOYER_KEYPAIR }} > ~/.config/solana/deployer.json
 
-  #     - name: Test
-  #       run: anchor --version
+      - name: Deploy Rewards
+        run: anchor deployer --program-name rewards --provider.cluster devnet --provider.wallet ~/.config/solana/deployer.json
+
+      - name: Deploy Staking
+        run: anchor deployer --program-name staking --provider.cluster devnet --provider.wallet ~/.config/solana/deployer.json
