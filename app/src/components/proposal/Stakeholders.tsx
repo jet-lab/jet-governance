@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { shortenAddress, abbreviateNumber } from "../../utils";
+import { useMint } from "../../contexts";
+import { shortenAddress, abbreviateNumber, fromLamports } from "../../utils";
+import { JET_TOKEN_MINT } from "../../utils";
+
 
 export const Stakeholders = (props: {
   type: string,
@@ -15,14 +18,18 @@ export const Stakeholders = (props: {
     setVote("in favor")
   } else if (type === "Nay") {
     setVote("against")
-  }
+  } else if (type === "Nay") {
+  setVote("against")
+}
   }, [type])
+
+  const mint = useMint(JET_TOKEN_MINT);
 
   return (
     <div className={`stakeholders ${thisUser ? 'your-vote' : ""}`} >
       <span className="voter">{thisUser && 'Your Vote'}</span>
       <span className="address">{shortenAddress(address)}</span>
-      <span className="amount">{abbreviateNumber(amount, 2)} JET</span>
+      <span className="amount">{abbreviateNumber(fromLamports(amount, mint), 2)} JET</span>
       <span className="vote">{vote}</span>
     </div>
   );

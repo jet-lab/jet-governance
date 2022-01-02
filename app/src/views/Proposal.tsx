@@ -201,7 +201,7 @@ export const ProposalView = () => {
                 total={bnToIntLossy(total)}
               />
               <ResultProgressBar
-                type="nea"
+                type="nay"
                 amount={bnToIntLossy(no)}
                 total={bnToIntLossy(total)}
               />

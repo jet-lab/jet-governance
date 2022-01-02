@@ -43,7 +43,7 @@ export const ProposalCard = (props: { proposal: ParsedAccount<Proposal>, governa
 
   // Active votes show progress bar
   const { yesPercent, yesAbstainPercent } = proposal.getVoteCounts();
-  const { startDate, endDate, countdown } = useCountdown(proposal, governance);
+  const { countdown } = useCountdown(proposal, governance);
 
   return (
     <Link to={headlineUrl}>
