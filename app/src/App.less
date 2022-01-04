@@ -56,10 +56,11 @@ button.inactive {
 }
 
 .proposal-card.ant-card {
-  height: 200px;
-  width: 200px;
-  margin: 0 @spacing-md @spacing-md @spacing-md;
-  .header, .details {
+  height: 189px;
+  width: 189px;
+  margin: 0 @spacing-xl @spacing-xl 0;
+  .header,
+  .details {
     font-size: @base-font-size;
     color: @dark-grey;
   }
@@ -99,90 +100,106 @@ p {
 }
 
 /* Styles for home page */
-.stake-info {
-  background: #e0e7f2;
-  box-shadow: inset 0px -1px 2px rgba(255, 255, 255, 0.75),
-    inset 0px 1px 2px rgba(0, 0, 0, 0.1);
-  border-radius: 15px;
-  margin-bottom: 82px;
-  width: 230px;
-  display: flex;
-  flex-direction: column;
-  padding: 20px;
-}
 
-.show-proposals {
-  display: flex;
-  justify-content: flex-start;
-  flex-wrap: wrap;
-}
+#home {
+  justify-content: center;
+  display: grid;
+  grid-template-columns: 225px 225px 225px 225px;
+  grid-template-rows: 225px 225px 225px 225px;
+  grid-gap: 30px;
+  #your-info {
+    grid-row: 1 / 3;
+    .staked-balance {
+      padding-bottom: 10px;
+    }
+    .stake-info {
+      background: #e0e7f2;
+      box-shadow: inset 0px -1px 2px rgba(255, 255, 255, 0.75),
+        inset 0px 1px 2px rgba(0, 0, 0, 0.1);
+      border-radius: 15px;
+      margin-bottom: 82px;
+      width: 230px;
+      display: flex;
+      flex-direction: column;
+      padding: 20px;
+    }
+    #wallet-overview {
+      width: 100%;
+      #current-staking-apr span {
+        font-weight: 500;
+        font-size: 15px;
+      }
+      span {
+        color: @black;
+        font-size: 13px;
+      }
+    }
 
-.staked-balance {
-  padding-bottom: 10px;
-}
-
-#wallet-overview {
-  width: 100%;
-  #current-staking-apr span {
-    font-weight: 500;
-    font-size: 15px;
-  }
-  span {
-    color: @black;
-    font-size: 13px;
-  }
-}
-
-#staking-input {
-  position: relative;
-  width: 100%;
-  input {
-    position: relative;
-    font-size: 20px;
-    padding-left: 50px;
-    padding-right: 80px;
-  }
-  span {
-    font-size: 24px;
-    color: @dark-grey;
-  }
-  .token-abbrev {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    right: @spacing-md;
-    padding: unset;
-  }
-  img {
-    width: 25px;
-    height: auto;
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    left: @spacing-md;
-  }
-}
-
-.filter-status {
-  span {
-    padding: 0 10px;
-  }
-  div {
-    padding-right: 9px;
-    display: flex;
-    align-items: center;
-    i {
-      margin: 0;
-      padding-right: 7px;
-      font-size: 6px;
-      margin-bottom: 3px;
+    #staking-input {
+      position: relative;
+      width: 100%;
+      input {
+        position: relative;
+        font-size: 20px;
+        padding-left: 50px;
+        padding-right: 80px;
+      }
+      span {
+        font-size: 24px;
+        color: @dark-grey;
+      }
+      .token-abbrev {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        right: @spacing-md;
+        padding: unset;
+      }
+      img {
+        width: 25px;
+        height: auto;
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        left: @spacing-md;
+      }
     }
   }
-}
+  #show-proposals {
+    grid-row-start: 1;
+    grid-column: 2 / span 3;
+    #proposal-cards {
+      display: inline-grid;
+      grid-gap: 30px;
+      grid-template-columns: 225px 225px 225px;
+      grid-template-rows: 225px 225px 225px;
+      a {
+        margin: 0;
+      }
+    }
+  }
 
-.details {
-  display: flex;
-  flex-direction: column;
+  .filter-status {
+    span {
+      padding: 0 10px;
+    }
+    div {
+      padding-right: 9px;
+      display: flex;
+      align-items: center;
+      i {
+        margin: 0;
+        padding-right: 7px;
+        font-size: 6px;
+        margin-bottom: 3px;
+      }
+    }
+  }
+
+  .details {
+    display: flex;
+    flex-direction: column;
+  }
 }
 
 /* Proposal page */
@@ -296,26 +313,26 @@ button,
       text-transform: uppercase;
       width: 25%;
       text-align: left;
-      font-size:  @xs-font-size !important;
+      font-size: @xs-font-size !important;
       padding-left: 10px;
     }
     .address {
       width: 25%;
       text-align: left;
       overflow-x: auto;
-      font-size:  @sm-font-size !important;
+      font-size: @sm-font-size !important;
     }
     .amount {
       width: 25%;
       text-align: left;
       margin-right: 21px;
-      font-size:  @sm-font-size !important;
+      font-size: @sm-font-size !important;
     }
     .vote {
       width: 25%;
       text-align: left;
       text-transform: uppercase;
-      font-size:  @sm-font-size !important;
+      font-size: @sm-font-size !important;
     }
     .title {
       font-size: 8px !important;

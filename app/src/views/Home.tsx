@@ -67,13 +67,13 @@ export const HomeView = () => {
   };
 
   return (
-    <div className="view-container content-body">
-      <div className="panel">
+    <div className="view-container content-body" id="home">
+      <div id="your-info">
         <h2>
           Your Info
         </h2>
 
-        <div className="neu-inset" style={{ maxWidth: "260px" }}>
+        <div className="neu-inset">
           <h3>Votes{" "}
             <InfoCircleOutlined onClick={() => setShowVotingBalanceModal(true)} />
           </h3>
@@ -146,7 +146,7 @@ export const HomeView = () => {
         </div>
       </div>
 
-      <div style={{ width: "100%" }}>
+      <div id="show-proposals">
         <div className="flex justify-between header">
           <h2>{showing}</h2>
           <div className="filter-status">
@@ -158,7 +158,7 @@ export const HomeView = () => {
           </div>
         </div>
 
-        <div className="show-proposals">
+        <div id="proposal-cards">
           {filteredProposals.map((proposal) => governance && (
             <ProposalCard
               proposal={proposal}

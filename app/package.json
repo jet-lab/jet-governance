@@ -6,7 +6,7 @@
     "@ant-design/pro-layout": "^6.7.0",
     "@babel/preset-typescript": "^7.12.13",
     "@craco/craco": "^5.7.0",
-    "@jet-lab/jet-antd": "^0.2.4",
+    "@jet-lab/jet-antd": "^0.2.6",
     "@jet-lab/jet-engine": "^0.2.1",
     "@project-serum/borsh": "^0.2.2",
     "@project-serum/serum": "^0.13.11",
