@@ -6,7 +6,7 @@ use anchor_spl::token::{Token, TokenAccount};
 use crate::state::*;
 
 #[derive(AnchorDeserialize, AnchorSerialize)]
-pub struct InitAirdropParams {
+pub struct AirdropCreateParams {
     /// The start of the vesting period for claimed rewards.
     pub vest_start_at: i64,
 
@@ -21,11 +21,14 @@ pub struct InitAirdropParams {
 
     /// The bump seed needed to generate the airdrop account address
     pub vault_bump: u8,
+
+    /// Airdrop settings
+    pub flags: u64,
 }
 
 #[derive(Accounts)]
-#[instruction(params: InitAirdropParams)]
-pub struct InitAirdrop<'info> {
+#[instruction(params: AirdropCreateParams)]
+pub struct AirdropCreate<'info> {
     /// The account to store all the airdrop metadata
     #[account(zero)]
     pub airdrop: AccountLoader<'info, Airdrop>,
@@ -58,7 +61,10 @@ pub struct InitAirdrop<'info> {
     pub rent: Sysvar<'info, Rent>,
 }
 
-pub fn init_airdrop_handler(ctx: Context<InitAirdrop>, params: InitAirdropParams) -> ProgramResult {
+pub fn airdrop_create_handler(
+    ctx: Context<AirdropCreate>,
+    params: AirdropCreateParams,
+) -> ProgramResult {
     let mut airdrop = ctx.accounts.airdrop.load_init()?;
 
     airdrop.authority = ctx.accounts.authority.key();
@@ -68,6 +74,8 @@ pub fn init_airdrop_handler(ctx: Context<InitAirdrop>, params: InitAirdropParams
     airdrop.vest_start_at = params.vest_start_at;
     airdrop.vest_end_at = params.vest_end_at;
     airdrop.stake_pool = params.stake_pool;
+
+    airdrop.flags = params.flags;
 
     airdrop
         .short_desc

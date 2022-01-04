@@ -3,7 +3,7 @@ use anchor_lang::prelude::*;
 use crate::state::*;
 
 #[derive(AnchorSerialize, AnchorDeserialize)]
-pub struct AddAirdropRecipientsParams {
+pub struct AirdropAddRecipientsParams {
     start_index: u64,
     recipients: Vec<AirdropRecipientParam>,
 }
@@ -18,7 +18,7 @@ pub struct AirdropRecipientParam {
 }
 
 #[derive(Accounts)]
-pub struct AddAirdropRecipients<'info> {
+pub struct AirdropAddRecipients<'info> {
     /// The airdrop to add to
     #[account(mut, has_one = authority)]
     pub airdrop: AccountLoader<'info, Airdrop>,
@@ -27,9 +27,9 @@ pub struct AddAirdropRecipients<'info> {
     pub authority: Signer<'info>,
 }
 
-pub fn add_airdrop_recipients_handler(
-    ctx: Context<AddAirdropRecipients>,
-    params: AddAirdropRecipientsParams,
+pub fn airdrop_add_recipients_handler(
+    ctx: Context<AirdropAddRecipients>,
+    params: AirdropAddRecipientsParams,
 ) -> ProgramResult {
     let mut airdrop = ctx.accounts.airdrop.load_mut()?;
 
