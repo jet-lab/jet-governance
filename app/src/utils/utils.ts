@@ -284,3 +284,16 @@ export const getRemainingTime = (currentTime: number, endTime: number): string =
     return `${hours.toLocaleString(undefined,{minimumIntegerDigits: 2})}:${minutes.toLocaleString(undefined,{minimumIntegerDigits: 2})}:${seconds.toLocaleString(undefined,{minimumIntegerDigits: 2})}`
   }
 };
+
+// Generate solana explorer url from a transaction id
+export function explorerUrl(txid: string) {
+  const clusterParam = process.env.REACT_APP_CLUSTER === 'devnet' ? `?cluster=devnet` : "";
+  return `https://explorer.solana.com/transaction/${txid}${clusterParam}`
+};
+
+// Manual timeout promise to pause program execution
+export function timeout(ms: number) {
+  return new Promise((res) => {
+    setTimeout(() => res(true), ms);
+  });
+};
