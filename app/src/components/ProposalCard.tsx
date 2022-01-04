@@ -21,7 +21,6 @@ export const ProposalCard = (props: { proposal: ParsedAccount<Proposal>, governa
     }
   } = props;
 
-
   const { programId } = useRpcContext();
 
   // Truncate headline if too long
@@ -49,7 +48,7 @@ export const ProposalCard = (props: { proposal: ParsedAccount<Proposal>, governa
     <Link to={headlineUrl}>
       <Card
         bordered={false}
-        className="proposal-card"
+        className={`proposal-card ${proposal.isVoting() ? "clickable" : ""}`}
         style={{}}>
         <div>
           <div className="header">Proposal {proposalAddressStr}</div>
