@@ -24,21 +24,18 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - id: cache-build
-        name: Setup Cache
+      - name: Setup Cache
         uses: actions/cache@v2
         with:
           key: cache-${{ runner.os }}-a${{ env.ANCHOR_CLI_VERSION }}-s${{ env.SOLANA_CLI_VERSION }}
           path: |
-            /usr/local/lib/node_modules
-            /usr/local/bin/anchor
             ~/.cache/solana
             ~/.cargo/bin/
             ~/.cargo/registry/index/
             ~/.cargo/registry/cache/
             ~/.cargo/git/db/
             ~/.local/share/solana/
-            target/
+            ./target/
 
       - name: Install Linux Dependencies
         run: sudo apt-get update && sudo apt-get -y install pkg-config build-essential libudev-dev
@@ -63,30 +60,32 @@ jobs:
       - name: Build Rewards and Staking
         run: anchor build
 
-      - run: ls -a && ls -a target/
-
   deploy:
     name: Deploy
     runs-on: ubuntu-latest
     needs: [build]
     steps:
-      - id: cache-deps
-        name: Cache Dependency Paths
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Recover Cache
         uses: actions/cache@v2
         with:
           key: cache-${{ runner.os }}-a${{ env.ANCHOR_CLI_VERSION }}-s${{ env.SOLANA_CLI_VERSION }}
           path: |
-            /usr/local/lib/node_modules/
-            /usr/local/bin/anchor
             ~/.cache/solana
             ~/.cargo/bin/
             ~/.cargo/registry/index/
             ~/.cargo/registry/cache/
             ~/.cargo/git/db/
             ~/.local/share/solana/
-            target/
+            ./target/
 
-      - run: ls -a && ls -a target/
+      - name: Setup NPM
+        uses: actions/setup-node@v2
+
+      - name: Install Anchor CLI
+        run: npm i -g @project-serum/anchor-cli@${{ env.ANCHOR_CLI_VERSION }}
       
       - name: Setup Environment
         run: |
