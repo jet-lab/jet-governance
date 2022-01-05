@@ -34,6 +34,7 @@ import { YesNoVote } from "../models/instructions";
 import { RelinquishVoteButton } from "./proposal/components/buttons/relinquishVoteButton";
 import { CastVoteButton } from "./proposal/components/buttons/castVoteButton";
 import { useHasVoteTimeExpired } from "../hooks/useHasVoteTimeExpired";
+import { DownloadOutlined } from "@ant-design/icons";
 
 export const ProposalView = () => {
   const [isVoteModalVisible, setIsVoteModalVisible] = useState(false);
@@ -214,7 +215,7 @@ export const ProposalView = () => {
             <div className="voters">
               <div className="flex justify-between">
                 <span />
-                <span onClick={() => voteRecordCsvDownload(proposal.pubkey, voterDisplayData)} id="csv">Download CSV</span>
+                <span onClick={() => voteRecordCsvDownload(proposal.pubkey, voterDisplayData)} id="csv"><DownloadOutlined/> Download CSV</span>
               </div>
               <div className={`stakeholders`} >
                 <span className="voter title"></span>

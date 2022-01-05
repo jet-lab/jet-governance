@@ -25,16 +25,6 @@ export const Input = (props: {
   return (
     <div className={`flex-centered ${disabled ? 'disabled-input' : ''}`}>
       <div className={`flex-centered ${token ? 'token-input' : ''}`} id="staking-input">
-        {/* <InputNumber
-          disabled={disabled}
-          value={props.value as number | undefined}
-          placeholder={error ?? placeholder}
-          className={`${error ? 'error' : ''}`}
-          onChange={(value: number) => onChange(value)}
-          onPressEnter={() => submit()}
-          size="large"
-        />
-        */}
         <input type={type}
           disabled={disabled}
           value={value as string | number | readonly string[] | undefined}

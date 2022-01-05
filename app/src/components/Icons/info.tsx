@@ -1,7 +1,7 @@
 import { Button, Popover } from 'antd';
 import React from 'react';
 
-import { InfoCircleOutlined } from '@ant-design/icons';
+import { InfoCircleFilled } from '@ant-design/icons';
 
 export const Info = (props: {
   text: React.ReactElement;
@@ -13,7 +13,7 @@ export const Info = (props: {
       content={<div style={{ width: 300 }}>{props.text}</div>}
     >
       <Button type="text" shape="circle">
-        <InfoCircleOutlined style={props.style} />
+        <InfoCircleFilled style={props.style} />
       </Button>
     </Popover>
   );

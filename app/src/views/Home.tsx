@@ -1,13 +1,12 @@
 import { useState, useEffect } from "react";
 import { useProposalContext } from "../contexts/proposal";
 import { ProposalCard } from "../components/ProposalCard";
-import { Button, Divider, notification } from "antd";
+import { Button, Divider, notification, Tooltip } from "antd";
 import { useUser } from "../hooks/useClient";
 import { Input } from "../components/Input";
 import { StakeModal } from "../components/modals/StakeModal";
 import { UnstakeModal } from "../components/modals/UnstakeModal";
-import { VotingBalanceModal } from "../components/modals/VotingBalanceModal";
-import { InfoCircleOutlined } from "@ant-design/icons";
+import { InfoCircleFilled } from "@ant-design/icons";
 import { useAirdrop } from "../contexts/airdrop";
 import React from "react";
 import { useRpcContext } from "../hooks/useRpcContext";
@@ -20,7 +19,6 @@ import { ReactFitty } from "react-fitty";
 export const HomeView = () => {
   const [showStakeModal, setShowStakeModal] = useState(false);
   const [showUnstakeModal, setShowUnstakeModal] = useState(false);
-  const [showVotingBalanceModal, setShowVotingBalanceModal] = useState(false);
 
   const { showing, setShowing } = useProposalContext();
   const [inputAmount, setInputAmount] = useState<number | null>(null);
@@ -75,18 +73,15 @@ export const HomeView = () => {
 
         <div className="neu-inset">
           <h3>Votes{" "}
-            <InfoCircleOutlined onClick={() => setShowVotingBalanceModal(true)} />
+          <Tooltip title="For each JET token staked, you receive 1 vote in JetGovern." mouseEnterDelay={0.5} placement="topLeft">
+            <InfoCircleFilled />
+          </Tooltip>
           </h3>
-          <VotingBalanceModal
-            showModal={showVotingBalanceModal}
-            onClose={() => setShowVotingBalanceModal(false)}
-          />
 
         <ReactFitty maxSize={100} className="text-gradient staked-balance">
           {connected ? new Intl.NumberFormat().format(votingBalance) : 0}
         </ReactFitty>
 
-          <Button onClick={getAirdrop}>GET JET</Button>
           <div id="wallet-overview" className="flex justify-between column">
             <div className="flex justify-between" id="current-staking-apr">
               <span>Current Staking APR</span>
@@ -144,11 +139,12 @@ export const HomeView = () => {
             />
           </div>
         </div>
+        <Button onClick={getAirdrop}>GET JET</Button>
       </div>
 
       <div id="show-proposals">
         <div className="flex justify-between header">
-          <h2>{showing}</h2>
+          <h2>Proposals</h2>
           <div className="filter-status">
             <span onClick={() => setShowing("active")}>Active</span>
             <span onClick={() => setShowing("inactive")}>Inactive</span>

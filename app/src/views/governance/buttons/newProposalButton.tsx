@@ -16,6 +16,7 @@ import BN from 'bn.js';
 import { useRpcContext } from '../../../hooks/useRpcContext';
 import { getOysterProposalUrl } from '../../../tools/routeTools';
 import { ParsedAccount, useMint } from '../../../contexts';
+import { format } from 'path/posix';
 
 export function NewProposalButton({
   realm,
@@ -25,10 +26,11 @@ export function NewProposalButton({
   realm: ParsedAccount<Realm> | undefined;
   governance: ParsedAccount<Governance> | undefined;
   buttonProps?: ButtonProps;
-}) {
+  }) {
   const [redirectTo, setRedirectTo] = useState('');
   const rpcContext = useRpcContext();
   const { programId } = rpcContext;
+  const [newProposalName, setNewProposalName] = useState("");
 
   const communityTokenOwnerRecord = useWalletTokenOwnerRecord(
     governance?.info.realm,
@@ -148,11 +150,12 @@ export function NewProposalButton({
       )}
 
       <Form.Item
-        name="name"
-        label={LABELS.NAME_LABEL}
+        name="name "
+        label="name (60 chars or less)"
         rules={[{ required: true }]}
+        requiredMark={true}
       >
-        <Input />
+        <Input maxLength={60} />
       </Form.Item>
       <Form.Item
         name="descriptionLink"

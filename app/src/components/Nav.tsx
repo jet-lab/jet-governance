@@ -20,7 +20,7 @@ export function Nav() {
 
   const navLinks = [
     {title: 'Voting', route: '/'},
-    {title: `Airdrop`, badge: unclaimedAirdrops(), route: '/airdrop'},
+    {title: `Airdrop`, badge: unclaimedAirdrops(), class: "highlight", route: '/airdrop'},
     {title: 'Flight log', route: '/flight-log'}
   ];
 
@@ -49,19 +49,19 @@ export function Nav() {
           {navLinks.map((link) =>
             <Link
               to={link.route}
-              className={`nav-link ${pathname === link.route ? 'active' : ''}`}
+              className={`nav-link ${pathname === link.route ? 'active' : ''}${link.class ? link.class : ""}`}
               key={link.route}
             >
-              {link.title} {link.badge ? (<span className="badge">{link.badge}</span>) : ""}
+                {link.title} {link.badge ? (<span className="badge">{link.badge}</span>) : ""}
             </Link>
           )}
           <Button className="secondary-btn flex-centered"
             type="ghost"
-            title={connected ? "disconnect" : "CONNECT"}
+            title={connected ? "disconnect" : "connect"}
             onClick={() => connected ? disconnect() : setConnecting(true)}>
             {connected 
               ? `${shortenAddress(publicKey ? publicKey.toString() : '')} CONNECTED` 
-                : "CONNECT"}
+                : "CONNECT WALLET"}
           </Button>
         </div>
       </nav>
