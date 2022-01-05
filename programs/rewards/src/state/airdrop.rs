@@ -24,6 +24,9 @@ pub struct Airdrop {
     /// The stake pool that rewards are staked into when claimed
     pub stake_pool: Pubkey,
 
+    /// Settings for airdrops
+    pub flags: u64,
+
     /// A short descriptive text for the airdrop
     pub short_desc: [u8; 31],
 
@@ -61,6 +64,10 @@ impl Airdrop {
         Ok(())
     }
 
+    pub fn has_recipient(&self, recipient: &Pubkey) -> bool {
+        self.target_info().get_recipient(recipient).is_ok()
+    }
+
     pub fn finalize(&mut self, vault_balance: u64) -> Result<(), ErrorCode> {
         let target = self.target_info_mut();
 
@@ -72,9 +79,13 @@ impl Airdrop {
         Ok(())
     }
 
-    pub fn claim(&mut self, recipient: &Pubkey) -> Result<u64, ErrorCode> {
+    pub fn claim(&mut self, claim: &AirdropClaim) -> Result<u64, ErrorCode> {
+        if self.flags().contains(AirdropFlags::VERIFICATION_REQUIRED) && !claim.verified {
+            return Err(ErrorCode::ClaimNotVerified);
+        }
+
         let target = self.target_info_mut();
-        let entry = target.get_recipient(recipient)?;
+        let entry = target.get_recipient_mut(&claim.recipient)?;
         let amount = entry.amount;
 
         entry.amount = 0;
@@ -87,8 +98,16 @@ impl Airdrop {
         [self.address.as_ref(), b"vault".as_ref(), &self.vault_bump]
     }
 
+    pub fn flags(&self) -> AirdropFlags {
+        AirdropFlags::from_bits(self.flags).unwrap()
+    }
+
     fn target_info_mut(&mut self) -> &mut AirdropTargetInfo {
         bytemuck::from_bytes_mut(&mut self.target_info)
+    }
+
+    fn target_info(&self) -> &AirdropTargetInfo {
+        bytemuck::from_bytes(&self.target_info)
     }
 }
 
@@ -110,7 +129,7 @@ pub struct AirdropTargetInfo {
 }
 
 impl AirdropTargetInfo {
-    fn get_recipient(&mut self, recipient: &Pubkey) -> Result<&mut AirdropTarget, ErrorCode> {
+    fn get_recipient_mut(&mut self, recipient: &Pubkey) -> Result<&mut AirdropTarget, ErrorCode> {
         let recipients = &mut self.recipients[..self.recipients_total as usize];
 
         let found = recipients
@@ -118,6 +137,16 @@ impl AirdropTargetInfo {
             .map_err(|_| ErrorCode::RecipientNotFound)?;
 
         Ok(&mut recipients[found])
+    }
+
+    fn get_recipient(&self, recipient: &Pubkey) -> Result<&AirdropTarget, ErrorCode> {
+        let recipients = &self.recipients[..self.recipients_total as usize];
+
+        let found = recipients
+            .binary_search_by_key(recipient, |r: &AirdropTarget| r.recipient)
+            .map_err(|_| ErrorCode::RecipientNotFound)?;
+
+        Ok(&recipients[found])
     }
 }
 
@@ -133,3 +162,24 @@ pub struct AirdropTarget {
 
 unsafe impl bytemuck::Pod for AirdropTargetInfo {}
 unsafe impl bytemuck::Zeroable for AirdropTargetInfo {}
+
+#[account]
+#[derive(Default)]
+pub struct AirdropClaim {
+    /// The airdrop being claimed from
+    pub airdrop: Pubkey,
+
+    /// The address claiming the tokens
+    pub recipient: Pubkey,
+
+    /// Flag indicating the recipient has been verified, and is
+    /// allowed to claim the tokens
+    pub verified: bool,
+}
+
+bitflags::bitflags! {
+    pub struct AirdropFlags: u64 {
+        /// Claims have to be verified with some 3rd party first
+        const VERIFICATION_REQUIRED = 1 << 0;
+    }
+}

@@ -24,8 +24,8 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - id: cache-deps
-        name: Cache Dependency Paths
+      - id: cache-build
+        name: Setup Cache
         uses: actions/cache@v2
         with:
           key: cache-${{ runner.os }}-a${{ env.ANCHOR_CLI_VERSION }}-s${{ env.SOLANA_CLI_VERSION }}
@@ -37,20 +37,18 @@ jobs:
             ~/.cargo/registry/index/
             ~/.cargo/registry/cache/
             ~/.cargo/git/db/
-            ~/.local/share/solana
-            ${{ github.workspace }}/target/
+            ~/.local/share/solana/
+            target/
 
       - name: Install Linux Dependencies
         run: sudo apt-get update && sudo apt-get -y install pkg-config build-essential libudev-dev
 
       - name: Install Rust
-        if: steps.cache-deps.outputs.cache-hit != 'true'
         uses: actions-rs/toolchain@v1
         with:
           toolchain: stable
 
       - name: Install Solana
-        if: steps.cache-deps.outputs.cache-hit != 'true'
         run: sh -c "$(curl -sSfL https://release.solana.com/v${{ env.SOLANA_CLI_VERSION }}/install)"
 
       - name: Setup NPM
@@ -65,6 +63,8 @@ jobs:
       - name: Build Rewards and Staking
         run: anchor build
 
+      - run: ls -a && ls -a target/
+
   deploy:
     name: Deploy
     runs-on: ubuntu-latest
@@ -76,23 +76,25 @@ jobs:
         with:
           key: cache-${{ runner.os }}-a${{ env.ANCHOR_CLI_VERSION }}-s${{ env.SOLANA_CLI_VERSION }}
           path: |
-            /usr/local/lib/node_modules
+            /usr/local/lib/node_modules/
             /usr/local/bin/anchor
             ~/.cache/solana
             ~/.cargo/bin/
             ~/.cargo/registry/index/
             ~/.cargo/registry/cache/
             ~/.cargo/git/db/
-            ~/.local/share/solana
-            ${{ github.workspace }}/target/
+            ~/.local/share/solana/
+            target/
+
+      - run: ls -a && ls -a target/
       
       - name: Setup Environment
         run: |
           echo "PATH=$HOME/.local/share/solana/install/active_release/bin:$HOME/.cargo/bin:$PATH" >> $GITHUB_ENV \
           && mkdir ~/.config/solana \
           && echo ${{ secrets.SOLANA_DEVNET_DEPLOYER_KEYPAIR }} > ~/.config/solana/deployer.json \
-          && echo ${{ secrets.REWARDS_DEVNET_KEYPAIR }} > ${{ github.workspace }}/target/deploy/jet_rewards-keypair.json \
-          && echo ${{ secrets.STAKING_DEVNET_KEYPAIR }} > ${{ github.workspace }}/target/deploy/jet_staking-keypair.json
+          && echo ${{ secrets.REWARDS_DEVNET_KEYPAIR }} > target/deploy/jet_rewards-keypair.json \
+          && echo ${{ secrets.STAKING_DEVNET_KEYPAIR }} > target/deploy/jet_staking-keypair.json
 
       - name: Deploy Rewards
         run: anchor deployer --program-name rewards --provider.cluster devnet --provider.wallet ~/.config/solana/deployer.json

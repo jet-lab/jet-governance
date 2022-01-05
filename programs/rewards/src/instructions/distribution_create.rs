@@ -4,7 +4,7 @@ use anchor_spl::token::{self, Token, TokenAccount, Transfer};
 use crate::state::*;
 
 #[derive(AnchorDeserialize, AnchorSerialize)]
-pub struct InitDistributionParams {
+pub struct DistributionCreateParams {
     /// The authority allowed to manage the distribution
     pub authority: Pubkey,
 
@@ -25,8 +25,8 @@ pub struct InitDistributionParams {
 }
 
 #[derive(Accounts)]
-#[instruction(params: InitDistributionParams)]
-pub struct InitDistribution<'info> {
+#[instruction(params: DistributionCreateParams)]
+pub struct DistributionCreate<'info> {
     /// The account to store the distribution info
     #[account(zero)]
     pub distribution: Account<'info, Distribution>,
@@ -62,7 +62,7 @@ pub struct InitDistribution<'info> {
     pub rent: Sysvar<'info, Rent>,
 }
 
-impl<'info> InitDistribution<'info> {
+impl<'info> DistributionCreate<'info> {
     fn transfer_context(&self) -> CpiContext<'_, '_, '_, 'info, Transfer<'info>> {
         CpiContext::new(
             self.token_program.to_account_info(),
@@ -75,9 +75,9 @@ impl<'info> InitDistribution<'info> {
     }
 }
 
-pub fn init_distribution_handler(
-    ctx: Context<InitDistribution>,
-    params: InitDistributionParams,
+pub fn distribution_create_handler(
+    ctx: Context<DistributionCreate>,
+    params: DistributionCreateParams,
 ) -> ProgramResult {
     let distribution = &mut ctx.accounts.distribution;
 

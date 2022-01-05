@@ -7,13 +7,13 @@ use jet_staking::program::JetStaking;
 use crate::state::*;
 
 #[derive(AnchorSerialize, AnchorDeserialize)]
-pub struct ClaimAirdropLockedParams {
+pub struct AirdropClaimLockedParams {
     pub bump: u8,
     pub seed: u32,
 }
 
 #[derive(Accounts)]
-pub struct ClaimAirdropLocked<'info> {
+pub struct AirdropClaimCompleteLocked<'info> {
     /// The airdrop to claim from
     #[account(mut,
               has_one = stake_pool,
@@ -23,10 +23,20 @@ pub struct ClaimAirdropLocked<'info> {
     /// The token account to claim the rewarded tokens from
     pub reward_vault: AccountInfo<'info>,
 
+    /// The claim account representing the request
+    #[account(mut,
+              close = receiver,
+              has_one = recipient)]
+    pub claim: Account<'info, AirdropClaim>,
+
     /// The address entitled to the airdrop, which must sign to claim
-    pub entitled: Signer<'info>,
+    pub recipient: Signer<'info>,
+
+    /// The address to receive rent recovered from the claim account
+    pub receiver: UncheckedAccount<'info>,
 
     /// The address paying rent costs
+    #[account(mut)]
     pub payer: Signer<'info>,
 
     /// The stake pool to deposit stake into
@@ -48,7 +58,7 @@ pub struct ClaimAirdropLocked<'info> {
     pub system_program: Program<'info, System>,
 }
 
-impl<'info> ClaimAirdropLocked<'info> {
+impl<'info> AirdropClaimCompleteLocked<'info> {
     fn add_stake_context(&self) -> CpiContext<'_, '_, '_, 'info, AddStakeLocked<'info>> {
         CpiContext::new(
             self.staking_program.to_account_info(),
@@ -66,13 +76,13 @@ impl<'info> ClaimAirdropLocked<'info> {
     }
 }
 
-pub fn claim_airdrop_locked_handler(
-    ctx: Context<ClaimAirdropLocked>,
-    params: ClaimAirdropLockedParams,
+pub fn airdrop_claim_complete_locked_handler(
+    ctx: Context<AirdropClaimCompleteLocked>,
+    params: AirdropClaimLockedParams,
 ) -> ProgramResult {
     let mut airdrop = ctx.accounts.airdrop.load_mut()?;
 
-    let claimed_amount = airdrop.claim(ctx.accounts.entitled.key)?;
+    let claimed_amount = airdrop.claim(&ctx.accounts.claim)?;
 
     jet_staking::cpi::add_stake_locked(
         ctx.accounts

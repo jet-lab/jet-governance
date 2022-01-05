@@ -4,7 +4,7 @@ use anchor_spl::token;
 use crate::state::*;
 
 #[derive(Accounts)]
-pub struct FinalizeAirdrop<'info> {
+pub struct AirdropFinalize<'info> {
     /// The airdrop to finalize
     #[account(mut,
               has_one = authority,
@@ -18,7 +18,7 @@ pub struct FinalizeAirdrop<'info> {
     pub authority: Signer<'info>,
 }
 
-pub fn finalize_airdrop_handler(ctx: Context<FinalizeAirdrop>) -> ProgramResult {
+pub fn airdrop_finalize_handler(ctx: Context<AirdropFinalize>) -> ProgramResult {
     let mut airdrop = ctx.accounts.airdrop.load_mut()?;
     let vault_balance = token::accessor::amount(&ctx.accounts.reward_vault)?;
 

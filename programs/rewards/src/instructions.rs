@@ -1,19 +1,23 @@
-mod add_airdrop_recipients;
-mod claim_airdrop;
-mod claim_airdrop_locked;
-mod close_airdrop;
-mod finalize_airdrop;
-mod init_airdrop;
+mod airdrop_add_recipients;
+mod airdrop_claim_begin;
+mod airdrop_claim_complete;
+mod airdrop_claim_complete_locked;
+mod airdrop_claim_verify;
+mod airdrop_close;
+mod airdrop_create;
+mod airdrop_finalize;
 
+mod distribution_create;
 mod distribution_release;
-mod init_distribution;
 
-pub use add_airdrop_recipients::*;
-pub use claim_airdrop::*;
-pub use claim_airdrop_locked::*;
-pub use close_airdrop::*;
-pub use finalize_airdrop::*;
-pub use init_airdrop::*;
+pub use airdrop_add_recipients::*;
+pub use airdrop_claim_begin::*;
+pub use airdrop_claim_complete::*;
+pub use airdrop_claim_complete_locked::*;
+pub use airdrop_claim_verify::*;
+pub use airdrop_close::*;
+pub use airdrop_create::*;
+pub use airdrop_finalize::*;
 
+pub use distribution_create::*;
 pub use distribution_release::*;
-pub use init_distribution::*;

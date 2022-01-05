@@ -19,3 +19,4 @@ anchor-lang = { git = "https://github.com/jet-lab/anchor" }
 anchor-spl = { git = "https://github.com/jet-lab/anchor" }
 jet-staking = { path = "../staking", features = ["cpi"] }
 bytemuck = "1.7"
+bitflags = "1.3"

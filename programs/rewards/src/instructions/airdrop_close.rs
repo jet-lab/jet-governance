@@ -4,7 +4,7 @@ use anchor_spl::token::{self, CloseAccount, Token};
 use crate::state::*;
 
 #[derive(Accounts)]
-pub struct CloseAirdrop<'info> {
+pub struct AirdropClose<'info> {
     /// The airdrop to claim from
     #[account(mut,
               has_one = authority,
@@ -24,7 +24,7 @@ pub struct CloseAirdrop<'info> {
     pub token_program: Program<'info, Token>,
 }
 
-impl<'info> CloseAirdrop<'info> {
+impl<'info> AirdropClose<'info> {
     fn close_context(&self) -> CpiContext<'_, '_, '_, 'info, CloseAccount<'info>> {
         CpiContext::new(
             self.token_program.to_account_info(),
@@ -37,7 +37,7 @@ impl<'info> CloseAirdrop<'info> {
     }
 }
 
-pub fn close_airdrop_handler(ctx: Context<CloseAirdrop>) -> ProgramResult {
+pub fn airdrop_close_handler(ctx: Context<AirdropClose>) -> ProgramResult {
     let airdrop = ctx.accounts.airdrop.load()?;
 
     token::close_account(
