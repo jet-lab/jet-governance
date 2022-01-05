@@ -9,6 +9,7 @@ pub struct CloseVestingAccount<'info> {
     pub owner: Signer<'info>,
 
     /// The receiver for the rent recovered
+    #[account(mut)]
     pub closer: UncheckedAccount<'info>,
 
     /// The account owning the stake to be unlocked

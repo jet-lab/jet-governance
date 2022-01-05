@@ -2,6 +2,7 @@ use anchor_lang::prelude::*;
 use anchor_spl::token::{self, Token, Transfer};
 
 use crate::state::*;
+use crate::Amount;
 
 #[derive(Accounts)]
 pub struct AddStake<'info> {
@@ -10,6 +11,7 @@ pub struct AddStake<'info> {
     pub stake_pool: Account<'info, StakePool>,
 
     /// The stake pool token vault
+    #[account(mut)]
     pub stake_pool_vault: AccountInfo<'info>,
 
     /// The account to own the stake being deposited
@@ -40,16 +42,17 @@ impl<'info> AddStake<'info> {
 }
 
 /// handler handler
-pub fn add_stake_handler(ctx: Context<AddStake>, amount: u64) -> ProgramResult {
+pub fn add_stake_handler(ctx: Context<AddStake>, amount: Amount) -> ProgramResult {
     let stake_pool = &mut ctx.accounts.stake_pool;
     let stake_account = &mut ctx.accounts.stake_account;
 
     let vault_amount = token::accessor::amount(&ctx.accounts.stake_pool_vault)?;
-    let staked_amount = stake_pool.deposit(vault_amount, amount);
+    let full_amount = stake_pool.convert_amount(vault_amount, amount);
 
-    stake_account.deposit_unlocked(staked_amount);
+    stake_pool.deposit(&full_amount);
+    stake_account.deposit_unlocked(full_amount.shares);
 
-    token::transfer(ctx.accounts.transfer_context(), amount)?;
+    token::transfer(ctx.accounts.transfer_context(), full_amount.tokens)?;
 
     Ok(())
 }

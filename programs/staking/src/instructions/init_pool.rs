@@ -5,13 +5,21 @@ use anchor_spl::token::TokenAccount;
 use anchor_spl::token::{Mint, Token};
 
 use crate::state::*;
-use crate::DEFAULT_UNBOND_PERIOD;
 
 #[derive(AnchorSerialize, AnchorDeserialize)]
 pub struct InitPoolSeeds {
     stake_pool: u8,
-    stake_token_mint: u8,
+    stake_vote_mint: u8,
+    stake_collateral_mint: u8,
     stake_pool_vault: u8,
+}
+
+#[derive(AnchorSerialize, AnchorDeserialize)]
+pub struct PoolConfig {
+    /// The time period for unbonding staked tokens from the pool.
+    ///
+    /// Unit is seconds.
+    unbond_period: u64,
 }
 
 #[derive(Accounts)]
@@ -41,7 +49,7 @@ pub struct InitPool<'info> {
                   seed.as_bytes(),
                   b"vote-mint".as_ref()
               ],
-              bump = bump.stake_token_mint,
+              bump = bump.stake_vote_mint,
               payer = payer,
               mint::decimals = token_mint.decimals,
               mint::authority = stake_pool)]
@@ -53,7 +61,7 @@ pub struct InitPool<'info> {
                   seed.as_bytes(),
                   b"collateral-mint".as_ref()
               ],
-              bump = bump.stake_token_mint,
+              bump = bump.stake_collateral_mint,
               payer = payer,
               mint::decimals = token_mint.decimals,
               mint::authority = stake_pool)]
@@ -80,6 +88,7 @@ pub fn init_pool_handler(
     ctx: Context<InitPool>,
     seed: String,
     bump: InitPoolSeeds,
+    config: PoolConfig,
 ) -> ProgramResult {
     let stake_pool = &mut ctx.accounts.stake_pool;
 
@@ -90,8 +99,9 @@ pub fn init_pool_handler(
 
     stake_pool.bump_seed[0] = bump.stake_pool;
     stake_pool.seed.as_mut().write(seed.as_bytes())?;
+    stake_pool.seed_len = seed.len() as u8;
 
-    stake_pool.unbond_period = DEFAULT_UNBOND_PERIOD as i64;
+    stake_pool.unbond_period = config.unbond_period as i64;
 
     Ok(())
 }

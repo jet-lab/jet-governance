@@ -21,6 +21,7 @@ pub struct AirdropClaimCompleteLocked<'info> {
     pub airdrop: AccountLoader<'info, Airdrop>,
 
     /// The token account to claim the rewarded tokens from
+    #[account(mut)]
     pub reward_vault: AccountInfo<'info>,
 
     /// The claim account representing the request
@@ -33,6 +34,7 @@ pub struct AirdropClaimCompleteLocked<'info> {
     pub recipient: Signer<'info>,
 
     /// The address to receive rent recovered from the claim account
+    #[account(mut)]
     pub receiver: UncheckedAccount<'info>,
 
     /// The address paying rent costs
@@ -44,6 +46,7 @@ pub struct AirdropClaimCompleteLocked<'info> {
     pub stake_pool: AccountInfo<'info>,
 
     /// The stake pool token vault
+    #[account(mut)]
     pub stake_pool_vault: AccountInfo<'info>,
 
     /// The account to own the stake being deposited
@@ -90,7 +93,7 @@ pub fn airdrop_claim_complete_locked_handler(
             .with_signer(&[&airdrop.signer_seeds()]),
         params.bump,
         params.seed,
-        claimed_amount,
+        jet_staking::Amount::tokens(claimed_amount),
         airdrop.vest_start_at,
         airdrop.vest_end_at,
     )?;

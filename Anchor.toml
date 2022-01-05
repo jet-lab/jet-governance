@@ -1,4 +1,4 @@
-anchor_version = "0.18.2"
+anchor_version = "0.19.0"
 
 [programs.localnet]
 jet_governance = "5TBwvU5xoA13fzmZgWVgFBUmBz1YCdiq2AshDZpPn3AL"

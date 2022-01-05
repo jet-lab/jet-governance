@@ -25,15 +25,12 @@ pub struct WithdrawUnbonded<'info> {
               has_one = stake_pool)]
     pub stake_account: Account<'info, StakeAccount>,
 
-    /// The staked token account
-    #[account(mut)]
-    pub stake_token_account: AccountInfo<'info>,
-
     /// The stake pool to create an account with
     #[account(mut, has_one = stake_pool_vault)]
     pub stake_pool: Account<'info, StakePool>,
 
     /// The stake pool token vault
+    #[account(mut)]
     pub stake_pool_vault: AccountInfo<'info>,
 
     /// The account that recorded the initial unbonding request
@@ -64,17 +61,16 @@ pub fn withdraw_unbonded_handler(ctx: Context<WithdrawUnbonded>) -> ProgramResul
     let unbonding_account = &mut ctx.accounts.unbonding_account;
     let clock = Clock::get()?;
 
-    if unbonding_account.unbonded_at >= clock.unix_timestamp {
+    if unbonding_account.unbonded_at > clock.unix_timestamp {
         return Err(ErrorCode::NotYetUnbonded.into());
     }
 
-    let vault_amount = token::accessor::amount(&ctx.accounts.stake_pool_vault)?;
-    let token_amount = stake_pool.withdraw(vault_amount, unbonding_account.amount);
-
-    stake_account.withdraw_unbonded(unbonding_account.amount);
+    stake_pool.withdraw(&unbonding_account.amount);
+    stake_account.withdraw_unbonded(unbonding_account.amount.shares);
     unbonding_account.stake_account = Pubkey::default();
 
     let stake_pool = &ctx.accounts.stake_pool;
+    let token_amount = unbonding_account.amount.tokens;
 
     token::transfer(
         ctx.accounts

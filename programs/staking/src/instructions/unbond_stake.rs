@@ -2,6 +2,7 @@ use anchor_lang::prelude::*;
 use anchor_spl::token;
 
 use crate::state::*;
+use crate::Amount;
 
 #[derive(Accounts)]
 #[instruction(bump: u8, seed: u32)]
@@ -42,7 +43,7 @@ pub fn unbond_stake_handler(
     ctx: Context<UnbondStake>,
     _bump: u8,
     _seed: u32,
-    share_amount: u64,
+    amount: Amount,
 ) -> ProgramResult {
     let stake_pool = &mut ctx.accounts.stake_pool;
     let stake_account = &mut ctx.accounts.stake_account;
@@ -50,13 +51,13 @@ pub fn unbond_stake_handler(
     let clock = Clock::get()?;
 
     let vault_amount = token::accessor::amount(&ctx.accounts.stake_pool_vault)?;
-    let token_amount = stake_pool.unbond(vault_amount, share_amount);
+    let full_amount = stake_pool.convert_amount(vault_amount, amount);
 
-    stake_account.unbond(share_amount)?;
+    stake_pool.unbond(&full_amount);
+    stake_account.unbond(full_amount.shares)?;
 
     unbonding_account.stake_account = stake_account.key();
-    unbonding_account.amount = share_amount;
-    unbonding_account.token_amount = token_amount;
+    unbonding_account.amount = full_amount;
     unbonding_account.unbonded_at = clock.unix_timestamp + stake_pool.unbond_period;
 
     Ok(())

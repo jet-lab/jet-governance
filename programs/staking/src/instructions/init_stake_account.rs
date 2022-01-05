@@ -2,14 +2,8 @@ use anchor_lang::prelude::*;
 
 use crate::state::*;
 
-#[derive(AnchorDeserialize, AnchorSerialize)]
-pub struct InitStakeAccountSeeds {
-    stake_account: u8,
-    stake_token_account: u8,
-}
-
 #[derive(Accounts)]
-#[instruction(bump: InitStakeAccountSeeds)]
+#[instruction(bump: u8)]
 pub struct InitStakeAccount<'info> {
     /// The owner for the stake
     pub owner: Signer<'info>,
@@ -23,7 +17,7 @@ pub struct InitStakeAccount<'info> {
                   stake_pool.key().as_ref(),
                   owner.key.as_ref()
               ],
-              bump = bump.stake_account,
+              bump = bump,
               payer = payer)]
     pub stake_account: Account<'info, StakeAccount>,
 
@@ -38,6 +32,7 @@ pub fn init_stake_account_handler(ctx: Context<InitStakeAccount>, _bump: u8) -> 
     let account = &mut ctx.accounts.stake_account;
 
     account.owner = *ctx.accounts.owner.key;
+    account.stake_pool = ctx.accounts.stake_pool.key();
 
     Ok(())
 }

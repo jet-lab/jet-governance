@@ -1,5 +1,7 @@
 use anchor_lang::prelude::*;
 
+use jet_proto_proc_macros::assert_size;
+
 use crate::ErrorCode;
 
 #[account(zero_copy)]
@@ -34,7 +36,7 @@ pub struct Airdrop {
     pub vault_bump: [u8; 1],
 
     /// Storage space for the list of airdrop recipients
-    pub target_info: [u8; 800016],
+    pub target_info: [u8; 400024],
 }
 
 impl Airdrop {
@@ -112,6 +114,7 @@ impl Airdrop {
 }
 
 #[repr(C)]
+#[assert_size(400024)]
 #[derive(Clone, Copy)]
 pub struct AirdropTargetInfo {
     /// The total amount of reward tokens that are claimable by recipients
@@ -125,7 +128,7 @@ pub struct AirdropTargetInfo {
     pub finalized: u64,
 
     /// List of airdrop recipients that can claim tokens
-    pub recipients: [AirdropTarget; 20000],
+    pub recipients: [AirdropTarget; 10000],
 }
 
 impl AirdropTargetInfo {
@@ -151,6 +154,7 @@ impl AirdropTargetInfo {
 }
 
 #[repr(C)]
+#[assert_size(40)]
 #[derive(Clone, Copy)]
 pub struct AirdropTarget {
     /// The amount of tokens that the target can claim

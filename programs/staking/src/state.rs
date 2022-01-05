@@ -1,6 +1,6 @@
 use anchor_lang::prelude::*;
 
-use crate::ErrorCode;
+use crate::{Amount, AmountKind, ErrorCode};
 
 #[account]
 #[derive(Default)]
@@ -9,7 +9,8 @@ pub struct StakePool {
     pub authority: Pubkey,
 
     /// The seed used to generate the pool address
-    pub seed: [u8; 31],
+    pub seed: [u8; 30],
+    pub seed_len: u8,
     pub bump_seed: [u8; 1],
 
     /// The mint for the tokens being staked
@@ -37,52 +38,53 @@ pub struct StakePool {
 
 impl StakePool {
     pub fn signer_seeds(&self) -> [&[u8]; 2] {
-        [&self.seed[..], &self.bump_seed[..]]
+        [&self.seed[..self.seed_len as usize], &self.bump_seed[..]]
     }
 
-    pub fn deposit(&mut self, vault_amount: u64, token_amount: u64) -> u64 {
-        let share_amount = self.tokens_as_shares(vault_amount, token_amount);
-        self.shares_bonded = self.shares_bonded.checked_add(share_amount).unwrap();
-
-        share_amount
+    pub fn deposit(&mut self, amount: &FullAmount) {
+        self.shares_bonded = self.shares_bonded.checked_add(amount.shares).unwrap();
     }
 
-    pub fn withdraw(&mut self, vault_amount: u64, share_amount: u64) -> u64 {
-        let tokens = self.shares_as_tokens(vault_amount, share_amount);
-        self.shares_unbonded = self.shares_unbonded.checked_sub(share_amount).unwrap();
-
-        tokens
+    pub fn withdraw(&mut self, amount: &FullAmount) {
+        self.shares_unbonded = self.shares_unbonded.checked_sub(amount.shares).unwrap();
     }
 
-    pub fn unbond(&mut self, vault_amount: u64, share_amount: u64) -> u64 {
-        let tokens = self.shares_as_tokens(vault_amount, share_amount);
-        self.shares_bonded = self.shares_bonded.checked_sub(share_amount).unwrap();
-        self.shares_unbonded = self.shares_unbonded.checked_add(share_amount).unwrap();
-
-        tokens
+    pub fn unbond(&mut self, amount: &FullAmount) {
+        self.shares_bonded = self.shares_bonded.checked_sub(amount.shares).unwrap();
+        self.shares_unbonded = self.shares_unbonded.checked_add(amount.shares).unwrap();
     }
 
-    pub fn tokens_as_shares(&self, vault_amount: u64, token_amount: u64) -> u64 {
-        let vault_amount = vault_amount as u128;
-        let share_supply = self.shares_bonded as u128;
+    pub fn convert_amount(&self, vault_amount: u64, amount: Amount) -> FullAmount {
+        let vault_amount = std::cmp::max(vault_amount as u128, 1);
+        let share_supply = std::cmp::max(self.shares_bonded as u128, 1);
 
-        let shares = (share_supply * token_amount as u128) / vault_amount;
+        match amount.kind {
+            AmountKind::Tokens => {
+                let shares = (share_supply * amount.value as u128) / vault_amount;
+                assert!(shares < std::u64::MAX as u128);
 
-        assert!(shares < std::u64::MAX as u128);
+                FullAmount {
+                    tokens: amount.value,
+                    shares: shares as u64,
+                }
+            }
+            AmountKind::Shares => {
+                let tokens = (vault_amount * amount.value as u128) / share_supply;
+                assert!(tokens < std::u64::MAX as u128);
 
-        shares as u64
+                FullAmount {
+                    shares: amount.value,
+                    tokens: tokens as u64,
+                }
+            }
+        }
     }
+}
 
-    pub fn shares_as_tokens(&self, vault_amount: u64, share_amount: u64) -> u64 {
-        let vault_amount = vault_amount as u128;
-        let share_supply = self.shares_bonded as u128;
-
-        let tokens = (vault_amount * share_amount as u128) / share_supply;
-
-        assert!(tokens < std::u64::MAX as u128);
-
-        tokens as u64
-    }
+#[derive(AnchorSerialize, AnchorDeserialize, Debug, Default, Clone, Copy)]
+pub struct FullAmount {
+    pub shares: u64,
+    pub tokens: u64,
 }
 
 #[account]
@@ -174,11 +176,8 @@ pub struct UnbondingAccount {
     /// The related account requesting to unstake
     pub stake_account: Pubkey,
 
-    /// The amount of shares to be unstaked
-    pub amount: u64,
-
-    /// The token amount that should actually be received when withdrawing the stake
-    pub token_amount: u64,
+    /// The amount of shares/tokens to be unstaked
+    pub amount: FullAmount,
 
     /// The time after which the staked amount can be withdrawn
     pub unbonded_at: i64,

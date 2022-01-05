@@ -1,5 +1,4 @@
 use anchor_lang::prelude::*;
-use anchor_lang::solana_program::clock::SECONDS_PER_DAY;
 
 declare_id!("JPLockxtkngHkaQT5AuRYow3HyUv5qWzmhwsCPd653n");
 
@@ -7,8 +6,6 @@ mod instructions;
 mod state;
 
 use instructions::*;
-
-pub const DEFAULT_UNBOND_PERIOD: u64 = 30 * SECONDS_PER_DAY;
 
 #[program]
 pub mod jet_staking {
@@ -21,8 +18,13 @@ pub mod jet_staking {
     /// * `seed` - A string to derive the pool address
     /// * `bump` - The bump seeds needed to derive the pool address and
     ///            the supporting accounts.
-    pub fn init_pool(ctx: Context<InitPool>, seed: String, bump: InitPoolSeeds) -> ProgramResult {
-        instructions::init_pool_handler(ctx, seed, bump)
+    pub fn init_pool(
+        ctx: Context<InitPool>,
+        seed: String,
+        bump: InitPoolSeeds,
+        config: PoolConfig,
+    ) -> ProgramResult {
+        instructions::init_pool_handler(ctx, seed, bump, config)
     }
 
     /// Initialize a new staking account
@@ -41,7 +43,7 @@ pub mod jet_staking {
     /// # Params
     ///
     /// * `amount` - The amount of tokens to transfer to the stake pool
-    pub fn add_stake(ctx: Context<AddStake>, amount: u64) -> ProgramResult {
+    pub fn add_stake(ctx: Context<AddStake>, amount: Amount) -> ProgramResult {
         instructions::add_stake_handler(ctx, amount)
     }
 
@@ -50,7 +52,7 @@ pub mod jet_staking {
         ctx: Context<AddStakeLocked>,
         bump: u8,
         seed: u32,
-        amount: u64,
+        amount: Amount,
         start_at: i64,
         end_at: i64,
     ) -> ProgramResult {
@@ -61,7 +63,7 @@ pub mod jet_staking {
         ctx: Context<UnbondStake>,
         bump: u8,
         seed: u32,
-        amount: u64,
+        amount: Amount,
     ) -> ProgramResult {
         instructions::unbond_stake_handler(ctx, bump, seed, amount)
     }
@@ -88,6 +90,34 @@ pub mod jet_staking {
 
     pub fn close_stake_account(ctx: Context<CloseStakeAccount>) -> ProgramResult {
         instructions::close_stake_account_handler(ctx)
+    }
+}
+
+#[derive(AnchorSerialize, AnchorDeserialize, Debug, Clone, Copy)]
+pub enum AmountKind {
+    Tokens,
+    Shares,
+}
+
+#[derive(AnchorSerialize, AnchorDeserialize, Debug, Clone, Copy)]
+pub struct Amount {
+    pub kind: AmountKind,
+    pub value: u64,
+}
+
+impl Amount {
+    pub fn tokens(value: u64) -> Self {
+        Self {
+            kind: AmountKind::Tokens,
+            value,
+        }
+    }
+
+    pub fn shares(value: u64) -> Self {
+        Self {
+            kind: AmountKind::Shares,
+            value,
+        }
     }
 }
 

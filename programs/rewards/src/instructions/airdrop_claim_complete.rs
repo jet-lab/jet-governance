@@ -16,6 +16,7 @@ pub struct AirdropClaimComplete<'info> {
     pub airdrop: AccountLoader<'info, Airdrop>,
 
     /// The token account to claim the rewarded tokens from
+    #[account(mut)]
     pub reward_vault: AccountInfo<'info>,
 
     /// The claim account representing the request
@@ -28,6 +29,7 @@ pub struct AirdropClaimComplete<'info> {
     pub recipient: Signer<'info>,
 
     /// The address to receive rent recovered from the claim account
+    #[account(mut)]
     pub receiver: UncheckedAccount<'info>,
 
     /// The stake pool to deposit stake into
@@ -35,6 +37,7 @@ pub struct AirdropClaimComplete<'info> {
     pub stake_pool: AccountInfo<'info>,
 
     /// The stake pool token vault
+    #[account(mut)]
     pub stake_pool_vault: UncheckedAccount<'info>,
 
     /// The account to own the stake being deposited
@@ -74,7 +77,7 @@ pub fn airdrop_claim_complete_handler(ctx: Context<AirdropClaimComplete>) -> Pro
         ctx.accounts
             .add_stake_context()
             .with_signer(&[&airdrop.signer_seeds()]),
-        claimed_amount,
+        jet_staking::Amount::tokens(claimed_amount),
     )?;
 
     Ok(())

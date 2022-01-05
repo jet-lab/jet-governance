@@ -67,6 +67,7 @@ pub fn airdrop_create_handler(
 ) -> ProgramResult {
     let mut airdrop = ctx.accounts.airdrop.load_init()?;
 
+    airdrop.address = ctx.accounts.airdrop.key();
     airdrop.authority = ctx.accounts.authority.key();
     airdrop.reward_vault = ctx.accounts.reward_vault.key();
     airdrop.vault_bump[0] = params.vault_bump;

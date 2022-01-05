@@ -2,6 +2,7 @@ use anchor_lang::prelude::*;
 use anchor_spl::token::{self, Token, Transfer};
 
 use crate::state::*;
+use crate::Amount;
 
 #[derive(Accounts)]
 #[instruction(bump: u8, seed: u32)]
@@ -11,6 +12,7 @@ pub struct AddStakeLocked<'info> {
     pub stake_pool: Account<'info, StakePool>,
 
     /// The stake pool token vault
+    #[account(mut)]
     pub stake_pool_vault: AccountInfo<'info>,
 
     /// The stake account that the tokens will belong to
@@ -56,7 +58,7 @@ pub fn add_stake_locked_handler(
     ctx: Context<AddStakeLocked>,
     _bump: u8,
     _seed: u32,
-    amount: u64,
+    amount: Amount,
     start_at: i64,
     end_at: i64,
 ) -> ProgramResult {
@@ -65,17 +67,22 @@ pub fn add_stake_locked_handler(
     let vesting_account = &mut ctx.accounts.vesting_account;
 
     let vault_amount = token::accessor::amount(&ctx.accounts.stake_pool_vault)?;
-    let staked_amount = stake_pool.deposit(vault_amount, amount);
+    let full_amount = stake_pool.convert_amount(vault_amount, amount);
+
+    stake_pool.deposit(&full_amount);
 
     vesting_account.stake_account = stake_account.key();
-    vesting_account.total = staked_amount;
+    vesting_account.total = full_amount.shares;
     vesting_account.unlocked = 0;
     vesting_account.vest_start_at = start_at;
     vesting_account.vest_end_at = end_at;
 
-    stake_account.locked = stake_account.locked.checked_add(staked_amount).unwrap();
+    stake_account.locked = stake_account
+        .locked
+        .checked_add(full_amount.shares)
+        .unwrap();
 
-    token::transfer(ctx.accounts.transfer_context(), amount)?;
+    token::transfer(ctx.accounts.transfer_context(), full_amount.tokens)?;
 
     Ok(())
 }
