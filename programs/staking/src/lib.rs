@@ -47,18 +47,6 @@ pub mod jet_staking {
         instructions::add_stake_handler(ctx, amount)
     }
 
-    /// Add tokens as stake to an account, with a vesting period
-    pub fn add_stake_locked(
-        ctx: Context<AddStakeLocked>,
-        bump: u8,
-        seed: u32,
-        amount: Amount,
-        start_at: i64,
-        end_at: i64,
-    ) -> ProgramResult {
-        instructions::add_stake_locked_handler(ctx, bump, seed, amount, start_at, end_at)
-    }
-
     pub fn unbond_stake(
         ctx: Context<UnbondStake>,
         bump: u8,
@@ -72,20 +60,12 @@ pub mod jet_staking {
         instructions::withdraw_unbonded_handler(ctx)
     }
 
-    pub fn unlock_stake(ctx: Context<UnlockStake>) -> ProgramResult {
-        instructions::unlock_stake_handler(ctx)
-    }
-
     pub fn mint_votes(ctx: Context<MintVotes>, amount: u64) -> ProgramResult {
         instructions::mint_votes_handler(ctx, amount)
     }
 
     pub fn burn_votes(ctx: Context<BurnVotes>, amount: u64) -> ProgramResult {
         instructions::burn_votes_handler(ctx, amount)
-    }
-
-    pub fn close_vesting_account(ctx: Context<CloseVestingAccount>) -> ProgramResult {
-        instructions::close_vesting_account_handler(ctx)
     }
 
     pub fn close_stake_account(ctx: Context<CloseStakeAccount>) -> ProgramResult {
