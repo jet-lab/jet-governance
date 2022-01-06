@@ -3,7 +3,7 @@ use anchor_lang::prelude::*;
 declare_id!("JPLockxtkngHkaQT5AuRYow3HyUv5qWzmhwsCPd653n");
 
 mod instructions;
-mod state;
+pub mod state;
 
 use instructions::*;
 
@@ -111,10 +111,7 @@ mod error {
         InsufficientUnlocked,
         VotesLocked,
         CollateralLocked,
-
         NotYetUnbonded,
-        NotYetVested,
-
         StakeRemaining,
     }
 }

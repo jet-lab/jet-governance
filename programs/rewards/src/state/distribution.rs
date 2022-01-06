@@ -17,13 +17,53 @@ pub struct Distribution {
 
     /// The length of the seed string
     pub seed_len: u8,
-    
+
     /// The bump seed for the address
     pub bump_seed: [u8; 1],
 
     /// The account the rewards are distributed into
     pub target_account: Pubkey,
 
+    /// The details on the token distribution
+    pub token_distribution: TokenDistribution,
+}
+
+impl Distribution {
+    pub fn signer_seeds(&self) -> [&[u8]; 2] {
+        [
+            &self.seed[..self.seed_len as usize],
+            self.bump_seed.as_ref(),
+        ]
+    }
+}
+
+impl std::ops::Deref for Distribution {
+    type Target = TokenDistribution;
+
+    fn deref(&self) -> &Self::Target {
+        &self.token_distribution
+    }
+}
+
+impl std::ops::DerefMut for Distribution {
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        &mut self.token_distribution
+    }
+}
+
+#[derive(AnchorDeserialize, AnchorSerialize, Clone)]
+pub enum DistributionKind {
+    Linear,
+}
+
+impl Default for DistributionKind {
+    fn default() -> Self {
+        DistributionKind::Linear
+    }
+}
+
+#[derive(AnchorDeserialize, AnchorSerialize, Clone, Default)]
+pub struct TokenDistribution {
     /// The total amount of tokens to be distributed
     pub target_amount: u64,
 
@@ -40,14 +80,7 @@ pub struct Distribution {
     pub kind: DistributionKind,
 }
 
-impl Distribution {
-    pub fn signer_seeds(&self) -> [&[u8]; 2] {
-        [
-            &self.seed[.. self.seed_len as usize],
-            self.bump_seed.as_ref(),
-        ]
-    }
-
+impl TokenDistribution {
     pub fn distribute(&mut self, timestamp: u64) -> u64 {
         let distributed = self.distributed;
         self.distributed = self.distributed_amount(timestamp);
@@ -71,16 +104,5 @@ impl Distribution {
         assert!(distributed < std::u64::MAX as u128);
 
         distributed as u64
-    }
-}
-
-#[derive(AnchorDeserialize, AnchorSerialize, Clone)]
-pub enum DistributionKind {
-    Linear,
-}
-
-impl Default for DistributionKind {
-    fn default() -> Self {
-        DistributionKind::Linear
     }
 }

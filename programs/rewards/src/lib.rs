@@ -74,6 +74,26 @@ pub mod jet_rewards {
     pub fn distribution_close(ctx: Context<DistributionClose>) -> ProgramResult {
         instructions::distribution_close_handler(ctx)
     }
+
+    /// Create a new award, to vest tokens to a stake account over time
+    pub fn award_create(ctx: Context<AwardCreate>, params: AwardCreateParams) -> ProgramResult {
+        instructions::award_create_handler(ctx, params)
+    }
+
+    /// Release vested tokens into the target stake account
+    pub fn award_release(ctx: Context<AwardRelease>) -> ProgramResult {
+        instructions::award_release_handler(ctx)
+    }
+
+    /// Close a fully vested award
+    pub fn award_close(ctx: Context<AwardClose>) -> ProgramResult {
+        instructions::award_close_handler(ctx)
+    }
+
+    /// Revoke an active award, reclaiming the unvested balance
+    pub fn award_revoke(ctx: Context<AwardRevoke>) -> ProgramResult {
+        instructions::award_revoke_handler(ctx)
+    }
 }
 
 #[derive(Accounts)]
@@ -93,6 +113,8 @@ mod error {
         ClaimNotVerified,
 
         DistributionNotEnded,
+
+        AwardNotFullyVested,
     }
 }
 

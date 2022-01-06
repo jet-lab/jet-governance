@@ -56,7 +56,7 @@ pub fn airdrop_close_handler(ctx: Context<AirdropClose>) -> ProgramResult {
     let airdrop = ctx.accounts.airdrop.load()?;
     let clock = Clock::get()?;
 
-    if airdrop.expire_at > clock.unix_timestamp  {
+    if airdrop.expire_at > clock.unix_timestamp {
         msg!("airdrop not expired");
         return Err(ErrorCode::AirdropExpired.into());
     }
