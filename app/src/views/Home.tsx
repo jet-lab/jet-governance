@@ -73,7 +73,7 @@ export const HomeView = () => {
 
         <div className="neu-inset">
           <h3>Votes{" "}
-          <Tooltip title="For each JET token staked, you receive 1 vote in JetGovern." mouseEnterDelay={0.5} placement="topLeft">
+          <Tooltip title="For each JET token staked, you receive 1 vote in JetGovern." placement="topLeft">
             <InfoCircleFilled />
           </Tooltip>
           </h3>

@@ -24,7 +24,7 @@ export const ProposalCard = (props: { proposal: ParsedAccount<Proposal>, governa
   const { programId } = useRpcContext();
 
   // Truncate headline if too long
-  var shortHeadline = useMemo(() => headline.length < 25 ? headline : headline.substr(0, 25) + "…", [headline]);
+  // var shortHeadline = useMemo(() => headline.length < 25 ? headline : headline.substr(0, 25) + "…", [headline]);
   var headlineUrl = useMemo(() => getProposalUrl(
     proposalAddress,
     programId,
@@ -48,16 +48,16 @@ export const ProposalCard = (props: { proposal: ParsedAccount<Proposal>, governa
     <Link to={headlineUrl}>
       <Card
         bordered={false}
-        className={`proposal-card ${proposal.isVoting() ? "clickable" : ""}`}
+        className={`proposal-card clickable ${proposal.isVoting() ? "" : ""}`}
         style={{}}>
         <div>
           <div className="header">Proposal {proposalAddressStr}</div>
-          <h1>{shortHeadline}</h1>
+          <h1>{headline}</h1>
         </div>
         <div className="details">
           {!proposal.isPreVotingState() ?
             <>
-              {proposal.isVoting() ? `Ends in ${countdown}.` : "Voting ended."}
+              {proposal.isVoting() ? `Ends in ${countdown}` : "Voting ended"}
               <Progress
                   percent={yesAbstainPercent}
                   success={{ percent: yesPercent }}

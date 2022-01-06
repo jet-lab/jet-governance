@@ -1,5 +1,5 @@
 import { Modal } from "antd";
-import React from "react";
+import React, { useEffect } from "react";
 import { ParsedAccount } from "../../contexts";
 import { Governance, Proposal, TokenOwnerRecord } from "../../models/accounts";
 import { useCountdown } from "../../hooks/proposalHooks";
@@ -29,14 +29,16 @@ export const VoteModal = (props: {
     tokenOwnerRecord,
   } = props;
   
-  const hasVoteTimeExpired = useHasVoteTimeExpired(governance, proposal);
-  const voteRecord = useTokenOwnerVoteRecord(
-    proposal.pubkey,
-    tokenOwnerRecord?.pubkey,
-  );
+  // const hasVoteTimeExpired = useHasVoteTimeExpired(governance, proposal);
+  // const voteRecord = useTokenOwnerVoteRecord(
+  //   proposal.pubkey,
+  //   tokenOwnerRecord?.pubkey,
+  // );
   const stakedBalance = 20;
 
-  let voteType: string;
+  let voteType: string = "in favor of";
+
+  useEffect(() => {
   if (vote === YesNoVote.Yes) {
     voteType = "in favor of";
   } else if (vote === YesNoVote.No) {
@@ -44,6 +46,8 @@ export const VoteModal = (props: {
   } else /*if (vote === "abstain")*/ {
     voteType = "to abstain from";
   }
+  }, [vote])
+
   const { endDate } = useCountdown(proposal.info, governance.info);
   const rpcContext = useRpcContext();
 

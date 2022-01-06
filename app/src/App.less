@@ -18,6 +18,30 @@ button.inactive {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  a {
+    text-decoration: underline;
+    margin: 0;
+    &:hover {
+      // add text gradient on hover
+      // TODO: make sure underline doesn't disappear on hover
+      opacity: 1;
+      background-image: @gradient;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+  }
+  .ant-modal-footer {
+    flex-direction: column-reverse;
+    & button.ant-btn:first-of-type {
+      background: transparent;
+      span {
+        color: @dark-grey
+      }
+      &:active {
+        box-shadow: none;
+      }
+    }
+  }
 }
 /* Styles between these lines should be included at the next version of the jet-antd library */
 
@@ -260,7 +284,6 @@ h1 {
 /* Vote selector */
 button,
 .ant-btn {
-  padding: 11px;
   &.vote-select {
     box-shadow: @neu-shadow;
     background: unset;
@@ -273,12 +296,11 @@ button,
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
-
     &:hover {
       box-shadow: @neu-shadow-low;
     }
-    &:active {
-      box-shadow: @neu-shadow-inset;
+    &.selected {
+      box-shadow: @neu-shadow-inset !important;
     }
   }
 }

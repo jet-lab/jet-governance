@@ -1,7 +1,7 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { ResultProgressBar } from "../components/proposal/ResultProgressBar";
-import { Divider, Spin, Tag, Button } from "antd";
+import { Divider, Spin, Button } from "antd";
 import { ProposalCard } from "../components/ProposalCard";
 import { VoterList } from "../components/proposal/VoterList";
 import { useWallet } from "@solana/wallet-adapter-react";
@@ -262,14 +262,14 @@ export const ProposalView = () => {
             <Button
               onClick={() => setVote(YesNoVote.Yes)}
               disabled={!connected || proposal.info.isVoting()}
-              className="vote-select"
+              className={`vote-select ${vote === YesNoVote.Yes ? "selected" : ""}`}
             >
               In favor
             </Button>
             <Button
               onClick={() => setVote(YesNoVote.No)}
               disabled={!connected || proposal.info.isVoting()}
-              className="vote-select"
+              className={`vote-select ${vote === YesNoVote.No ? "selected" : ""}`}
             >
               Against
             </Button>

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Modal } from "antd";
 import React from "react";
+import { explorerUrl } from "../../utils";
 
 export const StakeModal = (props: {
   showModal: boolean;
@@ -20,6 +21,7 @@ export const StakeModal = (props: {
 
   const handleCancel = () => {
     onClose();
+    setShowSuccessfulModal(false);
   };
 
   // Handlers for Tx successful modal
@@ -60,11 +62,10 @@ export const StakeModal = (props: {
         cancelButtonProps={{ style: { display: "none " } }}
       >
         <p>
-          You've staked {stakeAmount} JET into JetGovernance and can begin
-          voting with it immediately.
+          You've staked <strong>{stakeAmount} JET</strong> into Jet Govern and can begin voting with it immediately.
         </p>
 
-        <p>View your transaction on the blockchain here.</p>
+        <p>View your transaction on the blockchain <a href={explorerUrl('string')}  target="_blank" rel="noopener noreferrer">here</a>.</p>
       </Modal>
     </>
   );
