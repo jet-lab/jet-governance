@@ -90,13 +90,13 @@ jobs:
       - name: Setup Environment
         run: |
           echo "PATH=$HOME/.local/share/solana/install/active_release/bin:$HOME/.cargo/bin:$PATH" >> $GITHUB_ENV \
-          && mkdir ~/.config/solana \
+          && mkdir -p ~/.config/solana \
           && echo ${{ secrets.SOLANA_DEVNET_DEPLOYER_KEYPAIR }} > ~/.config/solana/deployer.json \
-          && echo ${{ secrets.REWARDS_DEVNET_KEYPAIR }} > target/deploy/jet_rewards-keypair.json \
-          && echo ${{ secrets.STAKING_DEVNET_KEYPAIR }} > target/deploy/jet_staking-keypair.json
+          && echo ${{ secrets.REWARDS_DEVNET_KEYPAIR }} > ./target/deploy/jet_rewards-keypair.json \
+          && echo ${{ secrets.STAKING_DEVNET_KEYPAIR }} > ./target/deploy/jet_staking-keypair.json
 
       - name: Deploy Rewards
-        run: anchor deployer --program-name rewards --provider.cluster devnet --provider.wallet ~/.config/solana/deployer.json
+        run: anchor deploy --program-name rewards --provider.cluster devnet --provider.wallet ~/.config/solana/deployer.json
 
       - name: Deploy Staking
-        run: anchor deployer --program-name staking --provider.cluster devnet --provider.wallet ~/.config/solana/deployer.json
+        run: anchor deploy --program-name staking --provider.cluster devnet --provider.wallet ~/.config/solana/deployer.json
