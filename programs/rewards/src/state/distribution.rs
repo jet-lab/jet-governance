@@ -1,6 +1,7 @@
 use anchor_lang::prelude::*;
 
 #[account]
+#[derive(Default)]
 pub struct Distribution {
     /// The address of this distribution account
     pub address: Pubkey,
@@ -11,8 +12,14 @@ pub struct Distribution {
     /// The account with the tokens to be distributed
     pub vault: Pubkey,
 
-    /// The bump seed for the vault account
-    pub vault_bump: [u8; 1],
+    /// The seed for the address
+    pub seed: [u8; 30],
+
+    /// The length of the seed string
+    pub seed_len: u8,
+    
+    /// The bump seed for the address
+    pub bump_seed: [u8; 1],
 
     /// The account the rewards are distributed into
     pub target_account: Pubkey,
@@ -34,11 +41,10 @@ pub struct Distribution {
 }
 
 impl Distribution {
-    pub fn vault_signer_seeds(&self) -> [&[u8]; 3] {
+    pub fn signer_seeds(&self) -> [&[u8]; 2] {
         [
-            self.address.as_ref(),
-            b"vault".as_ref(),
-            self.vault_bump.as_ref(),
+            &self.seed[.. self.seed_len as usize],
+            self.bump_seed.as_ref(),
         ]
     }
 
@@ -71,4 +77,10 @@ impl Distribution {
 #[derive(AnchorDeserialize, AnchorSerialize, Clone)]
 pub enum DistributionKind {
     Linear,
+}
+
+impl Default for DistributionKind {
+    fn default() -> Self {
+        DistributionKind::Linear
+    }
 }

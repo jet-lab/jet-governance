@@ -13,6 +13,9 @@ pub struct AirdropCreateParams {
     /// The end of the vesting period for claimed rewards.
     pub vest_end_at: i64,
 
+    /// The expiration time for the airdrop
+    pub expire_at: i64,
+
     /// The stake pool that claimed rewards are deposited into.
     pub stake_pool: Pubkey,
 
@@ -74,6 +77,7 @@ pub fn airdrop_create_handler(
 
     airdrop.vest_start_at = params.vest_start_at;
     airdrop.vest_end_at = params.vest_end_at;
+    airdrop.expire_at = params.expire_at;
     airdrop.stake_pool = params.stake_pool;
 
     airdrop.flags = params.flags;

@@ -23,6 +23,9 @@ pub struct Airdrop {
     /// The time at which vesting for the claimed tokens should be completed
     pub vest_end_at: i64,
 
+    /// The time at which this airdrop expires, and can no longer be claimed
+    pub expire_at: i64,
+
     /// The stake pool that rewards are staked into when claimed
     pub stake_pool: Pubkey,
 

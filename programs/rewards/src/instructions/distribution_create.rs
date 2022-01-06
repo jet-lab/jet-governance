@@ -1,3 +1,5 @@
+use std::io::Write;
+
 use anchor_lang::prelude::*;
 use anchor_spl::token::{self, Token, TokenAccount, Transfer};
 
@@ -5,6 +7,12 @@ use crate::state::*;
 
 #[derive(AnchorDeserialize, AnchorSerialize)]
 pub struct DistributionCreateParams {
+    /// The seed to create the address for the distribution
+    pub seed: String,
+
+    /// Bump seed for the distribution address
+    pub bump_seed: u8,
+
     /// The authority allowed to manage the distribution
     pub authority: Pubkey,
 
@@ -28,7 +36,10 @@ pub struct DistributionCreateParams {
 #[instruction(params: DistributionCreateParams)]
 pub struct DistributionCreate<'info> {
     /// The account to store the distribution info
-    #[account(zero)]
+    #[account(init,
+              seeds = [params.seed.as_bytes()],
+              bump = params.bump_seed,
+              payer = payer_rent)]
     pub distribution: Account<'info, Distribution>,
 
     /// The account to store the tokens to be distributed
@@ -40,7 +51,7 @@ pub struct DistributionCreate<'info> {
               bump = params.vault_bump,
               payer = payer_rent,
               token::mint = token_mint,
-              token::authority = vault)]
+              token::authority = distribution)]
     pub vault: Account<'info, TokenAccount>,
 
     /// The payer for rent charges
@@ -82,9 +93,11 @@ pub fn distribution_create_handler(
     let distribution = &mut ctx.accounts.distribution;
 
     distribution.address = distribution.key();
+    distribution.seed.as_mut().write(params.seed.as_bytes())?;
+    distribution.bump_seed[0] = params.bump_seed;
+
     distribution.authority = params.authority;
     distribution.vault = ctx.accounts.vault.key();
-    distribution.vault_bump[0] = params.vault_bump;
     distribution.target_account = params.target_account;
     distribution.target_amount = params.amount;
     distribution.begin_at = params.begin_at;

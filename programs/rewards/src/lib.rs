@@ -52,15 +52,6 @@ pub mod jet_rewards {
         instructions::airdrop_claim_complete_handler(ctx)
     }
 
-    /// Complete claim of tokens from an airdrop, which are deposited
-    /// as locked stake with vesting terms configured on the airdrop.
-    pub fn airdrop_claim_complete_locked(
-        ctx: Context<AirdropClaimCompleteLocked>,
-        params: AirdropClaimLockedParams,
-    ) -> ProgramResult {
-        instructions::airdrop_claim_complete_locked_handler(ctx, params)
-    }
-
     /// Verify a claim request is allowable
     pub fn airdrop_claim_verify(ctx: Context<AirdropClaimVerify>) -> ProgramResult {
         instructions::airdrop_claim_verify_handler(ctx)
@@ -78,6 +69,11 @@ pub mod jet_rewards {
     pub fn distribution_release(ctx: Context<DistributionRelease>) -> ProgramResult {
         instructions::distribution_release_handler(ctx)
     }
+
+    /// Close a completed distribution
+    pub fn distribution_close(ctx: Context<DistributionClose>) -> ProgramResult {
+        instructions::distribution_close_handler(ctx)
+    }
 }
 
 #[derive(Accounts)]
@@ -92,8 +88,11 @@ mod error {
         AddOutOfOrder,
         AirdropFinal,
         AirdropInsufficientRewardBalance,
+        AirdropExpired,
         ClaimMustVest,
         ClaimNotVerified,
+
+        DistributionNotEnded,
     }
 }
 

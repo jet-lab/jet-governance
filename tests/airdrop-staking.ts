@@ -149,6 +149,7 @@ describe("airdrop-staking", () => {
     const params = {
       vestStartAt: new anchor.BN(0),
       vestEndAt: new anchor.BN(0),
+      expireAt: new anchor.BN(Date.now() + 10),
       stakePool: stakeAcc.stakePool,
       shortDesc: "integ-test-airdrop",
       vaultBump: bumpSeed,
@@ -176,7 +177,7 @@ describe("airdrop-staking", () => {
       airdropVault,
       wallet.payer,
       [],
-      new u64(4_200_000_000)
+      new u64(5_000_000_000)
     );
   });
 
@@ -247,7 +248,7 @@ describe("airdrop-staking", () => {
       });
       assert.ok(false);
     } catch (e) {
-      assert.equal(e.code, 6005);
+      assert.equal(e.code, 6006);
     }
   });
 
@@ -332,4 +333,6 @@ describe("airdrop-staking", () => {
 
     assert.equal(updatedAta.amount.toNumber(), 4_200_000_000);
   });
+
+  it("close ")
 });

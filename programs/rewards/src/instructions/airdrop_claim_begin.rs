@@ -1,6 +1,7 @@
 use anchor_lang::prelude::*;
 
 use crate::state::*;
+use crate::ErrorCode;
 
 #[derive(Accounts)]
 #[instruction(bump: u8)]
@@ -31,6 +32,14 @@ pub struct AirdropClaimBegin<'info> {
 }
 
 pub fn airdrop_claim_begin_handler(ctx: Context<AirdropClaimBegin>, _bump: u8) -> ProgramResult {
+    let airdrop = ctx.accounts.airdrop.load()?;
+    let clock = Clock::get()?;
+
+    if airdrop.expire_at <= clock.unix_timestamp {
+        msg!("this airdrop is expired");
+        return Err(ErrorCode::AirdropExpired.into());
+    }
+
     let claim = &mut ctx.accounts.claim;
 
     claim.airdrop = ctx.accounts.airdrop.key();

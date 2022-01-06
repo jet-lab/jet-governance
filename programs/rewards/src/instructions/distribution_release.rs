@@ -45,7 +45,7 @@ pub fn distribution_release_handler(ctx: Context<DistributionRelease>) -> Progra
     token::transfer(
         ctx.accounts
             .transfer_context()
-            .with_signer(&[&distribution.vault_signer_seeds()]),
+            .with_signer(&[&distribution.signer_seeds()]),
         to_distribute,
     )?;
 
