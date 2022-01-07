@@ -1,7 +1,7 @@
 use anchor_lang::prelude::*;
 use anchor_spl::token::{self, MintTo, Token};
 
-use crate::state::*;
+use crate::{state::*, Amount};
 
 #[derive(Accounts)]
 pub struct MintVotes<'info> {
@@ -11,6 +11,9 @@ pub struct MintVotes<'info> {
     /// The stake pool to mint votes from
     #[account(has_one = stake_vote_mint)]
     pub stake_pool: Account<'info, StakePool>,
+
+    /// The stake pool token vault
+    pub stake_pool_vault: AccountInfo<'info>,
 
     /// The stake pool's voter mint
     #[account(mut)]
@@ -42,17 +45,20 @@ impl<'info> MintVotes<'info> {
     }
 }
 
-pub fn mint_votes_handler(ctx: Context<MintVotes>, amount: u64) -> ProgramResult {
+pub fn mint_votes_handler(ctx: Context<MintVotes>, amount: Amount) -> ProgramResult {
     let stake_pool = &ctx.accounts.stake_pool;
     let stake_account = &mut ctx.accounts.stake_account;
 
-    stake_account.mint_votes(amount)?;
+    let vault_amount = token::accessor::amount(&ctx.accounts.stake_pool_vault)?;
+    let full_amount = stake_pool.convert_amount(vault_amount, amount);
+
+    stake_account.mint_votes(&full_amount)?;
 
     token::mint_to(
         ctx.accounts
             .mint_context()
             .with_signer(&[&stake_pool.signer_seeds()]),
-        amount,
+        full_amount.tokens,
     )?;
 
     Ok(())

@@ -60,7 +60,7 @@ pub mod jet_staking {
         instructions::withdraw_unbonded_handler(ctx)
     }
 
-    pub fn mint_votes(ctx: Context<MintVotes>, amount: u64) -> ProgramResult {
+    pub fn mint_votes(ctx: Context<MintVotes>, amount: Amount) -> ProgramResult {
         instructions::mint_votes_handler(ctx, amount)
     }
 
@@ -108,7 +108,7 @@ mod error {
 
     #[error]
     pub enum ErrorCode {
-        InsufficientUnlocked,
+        InsufficientStake,
         VotesLocked,
         CollateralLocked,
         NotYetUnbonded,

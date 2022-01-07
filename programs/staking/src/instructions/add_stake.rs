@@ -50,7 +50,7 @@ pub fn add_stake_handler(ctx: Context<AddStake>, amount: Amount) -> ProgramResul
     let full_amount = stake_pool.convert_amount(vault_amount, amount);
 
     stake_pool.deposit(&full_amount);
-    stake_account.deposit_unlocked(full_amount.shares);
+    stake_account.deposit(&full_amount);
 
     token::transfer(ctx.accounts.transfer_context(), full_amount.tokens)?;
 

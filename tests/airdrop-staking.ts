@@ -79,6 +79,7 @@ describe("airdrop-staking", () => {
   const airdropKey = Keypair.generate();
 
   let testToken: Token;
+  let voteToken: Token;
   let stakeAcc: StakePoolAccounts;
 
   let stakerAccount: PublicKey;
@@ -116,6 +117,13 @@ describe("airdrop-staking", () => {
         rent: SYSVAR_RENT_PUBKEY,
       },
     });
+
+    voteToken = new Token(
+      provider.connection,
+      stakeAcc.stakeVoteMint,
+      TOKEN_PROGRAM_ID,
+      wallet.payer
+    );
   });
 
   it("create staker account", async () => {
@@ -335,7 +343,7 @@ describe("airdrop-staking", () => {
   });
 
   it("close airdrop", async () => {
-    await new Promise(resolve => setTimeout(resolve, 8_000));
+    await new Promise((resolve) => setTimeout(resolve, 8_000));
     const walletAta = await testToken.getOrCreateAssociatedAccountInfo(
       wallet.publicKey
     );
@@ -356,5 +364,96 @@ describe("airdrop-staking", () => {
     );
 
     assert.equal(updatedAta.amount.toNumber(), 800_000_000);
+  });
+
+  it("user restakes", async () => {
+    const testAta = await testToken.getOrCreateAssociatedAccountInfo(
+      staker.publicKey
+    );
+
+    await StakingProgram.rpc.addStake(
+      { kind: { tokens: {} }, value: new u64(4_200_000_000) },
+      {
+        accounts: {
+          stakeAccount: stakerAccount,
+          stakePool: stakeAcc.stakePool,
+          stakePoolVault: stakeAcc.stakePoolVault,
+          payer: staker.publicKey,
+          payerTokenAccount: testAta.address,
+          tokenProgram: TOKEN_PROGRAM_ID,
+        },
+        signers: [staker],
+      }
+    );
+
+    const updatedAta = await testToken.getOrCreateAssociatedAccountInfo(
+      staker.publicKey
+    );
+
+    assert.equal(updatedAta.amount.toNumber(), 0);
+  });
+
+  it("transfer staking reward", async () => {
+    await testToken.mintTo(
+      stakeAcc.stakePoolVault,
+      wallet.publicKey,
+      [],
+      5_800_000_000
+    );
+  });
+
+  it("mint max votes", async () => {
+    const voteAta = await voteToken.getOrCreateAssociatedAccountInfo(
+      wallet.publicKey
+    );
+
+    await StakingProgram.rpc.mintVotes(
+      { kind: { tokens: {} }, value: new u64(10_000_000_000) },
+      {
+        accounts: {
+          owner: staker.publicKey,
+          stakePool: stakeAcc.stakePool,
+          stakePoolVault: stakeAcc.stakePoolVault,
+          stakeVoteMint: stakeAcc.stakeVoteMint,
+          stakeAccount: stakerAccount,
+          voterTokenAccount: voteAta.address,
+          tokenProgram: TOKEN_PROGRAM_ID,
+        },
+        signers: [staker],
+      }
+    );
+
+    const updatedAta = await voteToken.getOrCreateAssociatedAccountInfo(
+      wallet.publicKey
+    );
+
+    assert.equal(updatedAta.amount.toNumber(), 10_000_000_000);
+  });
+
+  it("user cannot mint extra votes", async () => {
+    try {
+      const voteAta = await voteToken.getOrCreateAssociatedAccountInfo(
+        wallet.publicKey
+      );
+
+      await StakingProgram.rpc.mintVotes(
+        { kind: { tokens: {} }, value: new u64(1_000) },
+        {
+          accounts: {
+            owner: staker.publicKey,
+            stakePool: stakeAcc.stakePool,
+            stakePoolVault: stakeAcc.stakePoolVault,
+            stakeVoteMint: stakeAcc.stakeVoteMint,
+            stakeAccount: stakerAccount,
+            voterTokenAccount: voteAta.address,
+            tokenProgram: TOKEN_PROGRAM_ID,
+          },
+          signers: [staker],
+        }
+      );
+      assert.ok(false);
+    } catch (e) {
+      assert.equal(e.code, 6000);
+    }
   });
 });
