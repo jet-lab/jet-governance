@@ -149,7 +149,7 @@ describe("airdrop-staking", () => {
     const params = {
       vestStartAt: new anchor.BN(0),
       vestEndAt: new anchor.BN(0),
-      expireAt: new anchor.BN(Date.now() + 10),
+      expireAt: new anchor.BN(Date.now() / 1000 + 10),
       stakePool: stakeAcc.stakePool,
       shortDesc: "integ-test-airdrop",
       vaultBump: bumpSeed,
@@ -334,5 +334,27 @@ describe("airdrop-staking", () => {
     assert.equal(updatedAta.amount.toNumber(), 4_200_000_000);
   });
 
-  it("close ")
+  it("close airdrop", async () => {
+    await new Promise(resolve => setTimeout(resolve, 8_000));
+    const walletAta = await testToken.getOrCreateAssociatedAccountInfo(
+      wallet.publicKey
+    );
+
+    await RewardsProgram.rpc.airdropClose({
+      accounts: {
+        airdrop: airdropKey.publicKey,
+        rewardVault: airdropVault,
+        authority: wallet.publicKey,
+        receiver: wallet.publicKey,
+        tokenReceiver: walletAta.address,
+        tokenProgram: TOKEN_PROGRAM_ID,
+      },
+    });
+
+    const updatedAta = await testToken.getOrCreateAssociatedAccountInfo(
+      wallet.publicKey
+    );
+
+    assert.equal(updatedAta.amount.toNumber(), 800_000_000);
+  });
 });

@@ -20,9 +20,11 @@ pub struct AirdropClose<'info> {
     pub authority: Signer<'info>,
 
     /// The account to received the rent recovered
+    #[account(mut)]
     pub receiver: UncheckedAccount<'info>,
 
     /// The account to receive any remaining tokens in the vault
+    #[account(mut)]
     pub token_receiver: UncheckedAccount<'info>,
 
     pub token_program: Program<'info, Token>,
