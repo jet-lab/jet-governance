@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import { useProposalContext } from "../contexts/proposal";
 import { ProposalCard } from "../components/ProposalCard";
-import { Button, Divider, notification, Tooltip } from "antd";
+import { Button, Divider, notification, Tooltip, Switch } from "antd";
+import { useDarkTheme } from "../contexts/darkTheme";
 import { useUser } from "../hooks/useClient";
 import { Input } from "../components/Input";
 import { StakeModal } from "../components/modals/StakeModal";
@@ -26,6 +27,7 @@ export const HomeView = () => {
   const { vestedAirdrops } = useAirdrop();
   const rpcContext = useRpcContext();
   const connected = rpcContext.wallet.connected
+  const { darkTheme, toggleDarkTheme } = useDarkTheme();
 
   const proposals = useProposalsByGovernance(JET_GOVERNANCE);
   const filteredProposals = useProposalFilters(proposals);
@@ -139,7 +141,14 @@ export const HomeView = () => {
             />
           </div>
         </div>
+        <Switch onChange={() => toggleDarkTheme()} checked={darkTheme} />
         <Button onClick={getAirdrop}>GET JET</Button>
+      </div>
+
+      <div id="terms-conditions">
+        <p>Glossary</p>
+        <p>Terms & Conditions</p>
+        
       </div>
 
       <div id="show-proposals">

@@ -137,11 +137,14 @@ export const ProposalView = () => {
         visible={isStakeRedirectModalVisible}
         onClose={() => setIsStakeRedirectModalVisible(false)}
       />
-      <Link to="/">
-        <i className="fas fa-arrow-left"></i> All Proposals
-      </Link>
+      <div>
+        <Link to="/">
+          <i className="fas fa-arrow-left"></i> All Proposals
+        </Link>
+      </div>
 
-      <div className="view-container flex content">
+
+      <div className="flex content">
         <div className="flex column" style={{ width: "70%" }}>
           <h2>Proposal Details</h2>
           <div className="description neu-container ">
@@ -233,7 +236,7 @@ export const ProposalView = () => {
         <div className="flex column" style={{ width: "30%" }} id="vote-desktop">
           <h2>Your Vote</h2>
           <div
-            className="neu-container view-container flex column"
+            className="neu-container flex column"
             id="your-vote"
           >
             <RelinquishVoteButton

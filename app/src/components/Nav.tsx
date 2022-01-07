@@ -2,8 +2,7 @@ import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { useConnectWallet } from "../contexts/connectWallet";
-import { Button, Switch } from "antd";
-import { useDarkTheme } from "../contexts/darkTheme";
+import { Button } from "antd";
 import { useAirdrop } from "../contexts/airdrop";
 import { shortenAddress } from "../utils";
 
@@ -12,7 +11,6 @@ export function Nav() {
   const { pathname } = useLocation();
   const { connected, disconnect, publicKey } = useWallet();
   const { setConnecting } = useConnectWallet();
-  const { darkTheme, toggleDarkTheme } = useDarkTheme();
   const [drawerOpened, setDrawerOpened] = useState(false);
   const { unclaimedAirdrops } = useAirdrop(); 
 
@@ -45,7 +43,6 @@ export function Nav() {
           </a>
         </div>
         <div className="right-container flex-centered">
-          <Switch onChange={() => toggleDarkTheme()} checked={darkTheme} />
           {navLinks.map((link) =>
             <Link
               to={link.route}

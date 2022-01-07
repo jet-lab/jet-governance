@@ -11,32 +11,25 @@ export const AirdropView = () => {
 
   return (
     <div className="view-container" id="airdrop">
-      <div>
-        <h2>Airdrop</h2>
-        <div className="neu-container">
-          <h1>Here's how your airdrop works.</h1>
-          <p>
-            Airdrop claims deposit a fixed amount of Jet tokens into your
-            governance account. These tokens are locked for a 30-day vesting
-            period, during which time you may vote with your tokens. As tokens
-            are vested, they can remain staked to accrue rewards or you can
-            choose to unstake them.
-          </p>
+      <div className="neu-container">
+        <h1>Claim your airdrop!</h1>
+        <p>
+        Available airdrops are listed below, and can be claimed within 90 days of release. Airdrop claims deposit a fixed amount of Jet tokens into your governance account. These tokens are staked to JetGovern and will begin accruing rewards immediately. 
+        </p>
 
-          <Divider />
+        <Divider />
 
-          <h1>Available</h1>
-          {connected &&
-            airdrops?.map((airdrop) => (
-              <Available
-                name={airdrop.name}
-                amount={airdrop.amount}
-                end={airdrop.end}
-                claimed={airdrop.claimed}
-                announced={airdrop.announced}
-              />
-            ))}
-        </div>
+        <h1>Available</h1>
+        {connected &&
+          airdrops?.map((airdrop) => (
+            <Available
+              name={airdrop.name}
+              amount={airdrop.amount}
+              end={airdrop.end}
+              claimed={airdrop.claimed}
+              announced={airdrop.announced}
+            />
+          ))}
       </div>
     </div>
   );
