@@ -32,7 +32,7 @@ export const StakeModal = (props: {
   return (
     <>
       <Modal
-        title={`You are staking ${stakeAmount} JET into the platform.`}
+        title={`You are staking ${stakeAmount && Intl.NumberFormat('us-US').format(stakeAmount)} JET into the platform.`}
         visible={showModal}
         okText="I understand."
         onOk={handleSubmitTx}
@@ -62,7 +62,7 @@ export const StakeModal = (props: {
         cancelButtonProps={{ style: { display: "none " } }}
       >
         <p>
-          You've staked <strong>{stakeAmount} JET</strong> into Jet Govern and can begin voting with it immediately.
+          You've staked <strong>{stakeAmount && Intl.NumberFormat('us-US').format(stakeAmount)} JET</strong> into Jet Govern and can begin voting with it immediately.
         </p>
 
         <p>View your transaction on the blockchain <a href={explorerUrl('string')}  target="_blank" rel="noopener noreferrer">here</a>.</p>

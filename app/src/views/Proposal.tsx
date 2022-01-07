@@ -256,14 +256,13 @@ export const ProposalView = () => {
         </div>
 
         <div className="flex column" id="proposal-right">
-          <h2>Your Vote</h2>
           <div className="neu-container flex column" id="your-vote">
-            <RelinquishVoteButton
+            {/* <RelinquishVoteButton
               proposal={proposal}
               tokenOwnerRecord={tokenOwnerRecord}
               voteRecord={voteRecord?.tryUnwrap()}
               hasVoteTimeExpired={hasVoteTimeExpired}
-            />
+            /> */}
             {/* <CastVoteButton
               governance={governance}
               proposal={proposal}

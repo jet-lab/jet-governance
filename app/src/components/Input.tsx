@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import { InputNumber } from 'antd';
 
 export const Input = (props: {
@@ -14,13 +14,31 @@ export const Input = (props: {
 }) => {
 
   const { value, placeholder, token, type, maxInput, error, disabled, onChange, submit } = props;
+  const [isActive, setIsActive] = useState(false);
 
-    // Call submit fn on enter
-    const enterKeySubmit = (e: any) => {
-      if (e.code === 'Enter' && !props.disabled) {
-        props.submit();
-      }
+  // Call submit fn on enter
+  const enterKeySubmit = (e: any) => {
+    if (e.code === 'Enter' && !props.disabled) {
+      props.submit();
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener('click', setActiveElement)
+    return () => {
+      window.removeEventListener('click', setActiveElement);
     };
+  })
+
+  const setActiveElement = useCallback(
+    () => {
+      if (document.activeElement === document.getElementById("input-element")) {
+        setIsActive(true)
+      } else {
+        setIsActive(false)
+      }
+    }, [setIsActive]
+  )
 
   return (
     <div className={`flex-centered ${disabled ? 'disabled-input' : ''}`}>
@@ -32,14 +50,15 @@ export const Input = (props: {
           className={`with-btn ${error ? 'error' : ''}`}
           onChange={(e) => onChange(e.target.value)}
           onKeyPress={(e) => enterKeySubmit(e)}
+          id="input-element"
         />
         {token && (
           <>
             <img src="img/jet/jet_logomark_gradient.png"
               alt="Jet Token Icon"
-              style={{filter: 'grayscale(1)'}}
+              style={{filter: isActive ? 'none' : 'grayscale(1)'}}
             />
-            <span className="token-abbrev">
+            <span className={`token-abbrev ${isActive ? 'text-gradient' : ''}`}>
               JET
             </span>
           </>
