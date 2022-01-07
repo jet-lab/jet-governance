@@ -45,7 +45,7 @@ export const ProposalView = () => {
   const [isVoteModalVisible, setIsVoteModalVisible] = useState(false);
   const [isStakeRedirectModalVisible, setIsStakeRedirectModalVisible] =
     useState(false);
-  const [vote, setVote] = useState<YesNoVote>(YesNoVote.No);
+  const [vote, setVote] = useState<YesNoVote>(YesNoVote.Yes);
 
   // TODO: Fetch user's stake from blockchain
   const proposalAddress = useKeyParam();
@@ -74,13 +74,11 @@ export const ProposalView = () => {
   const isStaked = stakedBalance > 0;
 
   const handleVoteModal = () => {
-    setIsVoteModalVisible(true); // Fixme!
-    console.log("clicked");
-    // if (!isStaked) {
-    //   setIsStakeRedirectModalVisible(true);
-    // } else {
-    //   setIsVoteModalVisible(true);
-    // }
+    if (!isStaked) {
+      setIsStakeRedirectModalVisible(true);
+    } else {
+      setIsVoteModalVisible(true);
+    }
   };
 
   return proposal && governance && governingTokenMint && realm ? (
@@ -282,7 +280,7 @@ export const ProposalView = () => {
 
             <Button
               onClick={() => setVote(YesNoVote.Yes)}
-              disabled={!connected || proposal.info.isVoting()}
+              disabled={!connected || !proposal.info.isVoting() || hasVoteTimeExpired}
               className={`vote-select ${
                 vote === YesNoVote.Yes ? "selected" : ""
               }`}
@@ -291,7 +289,7 @@ export const ProposalView = () => {
             </Button>
             <Button
               onClick={() => setVote(YesNoVote.No)}
-              disabled={!connected || proposal.info.isVoting()}
+              disabled={!connected || !proposal.info.isVoting() || hasVoteTimeExpired}
               className={`vote-select ${
                 vote === YesNoVote.No ? "selected" : ""
               }`}
@@ -300,14 +298,14 @@ export const ProposalView = () => {
             </Button>
             <Button
               onClick={() => null}
-              disabled={!connected || proposal.info.isVoting()}
+              disabled={!connected || !proposal.info.isVoting() || hasVoteTimeExpired}
               className={`vote-select`}
             >
               Abstain
             </Button>
             <Button
               type="primary"
-              disabled={!connected || proposal.info.isVoting()}
+              disabled={!connected || !proposal.info.isVoting()}
               onClick={() => handleVoteModal()}
             >
               Vote

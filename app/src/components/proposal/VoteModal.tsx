@@ -9,8 +9,8 @@ import {
 } from '../../hooks/apiHooks';
 // import { CastVoteButton } from "../../views/proposal/components/buttons/castVoteButton";
 import { castVote } from "../../actions/castVote";
-import { useHasVoteTimeExpired } from "../../hooks/useHasVoteTimeExpired";
 import { useRpcContext } from "../../hooks/useRpcContext";
+import { useUser } from "../../hooks/useClient";
 
 export const VoteModal = (props: {
   vote: YesNoVote;
@@ -34,7 +34,7 @@ export const VoteModal = (props: {
   //   proposal.pubkey,
   //   tokenOwnerRecord?.pubkey,
   // );
-  const stakedBalance = 20;
+  const { stakedBalance } = useUser();
 
   let voteType: string = "in favor of";
 
@@ -60,7 +60,7 @@ export const VoteModal = (props: {
         proposal,
         tokenOwnerRecord.pubkey,
         vote,
-      );
+      ).then(() => onClose());
     }
   }
 
@@ -74,7 +74,7 @@ export const VoteModal = (props: {
       closable={false}
     >
       <p>This proposal hash is {proposal.pubkey.toBase58()}.</p>
-      <p>You have {stakedBalance} JET staked, and will be able to unstake these funds when voting ends at {endDate}.</p> {/** FIXME */}
+      <p>You have {Intl.NumberFormat().format(stakedBalance)} JET staked, and will be able to unstake these funds when voting ends at {endDate}.</p> {/** FIXME */}
       {/* <CastVoteButton
         governance={governance}
         proposal={proposal}
