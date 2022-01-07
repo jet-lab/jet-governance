@@ -134,12 +134,12 @@ export function AirdropProvider({ children = undefined as any }) {
   const transactionHistory = [{
     date: new Date("25 Dec 2021"),
     status: "Pending",
-    transaction: 'unstaked',
+    transaction: 'Unstaked',
     amount: 3500
   }, {
     date: new Date("25 Nov 2020"),
     status: "Complete",
-    transaction: 'unstaked',
+    transaction: 'Unstaked',
     amount: 3500
   }, {
     date: new Date("25 Sep 2020"),

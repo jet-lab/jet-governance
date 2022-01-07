@@ -19,18 +19,16 @@ export const FlightLogView = () => {
     ].join("-");
   };
 
-  console.log(pendingTransactions);
-
   return (
-    <div className="view-container" id="claim">
-      <div className="neu-container">
-        <h1>Flight logs</h1>
+    <div className="view-container column-grid">
+      <div className="neu-container"  id="flight-log">
+        <h1>Flight Logs</h1>
         <table>
           <thead>
             <tr>
               <th>Date</th>
               <th>Status</th>
-              <th className="center-text">Transaction</th>
+              <th className="center-text">Action</th>
               <th>Amount</th>
             </tr>
             <tr className="table-divider"></tr>

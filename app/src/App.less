@@ -30,18 +30,6 @@ button.inactive {
       -webkit-text-fill-color: transparent;
     }
   }
-  .ant-modal-footer {
-    flex-direction: column-reverse;
-    & button.ant-btn:first-of-type {
-      background: transparent;
-      span {
-        color: @dark-grey
-      }
-      &:active {
-        box-shadow: none;
-      }
-    }
-  }
 }
 /* Styles between these lines should be included at the next version of the jet-antd library */
 
@@ -57,34 +45,49 @@ button.inactive {
 .italics {
   font-style: italic;
 }
-
 strong {
   font-weight: @subheader-weight;
+}
+
+span, p, .proposal-card.ant-card .header, .ant-card-body .details {
+  font-size: 12.5px !important;
 }
 
 .nav-link {
   display: flex;
   align-items: center;
-  &.highlight {
-    background: #e5ebf4 -webkit-gradient(linear, 100% 0, 0 0, from(#e5ebf4), color-stop(0.5, #a9aaab), to(#e5ebf4));
-    background-position: 50px top;
-    background-repeat: no-repeat;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    -webkit-animation-name: shimmer;
-    -webkit-animation-duration: 5.5s;
-    -webkit-animation-iteration-count: infinite;
-    -webkit-background-size: 50px 100%;
-  }
 }
 
-@keyframes highlight {
-  0% {
-    background-position: -500% top;
-  }
+.connect-wallet-modal p {
+  margin: unset;
+}
 
+.shimmer {
+  display: inline-block;
+  color: white;
+  background: #acacac -webkit-gradient(linear, 100% 0, 0 0, from(#acacac), color-stop(0.5, #ffffff), to(#acacac));
+  background-position: -4rem top;
+  background-repeat: no-repeat;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  -webkit-animation-name: shimmer;
+  -webkit-animation-duration: 2.2s;
+  -webkit-animation-iteration-count: infinite;
+  -webkit-background-size: 4rem 100%;
+  
+}
+@keyframes shimmer {
+  0% {
+    background-position: -4rem top;
+    /*50px*/
+  }
+  70% {
+    background-position: 12.5rem top;
+    /*200px*/
+  }
   100% {
-    background-position: 500% top;
+    background-position: 12.5rem top;
+    /*200px*/
   }
 }
 
@@ -149,7 +152,7 @@ h1 {
 .ant-layout-content {
   display: flex;
   background-color: @white;
-  margin-top: @nav-height;
+  margin-top: 20px;
   .panel {
     margin: 0 10px;
   }
@@ -183,11 +186,11 @@ h1 {
       width: 100%;
       #current-staking-apr span {
         font-weight: 500;
-        font-size: 15px;
+        margin-bottom: 12px;
       }
       span {
         color: @black;
-        font-size: 13px;
+        margin: 0 4px;
       }
     }
 
@@ -201,13 +204,13 @@ h1 {
         padding-right: 80px;
       }
       span {
-        font-size: 24px;
+        font-size: 20px !important;
         color: @dark-grey;
       }
       .token-abbrev {
         position: absolute;
         top: 50%;
-        transform: translateY(-50%);
+        transform: translateY(-60%);
         right: @spacing-md;
         padding: unset;
       }
@@ -309,6 +312,7 @@ button,
     background: unset;
     text-transform: uppercase;
     background-clip: content-box, border-box;
+    padding: 10px 14px;
     span {
       opacity: 1;
       background-image: linear-gradient(135deg, #3d9e83 25%, #278db6 85%);
@@ -322,6 +326,9 @@ button,
     &.selected {
       box-shadow: @neu-shadow-inset !important;
     }
+  }
+  &.ant-btn-primary {
+    margin-top: 20px;
   }
 }
 
@@ -350,7 +357,7 @@ button,
     }
   }
 
-  /* Overrides for jet-antd and stakeholders  */
+  /* Overrides for jet-antd >> stakeholders  */
   .ant-list-item {
     border-bottom: none;
     padding: 0;
@@ -437,4 +444,8 @@ button,
 
 .gray {
   color: @dark-grey;
+}
+
+#flight-log {
+  grid-column: 1 / 5;
 }

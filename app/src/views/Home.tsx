@@ -69,30 +69,31 @@ export const HomeView = () => {
   return (
     <div className="view-container content-body column-grid" id="home">
       <div id="your-info">
-        <h2>
-          Your Info
-        </h2>
+        <h2>Your Info</h2>
 
         <div className="neu-inset">
-          <h3>Votes{" "}
-          <Tooltip title="For each JET token staked, you receive 1 vote in JetGovern." placement="topLeft">
-            <InfoCircleFilled />
-          </Tooltip>
+          <h3>
+            Votes{" "}
+            <Tooltip
+              title="For each JET token staked, you receive 1 vote in JetGovern."
+              placement="topLeft"
+            >
+              <InfoCircleFilled />
+            </Tooltip>
           </h3>
 
-        <ReactFitty maxSize={100} className="text-gradient staked-balance">
-          {connected ? new Intl.NumberFormat().format(votingBalance) : 0}
-        </ReactFitty>
+          <ReactFitty maxSize={100} className="text-gradient staked-balance">
+            {connected ? new Intl.NumberFormat().format(votingBalance) : 0}
+          </ReactFitty>
 
           <div id="wallet-overview" className="flex justify-between column">
             <div className="flex justify-between" id="current-staking-apr">
               <span>Current Staking APR</span>
-              <span>{(365 * userDailyReward / totalStake).toFixed(2)}%</span>
+              <span>{((365 * userDailyReward) / totalStake).toFixed(2)}%</span>
             </div>
             <div className="flex justify-between">
               <span>Est. Daily Reward</span>
-              <span>{userDailyReward}
-              </span>
+              <span>{userDailyReward}</span>
             </div>
             <div className="flex justify-between">
               <span>Est. Monthly Reward</span>
@@ -101,11 +102,9 @@ export const HomeView = () => {
           </div>
           <Divider />
           <div className="flex column">
-            <div className="flex justify-between">
+            <div className="flex justify-between"  id="staked">
               <span>Staked Tokens</span>
-              <span>
-                {new Intl.NumberFormat().format(stakedBalance)}
-              </span>
+              <span>{new Intl.NumberFormat().format(stakedBalance)}</span>
             </div>
             <Input
               type="number"
@@ -148,7 +147,6 @@ export const HomeView = () => {
       <div id="terms-conditions">
         <p>Glossary</p>
         <p>Terms & Conditions</p>
-        
       </div>
 
       <div id="show-proposals">
@@ -164,13 +162,16 @@ export const HomeView = () => {
         </div>
 
         <div id="proposal-cards">
-          {filteredProposals.map((proposal) => governance && (
-            <ProposalCard
-              proposal={proposal}
-              governance={governance}
-              key={proposal.pubkey.toBase58()}
-            />
-          ))}
+          {filteredProposals.map(
+            (proposal) =>
+              governance && (
+                <ProposalCard
+                  proposal={proposal}
+                  governance={governance}
+                  key={proposal.pubkey.toBase58()}
+                />
+              )
+          )}
         </div>
       </div>
     </div>

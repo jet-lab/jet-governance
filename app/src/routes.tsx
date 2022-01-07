@@ -11,7 +11,7 @@ import { ErrorBoundary } from 'react-error-boundary';
 
 import { AppErrorBanner } from './components/appErrorBanner/appErrorBanner';
 import { HomeView } from './views/Home';
-import { FlightLogView } from './views/FlightLog';
+import { FlightLogView } from './views/FlightLogs';
 import { AirdropView } from './views/Airdrop';
 import { AirdropHistory } from './views/AirdropHistory';
 import { ProposalView } from './views/Proposal';
@@ -75,7 +75,7 @@ export function Routes() {
                               exact path="/airdrop/history"
                               children={<AirdropHistory />}/>
                             <Route 
-                              exact path="/flight-log"
+                              exact path="/flight-logs"
                               children={<FlightLogView />}/>
 
                             {/** Old oyster paths */}
