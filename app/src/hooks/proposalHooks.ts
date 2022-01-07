@@ -5,6 +5,7 @@ import { ZERO } from "../constants";
 import { ParsedAccount } from "../contexts";
 import { useProposalContext } from "../contexts/proposal";
 import { Governance, Proposal, ProposalState, TokenOwnerRecord, VoteRecord } from "../models/accounts";
+import { dateToString } from "../utils";
 
 export const useProposalFilters = (proposals: ParsedAccount<Proposal>[]) => {
   const { showing } = useProposalContext();
@@ -83,11 +84,11 @@ export function useCountdown(proposal: Proposal, governance: Governance) {
     return () => clearInterval(interval);
   }, [proposal, governance]);
 
-  const startDate = useMemo(() => proposal.votingAt ? new Date(proposal.votingAt.toNumber() * 1000).toLocaleString() : undefined, [proposal.votingAt])
+  const startDate = useMemo(() => proposal.votingAt ? dateToString(new Date(proposal.votingAt.toNumber() * 1000)) : undefined, [proposal.votingAt])
   const endDate = useMemo(() => {
     const deadline = proposal.getVotingDeadline(governance);
     return deadline ?
-      new Date(deadline.toNumber() * 1000).toLocaleString() :
+    dateToString(new Date(deadline.toNumber() * 1000)) :
       undefined
   }, [proposal, governance])
 

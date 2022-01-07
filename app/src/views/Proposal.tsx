@@ -124,128 +124,136 @@ export const ProposalView = () => {
       isUrl: isDescriptionUrl
     } = useLoadGist(proposal.info.descriptionLink);
 
-    return (<div className="view-container proposal flex column flex-start">
-      {tokenOwnerRecord && <VoteModal
-        vote={vote}
-        visible={isVoteModalVisible}
-        onClose={() => setIsVoteModalVisible(false)}
-        governance={governance}
-        proposal={proposal}
-        tokenOwnerRecord={tokenOwnerRecord}
-      />}
-      <StakeRedirectModal
-        visible={isStakeRedirectModalVisible}
-        onClose={() => setIsStakeRedirectModalVisible(false)}
-      />
-      <div>
-        <Link to="/">
-          <i className="fas fa-arrow-left"></i> All Proposals
-        </Link>
-      </div>
+    return (
+      <div className="view-container proposal column-grid">
+        {tokenOwnerRecord && (
+          <VoteModal
+            vote={vote}
+            visible={isVoteModalVisible}
+            onClose={() => setIsVoteModalVisible(false)}
+            governance={governance}
+            proposal={proposal}
+            tokenOwnerRecord={tokenOwnerRecord}
+          />
+        )}
+        <StakeRedirectModal
+          visible={isStakeRedirectModalVisible}
+          onClose={() => setIsStakeRedirectModalVisible(false)}
+        />
+        <div>
+          <Link to="/">
+            <i className="fas fa-arrow-left"></i> All Proposals
+          </Link>
+        </div>
 
+          <div className="flex column" id="proposal-left">
+            <h2>Proposal Details</h2>
+            <div className="description neu-container">
+              <div className="flex">
+                <h3>Proposal {shortAddress}</h3>
+              </div>
+              <h1 className="view-header">{proposal.info.name}</h1>
 
-      <div className="flex content">
-        <div className="flex column" style={{ width: "70%" }}>
-          <h2>Proposal Details</h2>
-          <div className="description neu-container ">
-            <div className="flex">
-              <h3>Proposal {shortAddress}</h3>
-            </div>
-            <h1 className="view-header">{proposal.info.name}</h1>
-
-            {/* Description; Github Gist or text */
-              loading ? (
-                <Spin />
-              ) : isDescriptionUrl ? (
-                failed ? (
-                  <p>
-                    {LABELS.DESCRIPTION}:{' '}
-                    <a
-                      href={proposal.info.descriptionLink}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      {msg ? msg : LABELS.NO_LOAD}
-                    </a>
-                  </p>
+              {
+                /* Description; Github Gist or text */
+                loading ? (
+                  <Spin />
+                ) : isDescriptionUrl ? (
+                  failed ? (
+                    <p>
+                      {LABELS.DESCRIPTION}:{" "}
+                      <a
+                        href={proposal.info.descriptionLink}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        {msg ? msg : LABELS.NO_LOAD}
+                      </a>
+                    </p>
+                  ) : (
+                    <ReactMarkdown children={content} />
+                  )
                 ) : (
-                  <ReactMarkdown children={content} />
+                  <p>{content}</p>
                 )
-              ) : (
-                <p>{content}</p>
-              )
-            }
+              }
 
-            <div className="neu-inset flex column">
-              <div>
-                <span>Proposal ID:</span>
+              <div className="neu-inset" id="details">
+                <span>Proposal ID</span>
                 <span>{addressStr}</span>
-              </div>
-              <div>
-                <span>{proposal.info.isVoting() ? "Voting time left:" : "Voting time:"} </span>
+                <span>
+                  {proposal.info.isVoting()
+                    ? "Voting time left"
+                    : "Voting time"}{" "}
+                </span>
                 <span>{countdown}</span>
-              </div>
-              <div>
-                <span>Start date:</span>
+                <span>Start date</span>
                 <span> {startDate ? startDate : "To be determined."}</span>
-              </div>
-              <div>
-                <span>End date:</span>
+                <span>End date</span>
                 <span>{endDate ? endDate : "To be determined"}</span>
               </div>
             </div>
+
+            <h2>Vote turnout</h2>
+            <div
+              className="neu-container flex justify-evenly"
+              id="vote-turnout"
+            >
+              <div className="results">
+                <ResultProgressBar
+                  type="yea"
+                  amount={bnToIntLossy(yes)}
+                  total={bnToIntLossy(total)}
+                />
+                <ResultProgressBar
+                  type="nay"
+                  amount={bnToIntLossy(no)}
+                  total={bnToIntLossy(total)}
+                />
+                <ResultProgressBar
+                  type="abstain"
+                  amount={bnToIntLossy(abstain)}
+                  total={bnToIntLossy(total)}
+                />
+              </div>
+              <div className="voters">
+                <div className="flex justify-between">
+                  <span />
+                  <span
+                    onClick={() =>
+                      voteRecordCsvDownload(proposal.pubkey, voterDisplayData)
+                    }
+                    id="csv"
+                  >
+                    <DownloadOutlined /> Download CSV
+                  </span>
+                </div>
+                <div className={`stakeholders`}>
+                  <span className="voter title"></span>
+                  <span className="address title">WALLET</span>
+                  <span className="amount title">vJET</span>
+                  <span className="vote title">VOTE</span>
+                </div>
+                <VoterList
+                  voteRecords={voterDisplayData}
+                  userVoteRecord={voteRecord
+                    ?.tryUnwrap()
+                    ?.info.getVoterDisplayData()}
+                />
+              </div>
+            </div>
           </div>
 
-          <h2>Vote turnout</h2>
-          <div className="neu-container flex justify-evenly" id="vote-turnout">
-            <div className="results">
-              <ResultProgressBar
-                type="yea"
-                amount={bnToIntLossy(yes)}
-                total={bnToIntLossy(total)}
+          <div className="flex column" id="proposal-right">
+            <h2>Your Vote</h2>
+            <div className="neu-container flex column" id="your-vote">
+              <RelinquishVoteButton
+                proposal={proposal}
+                tokenOwnerRecord={tokenOwnerRecord}
+                voteRecord={voteRecord?.tryUnwrap()}
+                hasVoteTimeExpired={hasVoteTimeExpired}
               />
-              <ResultProgressBar
-                type="nay"
-                amount={bnToIntLossy(no)}
-                total={bnToIntLossy(total)}
-              />
-              <ResultProgressBar
-                type="abstain"
-                amount={bnToIntLossy(abstain)}
-                total={bnToIntLossy(total)}
-              />
-            </div>
-            <div className="voters">
-              <div className="flex justify-between">
-                <span />
-                <span onClick={() => voteRecordCsvDownload(proposal.pubkey, voterDisplayData)} id="csv"><DownloadOutlined/> Download CSV</span>
-              </div>
-              <div className={`stakeholders`} >
-                <span className="voter title"></span>
-                <span className="address title">WALLET</span>
-                <span className="amount title">vJET</span>
-                <span className="vote title">VOTE</span>
-              </div>
-              <VoterList
-                voteRecords={voterDisplayData}
-                userVoteRecord={voteRecord?.tryUnwrap()?.info.getVoterDisplayData()} />
-            </div>
-          </div>
-        </div>
-
-        <div className="flex column" style={{ width: "30%" }} id="vote-desktop">
-          <h2>Your Vote</h2>
-          <div
-            className="neu-container flex column"
-            id="your-vote"
-          >
-            <RelinquishVoteButton
-              proposal={proposal}
-              tokenOwnerRecord={tokenOwnerRecord}
-              voteRecord={voteRecord?.tryUnwrap()}
-              hasVoteTimeExpired={hasVoteTimeExpired}
-            />
-            {/* <CastVoteButton
+              {/* <CastVoteButton
               governance={governance}
               proposal={proposal}
               tokenOwnerRecord={tokenOwnerRecord}
@@ -262,62 +270,67 @@ export const ProposalView = () => {
               hasVoteTimeExpired={hasVoteTimeExpired}
             /> */}
 
-            <Button
-              onClick={() => setVote(YesNoVote.Yes)}
-              disabled={!connected || proposal.info.isVoting()}
-              className={`vote-select ${vote === YesNoVote.Yes ? "selected" : ""}`}
-            >
-              In favor
-            </Button>
-            <Button
-              onClick={() => setVote(YesNoVote.No)}
-              disabled={!connected || proposal.info.isVoting()}
-              className={`vote-select ${vote === YesNoVote.No ? "selected" : ""}`}
-            >
-              Against
-            </Button>
-            <Button
-              type="primary"
-              disabled={!connected || proposal.info.isVoting()}
-              onClick={() => handleVoteModal()}
-            >
-              Vote
-            </Button>
-            <VoteModal
-              vote={vote}
-              visible={isVoteModalVisible}
-              onClose={() => setIsVoteModalVisible(false)}
-              governance={governance}
-              proposal={proposal}
-              tokenOwnerRecord={tokenOwnerRecord}
-              // isStakeRedirectModalVisible={isStakeRedirectModalVisible}
-              // setIsStakeRedirectModalVisible={setIsStakeRedirectModalVisible}
-              // proposalNumber={id}
-              // endDate={end}
-            />
-            {/* <PostMessageButton
+              <Button
+                onClick={() => setVote(YesNoVote.Yes)}
+                disabled={!connected || proposal.info.isVoting()}
+                className={`vote-select ${
+                  vote === YesNoVote.Yes ? "selected" : ""
+                }`}
+              >
+                In favor
+              </Button>
+              <Button
+                onClick={() => setVote(YesNoVote.No)}
+                disabled={!connected || proposal.info.isVoting()}
+                className={`vote-select ${
+                  vote === YesNoVote.No ? "selected" : ""
+                }`}
+              >
+                Against
+              </Button>
+              <Button
+                type="primary"
+                disabled={!connected || proposal.info.isVoting()}
+                onClick={() => handleVoteModal()}
+              >
+                Vote
+              </Button>
+              <VoteModal
+                vote={vote}
+                visible={isVoteModalVisible}
+                onClose={() => setIsVoteModalVisible(false)}
+                governance={governance}
+                proposal={proposal}
+                tokenOwnerRecord={tokenOwnerRecord}
+                // isStakeRedirectModalVisible={isStakeRedirectModalVisible}
+                // setIsStakeRedirectModalVisible={setIsStakeRedirectModalVisible}
+                // proposalNumber={id}
+                // endDate={end}
+              />
+              {/* <PostMessageButton
             proposal={proposal}
             tokenOwnerRecord={tokenOwnerRecord}
           ></PostMessageButton> */}
+            </div>
+          </div>
+
+        <Divider />
+
+        <div className="other-proposals">
+          <h3>Other active proposals</h3>
+          <div className="flex">
+            {activeProposals.length > 0
+              ? activeProposals.map((proposal) => (
+                  <ProposalCard
+                    proposal={proposal}
+                    governance={governance}
+                    key={proposal.pubkey.toBase58()}
+                  />
+                ))
+              : "There are no active proposals at this time."}
           </div>
         </div>
       </div>
-
-      <Divider />
-
-      <div className="other-proposals">
-        <h3>Other active proposals</h3>
-        <div className="flex">
-          {activeProposals.length > 0 ? activeProposals.map((proposal) => (
-            <ProposalCard
-              proposal={proposal}
-              governance={governance}
-              key={proposal.pubkey.toBase58()}
-            />
-          )) : "There are no active proposals at this time."}
-        </div>
-      </div>
-    </div>
     );
   }
 };

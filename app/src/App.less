@@ -47,6 +47,13 @@ button.inactive {
 
 /* App-specific styling */
 /* This is an extension of the jet-antd library for the purposes of this UI only */
+.column-grid {
+  display: grid !important;
+  grid-template-columns: 250px 250px 250px 250px;
+  grid-gap: 30px;
+  justify-content: center;
+}
+
 .italics {
   font-style: italic;
 }
@@ -147,7 +154,6 @@ h1 {
     margin: 0 10px;
   }
   .content-body {
-    display: flex;
     margin: auto;
   }
 }
@@ -155,11 +161,7 @@ h1 {
 /* Styles for home page */
 
 #home {
-  justify-content: center;
-  display: grid;
-  grid-template-columns: 250px 250px 250px 250px;
   grid-auto-rows: 250px;
-  grid-gap: 30px;
   #your-info {
     grid-row: 1 / 3;
     .staked-balance {
@@ -269,23 +271,34 @@ h1 {
 
 /* Proposal page */
 .proposal {
-  .content {
-    .description {
-      padding: 39px 36px;
-      margin: 0 36px 39px 0;
-      display: flex;
-      flex-direction: column;
-      p {
-        font-size: 15px;
-        line-height: 26px;
-        margin-bottom: 26px;
-      }
+  #proposal-left {
+    grid-column: 1 / 4;
+  }
+  .description {
+    padding: 39px 36px;
+    margin-bottom: 39px;
+    display: flex;
+    flex-direction: column;
+    p {
+      font-size: 15px;
+      line-height: 26px;
+      margin-bottom: 26px;
+    }
+    #details {
+      display: grid;
+      grid-template-columns: 150px 1fr;
+      grid-auto-flow: dense;
     }
   }
-  .other-proposals div {
+  .ant-divider-horizontal {
+    grid-column: 1 / 5;
+  }
+  .other-proposals {
+    grid-column: 1 / 5;
+    div {
     overflow-y: scroll;
     flex-wrap: wrap;
-  }
+  }}
 }
 
 /* Vote selector */
@@ -313,7 +326,7 @@ button,
 }
 
 #vote-turnout {
-  margin: 0 36px 39px 0;
+  margin-bottom: 39px;
   .results {
     margin-bottom: 37px;
     flex-grow: 1;
@@ -404,6 +417,7 @@ button,
 }
 
 #airdrop {
+  grid-column: 2 / 4;
   .ant-progress-bg {
     height: 31px !important;
   }

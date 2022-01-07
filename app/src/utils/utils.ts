@@ -297,3 +297,17 @@ export function timeout(ms: number) {
     setTimeout(() => res(true), ms);
   });
 };
+
+export const dateToString = (date: Date) => {
+  const months = [ "January", "February", "March", "April", "May", "June",
+    "July", "August", "September", "October", "November", "December" ];
+
+  const day = date.getDate().toString().padStart(2, '0');
+  const month = date.getMonth();
+  const year = date.getFullYear();
+  const hour = date.getUTCHours().toString().padStart(2, '0');
+  const minute = date.getUTCMinutes().toString().padStart(2, '0');
+  const second = date.getUTCSeconds().toString().padStart(2, '0');
+
+  return `${months[month]} ${day}, ${year}, ${hour}:${minute}:${second}`
+}
