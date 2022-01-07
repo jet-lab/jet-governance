@@ -18,9 +18,7 @@ export const Stakeholders = (props: {
     setVote("in favor")
   } else if (type === "Nay") {
     setVote("against")
-  } else if (type === "Nay") {
-  setVote("against")
-}
+  }
   }, [type])
 
   const mint = useMint(JET_TOKEN_MINT);

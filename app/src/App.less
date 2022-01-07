@@ -35,11 +35,20 @@ button.inactive {
 
 /* App-specific styling */
 /* This is an extension of the jet-antd library for the purposes of this UI only */
-.column-grid {
+.four-column-grid {
   display: grid !important;
   grid-template-columns: 250px 250px 250px 250px;
   grid-gap: 30px;
   justify-content: center;
+}
+.eight-column-grid {
+  display: grid !important;
+  grid-template-columns: repeat(8, 105px);
+  grid-gap: 30px;
+  justify-content: center;
+  .centered {
+    grid-column: 2 / 8 !important;
+  }
 }
 
 .italics {
@@ -51,6 +60,9 @@ strong {
 
 span, p, .proposal-card.ant-card .header, .ant-card-body .details {
   font-size: 12.5px !important;
+}
+.hidden {
+  display: none;
 }
 
 .nav-link {
@@ -274,8 +286,11 @@ h1 {
 
 /* Proposal page */
 .proposal {
-  #proposal-left {
-    grid-column: 1 / 4;
+  .proposal-left {
+    grid-column: 1 / 7;
+  }
+  .proposal-right {
+    grid-column: 7 / 9;
   }
   .description {
     padding: 39px 36px;
@@ -294,10 +309,10 @@ h1 {
     }
   }
   .ant-divider-horizontal {
-    grid-column: 1 / 5;
+    grid-column: 1 / 9;
   }
   .other-proposals {
-    grid-column: 1 / 5;
+    grid-column: 1 / 9;
     div {
     overflow-y: scroll;
     flex-wrap: wrap;
@@ -447,5 +462,5 @@ button,
 }
 
 #flight-log {
-  grid-column: 1 / 5;
+  grid-column: 2 / 8;
 }

@@ -1,5 +1,5 @@
 import { Modal } from "antd";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { ParsedAccount } from "../../contexts";
 import { Governance, Proposal, TokenOwnerRecord } from "../../models/accounts";
 import { useCountdown } from "../../hooks/proposalHooks";
@@ -28,6 +28,8 @@ export const VoteModal = (props: {
     proposal,
     tokenOwnerRecord,
   } = props;
+
+  const [voteType, setVoteType] = useState("in favor of");
   
   // const hasVoteTimeExpired = useHasVoteTimeExpired(governance, proposal);
   // const voteRecord = useTokenOwnerVoteRecord(
@@ -36,15 +38,13 @@ export const VoteModal = (props: {
   // );
   const { stakedBalance } = useUser();
 
-  let voteType: string = "in favor of";
-
   useEffect(() => {
   if (vote === YesNoVote.Yes) {
-    voteType = "in favor of";
+    setVoteType("in favor of");
   } else if (vote === YesNoVote.No) {
-    voteType = "against";
+    setVoteType("against");
   } else /*if (vote === "abstain")*/ {
-    voteType = "to abstain from";
+    setVoteType("to abstain from");
   }
   }, [vote])
 
@@ -74,7 +74,7 @@ export const VoteModal = (props: {
       closable={false}
     >
       <p>This proposal hash is {proposal.pubkey.toBase58()}.</p>
-      <p>You have {Intl.NumberFormat().format(stakedBalance)} JET staked, and will be able to unstake these funds when voting ends at {endDate}.</p> {/** FIXME */}
+      <p>You have {Intl.NumberFormat().format(stakedBalance)} JET staked, and will be able to unstake these funds when voting ends on {endDate}.</p> {/** FIXME */}
       {/* <CastVoteButton
         governance={governance}
         proposal={proposal}

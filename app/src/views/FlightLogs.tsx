@@ -20,7 +20,7 @@ export const FlightLogView = () => {
   };
 
   return (
-    <div className="view-container column-grid">
+    <div className="view-container eight-column-grid">
       <div className="neu-container"  id="flight-log">
         <h1>Flight Logs</h1>
         <table>

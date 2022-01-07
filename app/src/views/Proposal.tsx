@@ -145,7 +145,7 @@ export const ProposalView = () => {
     } = useLoadGist(proposal.info.descriptionLink);
 
     return (
-      <div className="view-container proposal column-grid">
+      <div className="view-container proposal eight-column-grid">
         {tokenOwnerRecord && (
           <VoteModal
             vote={vote}
@@ -160,7 +160,7 @@ export const ProposalView = () => {
           visible={isStakeRedirectModalVisible}
           onClose={() => setIsStakeRedirectModalVisible(false)}
         />
-        <div className="flex column" id="proposal-left">
+        <div className={`flex column ${proposal.info.isVoting() ? "proposal-left" : "centered"}`}>
           <div className="description neu-container">
             <span>
               <Link to="/">
@@ -253,8 +253,8 @@ export const ProposalView = () => {
           </div>
         </div>
 
-        <div className="flex column" id="proposal-right">
-          <div className="neu-container flex column" id="your-vote">
+        <div className="flex column proposal-right">
+          <div className={`neu-container flex column ${!proposal.info.isVoting() && "hidden"}`} id="your-vote">
             {/* <RelinquishVoteButton
               proposal={proposal}
               tokenOwnerRecord={tokenOwnerRecord}
@@ -297,7 +297,7 @@ export const ProposalView = () => {
               Against
             </Button>
             <Button
-              onClick={() => null}
+              onClick={() => console.log(vote)}
               disabled={!connected || !proposal.info.isVoting() || hasVoteTimeExpired}
               className={`vote-select`}
             >
@@ -329,9 +329,9 @@ export const ProposalView = () => {
           </div>
         </div>
 
-        <Divider />
+        <Divider className={proposal.info.isVoting() ? "" : "centered"} />
 
-        <div className="other-proposals">
+        <div className={`other-proposals ${proposal.info.isVoting() ? "" : "centered" }`}>
           <h3>Other active proposals</h3>
           <div className="flex">
             {activeProposals.length > 0

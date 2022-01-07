@@ -10,7 +10,7 @@ export const AirdropView = () => {
     useAirdrop();
 
   return (
-    <div className="view-container column-grid">
+    <div className="view-container four-column-grid">
       <div className="neu-container" id="airdrop">
         <h1>Claim your airdrop!</h1>
         <p>

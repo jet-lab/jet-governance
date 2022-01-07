@@ -67,7 +67,7 @@ export const HomeView = () => {
   };
 
   return (
-    <div className="view-container content-body column-grid" id="home">
+    <div className="view-container content-body four-column-grid" id="home">
       <div id="your-info">
         <h2>Your Info</h2>
 
