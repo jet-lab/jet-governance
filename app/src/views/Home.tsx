@@ -67,7 +67,7 @@ export const HomeView = () => {
   };
 
   return (
-    <div className="view-container content-body four-column-grid" id="home">
+    <div className="view-container content-body column-grid" id="home">
       <div id="your-info">
         <h2>Your Info</h2>
 
@@ -140,7 +140,7 @@ export const HomeView = () => {
             />
           </div>
         </div>
-        <Switch onChange={() => toggleDarkTheme()} checked={darkTheme} />
+        <Switch onChange={() => toggleDarkTheme()} checked={darkTheme} checkedChildren="dark" unCheckedChildren="light" />
         <Button onClick={getAirdrop}>GET JET</Button>
       </div>
 

@@ -145,7 +145,7 @@ export const ProposalView = () => {
     } = useLoadGist(proposal.info.descriptionLink);
 
     return (
-      <div className="view-container proposal eight-column-grid">
+      <div className="view-container proposal column-grid">
         {tokenOwnerRecord && (
           <VoteModal
             vote={vote}
@@ -160,7 +160,11 @@ export const ProposalView = () => {
           visible={isStakeRedirectModalVisible}
           onClose={() => setIsStakeRedirectModalVisible(false)}
         />
-        <div className={`flex column ${proposal.info.isVoting() ? "proposal-left" : "centered"}`}>
+        <div
+          className={`flex column ${
+            proposal.info.isVoting() ? "proposal-left" : "centered"
+          }`}
+        >
           <div className="description neu-container">
             <span>
               <Link to="/">
@@ -206,55 +210,63 @@ export const ProposalView = () => {
             </div>
           </div>
 
-          <h2>Vote turnout</h2>
-          <div className="neu-container flex justify-evenly" id="vote-turnout">
-            <div className="results">
-              <ResultProgressBar
-                type="yea"
-                amount={bnToIntLossy(yes)}
-                total={bnToIntLossy(total)}
-              />
-              <ResultProgressBar
-                type="nay"
-                amount={bnToIntLossy(no)}
-                total={bnToIntLossy(total)}
-              />
-              <ResultProgressBar
-                type="abstain"
-                amount={bnToIntLossy(abstain)}
-                total={bnToIntLossy(total)}
-              />
+          <div className="neu-container flex column">
+            <div className="flex">
+              <h1>Vote turnout</h1>
+              <span
+                onClick={() =>
+                  voteRecordCsvDownload(proposal.pubkey, voterDisplayData)
+                }
+                id="csv"
+              >
+                Download CSV <DownloadOutlined />
+              </span>
             </div>
-            <div className="voters">
-              <div className="flex justify-between">
-                <span />
-                <span
-                  onClick={() =>
-                    voteRecordCsvDownload(proposal.pubkey, voterDisplayData)
-                  }
-                  id="csv"
-                >
-                  <DownloadOutlined /> Download CSV
-                </span>
+
+            <div className="flex justify-evenly" id="vote-turnout">
+              <div className="results">
+                <ResultProgressBar
+                  type="yea"
+                  amount={bnToIntLossy(yes)}
+                  total={bnToIntLossy(total)}
+                />
+                <ResultProgressBar
+                  type="nay"
+                  amount={bnToIntLossy(no)}
+                  total={bnToIntLossy(total)}
+                />
+                <ResultProgressBar
+                  type="abstain"
+                  amount={bnToIntLossy(abstain)}
+                  total={bnToIntLossy(total)}
+                />
               </div>
-              <div className={`stakeholders`}>
-                <span className="voter title"></span>
-                <span className="address title">WALLET</span>
-                <span className="amount title">vJET</span>
-                <span className="vote title">VOTE</span>
+
+              <div className="voters">
+                <div className={`stakeholders`}>
+                  <span className="voter title"></span>
+                  <span className="address title">Wallet</span>
+                  <span className="amount title">Stake</span>
+                  <span className="vote title">Vote</span>
+                </div>
+                <VoterList
+                  voteRecords={voterDisplayData}
+                  userVoteRecord={voteRecord
+                    ?.tryUnwrap()
+                    ?.info.getVoterDisplayData()}
+                />
               </div>
-              <VoterList
-                voteRecords={voterDisplayData}
-                userVoteRecord={voteRecord
-                  ?.tryUnwrap()
-                  ?.info.getVoterDisplayData()}
-              />
             </div>
           </div>
         </div>
 
         <div className="flex column proposal-right">
-          <div className={`neu-container flex column ${!proposal.info.isVoting() && "hidden"}`} id="your-vote">
+          <div
+            className={`neu-container flex column ${
+              !proposal.info.isVoting() && "hidden"
+            }`}
+            id="your-vote"
+          >
             {/* <RelinquishVoteButton
               proposal={proposal}
               tokenOwnerRecord={tokenOwnerRecord}
@@ -280,7 +292,9 @@ export const ProposalView = () => {
 
             <Button
               onClick={() => setVote(YesNoVote.Yes)}
-              disabled={!connected || !proposal.info.isVoting() || hasVoteTimeExpired}
+              disabled={
+                !connected || !proposal.info.isVoting() || hasVoteTimeExpired
+              }
               className={`vote-select ${
                 vote === YesNoVote.Yes ? "selected" : ""
               }`}
@@ -289,7 +303,9 @@ export const ProposalView = () => {
             </Button>
             <Button
               onClick={() => setVote(YesNoVote.No)}
-              disabled={!connected || !proposal.info.isVoting() || hasVoteTimeExpired}
+              disabled={
+                !connected || !proposal.info.isVoting() || hasVoteTimeExpired
+              }
               className={`vote-select ${
                 vote === YesNoVote.No ? "selected" : ""
               }`}
@@ -298,7 +314,9 @@ export const ProposalView = () => {
             </Button>
             <Button
               onClick={() => console.log(vote)}
-              disabled={!connected || !proposal.info.isVoting() || hasVoteTimeExpired}
+              disabled={
+                !connected || !proposal.info.isVoting() || hasVoteTimeExpired
+              }
               className={`vote-select`}
             >
               Abstain
@@ -331,7 +349,11 @@ export const ProposalView = () => {
 
         <Divider className={proposal.info.isVoting() ? "" : "centered"} />
 
-        <div className={`other-proposals ${proposal.info.isVoting() ? "" : "centered" }`}>
+        <div
+          className={`other-proposals ${
+            proposal.info.isVoting() ? "" : "centered"
+          }`}
+        >
           <h3>Other active proposals</h3>
           <div className="flex">
             {activeProposals.length > 0
