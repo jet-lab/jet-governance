@@ -9,7 +9,6 @@ import { NewProposalButton } from './buttons/newProposalButton';
 import { useKeyParam } from '../../hooks/useKeyParam';
 import { Proposal, ProposalState } from '../../models/accounts';
 import { ClockCircleOutlined } from '@ant-design/icons';
-import { GovernanceBadge } from '../../components/GovernanceBadge/governanceBadge';
 import { getOysterProposalUrl } from '../../tools/routeTools';
 import { useRpcContext } from '../../hooks/useRpcContext';
 import {
@@ -40,7 +39,6 @@ export const GovernanceView = () => {
   const token = tokenMap.get(
     realm?.info.communityMint?.toBase58() || '',
   ) as any;
-  const tokenBackground = token?.extensions?.background;
 
   const communityMint = realm?.info.communityMint?.toBase58() || '';
 
@@ -80,24 +78,17 @@ export const GovernanceView = () => {
   }, [proposals, programIdBase58]);
 
   return (
-    <Row
-      style={{
-        background: `url(${tokenBackground})`,
-        minHeight: '100%',
-        backgroundRepeat: 'repeat-y',
-        backgroundSize: 'cover',
-      }}
-    >
+    <Row>
       <Col flex="auto" xxl={15} xs={24} className="proposals-container">
         <div className="proposals-header">
-          {governance && (
+          {/* {governance && (
             <GovernanceBadge
               size={60}
               realm={realm}
               governance={governance}
               showVotingCount={false}
             ></GovernanceBadge>
-          )}
+          )} */}
 
           <div>
             <h1>{realm?.info.name}</h1>

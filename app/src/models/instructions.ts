@@ -176,7 +176,7 @@ export class CancelProposalArgs {
 
 export enum YesNoVote {
   Yes,
-  No,
+  No
 }
 
 export enum MultipleChoiceVote {

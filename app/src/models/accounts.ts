@@ -883,8 +883,9 @@ export class VoteRecord {
   }
   getVoteKind(): VoteKind {
     switch (this.accountType) {
+  // TODO: Move away from VoteRecordV1?
       case GovernanceAccountType.VoteRecordV1: {
-        return this.voteWeight?.yes?.isZero() ? VoteKind.Deny : VoteKind.Approve;
+        return this.voteWeight?.yes?.isZero() ? VoteKind.Approve : VoteKind.Deny;
       }
       case GovernanceAccountType.VoteRecordV2: {
         switch (this.vote?.voteType) {
@@ -903,13 +904,24 @@ export class VoteRecord {
     }
   }
 
+  getDisplayVoteType(vote: VoteKind): DisplayVoteType {
+    let kind = DisplayVoteType.Abstain;
+    if (vote === VoteKind.Approve) {
+      kind = DisplayVoteType.Yes
+    } else if (vote === VoteKind.Deny) {
+      kind = DisplayVoteType.No
+    }
+    return kind;
+  }
+
   getVoterDisplayData(): VoterDisplayData {
     const yesVoteWeight = this.getYesVoteWeight();
     const noVoteWeight = this.getNoVoteWeight();
+    const voteKind = this.getVoteKind();
     return {
       name: this.governingTokenOwner.toBase58(),
       title: this.governingTokenOwner.toBase58(),
-      group: this.getVoteKind() === VoteKind.Approve ? DisplayVoteType.Yes : DisplayVoteType.No,
+      group: this.getDisplayVoteType(voteKind),
       value: yesVoteWeight ?? noVoteWeight ?? new BN(0)
     }
   }

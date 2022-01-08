@@ -45,7 +45,7 @@ export const ProposalView = () => {
   const [isVoteModalVisible, setIsVoteModalVisible] = useState(false);
   const [isStakeRedirectModalVisible, setIsStakeRedirectModalVisible] =
     useState(false);
-  const [vote, setVote] = useState<YesNoVote>(YesNoVote.No);
+  const [vote, setVote] = useState<YesNoVote | undefined>(undefined);
 
   // TODO: Fetch user's stake from blockchain
   const proposalAddress = useKeyParam();
@@ -119,7 +119,9 @@ export const ProposalView = () => {
     const hasVoteTimeExpired = useHasVoteTimeExpired(governance, proposal);
 
     useEffect(() => {
-        if (voteRecord
+      if (!connected) {
+        return setVote(undefined);
+      } else if (voteRecord
           ?.tryUnwrap()
           ?.info.getVoterDisplayData().group === "Yea") {
           setVote(YesNoVote.Yes)
@@ -127,8 +129,8 @@ export const ProposalView = () => {
             ?.tryUnwrap()
           ?.info.getVoterDisplayData().group === "Nay") {
             setVote(YesNoVote.No)
-            }
-      }, [voteRecord])
+        }
+      }, [voteRecord, connected])
 
     // const instructions = useInstructionsByProposal(proposal.pubkey);
     // const signatories = useSignatoriesByProposal(proposal.pubkey);
@@ -156,13 +158,9 @@ export const ProposalView = () => {
       isUrl: isDescriptionUrl,
     } = useLoadGist(proposal.info.descriptionLink);
 
-    console.log(voteRecord
-      ?.tryUnwrap()
-      ?.info.getVoterDisplayData())
-
     return (
       <div className="view-container proposal column-grid">
-        {tokenOwnerRecord && (
+        {tokenOwnerRecord && vote && (
           <VoteModal
             vote={vote}
             visible={isVoteModalVisible}
@@ -344,7 +342,7 @@ export const ProposalView = () => {
             >
               Vote
             </Button>
-            <VoteModal
+            {vote && <VoteModal
               vote={vote}
               visible={isVoteModalVisible}
               onClose={() => setIsVoteModalVisible(false)}
@@ -355,7 +353,7 @@ export const ProposalView = () => {
               // setIsStakeRedirectModalVisible={setIsStakeRedirectModalVisible}
               // proposalNumber={id}
               // endDate={end}
-            />
+            />}
             {/* <PostMessageButton
             proposal={proposal}
             tokenOwnerRecord={tokenOwnerRecord}
