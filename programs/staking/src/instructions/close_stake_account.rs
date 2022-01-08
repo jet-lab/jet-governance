@@ -21,8 +21,7 @@ pub struct CloseStakeAccount<'info> {
 pub fn close_stake_account_handler(ctx: Context<CloseStakeAccount>) -> ProgramResult {
     let stake_account = &ctx.accounts.stake_account;
 
-    assert!(stake_account.unlocked == 0);
-    assert!(stake_account.locked == 0);
+    assert!(stake_account.shares == 0);
     assert!(stake_account.minted_votes == 0);
     assert!(stake_account.minted_collateral == 0);
     assert!(stake_account.unbonding == 0);

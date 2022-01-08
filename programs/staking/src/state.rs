@@ -62,6 +62,7 @@ impl StakePool {
             AmountKind::Tokens => {
                 let shares = (share_supply * amount.value as u128) / vault_amount;
                 assert!(shares < std::u64::MAX as u128);
+                assert!(shares > 0);
 
                 FullAmount {
                     tokens: amount.value,
@@ -71,6 +72,7 @@ impl StakePool {
             AmountKind::Shares => {
                 let tokens = (vault_amount * amount.value as u128) / share_supply;
                 assert!(tokens < std::u64::MAX as u128);
+                assert!(tokens > 0);
 
                 FullAmount {
                     shares: amount.value,
@@ -87,6 +89,24 @@ pub struct FullAmount {
     pub tokens: u64,
 }
 
+impl FullAmount {
+    fn with_tokens(&self, tokens: u64) -> Self {
+        let shares = (tokens as u128) * (self.shares as u128) / (self.tokens as u128);
+        assert!(shares < std::u64::MAX as u128);
+
+        let shares = shares as u64;
+        Self { shares, tokens }
+    }
+
+    fn with_shares(&self, shares: u64) -> Self {
+        let tokens = (self.tokens as u128) * (shares as u128) / (self.shares as u128);
+        assert!(tokens < std::u64::MAX as u128);
+
+        let tokens = tokens as u64;
+        Self { shares, tokens }
+    }
+}
+
 #[account]
 #[derive(Default)]
 pub struct StakeAccount {
@@ -96,15 +116,10 @@ pub struct StakeAccount {
     /// The pool this account is associated with
     pub stake_pool: Pubkey,
 
-    /// The stake balance that can be unstaked by the owner
-    /// at any time, not subject to vesting.
-    pub unlocked: u64,
+    /// The stake balance (in share units)
+    pub shares: u64,
 
-    /// The stake balance that is subject to vesting, cannot
-    /// be unstaked.
-    pub locked: u64,
-
-    /// The stake balance locked by existence of voting tokens
+    /// The token balance locked by existence of voting tokens
     pub minted_votes: u64,
 
     /// The stake balance locked by existence of collateral tokens
@@ -115,47 +130,47 @@ pub struct StakeAccount {
 }
 
 impl StakeAccount {
-    pub fn deposit_unlocked(&mut self, amount: u64) {
-        self.unlocked = self.unlocked.checked_add(amount).unwrap();
+    pub fn deposit(&mut self, amount: &FullAmount) {
+        self.shares = self.shares.checked_add(amount.shares).unwrap();
     }
 
-    pub fn deposit_locked(&mut self, amount: u64) {
-        self.locked = self.locked.checked_add(amount).unwrap();
-    }
-
-    pub fn unlock(&mut self, amount: u64) {
-        self.locked = self.locked.checked_sub(amount).unwrap();
-        self.deposit_unlocked(amount);
-    }
-
-    pub fn unbond(&mut self, amount: u64) -> Result<(), ErrorCode> {
-        if self.unlocked < amount {
-            return Err(ErrorCode::InsufficientUnlocked);
+    pub fn unbond(&mut self, amount: &FullAmount) -> Result<(), ErrorCode> {
+        if self.shares < amount.shares {
+            return Err(ErrorCode::InsufficientStake);
         }
 
-        self.unlocked = self.unlocked.checked_sub(amount).unwrap();
-        self.unbonding = self.unbonding.checked_add(amount).unwrap();
+        self.shares = self.shares.checked_sub(amount.shares).unwrap();
+        self.unbonding = self.unbonding.checked_add(amount.shares).unwrap();
 
-        if self.minted_votes > self.total_shares() {
+        let minted_vote_amount = amount.with_tokens(self.minted_votes);
+        if minted_vote_amount.shares > self.shares {
             return Err(ErrorCode::VotesLocked);
         }
 
-        if self.minted_collateral > self.unlocked {
+        if self.minted_collateral > self.shares {
             return Err(ErrorCode::CollateralLocked);
         }
 
         Ok(())
     }
 
-    pub fn withdraw_unbonded(&mut self, amount: u64) {
-        self.unbonding = self.unbonding.checked_sub(amount).unwrap();
+    pub fn withdraw_unbonded(&mut self, amount: &FullAmount) {
+        self.unbonding = self.unbonding.checked_sub(amount.shares).unwrap();
     }
 
-    pub fn mint_votes(&mut self, amount: u64) -> Result<(), ErrorCode> {
-        self.minted_votes = self.minted_votes.checked_add(amount).unwrap();
+    pub fn mint_votes(&mut self, amount: &FullAmount) -> Result<(), ErrorCode> {
+        self.minted_votes = self.minted_votes.checked_add(amount.tokens).unwrap();
 
-        if self.minted_votes > self.total_shares() {
-            return Err(ErrorCode::InsufficientUnlocked);
+        let minted_vote_amount = amount.with_tokens(self.minted_votes);
+
+        if minted_vote_amount.shares > self.shares {
+            let max_amount = amount.with_shares(self.shares);
+            msg!(
+                "insufficient stake for votes: requested={}, available={}",
+                minted_vote_amount.tokens,
+                max_amount.tokens
+            );
+            return Err(ErrorCode::InsufficientStake);
         }
 
         Ok(())
@@ -163,10 +178,6 @@ impl StakeAccount {
 
     pub fn burn_votes(&mut self, amount: u64) {
         self.minted_votes = self.minted_votes.checked_sub(amount).unwrap();
-    }
-
-    fn total_shares(&self) -> u64 {
-        self.unlocked + self.locked
     }
 }
 

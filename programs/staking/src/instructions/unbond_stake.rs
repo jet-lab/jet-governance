@@ -54,7 +54,7 @@ pub fn unbond_stake_handler(
     let full_amount = stake_pool.convert_amount(vault_amount, amount);
 
     stake_pool.unbond(&full_amount);
-    stake_account.unbond(full_amount.shares)?;
+    stake_account.unbond(&full_amount)?;
 
     unbonding_account.stake_account = stake_account.key();
     unbonding_account.amount = full_amount;
