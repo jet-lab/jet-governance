@@ -61,7 +61,6 @@ export const AllRealmsView = () => {
 
   return (
     <AppLayout>
-      <Background />
       <Row className="oyster">
         <Col flex="auto" xxl={15} xs={24} className="governance-container">
           <div className="governance-title">

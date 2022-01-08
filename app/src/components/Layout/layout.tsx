@@ -7,7 +7,6 @@ import { Content, Header } from 'antd/lib/layout/layout';
 import Logo from './dark-horizontal-combined-rainbow.inline.svg';
 import { useRpcContext } from '../../hooks/useRpcContext';
 import { getHomeUrl } from '../../tools/routeTools';
-import { AppBar } from '..';
 
 export const AppLayout = React.memo((props: any) => {
   //  const location = useLocation();
@@ -41,15 +40,14 @@ export const AppLayout = React.memo((props: any) => {
   return (
     <div className="App">
       <Layout>
-        <Header className="App-Bar">
+        {/* <Header className="App-Bar">
           <div className="app-title">
             <HomeLink></HomeLink>
             <a href="https://github.com/solana-labs/solana-program-library/blob/master/governance/README.md">
               Docs
             </a>
           </div>
-          <AppBar useWalletBadge={true} />
-        </Header>
+        </Header> */}
         <Content style={{flexDirection: "column"}}>
           {/* <Breadcrumb>{breadcrumbItems}</Breadcrumb> */}
           {props.children}

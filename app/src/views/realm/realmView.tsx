@@ -62,7 +62,6 @@ export const RealmView = () => {
 
   return (
     <AppLayout>
-      <Background />
       <Row>
         <Col flex="auto" xxl={15} xs={24} className="realm-container">
           <Row>
