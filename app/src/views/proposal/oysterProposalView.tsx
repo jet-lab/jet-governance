@@ -65,7 +65,8 @@ export const OysterProposalView = () => {
       : proposal?.info.governingTokenMint,
   );
 
-  const voterDisplayData = useVoterDisplayData(voteRecords, tokenOwnerRecords)
+  const { allData } = useVoterDisplayData(voteRecords, tokenOwnerRecords)
+  const voterDisplayData = allData
 
   if (!proposal || !governance || !governingTokenMint || !realm) {
     return <Spin/>;

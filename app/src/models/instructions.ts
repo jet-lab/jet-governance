@@ -179,6 +179,12 @@ export enum YesNoVote {
   No,
 }
 
+export enum MultipleChoiceVote {
+  Yes,
+  No,
+  Abstain
+}
+
 export class VoteChoice {
   rank: number;
   weightPercentage: number;
@@ -192,6 +198,7 @@ export class VoteChoice {
 export enum VoteKind {
   Approve,
   Deny,
+  Abstain
 }
 
 export class Vote {

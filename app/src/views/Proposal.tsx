@@ -65,7 +65,7 @@ export const ProposalView = () => {
       : proposal?.info.governingTokenMint
   );
 
-  const voterDisplayData = useVoterDisplayData(voteRecords, tokenOwnerRecords);
+  const { allHasVoted } = useVoterDisplayData(voteRecords, tokenOwnerRecords);
 
   const proposals = useProposalsByGovernance(JET_GOVERNANCE);
   const activeProposals = proposals.filter((p) => p.info.isVoting());
@@ -87,7 +87,7 @@ export const ProposalView = () => {
       governance={governance}
       realm={realm}
       governingTokenMint={governingTokenMint}
-      voterDisplayData={voterDisplayData}
+      voterDisplayData={allHasVoted}
     />
   ) : (
     <Spin />

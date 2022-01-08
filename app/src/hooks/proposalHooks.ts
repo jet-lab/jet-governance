@@ -4,7 +4,13 @@ import { useEffect, useMemo, useState } from "react";
 import { ZERO } from "../constants";
 import { ParsedAccount } from "../contexts";
 import { useProposalContext } from "../contexts/proposal";
-import { Governance, Proposal, ProposalState, TokenOwnerRecord, VoteRecord } from "../models/accounts";
+import {
+  Governance,
+  Proposal,
+  ProposalState,
+  TokenOwnerRecord,
+  VoteRecord,
+} from "../models/accounts";
 import { dateToString } from "../utils";
 
 export const useProposalFilters = (proposals: ParsedAccount<Proposal>[]) => {
@@ -14,7 +20,9 @@ export const useProposalFilters = (proposals: ParsedAccount<Proposal>[]) => {
     if (showing === "active") {
       return proposals.filter((p) => p.info.isVoting());
     } else if (showing === "inactive") {
-      return proposals.filter((p) => p.info.isVoteFinalized() || p.info.isPreVotingState());
+      return proposals.filter(
+        (p) => p.info.isVoteFinalized() || p.info.isPreVotingState()
+      );
     } else if (showing === "passed") {
       return proposals.filter((p) => p.info.state === ProposalState.Succeeded);
     } else if (showing === "rejected") {
@@ -25,7 +33,7 @@ export const useProposalFilters = (proposals: ParsedAccount<Proposal>[]) => {
       return proposals;
     }
   }, [showing, proposals]);
-}
+};
 
 export function useCountdown(proposal: Proposal, governance: Governance) {
   const [countdown, setCountdown] = useState("");
@@ -48,9 +56,12 @@ export function useCountdown(proposal: Proposal, governance: Governance) {
     const seconds = Math.floor(timespan % 60);
 
     function zeroPad(num: number, places: number) {
-      return String(num).padStart(places, '0');
+      return String(num).padStart(places, "0");
     }
-    return `${zeroPad(days, 2)}:${zeroPad(hours, 2)}:${zeroPad(minutes, 2)}:${zeroPad(seconds, 2)}`;
+    return `${zeroPad(days, 2)}:${zeroPad(hours, 2)}:${zeroPad(
+      minutes,
+      2
+    )}:${zeroPad(seconds, 2)}`;
   };
 
   useEffect(() => {
@@ -65,8 +76,8 @@ export function useCountdown(proposal: Proposal, governance: Governance) {
       let timeToVoteEnd = proposal.isPreVotingState()
         ? governance.config.maxVotingTime
         : proposal.votingAt?.toNumber()! +
-        governance.config.maxVotingTime -
-        now;
+          governance.config.maxVotingTime -
+          now;
 
       return getElapsedTime(timeToVoteEnd);
     };
@@ -84,15 +95,21 @@ export function useCountdown(proposal: Proposal, governance: Governance) {
     return () => clearInterval(interval);
   }, [proposal, governance]);
 
-  const startDate = useMemo(() => proposal.votingAt ? dateToString(new Date(proposal.votingAt.toNumber() * 1000)) : undefined, [proposal.votingAt])
+  const startDate = useMemo(
+    () =>
+      proposal.votingAt
+        ? dateToString(new Date(proposal.votingAt.toNumber() * 1000))
+        : undefined,
+    [proposal.votingAt]
+  );
   const endDate = useMemo(() => {
     const deadline = proposal.getVotingDeadline(governance);
-    return deadline ?
-    dateToString(new Date(deadline.toNumber() * 1000)) :
-      undefined
-  }, [proposal, governance])
+    return deadline
+      ? dateToString(new Date(deadline.toNumber() * 1000))
+      : undefined;
+  }, [proposal, governance]);
 
-  return { startDate, endDate, countdown};
+  return { startDate, endDate, countdown };
 }
 
 export interface VoterDisplayData {
@@ -103,17 +120,26 @@ export interface VoterDisplayData {
 }
 
 export enum VoteType {
-  Undecided = 'Undecided',
-  Yes = 'Yea',
-  No = 'Nay',
+  Undecided = "Undecided",
+  Yes = "Yea",
+  No = "Nay",
+  Abstain = "Abstain",
+}
+
+interface VoterData {
+  yesVote: Array<VoterDisplayData>;
+  noVote: Array<VoterDisplayData>;
+  // abstainVote: Array<VoterDisplayData>,
+  allHasVoted: Array<VoterDisplayData>;
+  undecidedVote: Array<VoterDisplayData>;
+  allData: Array<VoterDisplayData>;
 }
 
 export function useVoterDisplayData(
   voteRecords: ParsedAccount<VoteRecord>[],
-  tokenOwnerRecords: ParsedAccount<TokenOwnerRecord>[],
-): Array<VoterDisplayData> {
+  tokenOwnerRecords: ParsedAccount<TokenOwnerRecord>[]
+): VoterData {
   return useMemo(() => {
-
     const mapper = (key: string, amount: BN, label: VoteType) => ({
       name: key,
       title: key,
@@ -124,46 +150,72 @@ export function useVoterDisplayData(
 
     const undecidedData = tokenOwnerRecords
       .filter(
-        tor =>
+        (tor) =>
           !tor.info.governingTokenDepositAmount.isZero() &&
           !voteRecords.some(
-            vt =>
+            (vt) =>
               vt.info.governingTokenOwner.toBase58() ===
-              tor.info.governingTokenOwner.toBase58(),
-          ),
+              tor.info.governingTokenOwner.toBase58()
+          )
       )
-      .map(tor =>
+      .map((tor) =>
         mapper(
           tor.info.governingTokenOwner.toBase58(),
           tor.info.governingTokenDepositAmount,
-          VoteType.Undecided,
-        ),
+          VoteType.Undecided
+        )
       );
 
-    const noVoteData = voteRecords
-      .filter(vr => vr.info.getNoVoteWeight()?.gt(ZERO))
-      .map(vr =>
-        mapper(
-          vr.info.governingTokenOwner.toBase58(),
-          vr.info.getNoVoteWeight()!,
-          VoteType.No,
-        ),
-      );
-
-    const yesVoteData = voteRecords
-      .filter(vr => vr.info.getYesVoteWeight()?.gt(ZERO))
-      .map(vr =>
+    const allVotesData = voteRecords
+      .filter((vr) => vr.info.getYesVoteWeight()?.gt(ZERO))
+      .map((vr) =>
         mapper(
           vr.info.governingTokenOwner.toBase58(),
           vr.info.getYesVoteWeight()!,
-          VoteType.Yes,
-        ),
+          VoteType.Yes || VoteType.No || VoteType.Abstain
+        )
       );
 
-    const data = [...undecidedData, ...yesVoteData, ...noVoteData].sort((a, b) =>
-      b.value.cmp(a.value),
+    const yesVoteData = voteRecords
+      .filter((vr) => vr.info.getYesVoteWeight()?.gt(ZERO))
+      .map((vr) =>
+        mapper(
+          vr.info.governingTokenOwner.toBase58(),
+          vr.info.getYesVoteWeight()!,
+          VoteType.Yes
+        )
+      );
+
+    const noVoteData = voteRecords
+      .filter((vr) => vr.info.getNoVoteWeight()?.gt(ZERO))
+      .map((vr) =>
+        mapper(
+          vr.info.governingTokenOwner.toBase58(),
+          vr.info.getNoVoteWeight()!,
+          VoteType.No
+        )
+      );
+
+    // const abstainVoteData = voteRecords
+    //   .filter(vr => vr.info.getNoVoteWeight()?.gt(ZERO))
+    //   .map(vr =>
+    //     mapper(
+    //       vr.info.governingTokenOwner.toBase58(),
+    //       vr.info.getAbstainVoteWeight()!,
+    //       VoteType.Abstain,
+    //     ),
+    //   );
+
+    const data = [...undecidedData, ...yesVoteData, ...noVoteData].sort(
+      (a, b) => b.value.cmp(a.value)
     );
 
-    return data;
-  }, [voteRecords, tokenOwnerRecords])
+    return {
+      yesVote: yesVoteData,
+      noVote: noVoteData,
+      allHasVoted: [...yesVoteData, ...noVoteData],
+      undecidedVote: undecidedData,
+      allData: data
+    };
+  }, [voteRecords, tokenOwnerRecords]);
 }

@@ -22,8 +22,6 @@ export const UnstakeModal = (props: {
     setInputAmount(null)
   };
 
-
-
   return (
     <>
       <Modal
