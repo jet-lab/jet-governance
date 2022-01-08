@@ -156,6 +156,10 @@ export const ProposalView = () => {
       isUrl: isDescriptionUrl,
     } = useLoadGist(proposal.info.descriptionLink);
 
+    console.log(voteRecord
+      ?.tryUnwrap()
+      ?.info.getVoterDisplayData())
+
     return (
       <div className="view-container proposal column-grid">
         {tokenOwnerRecord && (

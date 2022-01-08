@@ -6,8 +6,6 @@ import {
   useGovernancesByRealm,
   useWalletTokenOwnerRecord,
 } from '../../hooks/apiHooks';
-
-import { Background } from '../../components/Background';
 import { useHistory } from 'react-router-dom';
 
 import { useKeyParam } from '../../hooks/useKeyParam';
@@ -45,7 +43,7 @@ export const RealmView = () => {
   );
 
   const governanceItems = useMemo(() => {
-    return governances
+    return governances.filter((g) => g.info)
       .sort((g1, g2) =>
         g1.info.governedAccount
           .toBase58()

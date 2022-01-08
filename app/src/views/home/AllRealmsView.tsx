@@ -1,8 +1,6 @@
 import { Col, List, Row } from 'antd';
 import React, { useMemo } from 'react';
 import { useRealms } from '../../contexts/GovernanceContext';
-
-import { Background } from '../../components/Background';
 import { useHistory } from 'react-router-dom';
 
 import { RegisterRealmButton } from './registerRealmButton';
@@ -17,14 +15,14 @@ import { AppLayout } from '../../components/Layout/layout';
 
 export const AllRealmsView = () => {
   const history = useHistory();
-  const realms = useRealms();
+  const realm = useRealms().filter((g) => g.info.name === "Much Shib");
   const { programIdBase58 } = useRpcContext();
   const tokenOwnerRecords = useWalletTokenOwnerRecords();
 
   const realmItems = useMemo(() => {
-    return realms
-      .sort((r1, r2) => r1.info.name.localeCompare(r2.info.name))
-      .map(r => {
+    
+
+    return realm.map(r => {
         const communityTokenOwnerRecord = tokenOwnerRecords.find(
           tor =>
             tor.info.governingTokenMint.toBase58() ===
@@ -57,18 +55,12 @@ export const AllRealmsView = () => {
           ),
         };
       });
-  }, [realms, tokenOwnerRecords, programIdBase58]);
+  }, [realm, tokenOwnerRecords, programIdBase58]);
 
   return (
     <AppLayout>
       <Row className="oyster">
         <Col flex="auto" xxl={15} xs={24} className="governance-container">
-          <div className="governance-title">
-            <h1>{LABELS.REALMS}</h1>
-            <RegisterRealmButton
-              buttonProps={{ style: { marginLeft: 'auto', marginRight: 0 } }}
-            />
-          </div>
           <List
             itemLayout="vertical"
             size="large"
