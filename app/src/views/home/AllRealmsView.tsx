@@ -2,10 +2,6 @@ import { Col, List, Row } from 'antd';
 import React, { useMemo } from 'react';
 import { useRealms } from '../../contexts/GovernanceContext';
 import { useHistory } from 'react-router-dom';
-
-import { RegisterRealmButton } from './registerRealmButton';
-import { LABELS } from '../../constants';
-
 import { RealmBadge } from '../../components/RealmBadge/realmBadge';
 import { useWalletTokenOwnerRecords } from '../../hooks/apiHooks';
 import { RealmDepositBadge } from '../../components/RealmDepositBadge/realmDepositBadge';

@@ -150,7 +150,7 @@ export function NewProposalButton({
       )}
 
       <Form.Item
-        name="name "
+        name="name"
         label="name (60 chars or less)"
         rules={[{ required: true }]}
         requiredMark={true}

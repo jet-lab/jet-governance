@@ -43,12 +43,7 @@ export const RealmView = () => {
   );
 
   const governanceItems = useMemo(() => {
-    return governances.filter((g) => g.info)
-      .sort((g1, g2) =>
-        g1.info.governedAccount
-          .toBase58()
-          .localeCompare(g2.info.governedAccount.toBase58()),
-      )
+    return governances
       .map(g => ({
         key: g.pubkey.toBase58(),
         href: getGovernanceUrl(g.pubkey, programIdBase58),
