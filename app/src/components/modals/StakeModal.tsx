@@ -41,7 +41,7 @@ export const StakeModal = (props: {
       >
         <p>Staking tokens yields X% APR.</p>
 
-        <p>APR = 365 *  (total_daily_reward / total stake)</p>
+        {/* <p>APR = 365 *  (total_daily_reward / total stake)</p> */}
 
         <p>
           Please note: All staked tokens require a 30-day unbonding period,
