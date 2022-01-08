@@ -18,7 +18,7 @@ export function Nav() {
 
   const navLinks = [
     {title: 'Voting', route: '/'},
-    {title: `Airdrop`, badge: unclaimedAirdrops(), route: '/airdrop'},
+    {title: `Airdrop`, class:'shimmer', badge: unclaimedAirdrops(), route: '/airdrop'},
     {title: 'Flight Logs', route: '/flight-logs'}
   ];
 
@@ -46,10 +46,10 @@ export function Nav() {
           {navLinks.map((link) =>
             <Link
               to={link.route}
-              className={`nav-link ${pathname === link.route ? 'active' : ''}`}
+              className={`nav-link ${pathname === link.route ? 'active' : ''} ${link.class}`}
               key={link.route}
             >
-                {link.title} {link.badge ? (<span className="badge shimmer"><span className="text-gradient">{link.badge}</span></span>) : ""}
+                {link.title} {link.badge ? (<span className="badge"><span className="text-gradient">{link.badge}</span></span>) : ""}
             </Link>
           )}
           <Button className="secondary-btn flex-centered"

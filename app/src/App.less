@@ -52,7 +52,10 @@ strong {
   font-weight: @subheader-weight !important;
 }
 
-span, p, .proposal-card.ant-card .header, .ant-card-body .details {
+span,
+p,
+.proposal-card.ant-card .header,
+.ant-card-body .details {
   font-size: 12.5px !important;
 }
 .hidden {
@@ -70,17 +73,15 @@ span, p, .proposal-card.ant-card .header, .ant-card-body .details {
 
 .shimmer {
   display: inline-block;
-  color: white;
-  background: #acacac -webkit-gradient(linear, 100% 0, 0 0, from(#acacac), color-stop(0.5, #ffffff), to(#acacac));
-  background-position: -4rem top;
+  background: #e5ebf4 -webkit-gradient(linear, 100% 0, 0 0, from(#e5ebf4), color-stop(0.5, #a9aaab), to(#e5ebf4));
+  background-position: 50px top;
   background-repeat: no-repeat;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   -webkit-animation-name: shimmer;
-  -webkit-animation-duration: 2.2s;
+  -webkit-animation-duration: 5.5s;
   -webkit-animation-iteration-count: infinite;
-  -webkit-background-size: 4rem 100%;
-  
+  -webkit-background-size: 50px 100%;
 }
 @keyframes shimmer {
   0% {
@@ -98,14 +99,17 @@ span, p, .proposal-card.ant-card .header, .ant-card-body .details {
 }
 
 .badge {
-  box-shadow: 800px 0 0 0 @white inset;
+  box-shadow: 800px 0 0 0 rgb(var(--lt-white)) inset;
   height: 15px;
   min-width: 15px;
-  padding: 3px;
+  padding: 2px 3px 3px 3px;
   border-radius: 50%;
   display: inline-block;
   color: @black;
   text-align: center;
+  span {
+    margin: 0 0 2px 3px !important;
+  }
 }
 
 .neu-container {
@@ -314,9 +318,10 @@ h1 {
   .other-proposals {
     grid-column: 1 / 9;
     div {
-    overflow-y: scroll;
-    flex-wrap: wrap;
-  }}
+      overflow-y: scroll;
+      flex-wrap: wrap;
+    }
+  }
 }
 
 /* Vote selector */

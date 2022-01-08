@@ -45,7 +45,7 @@ export const ProposalView = () => {
   const [isVoteModalVisible, setIsVoteModalVisible] = useState(false);
   const [isStakeRedirectModalVisible, setIsStakeRedirectModalVisible] =
     useState(false);
-  const [vote, setVote] = useState<YesNoVote>(YesNoVote.Yes);
+  const [vote, setVote] = useState<YesNoVote>(YesNoVote.No);
 
   // TODO: Fetch user's stake from blockchain
   const proposalAddress = useKeyParam();
@@ -117,6 +117,18 @@ export const ProposalView = () => {
       tokenOwnerRecord?.pubkey
     );
     const hasVoteTimeExpired = useHasVoteTimeExpired(governance, proposal);
+
+    useEffect(() => {
+        if (voteRecord
+          ?.tryUnwrap()
+          ?.info.getVoterDisplayData().group === "Yea") {
+          setVote(YesNoVote.Yes)
+          } else if (voteRecord
+            ?.tryUnwrap()
+          ?.info.getVoterDisplayData().group === "Nay") {
+            setVote(YesNoVote.No)
+            }
+      }, [voteRecord])
 
     // const instructions = useInstructionsByProposal(proposal.pubkey);
     // const signatories = useSignatoriesByProposal(proposal.pubkey);
