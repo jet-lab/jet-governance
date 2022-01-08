@@ -288,13 +288,14 @@ h1 {
 
 /* Proposal page */
 .proposal {
+  #csv {
+    cursor: pointer;
+    margin-left: 20px;
+    align-self: flex-end;
+    cursor: pointer;
+  }
   .proposal-left {
     grid-column: 1 / 7;
-    #csv {
-      margin-left: 20px;
-      align-self: flex-end;
-      cursor: pointer;
-    }
   }
   .proposal-right {
     grid-column: 7 / 9;
@@ -370,9 +371,6 @@ button,
   }
   .voters {
     flex-grow: 1;
-    #csv {
-      cursor: pointer;
-    }
   }
 
   /* Overrides for jet-antd >> stakeholders  */
