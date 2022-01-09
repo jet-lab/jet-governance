@@ -55,30 +55,14 @@ impl StakePool {
     }
 
     pub fn convert_amount(&self, vault_amount: u64, amount: Amount) -> FullAmount {
-        let vault_amount = std::cmp::max(vault_amount as u128, 1);
-        let share_supply = std::cmp::max(self.shares_bonded as u128, 1);
+        let tokens = std::cmp::max(vault_amount, 1);
+        let shares = std::cmp::max(self.shares_bonded, 1);
+
+        let full_amount = FullAmount { shares, tokens };
 
         match amount.kind {
-            AmountKind::Tokens => {
-                let shares = (share_supply * amount.value as u128) / vault_amount;
-                assert!(shares < std::u64::MAX as u128);
-                assert!(shares > 0);
-
-                FullAmount {
-                    tokens: amount.value,
-                    shares: shares as u64,
-                }
-            }
-            AmountKind::Shares => {
-                let tokens = (vault_amount * amount.value as u128) / share_supply;
-                assert!(tokens < std::u64::MAX as u128);
-                assert!(tokens > 0);
-
-                FullAmount {
-                    shares: amount.value,
-                    tokens: tokens as u64,
-                }
-            }
+            AmountKind::Tokens => full_amount.with_tokens(amount.value),
+            AmountKind::Shares => full_amount.with_shares(amount.value),
         }
     }
 }
@@ -91,8 +75,10 @@ pub struct FullAmount {
 
 impl FullAmount {
     fn with_tokens(&self, tokens: u64) -> Self {
+        msg!("{} {} {}", tokens, self.shares, self.tokens);
         let shares = (tokens as u128) * (self.shares as u128) / (self.tokens as u128);
         assert!(shares < std::u64::MAX as u128);
+        assert!((shares > 0 && tokens > 0) || (shares == 0 && tokens == 0));
 
         let shares = shares as u64;
         Self { shares, tokens }
@@ -101,6 +87,7 @@ impl FullAmount {
     fn with_shares(&self, shares: u64) -> Self {
         let tokens = (self.tokens as u128) * (shares as u128) / (self.shares as u128);
         assert!(tokens < std::u64::MAX as u128);
+        assert!((shares > 0 && tokens > 0) || (shares == 0 && tokens == 0));
 
         let tokens = tokens as u64;
         Self { shares, tokens }
