@@ -14,9 +14,9 @@ export const Stakeholders = (props: {
   const [vote, setVote] = useState("undecided")
 
   useEffect(() => {
-    if (type === "Yea") {
+    if (type === "Approve") {
     setVote("in favor")
-  } else if (type === "Nay") {
+  } else if (type === "Reject") {
     setVote("against")
   }
   }, [type])

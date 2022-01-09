@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { List, Button, Skeleton } from "antd";
-import { Voter, TOP_STAKEHOLDERS } from "../../models/TOP_STAKEHOLDERS";
 import { Stakeholders } from "./Stakeholders";
 import { useUser } from "../../hooks/useClient";
 import { useWallet } from "@solana/wallet-adapter-react";

@@ -121,8 +121,8 @@ export interface VoterDisplayData {
 
 export enum VoteType {
   Undecided = "Undecided",
-  Yes = "Yea",
-  No = "Nay",
+  Yes = "Approve",
+  No = "Reject",
   Abstain = "Abstain",
 }
 

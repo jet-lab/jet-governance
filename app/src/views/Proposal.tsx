@@ -36,7 +36,6 @@ import ReactMarkdown from "react-markdown";
 import { voteRecordCsvDownload } from "../actions/voteRecordCsvDownload";
 import { StakeRedirectModal } from "../components/Stake/StakeRedirectModal";
 import { YesNoVote } from "../models/instructions";
-import { RelinquishVoteButton } from "./proposal/components/buttons/relinquishVoteButton";
 import { CastVoteButton } from "./proposal/components/buttons/castVoteButton";
 import { useHasVoteTimeExpired } from "../hooks/useHasVoteTimeExpired";
 import { DownloadOutlined } from "@ant-design/icons";
@@ -123,11 +122,11 @@ export const ProposalView = () => {
         return setVote(undefined);
       } else if (voteRecord
           ?.tryUnwrap()
-          ?.info.getVoterDisplayData().group === "Yea") {
+          ?.info.getVoterDisplayData().group === "Approve") {
           setVote(YesNoVote.Yes)
           } else if (voteRecord
             ?.tryUnwrap()
-          ?.info.getVoterDisplayData().group === "Nay") {
+          ?.info.getVoterDisplayData().group === "Reject") {
             setVote(YesNoVote.No)
         }
       }, [voteRecord, connected])
@@ -240,12 +239,12 @@ export const ProposalView = () => {
             <div className="flex justify-evenly" id="vote-turnout">
               <div className="results">
                 <ResultProgressBar
-                  type="yea"
+                  type="Approve"
                   amount={bnToIntLossy(yes)}
                   total={bnToIntLossy(total)}
                 />
                 <ResultProgressBar
-                  type="nay"
+                  type="Reject"
                   amount={bnToIntLossy(no)}
                   total={bnToIntLossy(total)}
                 />
@@ -281,29 +280,6 @@ export const ProposalView = () => {
             }`}
             id="your-vote"
           >
-            {/* <RelinquishVoteButton
-              proposal={proposal}
-              tokenOwnerRecord={tokenOwnerRecord}
-              voteRecord={voteRecord?.tryUnwrap()}
-              hasVoteTimeExpired={hasVoteTimeExpired}
-            /> */}
-            {/* <CastVoteButton
-              governance={governance}
-              proposal={proposal}
-              tokenOwnerRecord={tokenOwnerRecord}
-              vote={YesNoVote.Yes}
-              voteRecord={voteRecord}
-              hasVoteTimeExpired={hasVoteTimeExpired}
-            />
-            <CastVoteButton
-              governance={governance}
-              proposal={proposal}
-              vote={YesNoVote.No}
-              tokenOwnerRecord={tokenOwnerRecord}
-              voteRecord={voteRecord}
-              hasVoteTimeExpired={hasVoteTimeExpired}
-            /> */}
-
             <Button
               onClick={() => setVote(YesNoVote.Yes)}
               disabled={
@@ -354,10 +330,6 @@ export const ProposalView = () => {
               // proposalNumber={id}
               // endDate={end}
             />}
-            {/* <PostMessageButton
-            proposal={proposal}
-            tokenOwnerRecord={tokenOwnerRecord}
-          ></PostMessageButton> */}
           </div>
         </div>
 

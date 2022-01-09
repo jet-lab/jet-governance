@@ -11,10 +11,10 @@ export const ResultProgressBar = (props: {
   const [vote, setVote] = useState("in favor")
   
   useMemo(() => {
-    if (type === "nay") {
+    if (type === "Reject") {
       setVote("against")
       setColor("var(--failure)")
-    } else if (type === "abstain") {
+    } else if (type === "Abstain") {
       setVote("abstain")
       setColor("var(--grey)")
     }
