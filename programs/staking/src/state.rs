@@ -75,7 +75,6 @@ pub struct FullAmount {
 
 impl FullAmount {
     fn with_tokens(&self, tokens: u64) -> Self {
-        msg!("{} {} {}", tokens, self.shares, self.tokens);
         let shares = (tokens as u128) * (self.shares as u128) / (self.tokens as u128);
         assert!(shares < std::u64::MAX as u128);
         assert!((shares > 0 && tokens > 0) || (shares == 0 && tokens == 0));
