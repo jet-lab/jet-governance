@@ -5,7 +5,6 @@ use jet_staking::cpi::accounts::AddStake;
 use jet_staking::program::JetStaking;
 
 use crate::state::*;
-use crate::ErrorCode;
 
 #[derive(Accounts)]
 pub struct AirdropClaimComplete<'info> {
@@ -66,10 +65,6 @@ impl<'info> AirdropClaimComplete<'info> {
 
 pub fn airdrop_claim_complete_handler(ctx: Context<AirdropClaimComplete>) -> ProgramResult {
     let mut airdrop = ctx.accounts.airdrop.load_mut()?;
-
-    if airdrop.vest_start_at != 0 || airdrop.vest_end_at != 0 {
-        return Err(ErrorCode::ClaimMustVest.into());
-    }
 
     let claimed_amount = airdrop.claim(&ctx.accounts.claim)?;
 

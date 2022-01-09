@@ -155,8 +155,6 @@ describe("airdrop-staking", () => {
     );
 
     const params = {
-      vestStartAt: new anchor.BN(0),
-      vestEndAt: new anchor.BN(0),
       expireAt: new anchor.BN(Date.now() / 1000 + 10),
       stakePool: stakeAcc.stakePool,
       shortDesc: "integ-test-airdrop",
@@ -256,7 +254,7 @@ describe("airdrop-staking", () => {
       });
       assert.ok(false);
     } catch (e) {
-      assert.equal(e.code, 6006);
+      assert.equal(e.code, 6005);
     }
   });
 

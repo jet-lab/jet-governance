@@ -7,12 +7,6 @@ use crate::state::*;
 
 #[derive(AnchorDeserialize, AnchorSerialize)]
 pub struct AirdropCreateParams {
-    /// The start of the vesting period for claimed rewards.
-    pub vest_start_at: i64,
-
-    /// The end of the vesting period for claimed rewards.
-    pub vest_end_at: i64,
-
     /// The expiration time for the airdrop
     pub expire_at: i64,
 
@@ -75,8 +69,6 @@ pub fn airdrop_create_handler(
     airdrop.reward_vault = ctx.accounts.reward_vault.key();
     airdrop.vault_bump[0] = params.vault_bump;
 
-    airdrop.vest_start_at = params.vest_start_at;
-    airdrop.vest_end_at = params.vest_end_at;
     airdrop.expire_at = params.expire_at;
     airdrop.stake_pool = params.stake_pool;
 

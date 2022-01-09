@@ -17,12 +17,6 @@ pub struct Airdrop {
     /// before finalizing.
     pub authority: Pubkey,
 
-    /// The time at which vesting for the claimed tokens begins
-    pub vest_start_at: i64,
-
-    /// The time at which vesting for the claimed tokens should be completed
-    pub vest_end_at: i64,
-
     /// The time at which this airdrop expires, and can no longer be claimed
     pub expire_at: i64,
 

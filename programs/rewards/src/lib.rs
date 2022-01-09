@@ -109,7 +109,6 @@ mod error {
         AirdropFinal,
         AirdropInsufficientRewardBalance,
         AirdropExpired,
-        ClaimMustVest,
         ClaimNotVerified,
 
         DistributionNotEnded,
