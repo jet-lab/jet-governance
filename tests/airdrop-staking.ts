@@ -456,4 +456,38 @@ describe("airdrop-staking", () => {
       assert.equal(e.code, 6000);
     }
   });
+
+  it("user cannot unbond with outstanding votes", async () => {
+    try {
+      let bumpSeed: number;
+      let unbondSeed = Buffer.alloc(4);
+
+      [stakerUnbond, bumpSeed] = await PublicKey.findProgramAddress(
+        [stakerAccount.toBuffer(), unbondSeed],
+        StakingProgram.programId
+      );
+
+      await StakingProgram.rpc.unbondStake(
+        bumpSeed,
+        0,
+        { kind: { tokens: {} }, value: new u64(4_200_000_000) },
+        {
+          accounts: {
+            owner: staker.publicKey,
+            payer: wallet.publicKey,
+            stakeAccount: stakerAccount,
+            stakePool: stakeAcc.stakePool,
+            stakePoolVault: stakeAcc.stakePoolVault,
+            unbondingAccount: stakerUnbond,
+            systemProgram: SystemProgram.programId,
+          },
+          signers: [staker],
+        }
+      );
+
+      assert.ok(false);
+    } catch (e) {
+      assert.equal(e.code, 6001);
+    }
+  });
 });
