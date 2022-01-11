@@ -51,7 +51,7 @@ export const ProposalCard = (props: { proposal: ParsedAccount<Proposal>, governa
         className={`proposal-card clickable ${proposal.isVoting() ? "" : ""}`}
         style={{}}>
         <div>
-          <div className="header">Proposal {proposalAddressStr}</div>
+          <div className="header">JUMP {proposalAddressStr}</div>
           <h1>{headline}</h1>
         </div>
         <div className="details">

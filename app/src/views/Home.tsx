@@ -146,6 +146,7 @@ export const HomeView = () => {
 
       <div id="terms-conditions">
         <p>Glossary</p>
+        <p>Docs</p>
         <p>Terms & Conditions</p>
       </div>
 

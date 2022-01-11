@@ -3,7 +3,6 @@ import { Typography } from 'antd';
 import { shortenAddress } from '../../utils/utils';
 import { Connection, PublicKey } from '@solana/web3.js';
 import { useConnectionConfig } from '../../contexts';
-
 import { getExplorerUrl } from '../../utils/explorer';
 
 export const ExplorerLink = (props: {

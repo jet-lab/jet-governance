@@ -14,7 +14,11 @@ export const AirdropView = () => {
       <div className="neu-container centered" id="airdrop">
         <h1>Claim your airdrop!</h1>
         <p>
-        Available airdrops are listed below, and can be claimed within 90 days of release. Airdrop claims deposit a fixed amount of Jet tokens into your governance account. These tokens are staked to JetGovern and will begin accruing rewards immediately. 
+          Available claims for the connected wallet are listed below. All claims must be claimed by the receiver within 90 days. After 90 days, any unclaimed claims will be redirected to the Jet DAO treasury for future allocation.
+        </p>
+        
+        <p>
+        Airdrop claims deposit a fixed amount of Jet tokens into your governance account. These tokens are staked to JetGovern and will begin accruing rewards immediately. 
         </p>
 
         <Divider />
@@ -25,6 +29,7 @@ export const AirdropView = () => {
             <Available
               name={airdrop.name}
               amount={airdrop.amount}
+              description={airdrop.description}
               end={airdrop.end}
               claimed={airdrop.claimed}
               announced={airdrop.announced}

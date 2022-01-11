@@ -3,6 +3,7 @@ import { useWallet } from "@solana/wallet-adapter-react";
 import { useAirdrop } from "../contexts/airdrop";
 import { InfoCircleFilled } from "@ant-design/icons";
 import React from "react";
+import { getExplorerUrl } from "../utils";
 
 export const FlightLogView = () => {
   const { pendingTransactions, completeTransactions } = useAirdrop();
@@ -19,6 +20,9 @@ export const FlightLogView = () => {
       padTo2Digits(date.getDate()),
     ].join("-");
   };
+
+  // Open explorer
+  const explorerUrl = () => window.open("https://explorer.solana.com", '_blank');
 
   return (
     <div className="view-container column-grid">
@@ -43,13 +47,13 @@ export const FlightLogView = () => {
                   <td className="italics">
                     {row.status}{" "}
                     <Tooltip
-                      title="Unstaking transactions require a 30-day unbonding period. Your transaction will be considered pending until the unbonding period completes."
+                      title="Unstaking transactions require a 29.5-day unbonding period. Your transaction will be considered pending until the unbonding period completes."
                       mouseEnterDelay={0.1}
                     >
                       <InfoCircleFilled />
                     </Tooltip>
                   </td>
-                  <td className="italics">{row.transaction}</td>
+                  <td className="italics" onClick={explorerUrl}>{row.transaction}</td>
                   <td className="italics">{row.amount}</td>
                 </tr>
               ))}
@@ -60,7 +64,7 @@ export const FlightLogView = () => {
                 <tr>
                   <td>{formatDate(row.date)}</td>
                   <td>{row.status}</td>
-                  <td className="asset">{row.transaction}</td>
+                  <td className="asset" onClick={explorerUrl}>{row.transaction}</td>
                   <td className="reserve-detail center-text">{row.amount}</td>
                 </tr>
               ))}

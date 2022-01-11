@@ -5,6 +5,7 @@ import { shortenAddress } from "../utils";
 interface AirdropConfig {
   airdrops?: {
     name: string;
+    description: string;
     amount: number;
     end: Date;
     announced: boolean;
@@ -56,6 +57,7 @@ export function AirdropProvider({ children = undefined as any }) {
   const airdrops = [
     {
       name: "Test Pilot Airdrop",
+      description: "Thank you for flying with Jet and trying out our app! Jet's first airdrop to broaden the distribution of JET tokens and begin decentralization. As announced, 100% of airdrops will be autostaked in the governance module immediately after being claimed, begin earning yield, and be subject to a 28 day unbonding period. In addition to the blog announcement on airdrop and staking details, more details can be found in the docs.",
       amount: 70000,
       end: new Date("25 Jan 2022"),
       announced: true,
@@ -66,6 +68,7 @@ export function AirdropProvider({ children = undefined as any }) {
     },
     {
       name: "But she hears only whispers of some quiet conversation",
+      description: "Test Pilot Airdrop",
       amount: 90000,
       end: new Date("25 Feb 2022"),
       announced: true,
@@ -75,6 +78,7 @@ export function AirdropProvider({ children = undefined as any }) {
     },
     {
       name: "I bless the rains down in Africa",
+      description: "Test Pilot Airdrop",
       amount: 90000,
       end: new Date("25 Mar 2022"),
       announced: true,
@@ -85,6 +89,7 @@ export function AirdropProvider({ children = undefined as any }) {
     },
     {
       name: "The wild dogs cry out in the night",
+      description: "Test Pilot Airdrop",
       amount: 90000,
       end: new Date("25 Apr 2022"),
       announced: false,

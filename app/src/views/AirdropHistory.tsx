@@ -6,6 +6,7 @@ import { Available } from "../components/airdrop/Available";
 
 interface Airdrop {
   name: string;
+  description: string;
   amount: number;
   end: Date;
   claimed: boolean;
@@ -73,6 +74,7 @@ export const AirdropHistory = () => {
             airdrops?.map((airdrop) => (
               <Available
                 name={airdrop.name}
+                description={airdrop.description}
                 amount={airdrop.amount}
                 end={airdrop.end}
                 claimed={airdrop.claimed}
