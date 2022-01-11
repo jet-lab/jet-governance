@@ -1,22 +1,21 @@
 [package]
-name = "jet-proto-staking"
+name = "jet-proto-auth"
 version = "0.1.0"
-description = "Created with Anchor"
+description = "Authentication for wallet addresses"
 edition = "2018"
 
 [lib]
 crate-type = ["cdylib", "lib"]
-name = "jet_staking"
+name = "jet_auth"
 path = "src/lib.rs"
 
 [features]
 no-entrypoint = []
 no-idl = []
+no-log-ix-name = []
 cpi = ["no-entrypoint"]
 default = []
+enforce-authority = []
 
 [dependencies]
 anchor-lang = { git = "https://github.com/jet-lab/anchor" }
-anchor-spl = { git = "https://github.com/jet-lab/anchor" }
-
-jet-proto-auth = { path = "../auth", features = ["cpi"] }

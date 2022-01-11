@@ -1,12 +1,19 @@
 use anchor_lang::prelude::*;
 
 use crate::state::*;
+use jet_auth::UserAuthentication;
 
 #[derive(Accounts)]
 #[instruction(bump: u8)]
 pub struct InitStakeAccount<'info> {
     /// The owner for the stake
     pub owner: Signer<'info>,
+
+    /// The authentication account, which identifies that the given owner
+    /// is actually allowed to use this program.
+    #[account(has_one = owner,
+              constraint = auth.allowed)]
+    pub auth: Account<'info, UserAuthentication>,
 
     /// The stake pool to create an account with
     pub stake_pool: Account<'info, StakePool>,

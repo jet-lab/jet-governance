@@ -9,10 +9,12 @@ import {
 import { Token, TOKEN_PROGRAM_ID, u64 } from "@solana/spl-token";
 import { JetRewards } from "../target/types/jet_rewards";
 import { JetStaking } from "../target/types/jet_staking";
+import { JetAuth } from "../target/types/jet_auth";
 import { assert } from "chai";
 
 const RewardsProgram = anchor.workspace.JetRewards as Program<JetRewards>;
 const StakingProgram = anchor.workspace.JetStaking as Program<JetStaking>;
+const AuthProgram = anchor.workspace.JetAuth as Program<JetAuth>;
 
 const AIRDROP_FLAG_VERIFICATION_REQUIRED = 1 << 0;
 
@@ -83,6 +85,7 @@ describe("airdrop-staking", () => {
   let stakeAcc: StakePoolAccounts;
 
   let stakerAccount: PublicKey;
+  let stakerAuth: PublicKey;
   let stakerClaim: PublicKey;
   let stakerUnbond: PublicKey;
   let airdropVault: PublicKey;
@@ -126,6 +129,34 @@ describe("airdrop-staking", () => {
     );
   });
 
+  it("create staker auth", async () => {
+    let bumpSeed: number;
+
+    [stakerAuth, bumpSeed] = await PublicKey.findProgramAddress(
+      [staker.publicKey.toBuffer()], AuthProgram.programId
+    );
+
+    await AuthProgram.rpc.createUserAuth(bumpSeed, {
+      accounts: {
+        user: staker.publicKey,
+        payer: wallet.publicKey,
+        auth: stakerAuth,
+        systemProgram: SystemProgram.programId
+      },
+      signers: [staker]
+    });
+  });
+
+  it("authenticate staker", async () => {
+    await AuthProgram.rpc.authenticate({
+      accounts: {
+        // FIXME: ?? authority signer should be .. something
+        authority: wallet.publicKey,
+        auth: stakerAuth
+      }
+    });
+  });
+
   it("create staker account", async () => {
     let bumpSeed: number;
 
@@ -137,6 +168,7 @@ describe("airdrop-staking", () => {
     await StakingProgram.rpc.initStakeAccount(bumpSeed, {
       accounts: {
         owner: staker.publicKey,
+        auth: stakerAuth,
         stakePool: stakeAcc.stakePool,
         stakeAccount: stakerAccount,
         payer: wallet.publicKey,
@@ -215,65 +247,11 @@ describe("airdrop-staking", () => {
     });
   });
 
-  it("user initiates claim", async () => {
-    let bumpSeed: number;
-
-    [stakerClaim, bumpSeed] = await PublicKey.findProgramAddress(
-      [staker.publicKey.toBuffer(), airdropKey.publicKey.toBuffer()],
-      RewardsProgram.programId
-    );
-
-    await RewardsProgram.rpc.airdropClaimBegin(bumpSeed, {
-      accounts: {
-        airdrop: airdropKey.publicKey,
-        claim: stakerClaim,
-        entitled: staker.publicKey,
-        payer: wallet.publicKey,
-        systemProgram: SystemProgram.programId,
-      },
-      signers: [staker],
-    });
-  });
-
-  it("user cannot complete claim without being verified", async () => {
-    try {
-      await RewardsProgram.rpc.airdropClaimComplete({
-        accounts: {
-          airdrop: airdropKey.publicKey,
-          rewardVault: airdropVault,
-          claim: stakerClaim,
-          recipient: staker.publicKey,
-          receiver: wallet.publicKey,
-          stakePool: stakeAcc.stakePool,
-          stakePoolVault: stakeAcc.stakePoolVault,
-          stakeAccount: stakerAccount,
-          stakingProgram: StakingProgram.programId,
-          tokenProgram: TOKEN_PROGRAM_ID,
-        },
-        signers: [staker],
-      });
-      assert.ok(false);
-    } catch (e) {
-      assert.equal(e.code, 6005);
-    }
-  });
-
-  it("verify user claim", async () => {
-    await RewardsProgram.rpc.airdropClaimVerify({
-      accounts: {
-        airdrop: airdropKey.publicKey,
-        claim: stakerClaim,
-        authority: wallet.publicKey,
-      },
-    });
-  });
-
   it("user claims airdrop", async () => {
-    await RewardsProgram.rpc.airdropClaimComplete({
+    await RewardsProgram.rpc.airdropClaim({
       accounts: {
         airdrop: airdropKey.publicKey,
         rewardVault: airdropVault,
-        claim: stakerClaim,
         recipient: staker.publicKey,
         receiver: wallet.publicKey,
         stakePool: stakeAcc.stakePool,

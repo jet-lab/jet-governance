@@ -78,13 +78,9 @@ impl Airdrop {
         Ok(())
     }
 
-    pub fn claim(&mut self, claim: &AirdropClaim) -> Result<u64, ErrorCode> {
-        if self.flags().contains(AirdropFlags::VERIFICATION_REQUIRED) && !claim.verified {
-            return Err(ErrorCode::ClaimNotVerified);
-        }
-
+    pub fn claim(&mut self, recipient: &Pubkey) -> Result<u64, ErrorCode> {
         let target = self.target_info_mut();
-        let entry = target.get_recipient_mut(&claim.recipient)?;
+        let entry = target.get_recipient_mut(recipient)?;
         let amount = entry.amount;
 
         entry.amount = 0;
@@ -164,23 +160,7 @@ pub struct AirdropTarget {
 unsafe impl bytemuck::Pod for AirdropTargetInfo {}
 unsafe impl bytemuck::Zeroable for AirdropTargetInfo {}
 
-#[account]
-#[derive(Default)]
-pub struct AirdropClaim {
-    /// The airdrop being claimed from
-    pub airdrop: Pubkey,
-
-    /// The address claiming the tokens
-    pub recipient: Pubkey,
-
-    /// Flag indicating the recipient has been verified, and is
-    /// allowed to claim the tokens
-    pub verified: bool,
-}
-
 bitflags::bitflags! {
     pub struct AirdropFlags: u64 {
-        /// Claims have to be verified with some 3rd party first
-        const VERIFICATION_REQUIRED = 1 << 0;
     }
 }

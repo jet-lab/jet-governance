@@ -1,7 +1,7 @@
 anchor_version = "0.19.0"
 
 [programs.localnet]
-jet_governance = "5TBwvU5xoA13fzmZgWVgFBUmBz1YCdiq2AshDZpPn3AL"
+jet_auth = "JPALXR88jy2fG3miuu4n3o8Jef4K2Cgc3Uypr3Y8RNX"
 jet_rewards = "JET777rQuPU8BatFbhp6irc1NAbozxTheBqNo25eLQP"
 jet_staking = "JPLockxtkngHkaQT5AuRYow3HyUv5qWzmhwsCPd653n"
 

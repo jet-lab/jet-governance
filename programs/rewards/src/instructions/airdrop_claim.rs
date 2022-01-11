@@ -5,9 +5,10 @@ use jet_staking::cpi::accounts::AddStake;
 use jet_staking::program::JetStaking;
 
 use crate::state::*;
+use crate::ErrorCode;
 
 #[derive(Accounts)]
-pub struct AirdropClaimComplete<'info> {
+pub struct AirdropClaim<'info> {
     /// The airdrop to claim from
     #[account(mut,
               has_one = stake_pool,
@@ -17,12 +18,6 @@ pub struct AirdropClaimComplete<'info> {
     /// The token account to claim the rewarded tokens from
     #[account(mut)]
     pub reward_vault: AccountInfo<'info>,
-
-    /// The claim account representing the request
-    #[account(mut,
-              close = receiver,
-              has_one = recipient)]
-    pub claim: Account<'info, AirdropClaim>,
 
     /// The address entitled to the airdrop, which must sign to claim
     pub recipient: Signer<'info>,
@@ -47,7 +42,7 @@ pub struct AirdropClaimComplete<'info> {
     pub token_program: Program<'info, Token>,
 }
 
-impl<'info> AirdropClaimComplete<'info> {
+impl<'info> AirdropClaim<'info> {
     fn add_stake_context(&self) -> CpiContext<'_, '_, '_, 'info, AddStake<'info>> {
         CpiContext::new(
             self.staking_program.to_account_info(),
@@ -63,10 +58,16 @@ impl<'info> AirdropClaimComplete<'info> {
     }
 }
 
-pub fn airdrop_claim_complete_handler(ctx: Context<AirdropClaimComplete>) -> ProgramResult {
+pub fn airdrop_claim_handler(ctx: Context<AirdropClaim>) -> ProgramResult {
     let mut airdrop = ctx.accounts.airdrop.load_mut()?;
+    let clock = Clock::get()?;
 
-    let claimed_amount = airdrop.claim(&ctx.accounts.claim)?;
+    if airdrop.expire_at <= clock.unix_timestamp {
+        msg!("this airdrop is expired");
+        return Err(ErrorCode::AirdropExpired.into());
+    }
+
+    let claimed_amount = airdrop.claim(&ctx.accounts.recipient.key())?;
 
     jet_staking::cpi::add_stake(
         ctx.accounts

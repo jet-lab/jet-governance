@@ -42,19 +42,9 @@ pub mod jet_rewards {
         instructions::airdrop_close_handler(ctx)
     }
 
-    /// Initiate a request to claim tokens from an airdrop
-    pub fn airdrop_claim_begin(ctx: Context<AirdropClaimBegin>, bump: u8) -> ProgramResult {
-        instructions::airdrop_claim_begin_handler(ctx, bump)
-    }
-
-    /// Complete claim of tokens from an airdrop as a recipient
-    pub fn airdrop_claim_complete(ctx: Context<AirdropClaimComplete>) -> ProgramResult {
-        instructions::airdrop_claim_complete_handler(ctx)
-    }
-
-    /// Verify a claim request is allowable
-    pub fn airdrop_claim_verify(ctx: Context<AirdropClaimVerify>) -> ProgramResult {
-        instructions::airdrop_claim_verify_handler(ctx)
+    /// Claim of tokens from an airdrop as a recipient
+    pub fn airdrop_claim(ctx: Context<AirdropClaim>) -> ProgramResult {
+        instructions::airdrop_claim_handler(ctx)
     }
 
     /// Initialize a new token distribution

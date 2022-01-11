@@ -1,7 +1,5 @@
 mod airdrop_add_recipients;
-mod airdrop_claim_begin;
-mod airdrop_claim_complete;
-mod airdrop_claim_verify;
+mod airdrop_claim;
 mod airdrop_close;
 mod airdrop_create;
 mod airdrop_finalize;
@@ -16,9 +14,7 @@ mod award_release;
 mod award_revoke;
 
 pub use airdrop_add_recipients::*;
-pub use airdrop_claim_begin::*;
-pub use airdrop_claim_complete::*;
-pub use airdrop_claim_verify::*;
+pub use airdrop_claim::*;
 pub use airdrop_close::*;
 pub use airdrop_create::*;
 pub use airdrop_finalize::*;
