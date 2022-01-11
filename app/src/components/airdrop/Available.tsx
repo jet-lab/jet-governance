@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Button } from "antd";
 import { CheckOutlined } from "@ant-design/icons";
-import { ClaimModal } from "./ClaimModal";
+import { ClaimModal } from "../modals/ClaimModal";
 import React from "react";
 import { getRemainingTime } from "../../utils";
 

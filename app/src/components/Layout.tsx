@@ -1,7 +1,7 @@
 import React from "react";
 import "../App.less";
 import { Layout } from "antd";
-import { ConnectWalletModal } from "./ConnectWalletModal";
+import { ConnectWalletModal } from "./modals/ConnectWalletModal";
 import { Nav } from "./Nav";
 import { WalletModalProvider } from "../contexts";
 

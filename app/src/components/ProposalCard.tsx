@@ -7,6 +7,7 @@ import { ParsedAccount } from "../contexts";
 import { getProposalUrl } from "../tools/routeTools";
 import { useRpcContext } from "../hooks/useRpcContext";
 import { useCountdown } from "../hooks/proposalHooks";
+import { pubkeysIndex } from "./modals/PUBKEYS_INDEX";
 
 export const ProposalCard = (props: { proposal: ParsedAccount<Proposal>, governance: ParsedAccount<Governance> }) => {
   const [currentTime, setCurrentTime] = useState(Date.now());
@@ -24,7 +25,7 @@ export const ProposalCard = (props: { proposal: ParsedAccount<Proposal>, governa
   const { programId } = useRpcContext();
 
   // Truncate headline if too long
-  // var shortHeadline = useMemo(() => headline.length < 25 ? headline : headline.substr(0, 25) + "…", [headline]);
+  // TODO: REMOVE BEFORE MAINNET: Headlines should not be truncated
   var headlineUrl = useMemo(() => getProposalUrl(
     proposalAddress,
     programId,
@@ -44,6 +45,10 @@ export const ProposalCard = (props: { proposal: ParsedAccount<Proposal>, governa
   const { yesPercent, yesAbstainPercent } = proposal.getVoteCounts();
   const { countdown } = useCountdown(proposal, governance);
 
+  const pubkeyIndex = (pubkey: string) => {
+    return pubkeysIndex.indexOf(pubkey) + 1
+  }
+
   return (
     <Link to={headlineUrl}>
       <Card
@@ -51,7 +56,7 @@ export const ProposalCard = (props: { proposal: ParsedAccount<Proposal>, governa
         className={`proposal-card clickable ${proposal.isVoting() ? "" : ""}`}
         style={{}}>
         <div>
-          <div className="header">JUMP {proposalAddressStr}</div>
+          <div className="header">JUMP {pubkeyIndex(proposalAddressStr)}</div>
           <h1>{headline}</h1>
         </div>
         <div className="details">
