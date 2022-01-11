@@ -3,12 +3,12 @@ import { withDepositGoverningTokens } from '../models/withDepositGoverningTokens
 import { sendTransactionWithNotifications } from '../tools/transactions';
 import { RpcContext } from '../models/core/api';
 import { TokenAccount, approve } from '../models';
+import { JET_TOKEN_MINT } from "../utils/ids";
 
 export const depositGoverningTokens = async (
   { connection, wallet, programId, programVersion, walletPubkey }: RpcContext,
   realm: PublicKey,
   governingTokenSource: TokenAccount,
-  governingTokenMint: PublicKey,
 ) => {
   let instructions: TransactionInstruction[] = [];
   let signers: Account[] = [];
@@ -31,7 +31,7 @@ export const depositGoverningTokens = async (
     programVersion,
     realm,
     governingTokenSource.pubkey,
-    governingTokenMint,
+    JET_TOKEN_MINT,
     walletPubkey,
     transferAuthority.publicKey,
     walletPubkey,

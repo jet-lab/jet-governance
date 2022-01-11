@@ -28,24 +28,6 @@ import {
 import { ScrollToTop } from "./contexts/scrollToTop";
 
 export function Routes() {
-  //   const [geobanned, setGeobanned] = useState(false);
-
-  //   const getGeobanned = async () => {
-  //     const resp = await fetch("https://ipinfo.io/json?token=46ceefa5641a93", {
-  //       method: "GET",
-  //       headers: { "Content-Type": "application/json" },
-  //     });
-  //     let locale = await resp.json();
-  //     if (locale?.country === "US") {
-  //       setGeobanned(true);
-  //     }
-  //   };
-
-  // If IP address is in US, geoban
-  // TODO: try catch
-  // useEffect(() => {
-  //   getGeobanned();
-  // });
 
   return (
     <>

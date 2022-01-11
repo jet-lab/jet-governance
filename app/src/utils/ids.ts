@@ -15,10 +15,10 @@ export const JET_GOV_PROGRAM_ID = new PublicKey(
   "5TBwvU5xoA13fzmZgWVgFBUmBz1YCdiq2AshDZpPn3AL"
 );
 export let JET_REALM = new PublicKey(
-  PublicKey.default // FIXME !
+  "9YDowTE7R1qr8wYYLJMvofQK5NrK2TqUn7u59r7VUTDm"
 );
 export let JET_GOVERNANCE = new PublicKey(
-  PublicKey.default // FIXME !
+  "FRuFWBrp1Kh6LpAi9CRvjk97C6YpCR7AERq62N2CZFUg"
 );
 
 export let TOKEN_PROGRAM_ID = new PublicKey(

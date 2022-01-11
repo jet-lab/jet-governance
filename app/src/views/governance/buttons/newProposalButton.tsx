@@ -99,7 +99,6 @@ export function NewProposalButton({
       tokenOwnerRecord!.pubkey,
       values.name,
       values.descriptionLink ?? '',
-      governingTokenMint,
       proposalIndex,
     );
   };

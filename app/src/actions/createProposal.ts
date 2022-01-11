@@ -5,6 +5,7 @@ import { withAddSignatory } from '../models/withAddSignatory';
 import { sendTransactionWithNotifications } from '../tools/transactions';
 import { RpcContext } from '../models/core/api';
 import { VoteType } from '../models/accounts';
+import { JET_TOKEN_MINT } from "../utils/ids";
 
 export const createProposal = async (
   { connection, wallet, programId, programVersion, walletPubkey }: RpcContext,
@@ -13,7 +14,6 @@ export const createProposal = async (
   tokenOwnerRecord: PublicKey,
   name: string,
   descriptionLink: string,
-  governingTokenMint: PublicKey,
   proposalIndex: number,
 ): Promise<PublicKey> => {
   let instructions: TransactionInstruction[] = [];
@@ -36,7 +36,7 @@ export const createProposal = async (
     tokenOwnerRecord,
     name,
     descriptionLink,
-    governingTokenMint,
+    JET_TOKEN_MINT,
 
     governanceAuthority,
     proposalIndex,

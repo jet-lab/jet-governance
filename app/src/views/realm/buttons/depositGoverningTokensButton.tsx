@@ -54,8 +54,7 @@ export function DepositGoverningTokensButton({
               await depositGoverningTokens(
                 rpcContext,
                 realm!.pubkey,
-                governingTokenAccount,
-                governingTokenMint!,
+                governingTokenAccount
               );
             }
           },
