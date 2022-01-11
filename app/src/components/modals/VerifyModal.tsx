@@ -3,16 +3,16 @@ import { access } from "fs";
 import React, { useState } from "react";
 
 export const VerifyModal = (props: {
-  showModal: boolean;
-  onOk: () => void;
+  verified: boolean;
+  setVerified: () => void;
 }) => {
-  const { showModal, onOk } = props;
+  const { verified, setVerified } = props;
+  const [smsModal, setSmsModal] = useState(true);
   const [accessCode, setAccessCode] = useState(false);
-  const [verified, setVerified] = useState(false);
   const [accessGrantedModal, setAccessGrantedModal] = useState(false);
 
   const handlePhoneVerify = () => {
-    onOk();
+    setSmsModal(false);
     setAccessCode(true)
   }
 
@@ -20,7 +20,7 @@ export const VerifyModal = (props: {
     setAccessCode(false);
     setAccessGrantedModal(true);
     if (Math.floor(Math.random() * 2) == 0) {
-      setVerified(true);
+      setVerified();
     }
   }
 
@@ -33,10 +33,11 @@ export const VerifyModal = (props: {
     
     <Modal
       title="Region verification required"
-      visible={showModal}
+      visible={smsModal}
       okText="Okay"
       onOk={handlePhoneVerify}
-      onCancel={onOk}
+      onCancel={() => null}
+      closable={false}
       cancelButtonProps={{ style: { display: "none " } }}
     >
       <p>To access Jet Govern, enter your number below to verify that you're located in an authorized region.</p>
@@ -51,7 +52,8 @@ export const VerifyModal = (props: {
       visible={accessCode}
       okText="Okay"
       onOk={handleConfirmCode}
-      onCancel={onOk}
+      onCancel={() => null}
+      closable={false}
       cancelButtonProps={{ style: { display: "none " } }}
     >
       <p>You will receive a secure access code via SMS. Enter the secure access code here to access Jet Govern.</p>
@@ -61,9 +63,9 @@ export const VerifyModal = (props: {
 
       <Modal
       title="Access Denied"
-      visible={verified && accessGrantedModal}
+      visible={!verified && accessGrantedModal}
       okText="Okay"
-      onOk={() => {console.log(verified, "***", accessGrantedModal)}}
+      onOk={handleCompleteVerify}
       onCancel={handleCompleteVerify}
       cancelButtonProps={{ style: { display: "none " } }}
     >
@@ -74,7 +76,7 @@ export const VerifyModal = (props: {
       title="Stake Jet to begin voting"
       visible={verified && accessGrantedModal}
       okText="Okay"
-      onOk={() => {console.log(verified, "***", accessGrantedModal)}}
+      onOk={handleCompleteVerify}
       onCancel={handleCompleteVerify}
       cancelButtonProps={{ style: { display: "none " } }}
     >

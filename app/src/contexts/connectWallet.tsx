@@ -31,7 +31,7 @@ export const ConnectWalletProvider = (props: { children: any }) => {
 
   return (
     <ConnectWalletContext.Provider value={{ connecting, setConnecting }}>
-      {publicKey && <VerifyModal showModal={!verified} onOk={() => setVerified(true)} />}
+      {publicKey && <VerifyModal verified={verified} setVerified={() => setVerified(true)} />}
       {props.children}
     </ConnectWalletContext.Provider>
   );
