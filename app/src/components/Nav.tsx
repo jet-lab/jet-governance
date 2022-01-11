@@ -17,8 +17,8 @@ export function Nav() {
   //const unclaimedBadge = (<div>{}</div>)
 
   const navLinks = [
-    {title: 'Voting', route: '/'},
-    {title: `Airdrop`, class:'shimmer', badge: unclaimedAirdrops(), route: '/airdrop'},
+    {title: 'Dashboard', route: '/'},
+    {title: `Claims`, class:'shimmer', badge: unclaimedAirdrops(), route: '/claims'},
     {title: 'Flight Logs', route: '/flight-logs'}
   ];
 
