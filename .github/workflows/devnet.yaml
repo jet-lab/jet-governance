@@ -94,9 +94,13 @@ jobs:
           && echo ${{ secrets.SOLANA_DEVNET_DEPLOYER_KEYPAIR }} > ~/.config/solana/deployer.json \
           && echo ${{ secrets.REWARDS_DEVNET_KEYPAIR }} > ./target/deploy/jet_rewards-keypair.json \
           && echo ${{ secrets.STAKING_DEVNET_KEYPAIR }} > ./target/deploy/jet_staking-keypair.json
+          && echo ${{ secrets.AUTH_DEVNET_KEYPAIR }} > ./target/deploy/jet_auth-keypair.json
 
       - name: Deploy Rewards
         run: anchor deploy --program-name rewards --provider.cluster devnet --provider.wallet ~/.config/solana/deployer.json
 
       - name: Deploy Staking
         run: anchor deploy --program-name staking --provider.cluster devnet --provider.wallet ~/.config/solana/deployer.json
+
+      - name: Deploy Auth
+        run: anchor deploy --program-name auth --provider.cluster devnet --provider.wallet ~/.config/solana/deployer.json
