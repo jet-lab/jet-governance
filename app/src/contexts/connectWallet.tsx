@@ -18,21 +18,20 @@ export const ConnectWalletProvider = (props: { children: any }) => {
   const [connecting, setConnecting] = useState(false);
   const [verified, setVerified] = useState(false);
   const [connected, setConnected] = useState(publicKey);
+  const [init, setInit] = useState(true)
 
   useEffect(() => {
     if (publicKey && !verified) {
-      // notify({
-      //   message: 'Checking eligibility',
-      //   description: 'You cannot access Jet Govern',
-      // });
+      // If wallet has already been SMS checked and cannot access Jet Govern,
+      // setInit(false).
     }
     // setVerified(true);
   }, [publicKey, verified]);
 
   return (
     <ConnectWalletContext.Provider value={{ connecting, setConnecting }}>
-      {publicKey && <VerifyModal verified={verified} setVerified={() => setVerified(true)} />}
-      {props.children}
+      {publicKey && <VerifyModal verified={verified} setVerified={() => setVerified(true)} doNotInit={() => setInit(false)} />}
+      {init && props.children}
     </ConnectWalletContext.Provider>
   );
 };

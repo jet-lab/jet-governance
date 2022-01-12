@@ -1,12 +1,14 @@
 import { Modal, Input } from "antd";
 import { access } from "fs";
 import React, { useState } from "react";
+import { notify } from "../../utils";
 
 export const VerifyModal = (props: {
   verified: boolean;
   setVerified: () => void;
+  doNotInit: () => void;
 }) => {
-  const { verified, setVerified } = props;
+  const { verified, setVerified, doNotInit } = props;
   const [smsModal, setSmsModal] = useState(true);
   const [accessCode, setAccessCode] = useState(false);
   const [accessGrantedModal, setAccessGrantedModal] = useState(false);
@@ -25,6 +27,14 @@ export const VerifyModal = (props: {
   }
 
   const handleCompleteVerify = () => {
+    if (!verified) {
+    // TODO add init app boolean
+      notify({
+        message: 'Checking eligibility',
+        description: 'You cannot access Jet Govern',
+      });
+      doNotInit();
+    }
     setAccessGrantedModal(false);
   }
 
