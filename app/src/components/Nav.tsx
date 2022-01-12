@@ -34,7 +34,7 @@ export function Nav() {
             <span></span>
           </div>
           <a className="left-container-logo flex-centered" 
-            href="/" target="_blank" rel="noopener noreferrer">
+            href="/" rel="noopener noreferrer">
             <img src="img/jetgovern_white.png" 
               width="100%"
               height="auto"

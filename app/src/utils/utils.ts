@@ -299,8 +299,8 @@ export function timeout(ms: number) {
 };
 
 export const dateToString = (date: Date) => {
-  const months = [ "January", "February", "March", "April", "May", "June",
-    "July", "August", "September", "October", "November", "December" ];
+  const months = [ "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+    "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" ];
 
   const day = date.getDate().toString().padStart(2, '0');
   const month = date.getMonth();
@@ -309,5 +309,5 @@ export const dateToString = (date: Date) => {
   const minute = date.getUTCMinutes().toString().padStart(2, '0');
   const second = date.getUTCSeconds().toString().padStart(2, '0');
 
-  return `${months[month]} ${day}, ${year}, ${hour}:${minute}:${second} UTC`
+  return `${day} ${months[month]} ${year}, ${hour}:${minute} UTC`
 }

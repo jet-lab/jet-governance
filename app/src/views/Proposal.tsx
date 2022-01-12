@@ -17,7 +17,7 @@ import {
   useWalletTokenOwnerRecord,
   useTokenOwnerVoteRecord,
 } from "../hooks/apiHooks";
-import { fromLamports, JET_GOVERNANCE, shortenAddress } from "../utils";
+import { fromLamports, JET_GOVERNANCE, shortenAddress, JET_TOKEN_MINT } from "../utils";
 import {
   useCountdown,
   useProposalFilters,
@@ -36,9 +36,8 @@ import ReactMarkdown from "react-markdown";
 import { voteRecordCsvDownload } from "../actions/voteRecordCsvDownload";
 import { StakeRedirectModal } from "../components/Stake/StakeRedirectModal";
 import { YesNoVote } from "../models/instructions";
-import { CastVoteButton } from "./proposal/components/buttons/castVoteButton";
 import { useHasVoteTimeExpired } from "../hooks/useHasVoteTimeExpired";
-import { DownloadOutlined } from "@ant-design/icons";
+import { DownloadOutlined, ArrowLeftOutlined } from "@ant-design/icons";
 
 export const ProposalView = () => {
   const [isVoteModalVisible, setIsVoteModalVisible] = useState(false);
@@ -53,7 +52,7 @@ export const ProposalView = () => {
   let governance = useGovernance(proposal?.info.governance);
   let realm = useRealm(governance?.info.realm);
 
-  const governingTokenMint = useMint(proposal?.info.governingTokenMint);
+  const governingTokenMint = useMint(JET_TOKEN_MINT);
 
   const voteRecords = useVoteRecordsByProposal(proposal?.pubkey);
 
@@ -181,7 +180,7 @@ export const ProposalView = () => {
           <div className="description neu-container">
             <span>
               <Link to="/">
-                <i className="fas fa-arrow-left"></i>Active Proposals
+                <ArrowLeftOutlined />Active Proposals
               </Link>{" "}
               / Proposal {shortAddress}
             </span>
@@ -225,7 +224,7 @@ export const ProposalView = () => {
 
           <div className="neu-container flex column">
             <div className="flex">
-              <h1>Vote turnout</h1>
+              <h1>Vote Turnout</h1>
               <span
                 onClick={() =>
                   voteRecordCsvDownload(proposal.pubkey, voterDisplayData)

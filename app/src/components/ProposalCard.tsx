@@ -34,16 +34,16 @@ export const ProposalCard = (props: { proposal: ParsedAccount<Proposal>, governa
   const proposalAddressStr = useMemo(() => shortenAddress(proposalAddress.toString()), [proposalAddress])
 
   // Update current time every second
-  useEffect(() => {
-    const secondInterval = setInterval(() => {
-      setCurrentTime(currentTime + 1000);
-    }, 1000);
-    return () => clearInterval(secondInterval);
-  });
+  // useEffect(() => {
+  //   const secondInterval = setInterval(() => {
+  //     setCurrentTime(currentTime + 1000);
+  //   }, 1000);
+  //   return () => clearInterval(secondInterval);
+  // });
 
   // Active votes show progress bar
   const { yesPercent, yesAbstainPercent } = proposal.getVoteCounts();
-  const { countdown } = useCountdown(proposal, governance);
+  const { endDate } = useCountdown(proposal, governance);
 
   const pubkeyIndex = (pubkey: string) => {
     return pubkeysIndex.indexOf(pubkey) + 1
@@ -62,7 +62,7 @@ export const ProposalCard = (props: { proposal: ParsedAccount<Proposal>, governa
         <div className="details">
           {!proposal.isPreVotingState() ?
             <>
-              {proposal.isVoting() ? `Ends in ${countdown}` : "Voting ended"}
+              {proposal.isVoting() ? `Ends: ${endDate}` : "Voting ended"}
               <Progress
                   percent={yesAbstainPercent}
                   success={{ percent: yesPercent }}

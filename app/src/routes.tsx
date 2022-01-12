@@ -28,7 +28,6 @@ import {
 import { ScrollToTop } from "./contexts/scrollToTop";
 
 export function Routes() {
-
   return (
     <>
       <HashRouter basename={"/"}>
@@ -38,9 +37,9 @@ export function Routes() {
         <ErrorBoundary FallbackComponent={AppErrorBanner}>
           <DarkThemeProvider>
             <ConnectionProvider>
-              <InitModalProvider>
-                <WalletProvider>
-                  <ConnectWalletProvider>
+              <WalletProvider>
+                <ConnectWalletProvider>
+                  <InitModalProvider>
                     <AirdropProvider>
                       <AccountsProvider>
                         <GovernanceProvider>
@@ -95,9 +94,9 @@ export function Routes() {
                         </GovernanceProvider>
                       </AccountsProvider>
                     </AirdropProvider>
-                  </ConnectWalletProvider>
-                </WalletProvider>
-              </InitModalProvider>
+                  </InitModalProvider>
+                </ConnectWalletProvider>
+              </WalletProvider>
             </ConnectionProvider>
           </DarkThemeProvider>
         </ErrorBoundary>

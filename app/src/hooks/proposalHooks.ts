@@ -58,10 +58,7 @@ export function useCountdown(proposal: Proposal, governance: Governance) {
     function zeroPad(num: number, places: number) {
       return String(num).padStart(places, "0");
     }
-    return days > 0 ? days === 1 ? `${days} day` : `${days} days` : `${zeroPad(days, 2)}:${zeroPad(hours, 2)}:${zeroPad(
-      minutes,
-      2
-    )}:${zeroPad(seconds, 2)}`;
+    return `${zeroPad(days, 2)}:${zeroPad(hours, 2)}:${zeroPad(minutes, 2)}:${zeroPad(seconds, 2)}`;
   };
 
   useEffect(() => {

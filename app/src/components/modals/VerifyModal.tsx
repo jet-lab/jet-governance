@@ -21,7 +21,7 @@ export const VerifyModal = (props: {
   const handleConfirmCode = () => {
     setAccessCode(false);
     setAccessGrantedModal(true);
-    if (Math.floor(Math.random() * 2) == 0) {
+    if (Math.floor(Math.random() * 4) === 0) {
       setVerified();
     }
   }

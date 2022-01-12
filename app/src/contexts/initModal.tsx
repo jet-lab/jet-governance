@@ -26,6 +26,7 @@ export function InitModalProvider(props: { children: any }) {
     }}>
       <InitModal
         showModal={showInitModal}
+        cancelInitModal={() => setShowInitModal(false)}
       />
       {props.children}
     </InitModalContext.Provider>
