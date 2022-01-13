@@ -118,6 +118,7 @@ export const HomeView = () => {
             <Button
               onClick={() => setShowStakeModal(true)}
               disabled={!connected && true}
+              className="full-width"
             >
               Stake
             </Button>
@@ -129,6 +130,7 @@ export const HomeView = () => {
             <Button
               onClick={() => setShowUnstakeModal(true)}
               disabled={!connected && true}
+              className="full-width"
             >
               Unstake
             </Button>

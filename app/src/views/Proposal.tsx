@@ -143,7 +143,7 @@ export const ProposalView = () => {
     );
     const { yes, no, abstain, total, yesPercent, yesAbstainPercent } =
       proposal.info.getVoteCounts();
-    const { startDate, endDate, countdown } = useCountdown(
+    const { startDate, endDate } = useCountdown(
       proposal.info,
       governance.info
     );
@@ -211,10 +211,6 @@ export const ProposalView = () => {
             <div className="neu-inset" id="details">
               <span>Proposal ID</span>
               <span>{addressStr}</span>
-              <span>
-                {proposal.info.isVoting() ? "Voting time left" : "Voting time"}{" "}
-              </span>
-              <span>{countdown}</span>
               <span>Start date</span>
               <span> {startDate ? startDate : "To be determined."}</span>
               <span>End date</span>

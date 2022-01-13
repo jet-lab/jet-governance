@@ -10,7 +10,6 @@ import { useCountdown } from "../hooks/proposalHooks";
 import { pubkeysIndex } from "./modals/PUBKEYS_INDEX";
 
 export const ProposalCard = (props: { proposal: ParsedAccount<Proposal>, governance: ParsedAccount<Governance> }) => {
-  const [currentTime, setCurrentTime] = useState(Date.now());
   const {
     proposal: {
       info: proposal,
@@ -32,14 +31,6 @@ export const ProposalCard = (props: { proposal: ParsedAccount<Proposal>, governa
     headline.substring(0, 15).replace(" ", "-")),
     [proposalAddress, programId, headline])
   const proposalAddressStr = useMemo(() => shortenAddress(proposalAddress.toString()), [proposalAddress])
-
-  // Update current time every second
-  // useEffect(() => {
-  //   const secondInterval = setInterval(() => {
-  //     setCurrentTime(currentTime + 1000);
-  //   }, 1000);
-  //   return () => clearInterval(secondInterval);
-  // });
 
   // Active votes show progress bar
   const { yesPercent, yesAbstainPercent } = proposal.getVoteCounts();

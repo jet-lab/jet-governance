@@ -74,10 +74,11 @@ export const VerifyModal = (props: {
       <Modal
       title="Access Denied"
       visible={!verified && accessGrantedModal}
-      okText="Okay"
-      onOk={handleCompleteVerify}
-      onCancel={handleCompleteVerify}
+      onOk={() => null}
+      okButtonProps={{ style: { display: "none " } }}
+      onCancel={() => null}
       cancelButtonProps={{ style: { display: "none " } }}
+      closable={false}
     >
       <p>Your wallet has been denied access to the app based on regional bans.</p>
       </Modal>

@@ -61,7 +61,7 @@ export const AirdropHistory = () => {
           <h1>Here's how your airdrop works.</h1>
           <p>
             Airdrop claims deposit a fixed amount of Jet tokens into your
-            governance account. These tokens are locked for a 30-day vesting
+            governance account. These tokens are locked for a 29.5-day vesting
             period, during which time you may vote with your tokens. As tokens
             are vested, they can remain staked to accrue rewards or you can
             choose to unstake them.

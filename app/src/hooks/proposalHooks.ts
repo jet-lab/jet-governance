@@ -36,62 +36,6 @@ export const useProposalFilters = (proposals: ParsedAccount<Proposal>[]) => {
 };
 
 export function useCountdown(proposal: Proposal, governance: Governance) {
-  const [countdown, setCountdown] = useState("");
-
-  // Get remaining days, hours and minutes for a proposal
-  const getElapsedTime = (timespan: number): string => {
-    if (timespan <= 0) {
-      return "Voting ended";
-    }
-
-    const days = Math.floor(timespan / 86400);
-    timespan -= days * 86400;
-
-    const hours = Math.floor(timespan / 3600) % 24;
-    timespan -= hours * 3600;
-
-    const minutes = Math.floor(timespan / 60) % 60;
-    timespan -= minutes * 60;
-
-    const seconds = Math.floor(timespan % 60);
-
-    function zeroPad(num: number, places: number) {
-      return String(num).padStart(places, "0");
-    }
-    return `${zeroPad(days, 2)}:${zeroPad(hours, 2)}:${zeroPad(minutes, 2)}:${zeroPad(seconds, 2)}`;
-  };
-
-  useEffect(() => {
-    if (proposal.isVoteFinalized()) {
-      setCountdown(getElapsedTime(0));
-      return;
-    }
-
-    const getTimeToVoteEnd = () => {
-      const now = moment().unix();
-
-      let timeToVoteEnd = proposal.isPreVotingState()
-        ? governance.config.maxVotingTime
-        : proposal.votingAt?.toNumber()! +
-          governance.config.maxVotingTime -
-          now;
-
-      return getElapsedTime(timeToVoteEnd);
-    };
-
-    const updateCountdown = () => {
-      const newState = getTimeToVoteEnd();
-      setCountdown(newState);
-    };
-
-    const interval = setInterval(() => {
-      updateCountdown();
-    }, 1000);
-
-    updateCountdown();
-    return () => clearInterval(interval);
-  }, [proposal, governance]);
-
   const startDate = useMemo(
     () =>
       proposal.votingAt
@@ -106,7 +50,7 @@ export function useCountdown(proposal: Proposal, governance: Governance) {
       : undefined;
   }, [proposal, governance]);
 
-  return { startDate, endDate, countdown };
+  return { startDate, endDate }
 }
 
 export interface VoterDisplayData {

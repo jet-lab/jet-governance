@@ -38,7 +38,7 @@ export const UnstakeModal = (props: {
         </p>
 
         <p>
-          Unstaked tokens have a 30-day bonding period. Your transaction will
+          Unstaked tokens have a 29.5-day bonding period. Your transaction will
           show up as pending in your flight log until the bonding period has
           completed.
         </p>
