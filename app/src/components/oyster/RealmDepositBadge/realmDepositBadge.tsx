@@ -1,12 +1,12 @@
 import React from 'react';
-import { TokenOwnerRecord } from '../../models/accounts';
+import { TokenOwnerRecord } from '../../../models/accounts';
 
 import {
   formatMintNaturalAmountAsDecimal,
   formatMintVoteWeight,
-} from '../../tools/units';
+} from '../../../tools/units';
 import { MintInfo } from '@solana/spl-token';
-import { ParsedAccount, useMint } from '../../contexts';
+import { ParsedAccount, useMint } from '../../../contexts';
 
 export function RealmDepositBadge({
   councilTokenOwnerRecord,

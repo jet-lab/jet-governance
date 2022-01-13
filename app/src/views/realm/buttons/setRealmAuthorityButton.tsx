@@ -3,7 +3,7 @@ import { Realm } from '../../../models/accounts';
 
 import { PublicKey } from '@solana/web3.js';
 import { useRpcContext } from '../../../hooks/useRpcContext';
-import { ModalFormAction } from '../../../components/ModalFormAction/modalFormAction';
+import { ModalFormAction } from '../../../components/oyster/ModalFormAction/modalFormAction';
 
 import { setRealmAuthority } from '../../../actions/setRealmAuthority';
 import { Form, Select } from 'antd';

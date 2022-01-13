@@ -10,9 +10,9 @@ import { Redirect } from 'react-router';
 import { GovernanceType } from '../../../models/enums';
 
 import { useKeyParam } from '../../../hooks/useKeyParam';
-import { ModalFormAction } from '../../../components/ModalFormAction/modalFormAction';
+import { ModalFormAction } from '../../../components/oyster/ModalFormAction/modalFormAction';
 
-import { AccountFormItem } from '../../../components/AccountFormItem/accountFormItem';
+import { AccountFormItem } from '../../../components/oyster/AccountFormItem/accountFormItem';
 
 import { useRpcContext } from '../../../hooks/useRpcContext';
 import { getGovernanceUrl } from '../../../tools/routeTools';
@@ -20,7 +20,7 @@ import {
   getGovernanceConfig,
   GovernanceConfigFormItem,
   GovernanceConfigValues,
-} from '../../../components/governanceConfigFormItem/governanceConfigFormItem';
+} from '../../../components/oyster/governanceConfigFormItem/governanceConfigFormItem';
 import { Realm } from '../../../models/accounts';
 import { useWalletTokenOwnerRecord } from '../../../hooks/apiHooks';
 import { createTreasuryAccount } from '../../../actions/createTreasuryAccount';

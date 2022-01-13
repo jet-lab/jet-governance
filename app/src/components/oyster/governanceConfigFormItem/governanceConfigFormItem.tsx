@@ -1,15 +1,15 @@
 import { Form, InputNumber, Space, Spin, Typography } from 'antd';
 import BN from 'bn.js';
 import React, { useState } from 'react';
-import { LABELS, ZERO } from '../../constants';
-import { ParsedAccount, useMint } from '../../contexts';
+import { LABELS, ZERO } from '../../../constants';
+import { ParsedAccount, useMint } from '../../../contexts';
 import {
   GovernanceConfig,
   Realm,
   VoteThresholdPercentage,
   VoteWeightSource,
-} from '../../models/accounts';
-import { getNameOf } from '../../tools/script';
+} from '../../../models/accounts';
+import { getNameOf } from '../../../tools/script';
 import {
   getDaysFromTimestamp,
   getMintNaturalAmountFromDecimal,
@@ -21,7 +21,7 @@ import {
   getMintSupplyFractionAsDecimalPercentage,
   getMintSupplyAsDecimal,
   formatPercentage,
-} from '../../tools/units';
+} from '../../../tools/units';
 
 const { Text } = Typography;
 

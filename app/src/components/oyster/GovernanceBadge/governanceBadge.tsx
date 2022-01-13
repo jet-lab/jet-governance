@@ -1,13 +1,13 @@
 import { Avatar, Badge, Tooltip } from 'antd';
 import React from 'react';
-import { Governance, ProposalState, Realm } from '../../models/accounts';
+import { Governance, ProposalState, Realm } from '../../../models/accounts';
 
-import { useProposalsByGovernance } from '../../hooks/apiHooks';
+import { useProposalsByGovernance } from '../../../hooks/apiHooks';
 
 
 import { SafetyCertificateOutlined } from '@ant-design/icons';
-import { ParsedAccount, useConnectionConfig, useTokenAccount } from '../../contexts';
-import { TokenIcon } from '..';
+import { ParsedAccount, useConnectionConfig, useTokenAccount } from '../../../contexts';
+import { TokenIcon } from '../..';
 
 export function GovernanceBadge({
   realm,

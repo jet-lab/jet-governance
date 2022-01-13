@@ -7,7 +7,7 @@ import { ParsedAccount } from "../contexts";
 import { getProposalUrl } from "../tools/routeTools";
 import { useRpcContext } from "../hooks/useRpcContext";
 import { useCountdown } from "../hooks/proposalHooks";
-import { pubkeysIndex } from "./modals/PUBKEYS_INDEX";
+import { pubkeysIndex } from "../models/PUBKEYS_INDEX";
 
 export const ProposalCard = (props: { proposal: ParsedAccount<Proposal>, governance: ParsedAccount<Governance> }) => {
   const {

@@ -3,32 +3,30 @@ import { InitModal } from "../components/modals/InitModal"
 
 // App init context
 interface InitModal {
-  showInitModal: boolean,
-  setShowInitModal: (showInitModal: boolean) => void
+  hideInitModal: boolean,
+  setHideInitModal: (hideInitModal: boolean) => void
 };
 const InitModalContext = createContext<InitModal>({
-  showInitModal: false,
-  setShowInitModal: () => {}
+  hideInitModal: false,
+  setHideInitModal: () => {}
 });
 
 // App init context provider
 export function InitModalProvider(props: { children: any }) {
-  const [showInitModal, setShowInitModal] = useState(localStorage.getItem('showInitModal') === 'false');
+  const [hideInitModal, setHideInitModal] = useState(localStorage.getItem('hideInitModal') === 'true');
   useEffect(() => {    
-    console.log("state", showInitModal);
-    localStorage.setItem('showInitModal', JSON.stringify(showInitModal))
-    console.log("localstorage", localStorage.getItem('showInitModal'));
-  }, [showInitModal]);
+    localStorage.setItem('hideInitModal', JSON.stringify(hideInitModal))
+  }, [hideInitModal]);
   
   return (
     <InitModalContext.Provider value={{ 
-      showInitModal, 
-      setShowInitModal
+      hideInitModal, 
+      setHideInitModal
     }}>
-      <InitModal
-        showModal={showInitModal}
-        cancelInitModal={() => setShowInitModal(false)}
-      />
+      {/* <InitModal
+        showModal={!hideInitModal}
+        cancelInitModal={() => setHideInitModal(false)}
+      /> */}
       {props.children}
     </InitModalContext.Provider>
   );

@@ -20,7 +20,7 @@ import {
   getMintDecimalAmountFromNatural,
   getMintMinAmountAsDecimal,
 } from '../../../../tools/units';
-import { parseMinTokensToCreate } from '../../../../components/governanceConfigFormItem/governanceConfigFormItem';
+import { parseMinTokensToCreate } from '../../../../components/oyster/governanceConfigFormItem/governanceConfigFormItem';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { ExplorerLink } from '../../../../components';
 import { ParsedAccount, useMint } from '../../../../contexts';

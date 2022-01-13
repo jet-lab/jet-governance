@@ -23,7 +23,7 @@ export const ConnectWalletProvider = (props: { children: any }) => {
   useEffect(() => {
     if (publicKey && !verified) {
       // If wallet has already been SMS checked and cannot access Jet Govern,
-      // setInit(false).
+      // return;
     }
     // setVerified(true);
   }, [publicKey, verified]);

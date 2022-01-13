@@ -10,7 +10,7 @@ import {
   getGovernanceConfig,
   GovernanceConfigFormItem,
   GovernanceConfigValues,
-} from '../../../../components/governanceConfigFormItem/governanceConfigFormItem';
+} from '../../../../components/oyster/governanceConfigFormItem/governanceConfigFormItem';
 import { useRpcContext } from '../../../../hooks/useRpcContext';
 import { createSetGovernanceConfig } from '../../../../models/createSetGovernanceConfig';
 import { useRealm } from '../../../../contexts/GovernanceContext';

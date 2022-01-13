@@ -3,8 +3,8 @@ import { Form, Input } from 'antd';
 import React from 'react';
 
 import { AccountInfo, ParsedAccountData } from '@solana/web3.js';
-import { useConnection } from '../../contexts';
-import { tryParseKey } from '../../utils';
+import { useConnection } from '../../../contexts';
+import { tryParseKey } from '../../../utils';
 
 export function AccountFormItem({
   name,

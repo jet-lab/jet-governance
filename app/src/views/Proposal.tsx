@@ -34,12 +34,11 @@ import { bnToIntLossy } from "../tools/units";
 import { LABELS } from "../constants";
 import ReactMarkdown from "react-markdown";
 import { voteRecordCsvDownload } from "../actions/voteRecordCsvDownload";
-import { StakeRedirectModal } from "../components/Stake/StakeRedirectModal";
+import { StakeRedirectModal } from "../components/modals/StakeRedirectModal";
 import { YesNoVote } from "../models/instructions";
 import { useHasVoteTimeExpired } from "../hooks/useHasVoteTimeExpired";
 import { DownloadOutlined, ArrowLeftOutlined } from "@ant-design/icons";
 import { useConnectWallet } from "../contexts/connectWallet";
-import { VoteSuccessModal } from "../components/modals/VoteSuccess";
 
 export const ProposalView = () => {
   const [isVoteModalVisible, setIsVoteModalVisible] = useState(false);

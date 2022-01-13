@@ -10,7 +10,7 @@ import { Token } from '@solana/spl-token';
 import React from 'react';
 import { formDefaults } from '../../../../tools/forms';
 import { validateTokenAccount } from '../../../../tools/validators/accounts/token';
-import { AccountFormItem } from '../../../../components/AccountFormItem/accountFormItem';
+import { AccountFormItem } from '../../../../components/oyster/AccountFormItem/accountFormItem';
 import {
   getMintMinAmountAsDecimal,
   parseMintNaturalAmountFromDecimal,

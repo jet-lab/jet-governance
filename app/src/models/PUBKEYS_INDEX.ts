@@ -199,4 +199,25 @@ export const pubkeysIndex = [
     "7CxJR3NwJb9zm45GZ2sRNQxRDPN8BDuY5mX8vNkU1zwW",
     "275CxTKV3tMnrLxaqzSiPYmKxoV8VhfGLgGywPDeRhKe",
     "7gV4CS5g41ZAmHVa8k4W4qunLRfBByapHfp4N5kmbzup"
-  ]
+]
+  
+
+// import { PublicKey } from "@solana/web3.js";
+// import { GOVERNANCE_PROGRAM_SEED } from "../../models/accounts";
+
+// const pubkeyIndex = async () => {
+
+//   let proposalIndexBuffer = Buffer.alloc(4);
+  
+//   for (let i = 0; i < 200; i++){
+//     proposalIndexBuffer.writeInt32LE(i, 0);
+
+//     const [proposalAddress] = await PublicKey.findProgramAddress(
+//       [
+//         Buffer.from(GOVERNANCE_PROGRAM_SEED),
+//         governance.toBuffer(),
+//         governingTokenMint.toBuffer(),
+//         proposalIndexBuffer,
+//       ],
+//       programId,}
+// );}

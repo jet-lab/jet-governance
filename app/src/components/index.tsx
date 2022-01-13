@@ -1,10 +1,10 @@
 export { ExplorerLink } from './ExplorerLink/index';
 export { CurrentUserBadge } from './CurrentUserBadge/index';
-export { Identicon } from './Identicon/index';
-export { Info } from './Icons/info';
-export { NumericInput } from './Input/numeric';
-export { ActionConfirmation } from './ActionConfirmation/index';
-export { TokenIcon } from './TokenIcon';
-export { TokenDisplay } from './TokenDisplay';
+export { Identicon } from './oyster/Identicon/index';
+export { Info } from './oyster/Icons/info';
+export { NumericInput } from './oyster/Input/numeric';
+export { ActionConfirmation } from './modals/ActionConfirmation/index';
+export { TokenIcon } from './oyster/TokenIcon';
+export { TokenDisplay } from './oyster/TokenDisplay';
 export { ConnectButton } from "./ConnectButton";
 export { Settings } from "./Settings";

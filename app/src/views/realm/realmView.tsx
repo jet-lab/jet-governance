@@ -10,10 +10,10 @@ import { useHistory } from 'react-router-dom';
 
 import { useKeyParam } from '../../hooks/useKeyParam';
 
-import { RealmBadge } from '../../components/RealmBadge/realmBadge';
-import { GovernanceBadge } from '../../components/GovernanceBadge/governanceBadge';
+import { RealmBadge } from '../../components/oyster/RealmBadge/realmBadge';
+import { GovernanceBadge } from '../../components/oyster/GovernanceBadge/governanceBadge';
 import AccountDescription from './components/accountDescription';
-import { RealmDepositBadge } from '../../components/RealmDepositBadge/realmDepositBadge';
+import { RealmDepositBadge } from '../../components/oyster/RealmDepositBadge/realmDepositBadge';
 import { useRpcContext } from '../../hooks/useRpcContext';
 import { getGovernanceUrl } from '../../tools/routeTools';
 import { RealmPopUpDetails } from './components/realmPopUpDetails';

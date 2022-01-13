@@ -9,7 +9,7 @@ import {
 import React from 'react';
 import { createUpgradeInstruction } from '../../../../tools/sdk/bpfUpgradeableLoader/createUpgradeInstruction';
 import { formDefaults } from '../../../../tools/forms';
-import { AccountFormItem } from '../../../../components/AccountFormItem/accountFormItem';
+import { AccountFormItem } from '../../../../components/oyster/AccountFormItem/accountFormItem';
 import { validateProgramBufferAccount } from '../../../../tools/validators/accounts/upgradeable-program';
 import { utils } from '@project-serum/anchor';
 import { useWallet } from '@solana/wallet-adapter-react';

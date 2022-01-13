@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button } from 'antd';
-import { LABELS } from '../../constants';
+import { LABELS } from '../../../constants';
 import { Link } from 'react-router-dom';
 
 export const ActionConfirmation = (props: {

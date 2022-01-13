@@ -8,7 +8,6 @@ export function ConnectWalletModal() {
   const { connecting, setConnecting } = useConnectWallet();
 
   return (
-    <>
     <Modal footer={null}
       visible={connecting && !connected} 
       onCancel={() => setConnecting(false)}>
@@ -48,6 +47,5 @@ export function ConnectWalletModal() {
         </div>
       </div>
       </Modal>
-    </>
   );
 };

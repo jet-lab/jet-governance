@@ -1,5 +1,5 @@
 import { Modal } from "antd";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { ParsedAccount } from "../../contexts";
 import { Governance, Proposal, TokenOwnerRecord } from "../../models/accounts";
 import { castVote } from "../../actions/castVote";
@@ -58,7 +58,7 @@ export const VoteModal = (props: {
         tokenOwnerRecord.pubkey,
         vote,
       ).then(() => {
-        // setAllSetModal(true)
+        setAllSetModal(true)
         onClose();
       })
     }
@@ -88,9 +88,9 @@ export const VoteModal = (props: {
     >
       <p>This proposal hash is {proposal.pubkey.toBase58()}.</p>
       <p>You have {Intl.NumberFormat().format(stakedBalance)} JET staked, and will be able to unstake these funds when voting ends on {endDate}.</p> {/** FIXME */}
-      </Modal>
+    </Modal>
       
-      <Modal
+    <Modal
       title="All set"
       visible={allSetModal}
       okText="Okay"

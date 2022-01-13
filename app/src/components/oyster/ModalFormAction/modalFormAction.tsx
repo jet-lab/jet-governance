@@ -2,14 +2,14 @@ import React, { useState } from 'react';
 import { Alert, Button, ButtonProps, Modal, Space, Typography } from 'antd';
 import { Form } from 'antd';
 
-import { formDefaults } from '../../tools/forms';
+import { formDefaults } from '../../../tools/forms';
 import {
   getTransactionErrorMsg,
   isWalletNotConnectedError,
-} from '../../models/errors';
+} from '../../../models/errors';
 import { useWallet } from '@solana/wallet-adapter-react';
-import { isSendTransactionError, isSignTransactionError, isTransactionTimeoutError } from '../../utils';
-import { ExplorerLink } from '..';
+import { isSendTransactionError, isSignTransactionError, isTransactionTimeoutError } from '../../../utils';
+import { ExplorerLink } from '../..';
 
 const { Text } = Typography;
 

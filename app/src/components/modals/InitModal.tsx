@@ -22,6 +22,7 @@ export const InitModal = (props: {
       onOk={connectWallet}
       onCancel={() => cancelInitModal()}
       cancelButtonProps={{ style: { display: "none" } }}
+      maskClosable={true}
     >
       <p>Welcome to Jet Govern - the governance app for Jet Protocol. Here, you earn rewards and help pilot the direction of Jet Protocol by staking your JET into the app.</p>
 

@@ -1,14 +1,14 @@
 import { PublicKey } from '@solana/web3.js';
 import { Form, InputNumber, Space, Typography } from 'antd';
 import React, { useState } from 'react';
-import { useMint } from '../../contexts';
+import { useMint } from '../../../contexts';
 import {
   formatPercentage,
   getMintMinAmountAsDecimal,
   getMintSupplyAsDecimal,
   getMintSupplyFractionAsDecimalPercentage,
   getMintSupplyPercentageAsDecimal,
-} from '../../tools/units';
+} from '../../../tools/units';
 import { parseMinTokensToCreate } from '../governanceConfigFormItem/governanceConfigFormItem';
 
 const { Text } = Typography;

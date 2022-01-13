@@ -7,7 +7,7 @@ import { createSetBuffer } from '../../../../tools/anchor/idlInstructions';
 
 import { formDefaults } from '../../../../tools/forms';
 import { useAnchorIdlAddress } from '../../../../tools/anchor/anchorHooks';
-import { AccountFormItem } from '../../../../components/AccountFormItem/accountFormItem';
+import { AccountFormItem } from '../../../../components/oyster/AccountFormItem/accountFormItem';
 import { ExplorerLink } from '../../../../components';
 import { ParsedAccount } from '../../../../contexts';
 

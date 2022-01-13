@@ -2,8 +2,8 @@ import { MintLayout } from '@solana/spl-token';
 import { Form, Input } from 'antd';
 
 import React from 'react';
-import { useConnection } from '../../contexts';
-import { tryParseKey } from '../../utils';
+import { useConnection } from '../../../contexts';
+import { tryParseKey } from '../../../utils';
 
 export function MintFormItem({
   name,
