@@ -93,7 +93,7 @@ jobs:
           && mkdir -p ~/.config/solana \
           && echo ${{ secrets.SOLANA_DEVNET_DEPLOYER_KEYPAIR }} > ~/.config/solana/deployer.json \
           && echo ${{ secrets.REWARDS_DEVNET_KEYPAIR }} > ./target/deploy/jet_rewards-keypair.json \
-          && echo ${{ secrets.STAKING_DEVNET_KEYPAIR }} > ./target/deploy/jet_staking-keypair.json
+          && echo ${{ secrets.STAKING_DEVNET_KEYPAIR }} > ./target/deploy/jet_staking-keypair.json \
           && echo ${{ secrets.AUTH_DEVNET_KEYPAIR }} > ./target/deploy/jet_auth-keypair.json
 
       - name: Deploy Rewards
