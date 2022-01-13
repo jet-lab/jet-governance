@@ -25,7 +25,7 @@ pub struct WithdrawUnbonded<'info> {
               has_one = stake_pool)]
     pub stake_account: Account<'info, StakeAccount>,
 
-    /// The stake pool to create an account with
+    /// The stake pool to withdraw from
     #[account(mut, has_one = stake_pool_vault)]
     pub stake_pool: Account<'info, StakePool>,
 

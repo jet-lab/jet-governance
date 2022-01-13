@@ -47,6 +47,7 @@ pub mod jet_staking {
         instructions::add_stake_handler(ctx, amount)
     }
 
+    /// Unbond stake from an account, allowing it to be withdrawn
     pub fn unbond_stake(
         ctx: Context<UnbondStake>,
         bump: u8,
@@ -56,18 +57,27 @@ pub mod jet_staking {
         instructions::unbond_stake_handler(ctx, bump, seed, amount)
     }
 
+    /// Withdraw stake that was previously unbonded
     pub fn withdraw_unbondend(ctx: Context<WithdrawUnbonded>) -> ProgramResult {
         instructions::withdraw_unbonded_handler(ctx)
     }
 
+    /// Withdraw stake from the pool by the authority
+    pub fn withdraw_bonded(ctx: Context<WithdrawBonded>, amount: u64) -> ProgramResult {
+        instructions::withdraw_bonded_handler(ctx, amount)
+    }
+
+    /// Mint voting tokens based on current stake
     pub fn mint_votes(ctx: Context<MintVotes>, amount: Amount) -> ProgramResult {
         instructions::mint_votes_handler(ctx, amount)
     }
 
+    /// Burn outstanding burning tokens to unlock stake
     pub fn burn_votes(ctx: Context<BurnVotes>, amount: u64) -> ProgramResult {
         instructions::burn_votes_handler(ctx, amount)
     }
 
+    /// Close out the stake account, return any rent
     pub fn close_stake_account(ctx: Context<CloseStakeAccount>) -> ProgramResult {
         instructions::close_stake_account_handler(ctx)
     }

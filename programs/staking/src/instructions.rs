@@ -3,6 +3,7 @@ mod init_stake_account;
 
 mod add_stake;
 mod unbond_stake;
+mod withdraw_bonded;
 mod withdraw_unbonded;
 
 mod burn_votes;
@@ -15,6 +16,7 @@ pub use init_stake_account::*;
 
 pub use add_stake::*;
 pub use unbond_stake::*;
+pub use withdraw_bonded::*;
 pub use withdraw_unbonded::*;
 
 pub use burn_votes::*;
