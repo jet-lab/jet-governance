@@ -38,6 +38,8 @@ import { StakeRedirectModal } from "../components/Stake/StakeRedirectModal";
 import { YesNoVote } from "../models/instructions";
 import { useHasVoteTimeExpired } from "../hooks/useHasVoteTimeExpired";
 import { DownloadOutlined, ArrowLeftOutlined } from "@ant-design/icons";
+import { useConnectWallet } from "../contexts/connectWallet";
+import { VoteSuccessModal } from "../components/modals/VoteSuccess";
 
 export const ProposalView = () => {
   const [isVoteModalVisible, setIsVoteModalVisible] = useState(false);
@@ -48,6 +50,7 @@ export const ProposalView = () => {
   // TODO: Fetch user's stake from blockchain
   const proposalAddress = useKeyParam();
   const proposal = useProposal(proposalAddress);
+  const { setConnecting } = useConnectWallet();
 
   let governance = useGovernance(proposal?.info.governance);
   let realm = useRealm(governance?.info.realm);
@@ -117,9 +120,7 @@ export const ProposalView = () => {
     const hasVoteTimeExpired = useHasVoteTimeExpired(governance, proposal);
 
     useEffect(() => {
-      if (!connected) {
-        return setVote(undefined);
-      } else if (voteRecord
+      if (voteRecord
           ?.tryUnwrap()
           ?.info.getVoterDisplayData().group === "Approve") {
           setVote(YesNoVote.Yes)
@@ -277,9 +278,6 @@ export const ProposalView = () => {
           >
             <Button
               onClick={() => setVote(YesNoVote.Yes)}
-              disabled={
-                !connected || !proposal.info.isVoting() || hasVoteTimeExpired
-              }
               className={`vote-select ${
                 vote === YesNoVote.Yes ? "selected" : ""
               }`}
@@ -288,9 +286,6 @@ export const ProposalView = () => {
             </Button>
             <Button
               onClick={() => setVote(YesNoVote.No)}
-              disabled={
-                !connected || !proposal.info.isVoting() || hasVoteTimeExpired
-              }
               className={`vote-select ${
                 vote === YesNoVote.No ? "selected" : ""
               }`}
@@ -299,17 +294,13 @@ export const ProposalView = () => {
             </Button>
             <Button
               onClick={() => console.log(vote)}
-              disabled={
-                !connected || !proposal.info.isVoting() || hasVoteTimeExpired
-              }
               className={`vote-select`}
             >
               Abstain
             </Button>
             <Button
               type="primary"
-              disabled={!connected || !proposal.info.isVoting()}
-              onClick={() => handleVoteModal()}
+              onClick={!connected ? () => setConnecting(true) : () => handleVoteModal()}
             >
               Vote
             </Button>

@@ -14,7 +14,7 @@ const ProposalContext = React.createContext<ProposalConfig>({
 
 export function ProposalProvider({ children = undefined as any }) {
   const [showing, setShowing] = useState<ProposalFilter>("active");
-
+  
   return (
     <ProposalContext.Provider
       value={{

@@ -2,15 +2,16 @@ import { Modal } from "antd";
 import React, { useEffect, useState } from "react";
 import { ParsedAccount } from "../../contexts";
 import { Governance, Proposal, TokenOwnerRecord } from "../../models/accounts";
-import { useCountdown } from "../../hooks/proposalHooks";
+import { castVote } from "../../actions/castVote";
 import { YesNoVote } from "../../models/instructions";
 import {
+  useProposalsByGovernance,
   useTokenOwnerVoteRecord,
 } from '../../hooks/apiHooks';
-// import { CastVoteButton } from "../../views/proposal/components/buttons/castVoteButton";
-import { castVote } from "../../actions/castVote";
+import { useCountdown } from "../../hooks/proposalHooks";
 import { useRpcContext } from "../../hooks/useRpcContext";
 import { useUser } from "../../hooks/useClient";
+import { JET_GOVERNANCE } from "../../utils";
 
 export const VoteModal = (props: {
   vote: YesNoVote;
@@ -29,22 +30,18 @@ export const VoteModal = (props: {
     tokenOwnerRecord,
   } = props;
 
-  const [voteType, setVoteType] = useState("in favor of");
-  
-  // const hasVoteTimeExpired = useHasVoteTimeExpired(governance, proposal);
-  // const voteRecord = useTokenOwnerVoteRecord(
-  //   proposal.pubkey,
-  //   tokenOwnerRecord?.pubkey,
-  // );
+  const [voteText, setVoteText] = useState("in favor of");
+  const [allSetModal, setAllSetModal] = useState(false);
+
   const { stakedBalance } = useUser();
 
   useEffect(() => {
   if (vote === YesNoVote.Yes) {
-    setVoteType("in favor of");
+    setVoteText("in favor of");
   } else if (vote === YesNoVote.No) {
-    setVoteType("against");
+    setVoteText("against");
   } else /*if (vote === "abstain")*/ {
-    setVoteType("to abstain from");
+    setVoteText("to abstain from");
   }
   }, [vote])
 
@@ -60,13 +57,29 @@ export const VoteModal = (props: {
         proposal,
         tokenOwnerRecord.pubkey,
         vote,
-      ).then(() => onClose());
+      ).then(() => {
+        // setAllSetModal(true)
+        onClose();
+      })
     }
   }
 
+  // Handlers for tx success all set modal
+  const proposals = useProposalsByGovernance(JET_GOVERNANCE);
+  const activeProposals = proposals.filter((p) => p.info.isVoting());
+
+  const handleOk = () => {
+    setAllSetModal(false);
+  };
+
+  const handleCancel = () => {
+    setAllSetModal(false);
+  };
+
   return (
+    <>
     <Modal
-      title={`You are about to vote ${voteType} proposal "${proposal.info.name}"`}
+      title={`You are about to vote ${voteText} proposal "${proposal.info.name}"`}
       visible={visible}
       okText="Confirm vote"
       onOk={confirmVote}
@@ -75,14 +88,31 @@ export const VoteModal = (props: {
     >
       <p>This proposal hash is {proposal.pubkey.toBase58()}.</p>
       <p>You have {Intl.NumberFormat().format(stakedBalance)} JET staked, and will be able to unstake these funds when voting ends on {endDate}.</p> {/** FIXME */}
-      {/* <CastVoteButton
-        governance={governance}
-        proposal={proposal}
-        tokenOwnerRecord={tokenOwnerRecord}
-        vote={vote}
-        voteRecord={voteRecord}
-        hasVoteTimeExpired={hasVoteTimeExpired}
-      /> */}
+      </Modal>
+      
+      <Modal
+      title="All set"
+      visible={allSetModal}
+      okText="Okay"
+      onOk={handleOk}
+      onCancel={handleCancel}
+      cancelButtonProps={{ style: { display: "none " } }}
+    >
+      <p>
+        You've successfully voted <strong>{voteText}</strong> proposal #: {proposal.info.name}.
+      </p>
+
+      <h2 className="text-gradient">Vote on other proposals:</h2>
+
+      <p>
+      {activeProposals && activeProposals.length > 0
+        ? activeProposals?.map((proposal) => (
+            `HELLO ${proposal.info.name}`
+          ))
+        : "There are no active proposals at this time."}
+      </p>
     </Modal>
+
+      </>
   );
 };

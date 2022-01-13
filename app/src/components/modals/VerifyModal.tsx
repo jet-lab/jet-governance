@@ -21,18 +21,13 @@ export const VerifyModal = (props: {
   const handleConfirmCode = () => {
     setAccessCode(false);
     setAccessGrantedModal(true);
-    if (Math.floor(Math.random() * 4) === 0) {
+    // if (Math.floor(Math.random() * 4) === 0) {
       setVerified();
-    }
+    // }
   }
 
   const handleCompleteVerify = () => {
     if (!verified) {
-    // TODO add init app boolean
-      notify({
-        message: 'Checking eligibility',
-        description: 'You cannot access Jet Govern',
-      });
       doNotInit();
     }
     setAccessGrantedModal(false);
@@ -99,4 +94,4 @@ export const VerifyModal = (props: {
 
       </>
   );
-};
+}

@@ -6,7 +6,6 @@ interface InitModal {
   showInitModal: boolean,
   setShowInitModal: (showInitModal: boolean) => void
 };
-
 const InitModalContext = createContext<InitModal>({
   showInitModal: false,
   setShowInitModal: () => {}
@@ -15,8 +14,10 @@ const InitModalContext = createContext<InitModal>({
 // App init context provider
 export function InitModalProvider(props: { children: any }) {
   const [showInitModal, setShowInitModal] = useState(localStorage.getItem('showInitModal') === 'false');
-  useEffect(() => {
-    localStorage.setItem('showInitModal', JSON.stringify(showInitModal));
+  useEffect(() => {    
+    console.log("state", showInitModal);
+    localStorage.setItem('showInitModal', JSON.stringify(showInitModal))
+    console.log("localstorage", localStorage.getItem('showInitModal'));
   }, [showInitModal]);
   
   return (
@@ -31,13 +32,4 @@ export function InitModalProvider(props: { children: any }) {
       {props.children}
     </InitModalContext.Provider>
   );
-};
-
-// User has clicked init modal
-export const useInitModal = () => {
-  const { showInitModal, setShowInitModal } = useContext(InitModalContext);
-  return {
-    showInitModal,
-    setShowInitModal: () => setShowInitModal(false)
-  };
 };
