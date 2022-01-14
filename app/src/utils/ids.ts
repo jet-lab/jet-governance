@@ -10,9 +10,8 @@ export let JET_TOKEN_MINT = new PublicKey(
 export const JET_FAUCET_DEVNET = new PublicKey(
   "4RqY4p1xXMcMF1xrGYtJG8aaQDR7s8GHkjfSHFqcBmQV"
 );
-
-export const JET_GOV_PROGRAM_ID = new PublicKey(
-  "5TBwvU5xoA13fzmZgWVgFBUmBz1YCdiq2AshDZpPn3AL"
+export const OYSTER_GOV_PROGRAM_ID = new PublicKey(
+  "GovER5Lthms3bLBqWub97yVrMmEogzX7xNjdXpPPCVZw"
 );
 export let JET_REALM = new PublicKey(
   "9YDowTE7R1qr8wYYLJMvofQK5NrK2TqUn7u59r7VUTDm"

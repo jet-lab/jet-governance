@@ -1,13 +1,12 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { Card, Progress } from "antd";
-import { shortenAddress } from "../utils";
 import { Governance, Proposal, ProposalState } from "../models/accounts";
 import { ParsedAccount } from "../contexts";
 import { getProposalUrl } from "../tools/routeTools";
 import { useRpcContext } from "../hooks/useRpcContext";
 import { useCountdown } from "../hooks/proposalHooks";
-import { pubkeysIndex } from "../models/PUBKEYS_INDEX";
+import { getPubkeyIndex } from "../models/PUBKEYS_INDEX";
 
 export const ProposalCard = (props: { proposal: ParsedAccount<Proposal>, governance: ParsedAccount<Governance> }) => {
   const {
@@ -30,15 +29,11 @@ export const ProposalCard = (props: { proposal: ParsedAccount<Proposal>, governa
     programId,
     headline.substring(0, 15).replace(" ", "-")),
     [proposalAddress, programId, headline])
-  const proposalAddressStr = useMemo(() => shortenAddress(proposalAddress.toString()), [proposalAddress])
+  const proposalStr = useMemo(() => proposalAddress.toString(), [proposalAddress])
 
   // Active votes show progress bar
   const { yesPercent, yesAbstainPercent } = proposal.getVoteCounts();
   const { endDate } = useCountdown(proposal, governance);
-
-  const pubkeyIndex = (pubkey: string) => {
-    return pubkeysIndex.indexOf(pubkey) + 1
-  }
 
   return (
     <Link to={headlineUrl}>
@@ -47,7 +42,7 @@ export const ProposalCard = (props: { proposal: ParsedAccount<Proposal>, governa
         className={`proposal-card clickable ${proposal.isVoting() ? "" : ""}`}
         style={{}}>
         <div>
-          <div className="header">JUMP {pubkeyIndex(proposalAddressStr)}</div>
+          <div className="header">JUMP {getPubkeyIndex(proposalStr)} </div>
           <h1>{headline}</h1>
         </div>
         <div className="details">

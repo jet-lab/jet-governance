@@ -17,7 +17,12 @@ import {
   useWalletTokenOwnerRecord,
   useTokenOwnerVoteRecord,
 } from "../hooks/apiHooks";
-import { fromLamports, JET_GOVERNANCE, shortenAddress, JET_TOKEN_MINT } from "../utils";
+import {
+  fromLamports,
+  JET_GOVERNANCE,
+  shortenAddress,
+  JET_TOKEN_MINT,
+} from "../utils";
 import {
   useCountdown,
   useProposalFilters,
@@ -39,6 +44,7 @@ import { YesNoVote } from "../models/instructions";
 import { useHasVoteTimeExpired } from "../hooks/useHasVoteTimeExpired";
 import { DownloadOutlined, ArrowLeftOutlined } from "@ant-design/icons";
 import { useConnectWallet } from "../contexts/connectWallet";
+import { getPubkeyIndex } from "../models/PUBKEYS_INDEX";
 
 export const ProposalView = () => {
   const [isVoteModalVisible, setIsVoteModalVisible] = useState(false);
@@ -119,16 +125,16 @@ export const ProposalView = () => {
     const hasVoteTimeExpired = useHasVoteTimeExpired(governance, proposal);
 
     useEffect(() => {
-      if (voteRecord
-          ?.tryUnwrap()
-          ?.info.getVoterDisplayData().group === "Approve") {
-          setVote(YesNoVote.Yes)
-          } else if (voteRecord
-            ?.tryUnwrap()
-          ?.info.getVoterDisplayData().group === "Reject") {
-            setVote(YesNoVote.No)
-        }
-      }, [voteRecord, connected])
+      if (
+        voteRecord?.tryUnwrap()?.info.getVoterDisplayData().group === "Approve"
+      ) {
+        setVote(YesNoVote.Yes);
+      } else if (
+        voteRecord?.tryUnwrap()?.info.getVoterDisplayData().group === "Reject"
+      ) {
+        setVote(YesNoVote.No);
+      }
+    }, [voteRecord, connected]);
 
     // const instructions = useInstructionsByProposal(proposal.pubkey);
     // const signatories = useSignatoriesByProposal(proposal.pubkey);
@@ -137,16 +143,9 @@ export const ProposalView = () => {
       () => proposalAddress.toBase58(),
       [proposalAddress]
     );
-    const shortAddress = useMemo(
-      () => shortenAddress(proposalAddress.toString()),
-      [proposalAddress]
-    );
     const { yes, no, abstain, total, yesPercent, yesAbstainPercent } =
       proposal.info.getVoteCounts();
-    const { startDate, endDate } = useCountdown(
-      proposal.info,
-      governance.info
-    );
+    const { startDate, endDate } = useCountdown(proposal.info, governance.info);
 
     const {
       loading,
@@ -158,20 +157,6 @@ export const ProposalView = () => {
 
     return (
       <div className="view-container proposal column-grid">
-        {tokenOwnerRecord && vote && (
-          <VoteModal
-            vote={vote}
-            visible={isVoteModalVisible}
-            onClose={() => setIsVoteModalVisible(false)}
-            governance={governance}
-            proposal={proposal}
-            tokenOwnerRecord={tokenOwnerRecord}
-          />
-        )}
-        <StakeRedirectModal
-          visible={isStakeRedirectModalVisible}
-          onClose={() => setIsStakeRedirectModalVisible(false)}
-        />
         <div
           className={`flex column ${
             proposal.info.isVoting() ? "proposal-left" : "centered"
@@ -180,9 +165,10 @@ export const ProposalView = () => {
           <div className="description neu-container">
             <span>
               <Link to="/">
-                <ArrowLeftOutlined />Active Proposals
+                <ArrowLeftOutlined />
+                Active Proposals
               </Link>{" "}
-              / Proposal {shortAddress}
+              / Proposal {getPubkeyIndex(addressStr)}
             </span>
             <h1 className="view-header">{proposal.info.name}</h1>
             {
@@ -291,30 +277,29 @@ export const ProposalView = () => {
             >
               Against
             </Button>
-            <Button
-              onClick={() => console.log(vote)}
-              className={`vote-select`}
-            >
+            <Button onClick={() => console.log(vote)} className={`vote-select`}>
               Abstain
             </Button>
             <Button
               type="primary"
-              onClick={!connected ? () => setConnecting(true) : () => handleVoteModal()}
+              onClick={
+                !connected ? () => setConnecting(true) : () => handleVoteModal()
+              }
             >
               Vote
             </Button>
-            {vote && <VoteModal
+            <VoteModal
               vote={vote}
               visible={isVoteModalVisible}
               onClose={() => setIsVoteModalVisible(false)}
               governance={governance}
               proposal={proposal}
               tokenOwnerRecord={tokenOwnerRecord}
-              // isStakeRedirectModalVisible={isStakeRedirectModalVisible}
-              // setIsStakeRedirectModalVisible={setIsStakeRedirectModalVisible}
-              // proposalNumber={id}
-              // endDate={end}
-            />}
+            />
+            <StakeRedirectModal
+              visible={isStakeRedirectModalVisible}
+              onClose={() => setIsStakeRedirectModalVisible(false)}
+            />
           </div>
         </div>
 
