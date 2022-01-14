@@ -1,8 +1,7 @@
 import { Modal } from "antd";
-import React, { useCallback, useEffect, useState } from "react";
+import { useState } from "react";
 import { ParsedAccount } from "../../contexts";
 import { Governance, Proposal, TokenOwnerRecord } from "../../models/accounts";
-import { castVote } from "../../actions/castVote";
 import { YesNoVote } from "../../models/instructions";
 import {
   useProposalsByGovernance,
@@ -10,8 +9,10 @@ import {
 } from "../../hooks/apiHooks";
 import { useCountdown } from "../../hooks/proposalHooks";
 import { useRpcContext } from "../../hooks/useRpcContext";
-import { useUser } from "../../hooks/useClient";
 import { JET_GOVERNANCE } from "../../utils";
+import { StakeAccount, StakePool } from "@jet-lab/jet-engine";
+import { useStakedBalance } from "../../hooks/useStaking";
+import React from "react";
 
 export const VoteModal = (props: {
   vote: YesNoVote | undefined;
@@ -20,16 +21,26 @@ export const VoteModal = (props: {
   governance: ParsedAccount<Governance>;
   proposal: ParsedAccount<Proposal>;
   tokenOwnerRecord?: ParsedAccount<TokenOwnerRecord>;
+  stakeAccount: StakeAccount | undefined,
+  stakePool: StakePool | undefined
 }) => {
-  const { vote, visible, onClose, governance, proposal, tokenOwnerRecord } =
-    props;
+  const {
+    vote,
+    visible,
+    onClose,
+    governance,
+    proposal,
+    tokenOwnerRecord,
+    stakeAccount,
+    stakePool
+  } = props;
 
   const [voteSuccessModal, setVoteSuccessModal] = useState(false);
-  const { stakedBalance } = useUser();
   const { endDate } = useCountdown(proposal.info, governance.info);
   const rpcContext = useRpcContext();
 
   let voteText: string;
+  const { stakedJet } = useStakedBalance(stakeAccount, stakePool);
 
   if (vote === YesNoVote.Yes) {
     voteText = "in favor of";
@@ -84,7 +95,7 @@ export const VoteModal = (props: {
       >
         <p>This proposal hash is {proposal.pubkey.toBase58()}.</p>
         <p>
-          You have {Intl.NumberFormat().format(stakedBalance)} JET staked, and
+          You have {Intl.NumberFormat().format(stakedJet)} JET staked, and
           will be able to unstake these funds when voting ends on {endDate}.
         </p>{" "}
         {/** FIXME */}

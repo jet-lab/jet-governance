@@ -10,8 +10,8 @@ import {
   getTokenOwnerRecordAddress,
   GOVERNANCE_PROGRAM_SEED,
 } from './accounts';
-import BN from 'bn.js';
 import { programIds } from '../utils';
+import { BN } from '@project-serum/anchor';
 
 export const withDepositGoverningTokens = async (
   instructions: TransactionInstruction[],

@@ -1,6 +1,6 @@
+import { BN } from '@project-serum/anchor';
 import { MintInfo } from '@solana/spl-token';
 import { BigNumber } from 'bignumber.js';
-import BN from 'bn.js';
 
 import { MintMaxVoteWeightSource } from '../models/accounts';
 
@@ -190,7 +190,7 @@ export function getMintMaxVoteWeight(
   maxVoteWeightSource: MintMaxVoteWeightSource,
 ) {
   if (maxVoteWeightSource.isFullSupply()) {
-    return mint.supply;
+    return mint.supply as BN;
   }
 
   const supplyFraction = maxVoteWeightSource.getSupplyFraction();

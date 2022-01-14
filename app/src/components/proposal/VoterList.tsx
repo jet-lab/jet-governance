@@ -1,9 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { List, Button, Skeleton } from "antd";
 import { Stakeholders } from "./Stakeholders";
-import { useUser } from "../../hooks/useClient";
-import { useWallet } from "@solana/wallet-adapter-react";
-import { VoteRecord } from "../../models/accounts";
 import { VoterDisplayData } from "../../hooks/proposalHooks";
 import { bnToIntLossy } from "../../tools/units";
 

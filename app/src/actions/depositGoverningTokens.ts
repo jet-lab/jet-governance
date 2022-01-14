@@ -4,6 +4,7 @@ import { sendTransactionWithNotifications } from '../tools/transactions';
 import { RpcContext } from '../models/core/api';
 import { TokenAccount, approve } from '../models';
 import { JET_TOKEN_MINT } from "../utils/ids";
+import { BN } from '@project-serum/anchor';
 
 export const depositGoverningTokens = async (
   { connection, wallet, programId, programVersion, walletPubkey }: RpcContext,
@@ -13,7 +14,7 @@ export const depositGoverningTokens = async (
   let instructions: TransactionInstruction[] = [];
   let signers: Account[] = [];
 
-  const amount = governingTokenSource.info.amount;
+  const amount = governingTokenSource.info.amount as BN;
 
   const transferAuthority = approve(
     instructions,

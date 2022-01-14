@@ -4,6 +4,7 @@ import { Governance } from '../../../models/accounts';
 import { MintInfo } from '@solana/spl-token';
 import { formatMintNaturalAmountAsDecimal } from '../../../tools/units';
 import { deserializeMint, ParsedAccount, useTokenAccount, useConnection, useMint } from '../../../contexts';
+import { BN } from '@project-serum/anchor';
 
 export default function AccountDescription({
   governance,
@@ -33,12 +34,12 @@ export default function AccountDescription({
         tokenAccountMint &&
         `Token Balance: ${formatMintNaturalAmountAsDecimal(
           tokenAccountMint,
-          tokenAccount.info.amount,
+          tokenAccount.info.amount as BN,
         )}`}
       {mintAccount &&
         `Mint Supply: ${formatMintNaturalAmountAsDecimal(
           mintAccount,
-          mintAccount.supply,
+          mintAccount.supply as BN,
         )}`}
     </>
   );

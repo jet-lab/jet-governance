@@ -16,7 +16,6 @@ import BN from 'bn.js';
 import { useRpcContext } from '../../../hooks/useRpcContext';
 import { getOysterProposalUrl } from '../../../tools/routeTools';
 import { ParsedAccount, useMint } from '../../../contexts';
-import { format } from 'path/posix';
 
 export function NewProposalButton({
   realm,

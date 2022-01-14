@@ -1,70 +1,86 @@
-import { useState, useEffect } from "react";
-import { useProposalContext } from "../contexts/proposal";
-import { ProposalCard } from "../components/ProposalCard";
-import { Button, Divider, notification, Tooltip, Switch } from "antd";
-import { useDarkTheme } from "../contexts/darkTheme";
-import { useUser } from "../hooks/useClient";
-import { Input } from "../components/Input";
-import { StakeModal } from "../components/modals/StakeModal";
-import { UnstakeModal } from "../components/modals/UnstakeModal";
-import { InfoCircleFilled } from "@ant-design/icons";
-import { useAirdrop } from "../contexts/airdrop";
-import React from "react";
-import { useRpcContext } from "../hooks/useRpcContext";
-import { jetFaucet } from "../actions/jetFaucet";
-import { useGovernance, useProposalsByGovernance } from "../hooks/apiHooks";
-import { JET_GOVERNANCE } from "../utils";
-import { useProposalFilters } from "../hooks/proposalHooks";
-import { ReactFitty } from "react-fitty";
+import React, { useState } from "react"
+import { useProposalContext } from "../contexts/proposal"
+import { ProposalCard } from "../components/ProposalCard"
+import { Button, Divider, notification, Tooltip, Switch } from "antd"
+import { useDarkTheme } from "../contexts/darkTheme"
+import {
+  useStakeAccount,
+  useStakeProgram,
+  useStakedBalance,
+  useStakePool,
+  useUnbondingAccountsByStakeAccount,
+} from "../hooks/useStaking"
+import { Input } from "../components/Input"
+import { StakeModal } from "../components/modals/StakeModal"
+import { UnstakeModal } from "../components/modals/UnstakeModal"
+import { InfoCircleFilled } from "@ant-design/icons"
+import { useAirdrop } from "../contexts/airdrop"
+import { useRpcContext } from "../hooks/useRpcContext"
+import { jetFaucet } from "../actions/jetFaucet"
+import { useGovernance, useProposalsByGovernance } from "../hooks/apiHooks"
+import { JET_GOVERNANCE } from "../utils"
+import { useProposalFilters } from "../hooks/proposalHooks"
+import { ReactFitty } from "react-fitty"
 
 export const HomeView = () => {
-  const [showStakeModal, setShowStakeModal] = useState(false);
-  const [showUnstakeModal, setShowUnstakeModal] = useState(false);
+  const [showStakeModal, setShowStakeModal] = useState(false)
+  const [showUnstakeModal, setShowUnstakeModal] = useState(false)
 
-  const { showing, setShowing } = useProposalContext();
-  const [inputAmount, setInputAmount] = useState<number | null>(null);
-  const { votingBalance, stakedBalance } = useUser();
-  const { vestedAirdrops } = useAirdrop();
-  const rpcContext = useRpcContext();
+  const { showing, setShowing } = useProposalContext()
+  const [inputAmount, setInputAmount] = useState<number | undefined>()
+  const { vestedAirdrops } = useAirdrop()
+  const rpcContext = useRpcContext()
   const connected = rpcContext.wallet.connected
-  const { darkTheme, toggleDarkTheme } = useDarkTheme();
+  const { darkTheme, toggleDarkTheme } = useDarkTheme()
 
-  const proposals = useProposalsByGovernance(JET_GOVERNANCE);
-  const filteredProposals = useProposalFilters(proposals);
+  // ----- Proposals -----
+  const proposals = useProposalsByGovernance(JET_GOVERNANCE)
+  const filteredProposals = useProposalFilters(proposals)
 
-  let governance = useGovernance(JET_GOVERNANCE);
+  // ----- Staking -----
+  const stakeProgram = useStakeProgram()
+  const stakePool = useStakePool(stakeProgram)
+  const stakeAccount = useStakeAccount(stakeProgram, stakePool)
+  const unbondingAccounts = useUnbondingAccountsByStakeAccount(
+    stakeProgram,
+    stakeAccount
+  )
+  const { stakedJet, unstakedJet, unbondingJet, unlockedVotes } =
+    useStakedBalance(stakeAccount, stakePool)
+
+  let governance = useGovernance(JET_GOVERNANCE)
 
   const totalDailyReward = 1000000
   const totalStake = 1500000
-  const userDailyReward = totalDailyReward * stakedBalance / totalStake
+  const userDailyReward = (totalDailyReward * (stakedJet ?? 0)) / totalStake
 
   // Devnet only: airdrop JET tokens
   const getAirdrop = async () => {
     try {
       await jetFaucet(rpcContext)
-    } catch { }
-  };
+    } catch {}
+  }
 
   const openNotification = () => {
-    const vestedAirdropNotifications = vestedAirdrops();
+    const vestedAirdropNotifications = vestedAirdrops()
     vestedAirdropNotifications.map(
       (airdrop: {
-        name: string;
-        amount: number;
-        end: Date;
-        claimed: boolean;
-        vested: boolean;
+        name: string
+        amount: number
+        end: Date
+        claimed: boolean
+        vested: boolean
       }) =>
         notification.open({
           message: "Fully vested",
           description: `${airdrop.name} has fully vested and may now be unstaked! Click for info.`,
           onClick: () => {
-            console.log("Go to Airdrop page");
+            console.log("Go to Airdrop page")
           },
           placement: "bottomRight",
         })
-    );
-  };
+    )
+  }
 
   return (
     <div className="view-container content-body column-grid" id="home">
@@ -77,40 +93,65 @@ export const HomeView = () => {
             <Tooltip
               title="For each JET token staked, you receive 1 vote in JetGovern."
               placement="topLeft"
+              overlayClassName="no-arrow"
             >
               <InfoCircleFilled />
             </Tooltip>
           </h3>
 
           <ReactFitty maxSize={100} className="text-gradient staked-balance">
-            {connected ? new Intl.NumberFormat().format(votingBalance) : 0}
+            {connected ? new Intl.NumberFormat().format(unlockedVotes) : "-"}
           </ReactFitty>
 
           <div id="wallet-overview" className="flex justify-between column">
             <div className="flex justify-between" id="current-staking-apr">
-              <span>Current Staking APR</span>
-              <span>{((365 * userDailyReward) / totalStake).toFixed(2)}%</span>
+              <span>
+                Current Staking APR{" "}
+                <Tooltip
+                  title="The current staking APR depends upon many factors including the total number of JET staked in the module and the amount of interest paid to depositors."
+                  overlayClassName="no-arrow"
+                >
+                  <InfoCircleFilled />
+                </Tooltip>
+              </span>
+              <span>{((365 * userDailyReward) / totalStake).toFixed(0)}%</span>
             </div>
-            <div className="flex justify-between">
+            <div className="flex justify-between cluster">
               <span>Est. Daily Reward</span>
               <span>{userDailyReward}</span>
             </div>
-            <div className="flex justify-between">
+            <div className="flex justify-between cluster">
               <span>Est. Monthly Reward</span>
               <span>{userDailyReward * 30}</span>
             </div>
           </div>
           <Divider />
           <div className="flex column">
-            <div className="flex justify-between"  id="staked">
-              <span>Staked Tokens</span>
-              <span>{new Intl.NumberFormat().format(stakedBalance)}</span>
+            <div className="flex justify-between cluster">
+              <span>Staked JET</span>
+              <span>{new Intl.NumberFormat().format(stakedJet)}</span>
+            </div>
+            <div className="flex justify-between cluster">
+              <span>
+                Unbonding queue{" "}
+                <Tooltip
+                  title="For each JET token staked, you receive 1 vote in JetGovern."
+                  overlayClassName="no-arrow"
+                >
+                  <InfoCircleFilled />
+                </Tooltip>
+              </span>
+              <span>{new Intl.NumberFormat().format(unbondingJet)}</span>
+            </div>
+            <div className="flex justify-between cluster">
+              <span>Available for Withdrawal</span>
+              <span>{new Intl.NumberFormat().format(unstakedJet)}</span>
             </div>
             <Input
               type="number"
               token
-              value={inputAmount === null ? "" : inputAmount}
-              maxInput={connected ? votingBalance : 0}
+              value={inputAmount == undefined ? "" : inputAmount}
+              maxInput={unlockedVotes ? unlockedVotes : undefined}
               disabled={!connected}
               onChange={(value: number) => setInputAmount(value)}
               submit={() => null}
@@ -124,8 +165,8 @@ export const HomeView = () => {
             </Button>
             <StakeModal
               showModal={showStakeModal}
-              stakeAmount={inputAmount ?? 0}
               onClose={() => setShowStakeModal(false)}
+              amount={inputAmount}
             />
             <Button
               onClick={() => setShowUnstakeModal(true)}
@@ -140,16 +181,30 @@ export const HomeView = () => {
               setInputAmount={setInputAmount}
               setShowUnstakeModal={setShowUnstakeModal}
             />
+            <Button
+              onClick={() => null}
+              disabled={!connected && true}
+              className="full-width"
+              type="ghost"
+            >
+              Withdraw
+            </Button>
           </div>
         </div>
-        <Switch onChange={() => toggleDarkTheme()} checked={darkTheme} checkedChildren="dark" unCheckedChildren="light" />
-        <Button onClick={getAirdrop}>GET JET</Button>
-      </div>
 
-      <div id="terms-conditions">
-        <p>Glossary</p>
-        <p>Docs</p>
-        <p>Terms & Conditions</p>
+        <div id="terms-conditions">
+          <span>Terms of Use</span>
+          <span>Docs</span>
+          <span>Glossary</span>
+        </div>
+        
+        <Switch
+          onChange={() => toggleDarkTheme()}
+          checked={darkTheme}
+          checkedChildren="dark"
+          unCheckedChildren="light"
+        />
+        <Button onClick={getAirdrop}>GET JET</Button>
       </div>
 
       <div id="show-proposals">
@@ -178,5 +233,5 @@ export const HomeView = () => {
         </div>
       </div>
     </div>
-  );
-};
+  )
+}

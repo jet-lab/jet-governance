@@ -26,6 +26,7 @@ import {
   WalletProvider,
 } from "./contexts";
 import { ScrollToTop } from "./contexts/scrollToTop";
+import { ProposalProvider } from "./contexts/proposal";
 
 export function Routes() {
   return (
@@ -43,54 +44,59 @@ export function Routes() {
                     <AirdropProvider>
                       <AccountsProvider>
                         <GovernanceProvider>
-                          <AppLayout>
-                            <Switch>
-                              <ScrollToTop>
-                                <Route exact path="/" children={<HomeView />} />
-                                <Route
-                                  path={"/proposal/:key"}
-                                  children={<ProposalView />}
-                                />
-                                <Route
-                                  exact
-                                  path="/claims"
-                                  children={<AirdropView />}
-                                />
-                                {/* <Route 
+                          <ProposalProvider>
+                            <AppLayout>
+                              <Switch>
+                                <ScrollToTop>
+                                  <Route
+                                    exact path="/"
+                                    children={<HomeView />}
+                                  />
+                                  <Route
+                                    path={"/proposal/:key"}
+                                    children={<ProposalView />}
+                                  />
+                                  <Route
+                                    exact
+                                    path="/claims"
+                                    children={<AirdropView />}
+                                  />
+                                  {/* <Route 
                               exact path="/airdrop/history"
                               children={<AirdropHistory />}/> */}
-                                <Route
-                                  exact
-                                  path="/flight-logs"
-                                  children={<FlightLogView />}
-                                />
+                                  <Route
+                                    exact
+                                    path="/flight-logs"
+                                    children={<FlightLogView />}
+                                  />
 
-                                {/** Old oyster paths */}
-                                <Route
-                                  exact
-                                  path="/realms"
-                                  component={() => <AllRealmsView />}
-                                />
-                                <Route
-                                  path="/proposal-oyster/:key"
-                                  children={<OysterProposalView />}
-                                />
-                                <Route
-                                  path="/governance/:key"
-                                  children={<GovernanceView />}
-                                />
-                                <Route
-                                  path="/realm/:key"
-                                  children={<RealmView />}
-                                />
-                                <Route
-                                  exact
-                                  path="/devtools"
-                                  children={<DevToolsView />}
-                                />
-                              </ScrollToTop>
-                            </Switch>
-                          </AppLayout>
+                                  {/** Old oyster paths */}
+                                  <Route
+                                    exact
+                                    path="/realms"
+                                    component={() => <AllRealmsView />}
+                                  />
+                                  <Route
+                                    path="/proposal-oyster/:key"
+                                    children={<OysterProposalView />}
+                                  />
+                                  <Route
+                                    path="/governance/:key"
+                                    children={<GovernanceView />}
+                                  />
+                                  <Route
+                                    path="/realm/:key"
+                                    children={<RealmView />}
+                                  />
+                                  <Route
+                                    exact
+                                    path="/devtools"
+                                    children={<DevToolsView />}
+                                  />
+                                </ScrollToTop>
+                              </Switch>
+                            </AppLayout>
+                          </ProposalProvider>
                         </GovernanceProvider>
                       </AccountsProvider>
                     </AirdropProvider>

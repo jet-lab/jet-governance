@@ -8,7 +8,7 @@ import {
 import { AccountInfo as TokenAccountInfo, Token, u64 } from '@solana/spl-token';
 import { TOKEN_PROGRAM_ID } from '../utils/ids';
 import BufferLayout from 'buffer-layout';
-import BN from 'bn.js';
+import { BN } from '@project-serum/anchor';
 
 export interface TokenAccount {
   pubkey: PublicKey;
@@ -54,7 +54,7 @@ export function approve(
   cleanupInstructions: TransactionInstruction[],
   account: PublicKey,
   owner: PublicKey,
-  amount: number | u64,
+  amount: number | BN | u64,
   autoRevoke = true,
 
   // if delegate is not passed ephemeral transfer authority is used

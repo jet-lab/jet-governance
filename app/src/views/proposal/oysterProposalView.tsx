@@ -41,7 +41,8 @@ import { ProposalActionBar } from './components/buttons/proposalActionBar';
 import { TokenIcon, ExplorerLink } from '../../components';
 import { useConnectionConfig, useMint, ParsedAccount } from '../../contexts';
 import { useVoterDisplayData, VoterDisplayData } from '../../hooks/proposalHooks';
-import { useIsUrl, useLoadGist } from '../../hooks/useLoadGist';
+import { useLoadGist } from '../../hooks/useLoadGist';
+import { BN } from '@project-serum/anchor';
 
 const { TabPane } = Tabs;
 
@@ -350,7 +351,7 @@ function getMaxVoteScore(
     proposal.info.governingTokenMint.toBase58() ===
     realm.info.config.councilMint?.toBase58()
   ) {
-    return governingTokenMint.supply;
+    return governingTokenMint.supply as BN;
   }
 
   return getMintMaxVoteWeight(

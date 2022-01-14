@@ -18,7 +18,7 @@ export const TokenDisplay = (props: {
   if (showBalance) {
     if (tokenAccount && tokenMint) {
       balance =
-        tokenAccount.info.amount.toNumber() / Math.pow(10, tokenMint.decimals);
+        tokenAccount.info.amount.toNumber() / 10 ** tokenMint.decimals;
       hasBalance = balance > 0;
     }
   }

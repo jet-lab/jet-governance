@@ -1,7 +1,6 @@
 import { Popover, Tooltip } from 'antd';
 
 import { ProposalState } from '../../../../models/accounts';
-import BN from 'bn.js';
 
 import {
   formatPercentage,
@@ -9,6 +8,7 @@ import {
 } from '../../../../tools/units';
 import React, { useRef } from 'react';
 import { BigNumber } from 'bignumber.js';
+import { BN } from '@project-serum/anchor';
 
 export function VoteScore({
   yesVoteCount,

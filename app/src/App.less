@@ -31,6 +31,10 @@ button.inactive {
     }
   }
 }
+
+.ant-tooltip.no-arrow .ant-tooltip-arrow {
+  display: none !important;
+}
 /* Styles between these lines should be included at the next version of the jet-antd library */
 
 /* App-specific styling */
@@ -174,7 +178,6 @@ h1 {
 /* Styles for home page */
 
 #home {
-  grid-auto-rows: 250px;
   h2, .neu-inset {
     margin-bottom: 20px;
   }
@@ -204,8 +207,10 @@ h1 {
       }
       span {
         color: @black;
-        margin: 0 4px;
       }
+    }
+    .cluster span {
+      margin: 0 4px;
     }
     .full-width {
       margin-left: 0;
@@ -214,6 +219,7 @@ h1 {
     #staking-input {
       position: relative;
       width: 100%;
+      margin-top: 10px;
       input {
         position: relative;
         font-size: 20px;

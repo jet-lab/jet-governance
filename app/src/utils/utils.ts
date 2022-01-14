@@ -253,7 +253,7 @@ export function convert(
   const amount =
     typeof account === 'number' ? account : account.info.amount?.toNumber();
 
-  const precision = Math.pow(10, mint?.decimals || 0);
+  const precision = 10 ** (mint?.decimals || 0);
   let result = (amount / precision) * rate;
 
   return result;

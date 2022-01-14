@@ -6,7 +6,6 @@ import { ProposalCard } from "../components/ProposalCard";
 import { VoterList } from "../components/proposal/VoterList";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { VoteModal } from "../components/proposal/VoteModal";
-import { useUser } from "../hooks/useClient";
 import React from "react";
 import {
   useGovernance,
@@ -45,6 +44,7 @@ import { useHasVoteTimeExpired } from "../hooks/useHasVoteTimeExpired";
 import { DownloadOutlined, ArrowLeftOutlined } from "@ant-design/icons";
 import { useConnectWallet } from "../contexts/connectWallet";
 import { getPubkeyIndex } from "../models/PUBKEYS_INDEX";
+import { useStakeAccount, useStakedBalance, useStakePool, useStakeProgram } from "../hooks/useStaking";
 
 export const ProposalView = () => {
   const [isVoteModalVisible, setIsVoteModalVisible] = useState(false);
@@ -52,7 +52,6 @@ export const ProposalView = () => {
     useState(false);
   const [vote, setVote] = useState<YesNoVote | undefined>(undefined);
 
-  // TODO: Fetch user's stake from blockchain
   const proposalAddress = useKeyParam();
   const proposal = useProposal(proposalAddress);
   const { setConnecting } = useConnectWallet();
@@ -75,9 +74,14 @@ export const ProposalView = () => {
 
   const proposals = useProposalsByGovernance(JET_GOVERNANCE);
   const activeProposals = proposals.filter((p) => p.info.isVoting());
+
+  const stakeProgram = useStakeProgram()
+  const stakePool = useStakePool(stakeProgram)
+  const stakeAccount = useStakeAccount(stakeProgram, stakePool)
+
   const { connected } = useWallet();
-  const { stakedBalance } = useUser();
-  const isStaked = stakedBalance > 0;
+  const { stakedJet } = useStakedBalance(stakeAccount, stakePool);
+  const isStaked = stakedJet != undefined && stakedJet > 0;
 
   const handleVoteModal = () => {
     if (!isStaked) {
@@ -295,6 +299,8 @@ export const ProposalView = () => {
               governance={governance}
               proposal={proposal}
               tokenOwnerRecord={tokenOwnerRecord}
+              stakeAccount={stakeAccount}
+              stakePool={stakePool}
             />
             <StakeRedirectModal
               visible={isStakeRedirectModalVisible}

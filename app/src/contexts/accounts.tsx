@@ -11,7 +11,6 @@ import { AccountLayout, MintInfo, MintLayout, u64 } from '@solana/spl-token';
 import { TokenAccount } from '../models';
 import { chunks } from '../utils/utils';
 import { EventEmitter } from '../utils/eventEmitter';
-import { useUserAccounts } from '../hooks/useUserAccounts';
 import {
   WRAPPED_SOL_MINT,
   programIds,
@@ -19,7 +18,15 @@ import {
 } from '../utils/ids';
 import { useWallet } from '@solana/wallet-adapter-react';
 
-const AccountsContext = React.createContext<any>(null);
+const AccountsContext = React.createContext<AccountsContextState>({
+  userAccounts: [],
+  nativeAccount: undefined
+});
+
+export interface AccountsContextState {
+  userAccounts: TokenAccount[],
+  nativeAccount: AccountInfo<Buffer> | undefined,
+}
 
 const pendingCalls = new Map<string, Promise<ParsedAccountBase>>();
 const genericCache = new Map<string, ParsedAccountBase>();
@@ -288,6 +295,7 @@ function wrapNativeAccount(
     pubkey: pubkey,
     account,
     info: {
+      address: pubkey,
       mint: WRAPPED_SOL_MINT,
       owner: pubkey,
       amount: new u64(account.lamports),
