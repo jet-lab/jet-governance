@@ -172,7 +172,7 @@ export const ProposalView = () => {
                 <ArrowLeftOutlined />
                 Active Proposals
               </Link>{" "}
-              / Proposal {getPubkeyIndex(addressStr)}
+              / JUMP {getPubkeyIndex(addressStr)}
             </span>
             <h1 className="view-header">{proposal.info.name}</h1>
             {
@@ -270,6 +270,7 @@ export const ProposalView = () => {
               className={`vote-select ${
                 vote === YesNoVote.Yes ? "selected" : ""
               }`}
+              size="large"
             >
               In favor
             </Button>
@@ -277,11 +278,16 @@ export const ProposalView = () => {
               onClick={() => setVote(YesNoVote.No)}
               className={`vote-select ${
                 vote === YesNoVote.No ? "selected" : ""
-              }`}
+                }`}
+              size="large"
             >
               Against
             </Button>
-            <Button onClick={() => console.log(vote)} className={`vote-select`}>
+            <Button
+              onClick={() => console.log(vote)}
+              className={`vote-select`}
+              size="large"
+            >
               Abstain
             </Button>
             <Button
@@ -289,6 +295,7 @@ export const ProposalView = () => {
               onClick={
                 !connected ? () => setConnecting(true) : () => handleVoteModal()
               }
+              size="large"
             >
               Vote
             </Button>
