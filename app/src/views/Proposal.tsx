@@ -5,7 +5,7 @@ import { Divider, Spin, Button } from "antd";
 import { ProposalCard } from "../components/ProposalCard";
 import { VoterList } from "../components/proposal/VoterList";
 import { useWallet } from "@solana/wallet-adapter-react";
-import { VoteModal } from "../components/proposal/VoteModal";
+import { VoteModal } from "../components/modals/VoteModal";
 import React from "react";
 import {
   useGovernance,

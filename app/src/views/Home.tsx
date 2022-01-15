@@ -165,7 +165,7 @@ export const HomeView = () => {
               Stake
             </Button>
             <StakeModal
-              showModal={showStakeModal}
+              visible={showStakeModal}
               onClose={() => setShowStakeModal(false)}
               amount={inputAmount ?? 0}
             />
@@ -177,9 +177,9 @@ export const HomeView = () => {
               Unstake
             </Button>
             <UnstakeModal
-              showModal={showUnstakeModal}
+              visible={showUnstakeModal}
               amount={inputAmount ?? 0}
-              setInputAmount={setInputAmount}
+              resetInput={() => setInputAmount(undefined)}
               onClose={() => setShowUnstakeModal(false)}
             />
             <Button

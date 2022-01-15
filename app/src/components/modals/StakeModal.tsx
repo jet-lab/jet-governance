@@ -8,11 +8,11 @@ import { useBN } from "../../hooks/useStaking";
 import React from "react";
 
 export const StakeModal = (props: {
-  showModal: boolean;
+  visible: boolean;
   onClose: () => void;
   amount: number | undefined;
 }) => {
-  const { showModal, onClose, amount } = props;
+  const { visible, onClose, amount } = props;
 
   const [current, setCurrent] = useState(0);
   const [submitLoading, setSubmitLoading] = useState(false);
@@ -101,7 +101,7 @@ export const StakeModal = (props: {
   return (
     <Modal
       title={steps[current].title}
-      visible={showModal}
+      visible={visible}
       okText={steps[current].okText}
       onOk={steps[current].onOk}
       okButtonProps={steps[current].okButtonProps}

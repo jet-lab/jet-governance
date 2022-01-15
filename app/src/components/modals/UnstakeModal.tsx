@@ -3,13 +3,13 @@ import { Modal } from "antd";
 import React from "react";
 
 export const UnstakeModal = (props: {
-  showModal: boolean;
+  visible: boolean;
   onClose: () => void;
-  setInputAmount: Function,
+  resetInput: () => void,
   amount: number | null;
 }) => {
   const [current, setCurrent] = useState(0);
-  const { showModal, onClose, setInputAmount, amount } = props;
+  const { visible, onClose, resetInput, amount } = props;
 
   const handleSubmitUnstake = () => {
     setCurrent(1);
@@ -17,7 +17,7 @@ export const UnstakeModal = (props: {
 
   const handleCancel = () => {
     onClose();
-    setInputAmount(null)
+    resetInput()
   };
 
   const steps = [
@@ -26,7 +26,7 @@ export const UnstakeModal = (props: {
         amount && Intl.NumberFormat("us-US").format(amount)
       } JET from the platform.`,
       okText: "Confirm unstake",
-      onOk: () => setCurrent(1),
+      onOk: () => handleSubmitUnstake(),
       onCancel: () => onClose(),
       content: [
         <>
@@ -47,8 +47,8 @@ export const UnstakeModal = (props: {
     {
       title: `All set!`,
       okText: "Okay",
-      onOk: () => onClose(),
-      onCancel: () => onClose(),
+      onOk: () => handleCancel(),
+      onCancel: () => handleCancel(),
       content: [
         <>
           <p>
@@ -69,7 +69,7 @@ export const UnstakeModal = (props: {
   return (
     <Modal
       title={steps[current].title}
-      visible={showModal}
+      visible={visible}
       okText={steps[current].okText}
       onOk={steps[current].onOk}
       onCancel={steps[current].onCancel}

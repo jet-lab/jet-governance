@@ -13,6 +13,7 @@ import { JET_GOVERNANCE } from "../../utils";
 import { StakeAccount, StakePool } from "@jet-lab/jet-engine";
 import { useStakedBalance } from "../../hooks/useStaking";
 import { castVote } from "../../actions/castVote";
+import { getPubkeyIndex } from "../../models/PUBKEYS_INDEX";
 
 export const VoteModal = (props: {
   vote: YesNoVote | undefined;
@@ -60,7 +61,6 @@ export const VoteModal = (props: {
       tokenOwnerRecord!.pubkey,
       vote
     );
-    // debugger;
     setCurrent(2);
   };
 
@@ -82,7 +82,7 @@ export const VoteModal = (props: {
       okText: "Okay",
       onOk: () => {},
       onCancel: () => onClose(),
-      content: 'Please select a vote.',
+      content: [<p>Please select a vote.</p>],
       closable: true
     },
     {
@@ -90,7 +90,12 @@ export const VoteModal = (props: {
       okText: "Confirm vote",
       onOk: () => {vote !== undefined && confirmVote(vote)},
       onCancel: () => { },
-      content: 'Please select a vote.',
+      content: [<>
+        <p>
+          You have {Intl.NumberFormat().format(stakedJet)} JET staked, and
+          will be able to unstake these funds when voting ends on {endDate}.
+        </p>
+      </>],
       closable: true
     },
     {
@@ -98,62 +103,34 @@ export const VoteModal = (props: {
       okText: "Okay",
       onOk: () => onClose(),
       onCancel: () => onClose(),
-      content: 'Please select a vote.',
-      closable: true
-    },
-  ];
-
-  return (
-    <>
-      <Modal
-        title={steps[current].title}
-        visible={visible}
-        okText={steps[current].okText}
-        onOk={steps[current].onOk}
-        onCancel={steps[current].onCancel}
-        cancelButtonProps={{ style: { display: "none " } }}
-      >
-        <p>
-          {steps[current].content}
-        </p>
-      </Modal>
-
-      {/* <Modal
-        title={`You are about to vote ${voteText} proposal "${proposal.info.name}"`}
-        visible={visible && vote !== undefined}
-        okText="Confirm vote"
-        onOk={() => vote !== undefined && confirmVote(vote)}
-        onCancel={onClose}
-        closable={false}
-      >
-        <p>This proposal hash is {proposal.pubkey.toBase58()}.</p>
-        <p>
-          You have {Intl.NumberFormat().format(stakedJet)} JET staked, and
-          will be able to unstake these funds when voting ends on {endDate}.
-        </p>{" "}
-      </Modal> */}
-
-      {/* <Modal
-        title="All set"
-        visible={voteSuccessModal}
-        okText="Okay"
-        onOk={onOk}
-        onCancel={onOk}
-        cancelButtonProps={{ style: { display: "none " } }}
-      >
-        <p>
-          You've successfully voted <strong>{voteText}</strong> proposal #:{" "}
+      content: [<>
+      <p>
+          You've successfully voted <strong>{voteText}</strong> proposal #{getPubkeyIndex(proposal.pubkey.toBase58())}:{" "}
           {proposal.info.name}.
         </p>
 
-        <h2 className="text-gradient">Vote on other proposals:</h2>
+        <h2 className="text-gradient" style={{marginLeft: 0}}>Vote on other proposals:</h2>
 
         <p>
           {activeProposals && activeProposals.length > 0
             ? activeProposals?.map((proposal) => `HELLO ${proposal.info.name}`)
             : "There are no active proposals at this time."}
         </p>
-      </Modal> */}
-    </>
+      </>],
+      closable: true
+    },
+  ];
+
+  return (
+    <Modal
+      title={steps[current].title}
+      visible={visible}
+      okText={steps[current].okText}
+      onOk={steps[current].onOk}
+      onCancel={steps[current].onCancel}
+      cancelButtonProps={{ style: { display: "none " } }}
+    >
+      {steps[current].content}
+    </Modal>
   );
 };
