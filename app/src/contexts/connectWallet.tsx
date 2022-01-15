@@ -16,21 +16,24 @@ const ConnectWalletContext = createContext<ConnectWallet>({
 export const ConnectWalletProvider = (props: { children: any }) => {
   const { publicKey } = useWallet();
   const [connecting, setConnecting] = useState(false);
-  const [verified, setVerified] = useState(false);
   const [connected, setConnected] = useState(publicKey);
   const [init, setInit] = useState(true)
+  const [modalVisible, setModalVisible] = useState(true);
+  const [authenticated, setAuthenticated] = useState(false);
+  const [verified, setVerified] = useState(false);
+
 
   useEffect(() => {
-    if (publicKey && !verified) {
+    if (publicKey && !verified && authenticated) {
       // If wallet has already been SMS checked and cannot access Jet Govern,
-      // return;
+      return setInit(false);
     }
-    // setVerified(true);
+    setModalVisible(true);
   }, [publicKey, verified]);
 
   return (
     <ConnectWalletContext.Provider value={{ connecting, setConnecting }}>
-      {publicKey && <VerifyModal verified={verified} setVerified={() => setVerified(true)} doNotInit={() => setInit(false)} />}
+      {publicKey && <VerifyModal visible={modalVisible} onClose={() => setModalVisible(false)} verified={verified} authenticated={authenticated} />}
       {init && props.children}
     </ConnectWalletContext.Provider>
   );

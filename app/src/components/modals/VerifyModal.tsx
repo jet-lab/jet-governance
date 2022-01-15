@@ -1,57 +1,91 @@
 import { Modal, Input } from "antd";
 import { access } from "fs";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { notify } from "../../utils";
 
 export const VerifyModal = (props: {
+  visible: boolean;
+  onClose: () => void;
   verified: boolean;
-  setVerified: () => void;
-  doNotInit: () => void;
+  authenticated: boolean;
 }) => {
-  const { verified, setVerified, doNotInit } = props;
-  const [smsModal, setSmsModal] = useState(true);
-  const [accessCode, setAccessCode] = useState(false);
-  const [accessGrantedModal, setAccessGrantedModal] = useState(false);
+  const { visible, onClose, verified, authenticated } = props;
+  const [current, setCurrent] = useState(0);
+
+  useEffect(() => {
+    if (authenticated && !verified) {
+      return setCurrent(2)
+    } else if (authenticated && verified) {
+      return setCurrent(3)
+    }
+  }, [verified, authenticated])
 
   const handlePhoneVerify = () => {
-    setSmsModal(false);
-    setAccessCode(true)
+    setCurrent(1)
   }
 
   const handleConfirmCode = () => {
-    setAccessCode(false);
-    setAccessGrantedModal(true);
     // if (Math.floor(Math.random() * 4) === 0) {
-      setVerified();
+    setCurrent(3);
     // }
   }
 
   const handleCompleteVerify = () => {
     if (!verified) {
-      doNotInit();
+      return setCurrent(2)
     }
-    setAccessGrantedModal(false);
   }
 
+  const steps = [
+    {
+      title: 'Region verification required',
+      okText: "Okay",
+      onOk: () => handlePhoneVerify(),
+      onCancel: () => onClose(),
+      content: `To access Jet Govern, enter your number below to verify that you're located in an authorized region.`,
+      closable: true
+    }, {
+      title: 'Enter your secure access code',
+      okText: "Okay",
+      onOk: () => handleConfirmCode(),
+      onCancel: () => onClose(),
+      content: 'You will receive a secure access code via SMS. Enter the secure access code here to access Jet Govern.',
+      closable: true
+    }, {
+      title: 'Access Denied',
+      okText: "Okay",
+      onOk: () => {},
+      onCancel: () => null,
+      content: 'Please select a vote.',
+      closable: false
+    }, {
+      title: 'Stake Jet to begin voting',
+      okText: "Okay",
+      onOk: () => onClose(),
+      onCancel: () => onClose(),
+      content: `Your wallet has been verified and you now have full access to the app. You will not need to verify your location again to interact with Jet Govern.`,
+      closable: true
+    }
+  ]
+
   return (
-    <>
-    
     <Modal
-      title="Region verification required"
-      visible={smsModal}
-      okText="Okay"
-      onOk={handlePhoneVerify}
-      onCancel={() => null}
-      closable={false}
+      title={steps[current].title}
+      visible={visible}
+      okText={steps[current].okText}
+      onOk={steps[current].onOk}
+      onCancel={steps[current].onCancel}
+      closable={steps[current].closable}
       cancelButtonProps={{ style: { display: "none " } }}
     >
-      <p>To access Jet Govern, enter your number below to verify that you're located in an authorized region.</p>
+      {/* <p>To access Jet Govern, enter your number below to verify that you're located in an authorized region.</p>
 
-      <p>This information is never stored or tracked, and is used solely for regional access.</p>
+      <p>This information is never stored or tracked, and is used solely for regional access.</p> */}
 
+      <p>{steps[current].content}</p>
       <Input />
-      </Modal>
 
+{/* 
       <Modal
       title="Enter your secure access code"
       visible={accessCode}
@@ -88,10 +122,10 @@ export const VerifyModal = (props: {
     >
         <p>Your wallet has been verified and you now have full access to the app. You will not need to verify your location again to interact with Jet Govern.</p>
         <p>To begin voting, you'll need to stake some JET tokens (1 staked JET token = 1 vote)</p>
-        <p>Your wallet has been verified and you now have full access to the app. You will not need to verify your location again to interact with Jet Govern.</p>
-        <p>Your wallet has been verified and you now have full access to the app. You will not need to verify your location again to interact with Jet Govern.</p>
       </Modal>
 
-      </>
+      </> */}
+
+    </Modal>
   );
 }
