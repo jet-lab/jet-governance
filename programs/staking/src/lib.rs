@@ -58,7 +58,7 @@ pub mod jet_staking {
     }
 
     /// Withdraw stake that was previously unbonded
-    pub fn withdraw_unbondend(ctx: Context<WithdrawUnbonded>) -> ProgramResult {
+    pub fn withdraw_unbonded(ctx: Context<WithdrawUnbonded>) -> ProgramResult {
         instructions::withdraw_unbonded_handler(ctx)
     }
 

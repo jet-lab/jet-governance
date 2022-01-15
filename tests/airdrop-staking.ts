@@ -297,7 +297,7 @@ describe("airdrop-staking", () => {
       staker.publicKey
     );
 
-    await StakingProgram.rpc.withdrawUnbondend({
+    await StakingProgram.rpc.withdrawUnbonded({
       accounts: {
         owner: staker.publicKey,
         closer: wallet.publicKey,
