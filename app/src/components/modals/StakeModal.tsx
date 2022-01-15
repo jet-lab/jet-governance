@@ -12,88 +12,103 @@ export const StakeModal = (props: {
   onClose: () => void;
   amount: number | undefined;
 }) => {
-  const {
-    showModal,
-    onClose,
-    amount,
-  } = props;
+  const { showModal, onClose, amount } = props;
 
-  const [showSuccessfulModal, setShowSuccessfulModal] = useState(false);
-  const [showErrorModal, setShowErrorModal] = useState(false);
+  const [current, setCurrent] = useState(0);
   const [submitLoading, setSubmitLoading] = useState(false);
   const { publicKey } = useWallet();
-  const {
-    stakeProgram,
-    stakePool,
-    stakeAccount,
-    jetAccount,
-    voteAccount,
-  } = useProposalContext()
-  const stakeLamports = useBN(amount, stakePool?.collateralMint.decimals)
+  const { stakeProgram, stakePool, stakeAccount, jetAccount, voteAccount } =
+    useProposalContext();
+  const stakeLamports = useBN(amount, stakePool?.collateralMint.decimals);
   // Handlers for staking info modal
 
   const handleSubmitTx = () => {
-    console.log(stakePool, publicKey, jetAccount)
+    console.log(stakePool, publicKey, jetAccount);
     if (!stakePool || !publicKey || !jetAccount) {
       return;
     }
 
     setSubmitLoading(true);
-    console.log("foo")
-    StakeAccount.addStake(stakePool, publicKey, jetAccount.address, stakeLamports)
-      .then(txid => { console.log(txid); setSubmitLoading(false); onClose(); setShowSuccessfulModal(true) })
-      .catch(err => { console.error(err); setSubmitLoading(false); onClose(); setShowErrorModal(true) })
+    console.log("foo");
+    StakeAccount.addStake(
+      stakePool,
+      publicKey,
+      jetAccount.address,
+      stakeLamports
+    )
+      .then((txid) => {
+        console.log(txid);
+        setSubmitLoading(false);
+        setCurrent(1);
+      })
+      .catch((err) => {
+        console.error(err);
+        setSubmitLoading(false);
+        setCurrent(2);
+      });
   };
 
-  const handleCancel = () => {
-    onClose();
-    setShowSuccessfulModal(false);
-  };
-
-  // Handlers for Tx successful modal
-  const handleOk = () => {
-    setShowSuccessfulModal(false);
-  };
+  const steps = [
+    {
+      title: `You are staking ${
+        amount && Intl.NumberFormat("us-US").format(amount)
+      } JET into the platform.`,
+      okText: "I understand.",
+      onOk: () => handleSubmitTx(),
+      onCancel: () => onClose(),
+      okButtonProps: { loading: submitLoading },
+      content: [
+        <>
+          <p>
+            Staking tokens gives your voice a vote and entitles you to rewards
+            sourced from protocol revenue.
+          </p>
+          <p>
+            Remember: To unstake your tokens, there will be a 29.5-day unbonding
+            period. For more information, please <a>read the docs.</a>
+          </p>
+        </>
+      ],
+      closable: true,
+      cancelButtonProps: undefined,
+    },
+    {
+      title: `All set!`,
+      okText: "Okay",
+      onOk: () => onClose(),
+      onCancel: () => onClose(),
+      okButtonProps: { loading: submitLoading },
+      content: [
+        <p>You've staked {
+        amount && Intl.NumberFormat("us-US").format(amount)
+        } JET into JetGovern and can begin using to vote on active proposals immediately.</p>
+      ],
+      closable: true,
+      cancelButtonProps: { display: "none " },
+    },
+    {
+      title: `Error.`,
+      okText: "I understand.",
+      onOk: () => onClose(),
+      onCancel: () => onClose(),
+      okButtonProps: { loading: submitLoading },
+      content: `Staking tokens yields X% APR.`,
+      closable: true,
+      cancelButtonProps: undefined,
+    },
+  ];
 
   return (
-    <>
-      <Modal
-        title={`You are staking ${amount && Intl.NumberFormat('us-US').format(amount)} JET into the platform.`}
-        visible={showModal}
-        okText="I understand."
-        onOk={handleSubmitTx}
-        okButtonProps={{loading: submitLoading}}
-        onCancel={handleCancel}
-        cancelButtonProps={{ style: { display: "none " } }}
-      >
-        <p>Staking tokens yields X% APR.</p>
-
-        {/* <p>APR = 365 *  (total_daily_reward / total stake)</p> */}
-
-        <p>
-          Please note: All staked tokens require a 29.5-day unbonding period,
-          which begins when you unstake your tokens.
-        </p>
-
-        <p>
-          Staked tokens will continue to earn staking rewards during the unbonding period.
-        </p>
-      </Modal>
-
-      <Modal
-        title={`Transaction successful`}
-        visible={showSuccessfulModal}
-        okText="Okay"
-        onOk={handleOk}
-        onCancel={handleCancel}
-        cancelButtonProps={{ style: { display: "none " } }}
-      >
-        <p>
-          You've staked <strong>{amount && Intl.NumberFormat('us-US').format(amount)} JET</strong> into Jet Govern and can begin voting with it immediately.
-        </p>
-
-        <p>View your transaction on the blockchain <a href={explorerUrl('string')} target="_blank" rel="noopener noreferrer">here</a>.</p>
-      </Modal>
-    </>
+    <Modal
+      title={steps[current].title}
+      visible={showModal}
+      okText={steps[current].okText}
+      onOk={steps[current].onOk}
+      okButtonProps={steps[current].okButtonProps}
+      onCancel={steps[current].onCancel}
+      cancelButtonProps={{ style: steps[current].cancelButtonProps }}
+    >
+      {steps[current].content}
+    </Modal>
   );
 };

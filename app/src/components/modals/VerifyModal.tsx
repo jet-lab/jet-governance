@@ -1,7 +1,6 @@
 import { Modal, Input } from "antd";
 import { access } from "fs";
 import React, { useEffect, useState } from "react";
-import { notify } from "../../utils";
 
 export const VerifyModal = (props: {
   visible: boolean;
@@ -26,44 +25,54 @@ export const VerifyModal = (props: {
 
   const handleConfirmCode = () => {
     // if (Math.floor(Math.random() * 4) === 0) {
+    if (authenticated && !verified) {
+      return setCurrent(2)
+    }
     setCurrent(3);
     // }
   }
 
-  const handleCompleteVerify = () => {
-    if (!verified) {
-      return setCurrent(2)
-    }
-  }
-
   const steps = [
     {
-      title: 'Region verification required',
+      title: '2. Confirm location',
       okText: "Okay",
       onOk: () => handlePhoneVerify(),
       onCancel: () => onClose(),
-      content: `To access Jet Govern, enter your number below to verify that you're located in an authorized region.`,
+      content: [
+        <>
+          <p>
+            Due to regulatory restrictions, only users in authorized regions are able to access JetGovern. <a>Read more</a>
+          </p>
+          <p><strong>
+            This information is never stored with us or our SMS verification partner, and is used solely for regional access.
+          </strong></p>
+          <Input />
+        </>],
       closable: true
     }, {
-      title: 'Enter your secure access code',
+      title: '3. Enter your secure access code',
       okText: "Okay",
       onOk: () => handleConfirmCode(),
       onCancel: () => onClose(),
-      content: 'You will receive a secure access code via SMS. Enter the secure access code here to access Jet Govern.',
+      content: [
+        <>
+          <p>You will receive a secure access code via SMS. Enter the code here to proceed.</p>
+          <Input />
+        </>],
       closable: true
     }, {
       title: 'Access Denied',
       okText: "Okay",
-      onOk: () => {},
+      onOk: () => null,
       onCancel: () => null,
-      content: 'Please select a vote.',
+      content: 'You have been denied access to JetGovern.',
       closable: false
     }, {
       title: 'Stake Jet to begin voting',
       okText: "Okay",
       onOk: () => onClose(),
       onCancel: () => onClose(),
-      content: `Your wallet has been verified and you now have full access to the app. You will not need to verify your location again to interact with Jet Govern.`,
+      content: [<p>Your wallet has been verified and you now have full access to the app. You will not need to verify your location again to interact with JetGovern.</p>],
       closable: true
     }
   ]
@@ -78,54 +87,7 @@ export const VerifyModal = (props: {
       closable={steps[current].closable}
       cancelButtonProps={{ style: { display: "none " } }}
     >
-      {/* <p>To access Jet Govern, enter your number below to verify that you're located in an authorized region.</p>
-
-      <p>This information is never stored or tracked, and is used solely for regional access.</p> */}
-
-      <p>{steps[current].content}</p>
-      <Input />
-
-{/* 
-      <Modal
-      title="Enter your secure access code"
-      visible={accessCode}
-      okText="Okay"
-      onOk={handleConfirmCode}
-      onCancel={() => null}
-      closable={false}
-      cancelButtonProps={{ style: { display: "none " } }}
-    >
-      <p>You will receive a secure access code via SMS. Enter the secure access code here to access Jet Govern.</p>
-
-      <Input />
-      </Modal>
-
-      <Modal
-      title="Access Denied"
-      visible={!verified && accessGrantedModal}
-      onOk={() => null}
-      okButtonProps={{ style: { display: "none " } }}
-      onCancel={() => null}
-      cancelButtonProps={{ style: { display: "none " } }}
-      closable={false}
-    >
-      <p>Your wallet has been denied access to the app based on regional bans.</p>
-      </Modal>
-
-      <Modal
-      title="Stake Jet to begin voting"
-      visible={verified && accessGrantedModal}
-      okText="Okay"
-      onOk={handleCompleteVerify}
-      onCancel={handleCompleteVerify}
-      cancelButtonProps={{ style: { display: "none " } }}
-    >
-        <p>Your wallet has been verified and you now have full access to the app. You will not need to verify your location again to interact with Jet Govern.</p>
-        <p>To begin voting, you'll need to stake some JET tokens (1 staked JET token = 1 vote)</p>
-      </Modal>
-
-      </> */}
-
+      {steps[current].content}
     </Modal>
   );
 }

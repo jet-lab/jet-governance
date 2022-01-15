@@ -89,16 +89,16 @@ export const HomeView = () => {
         <h2>Your Info</h2>
 
         <div className="neu-inset">
-          <h3>
+          <span>
             Votes{" "}
             <Tooltip
-              title="For each JET token staked, you receive 1 vote in JetGovern."
+              title="For each JET token staked, you may cast 1 vote in JetGovern."
               placement="topLeft"
               overlayClassName="no-arrow"
             >
               <InfoCircleFilled />
             </Tooltip>
-          </h3>
+          </span>
 
           <ReactFitty maxSize={100} className="text-gradient staked-balance">
             {connected ? new Intl.NumberFormat().format(unlockedVotes) : "-"}
@@ -109,7 +109,7 @@ export const HomeView = () => {
               <span>
                 Current Staking APR{" "}
                 <Tooltip
-                  title="The current staking APR depends upon many factors including the total number of JET staked in the module and the amount of interest paid to depositors."
+                  title="The displayed APR depends upon many factors, including the total number of JET staked in the module and the amount of protocol revenue flowing to depositors."
                   overlayClassName="no-arrow"
                 >
                   <InfoCircleFilled />
@@ -136,7 +136,7 @@ export const HomeView = () => {
               <span>
                 Unbonding queue{" "}
                 <Tooltip
-                  title="For each JET token staked, you receive 1 vote in JetGovern."
+                  title="This is the amount of tokens you've unstaked that are currently in an unbonding period. For detailed information about the availability of your tokens, visit the Flight Logs page."
                   overlayClassName="no-arrow"
                 >
                   <InfoCircleFilled />
@@ -167,7 +167,7 @@ export const HomeView = () => {
             <StakeModal
               showModal={showStakeModal}
               onClose={() => setShowStakeModal(false)}
-              amount={inputAmount}
+              amount={inputAmount ?? 0}
             />
             <Button
               onClick={() => setShowUnstakeModal(true)}
@@ -178,9 +178,9 @@ export const HomeView = () => {
             </Button>
             <UnstakeModal
               showModal={showUnstakeModal}
-              unstakedAmount={inputAmount ?? 0}
+              amount={inputAmount ?? 0}
               setInputAmount={setInputAmount}
-              setShowUnstakeModal={setShowUnstakeModal}
+              onClose={() => setShowUnstakeModal(false)}
             />
             <Button
               onClick={() => null}

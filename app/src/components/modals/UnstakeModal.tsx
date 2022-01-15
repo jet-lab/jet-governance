@@ -4,54 +4,78 @@ import React from "react";
 
 export const UnstakeModal = (props: {
   showModal: boolean;
-  setShowUnstakeModal: Function;
+  onClose: () => void;
   setInputAmount: Function,
-  unstakedAmount: number | null;
+  amount: number | null;
 }) => {
-  const [unstakeSuccess, setUnstakeSuccess] = useState(false);
-  const { showModal, setShowUnstakeModal, setInputAmount, unstakedAmount } = props;
+  const [current, setCurrent] = useState(0);
+  const { showModal, onClose, setInputAmount, amount } = props;
 
-  const handleOk = () => {
-    setShowUnstakeModal(false);
-    setUnstakeSuccess(true);
+  const handleSubmitUnstake = () => {
+    setCurrent(1);
   };
 
   const handleCancel = () => {
-    setShowUnstakeModal(false);
-    setUnstakeSuccess(false);
+    onClose();
     setInputAmount(null)
   };
 
+  const steps = [
+    {
+      title: `You're unstaking ${
+        amount && Intl.NumberFormat("us-US").format(amount)
+      } JET from the platform.`,
+      okText: "Confirm unstake",
+      onOk: () => setCurrent(1),
+      onCancel: () => onClose(),
+      content: [
+        <>
+          <p>
+            You currently have votes cast on active proposals, which will be rescinded upon unbonding. If you wish to keep your votes, wait until the voting period has ended before unstaking.
+          </p>
+          <p>
+            Unstaked tokens have a 29.5-day unbonding period. During this period, you will not earn any rewards.
+          </p>
+          <p>
+            Your flight log will reflect a status of unbonding until this period has completed.
+          </p>
+        </>
+      ],
+      closable: true,
+      cancelButtonProps: undefined,
+    },
+    {
+      title: `All set!`,
+      okText: "Okay",
+      onOk: () => onClose(),
+      onCancel: () => onClose(),
+      content: [
+        <>
+          <p>
+            You've unstaked {
+        amount && Intl.NumberFormat("us-US").format(amount)
+      } JET from JetGovern.
+          </p>
+          <p>
+            Your 29.5-day unbonding period will complete on {new Date().toString()}.
+          </p>
+        </>
+      ],
+      closable: true,
+      cancelButtonProps: { display: "none " },
+    }
+  ];
+
   return (
-    <>
-      <Modal
-        title={`You are unstaking ${unstakedAmount} JET from the platform.`}
-        visible={showModal}
-        okText="Confirm"
-        onOk={handleOk}
-        onCancel={() => setShowUnstakeModal(false)}
-      >
-        <p>
-          You have two active votes that will be rescinded upon confirmation of
-          unstaking. If you would like to keep your votes, wait until the voting
-          period has ended to unstake.
-        </p>
-
-        <p>
-          Unstaked tokens have a 29.5-day bonding period. Your transaction will
-          show up as pending in your flight log until the bonding period has
-          completed.
-        </p>
-      </Modal>
-
-      <Modal
-        title={`You have successfully unstaked ${unstakedAmount} JET.`}
-        visible={unstakeSuccess}
-        okText="Confirm"
-        onOk={handleCancel}
-        cancelButtonProps={{ style: { display: "none " } }}
-      >
-      </Modal>
-    </>
+    <Modal
+      title={steps[current].title}
+      visible={showModal}
+      okText={steps[current].okText}
+      onOk={steps[current].onOk}
+      onCancel={steps[current].onCancel}
+      cancelButtonProps={{ style: steps[current].cancelButtonProps }}
+    >
+      {steps[current].content}
+    </Modal>
   );
 };

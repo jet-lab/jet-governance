@@ -15,12 +15,6 @@ button.ant-btn.ant-btn-lg {
   padding: 10px 14px;
 }
 .ant-modal-content {
-  min-height: 300px !important;
-  max-width: 300px !important;
-  padding: @spacing-xl !important;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
   a {
     text-decoration: underline;
     margin: 0;
@@ -32,6 +26,9 @@ button.ant-btn.ant-btn-lg {
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
+  }
+  p {
+    margin: 10px auto;
   }
 }
 
@@ -115,7 +112,7 @@ p,
   color: @black;
   text-align: center;
   span {
-    margin: 0 -1px 0 0 !important;
+    margin: 0 -1px 0 -1px !important;
   }
 }
 
@@ -455,6 +452,9 @@ button,
 }
 
 #airdrop {
+  h1 {
+    margin-left: 0;
+  }
   .ant-progress-bg {
     height: 31px !important;
   }

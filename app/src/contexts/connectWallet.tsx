@@ -25,7 +25,7 @@ export const ConnectWalletProvider = (props: { children: any }) => {
 
   useEffect(() => {
     if (publicKey && !verified && authenticated) {
-      // If wallet has already been SMS checked and cannot access Jet Govern,
+      // If wallet has already been SMS checked and cannot access JetGovern,
       return setInit(false);
     }
     setModalVisible(true);

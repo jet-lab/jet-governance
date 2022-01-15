@@ -24,7 +24,7 @@ export const InitModal = (props: {
       cancelButtonProps={{ style: { display: "none" } }}
       maskClosable={true}
     >
-      <p>Welcome to Jet Govern - the governance app for Jet Protocol. Here, you earn rewards and help pilot the direction of Jet Protocol by staking your JET into the app.</p>
+      <p>Welcome to JetGovern - the governance app for Jet Protocol. Here, you earn rewards and help pilot the direction of Jet Protocol by staking your JET into the app.</p>
 
       <p>
         To start voting, connect your wallet and deposit some JET today!

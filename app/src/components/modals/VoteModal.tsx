@@ -12,6 +12,7 @@ import { useRpcContext } from "../../hooks/useRpcContext";
 import { JET_GOVERNANCE } from "../../utils";
 import { StakeAccount, StakePool } from "@jet-lab/jet-engine";
 import { useStakedBalance } from "../../hooks/useStaking";
+import { castVote } from "../../actions/castVote";
 
 export const VoteModal = (props: {
   vote: YesNoVote | undefined;
@@ -51,14 +52,14 @@ export const VoteModal = (props: {
   }
 
   // Handlers for vote modal
-  const confirmVote = async () => {
-    // await castVote(
-    //   rpcContext,
-    //   governance.info.realm,
-    //   proposal,
-    //   tokenOwnerRecord!.pubkey,
-    //   vote
-    // );
+  const confirmVote = async (vote: YesNoVote) => {
+    await castVote(
+      rpcContext,
+      governance.info.realm,
+      proposal,
+      tokenOwnerRecord!.pubkey,
+      vote
+    );
     // debugger;
     setCurrent(2);
   };
@@ -87,7 +88,7 @@ export const VoteModal = (props: {
     {
       title: `You are about to vote ${voteText} proposal "${proposal.info.name}"`,
       okText: "Confirm vote",
-      onOk: () => {confirmVote()},
+      onOk: () => {vote !== undefined && confirmVote(vote)},
       onCancel: () => { },
       content: 'Please select a vote.',
       closable: true
@@ -112,7 +113,9 @@ export const VoteModal = (props: {
         onCancel={steps[current].onCancel}
         cancelButtonProps={{ style: { display: "none " } }}
       >
-        {steps[current].content}
+        <p>
+          {steps[current].content}
+        </p>
       </Modal>
 
       {/* <Modal
