@@ -1,5 +1,5 @@
-import { Modal } from "antd";
-import { useState } from "react";
+import { Modal, Steps } from "antd";
+import React, { useCallback, useEffect, useState } from "react";
 import { ParsedAccount } from "../../contexts";
 import { Governance, Proposal, TokenOwnerRecord } from "../../models/accounts";
 import { YesNoVote } from "../../models/instructions";
@@ -12,7 +12,6 @@ import { useRpcContext } from "../../hooks/useRpcContext";
 import { JET_GOVERNANCE } from "../../utils";
 import { StakeAccount, StakePool } from "@jet-lab/jet-engine";
 import { useStakedBalance } from "../../hooks/useStaking";
-import React from "react";
 
 export const VoteModal = (props: {
   vote: YesNoVote | undefined;
@@ -34,8 +33,9 @@ export const VoteModal = (props: {
     stakeAccount,
     stakePool
   } = props;
+  
+  const [current, setCurrent] = useState(0);
 
-  const [voteSuccessModal, setVoteSuccessModal] = useState(false);
   const { endDate } = useCountdown(proposal.info, governance.info);
   const rpcContext = useRpcContext();
 
@@ -51,7 +51,7 @@ export const VoteModal = (props: {
   }
 
   // Handlers for vote modal
-  const confirmVote = async (vote: YesNoVote) => {
+  const confirmVote = async () => {
     // await castVote(
     //   rpcContext,
     //   governance.info.realm,
@@ -60,32 +60,62 @@ export const VoteModal = (props: {
     //   vote
     // );
     // debugger;
-    // onClose();
-    setVoteSuccessModal(true);
+    setCurrent(2);
   };
 
   // Handlers for tx success all set modal
   const proposals = useProposalsByGovernance(JET_GOVERNANCE);
   const activeProposals = proposals.filter((p) => p.info.isVoting());
 
-  const onOk = () => {
-    setVoteSuccessModal(false);
-  };
+  useEffect(() => {
+    if (vote === undefined) {
+      setCurrent(0)
+    } else {
+      setCurrent(1)
+    }
+  }, [vote])
+
+  const steps = [
+    {
+      title: 'Set a vote!',
+      okText: "Okay",
+      onOk: () => {},
+      onCancel: () => onClose(),
+      content: 'Please select a vote.',
+      closable: true
+    },
+    {
+      title: `You are about to vote ${voteText} proposal "${proposal.info.name}"`,
+      okText: "Confirm vote",
+      onOk: () => {confirmVote()},
+      onCancel: () => { },
+      content: 'Please select a vote.',
+      closable: true
+    },
+    {
+      title: `All set`,
+      okText: "Okay",
+      onOk: () => onClose(),
+      onCancel: () => onClose(),
+      content: 'Please select a vote.',
+      closable: true
+    },
+  ];
 
   return (
     <>
       <Modal
-        title="Set a vote!"
-        visible={visible && vote === undefined}
-        okText="Okay"
-        onOk={onClose}
-        onCancel={onClose}
+        title={steps[current].title}
+        visible={visible}
+        okText={steps[current].okText}
+        onOk={steps[current].onOk}
+        onCancel={steps[current].onCancel}
         cancelButtonProps={{ style: { display: "none " } }}
       >
-        <p>Please select a vote.</p>
+        {steps[current].content}
       </Modal>
 
-      <Modal
+      {/* <Modal
         title={`You are about to vote ${voteText} proposal "${proposal.info.name}"`}
         visible={visible && vote !== undefined}
         okText="Confirm vote"
@@ -98,10 +128,9 @@ export const VoteModal = (props: {
           You have {Intl.NumberFormat().format(stakedJet)} JET staked, and
           will be able to unstake these funds when voting ends on {endDate}.
         </p>{" "}
-        {/** FIXME */}
-      </Modal>
+      </Modal> */}
 
-      <Modal
+      {/* <Modal
         title="All set"
         visible={voteSuccessModal}
         okText="Okay"
@@ -121,7 +150,7 @@ export const VoteModal = (props: {
             ? activeProposals?.map((proposal) => `HELLO ${proposal.info.name}`)
             : "There are no active proposals at this time."}
         </p>
-      </Modal>
+      </Modal> */}
     </>
   );
 };

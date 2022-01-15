@@ -186,7 +186,7 @@ export const HomeView = () => {
               onClick={() => null}
               disabled={!connected && true}
               className="full-width"
-              type="ghost"
+              type="dashed"
             >
               Withdraw
             </Button>
