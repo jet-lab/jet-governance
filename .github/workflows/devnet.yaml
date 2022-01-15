@@ -18,7 +18,7 @@ defaults:
 
 jobs:
   build:
-    name: Install Dependencies and Build Programs
+    name: Install Dependencies
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -35,7 +35,6 @@ jobs:
             ~/.cargo/registry/cache/
             ~/.cargo/git/db/
             ~/.local/share/solana/
-            ./target/
 
       - name: Install Linux Dependencies
         run: sudo apt-get update && sudo apt-get -y install pkg-config build-essential libudev-dev
@@ -47,18 +46,6 @@ jobs:
 
       - name: Install Solana
         run: sh -c "$(curl -sSfL https://release.solana.com/v${{ env.SOLANA_CLI_VERSION }}/install)"
-
-      - name: Setup NPM
-        uses: actions/setup-node@v2
-
-      - name: Install Anchor CLI
-        run: npm i -g @project-serum/anchor-cli@${{ env.ANCHOR_CLI_VERSION }}
-
-      - name: Update Environment
-        run: echo "PATH=$HOME/.local/share/solana/install/active_release/bin:$HOME/.cargo/bin:$PATH" >> $GITHUB_ENV
-
-      - name: Build Rewards and Staking
-        run: anchor build
 
   deploy:
     name: Deploy
@@ -79,7 +66,6 @@ jobs:
             ~/.cargo/registry/cache/
             ~/.cargo/git/db/
             ~/.local/share/solana/
-            ./target/
 
       - name: Setup NPM
         uses: actions/setup-node@v2
@@ -91,16 +77,28 @@ jobs:
         run: |
           echo "PATH=$HOME/.local/share/solana/install/active_release/bin:$HOME/.cargo/bin:$PATH" >> $GITHUB_ENV \
           && mkdir -p ~/.config/solana \
+          && mkdir -p ./target/deploy \
           && echo ${{ secrets.SOLANA_DEVNET_DEPLOYER_KEYPAIR }} > ~/.config/solana/deployer.json \
           && echo ${{ secrets.REWARDS_DEVNET_KEYPAIR }} > ./target/deploy/jet_rewards-keypair.json \
           && echo ${{ secrets.STAKING_DEVNET_KEYPAIR }} > ./target/deploy/jet_staking-keypair.json \
           && echo ${{ secrets.AUTH_DEVNET_KEYPAIR }} > ./target/deploy/jet_auth-keypair.json
 
+      - name: Build Programs
+        run: |
+          anchor build
+          anchor test
+
       - name: Deploy Rewards
-        run: anchor deploy --program-name rewards --provider.cluster devnet --provider.wallet ~/.config/solana/deployer.json
+        run: |
+          anchor deploy --program-name rewards --provider.cluster devnet --provider.wallet ~/.config/solana/deployer.json
+          anchor idl upgrade -f ./target/idl/jet_rewards.json JET777rQuPU8BatFbhp6irc1NAbozxTheBqNo25eLQP --provider.cluster devnet --provider.wallet ~/.config/solana/deployer.json
 
       - name: Deploy Staking
-        run: anchor deploy --program-name staking --provider.cluster devnet --provider.wallet ~/.config/solana/deployer.json
+        run: |
+          anchor deploy --program-name staking --provider.cluster devnet --provider.wallet ~/.config/solana/deployer.json
+          anchor idl upgrade -f ./target/idl/jet_staking.json JPLockxtkngHkaQT5AuRYow3HyUv5qWzmhwsCPd653n --provider.cluster devnet --provider.wallet ~/.config/solana/deployer.json
 
       - name: Deploy Auth
-        run: anchor deploy --program-name auth --provider.cluster devnet --provider.wallet ~/.config/solana/deployer.json
+        run: |
+          anchor deploy --program-name auth --provider.cluster devnet --provider.wallet ~/.config/solana/deployer.json
+          anchor idl upgrade -f ./target/idl/jet_auth.json JPALXR88jy2fG3miuu4n3o8Jef4K2Cgc3Uypr3Y8RNX --provider.cluster devnet --provider.wallet ~/.config/solana/deployer.json
