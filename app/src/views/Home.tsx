@@ -21,6 +21,7 @@ import { useGovernance, useProposalsByGovernance } from "../hooks/apiHooks"
 import { JET_GOVERNANCE } from "../utils"
 import { useProposalFilters } from "../hooks/proposalHooks"
 import { ReactFitty } from "react-fitty"
+import { FooterLinks } from "../components/FooterLinks"
 
 export const HomeView = () => {
   const [showStakeModal, setShowStakeModal] = useState(false)
@@ -192,11 +193,7 @@ export const HomeView = () => {
           </div>
         </div>
 
-        <div id="terms-conditions">
-          <span>Terms of Use</span>
-          <span>Docs</span>
-          <span>Glossary</span>
-        </div>
+        <FooterLinks />
         
         <Switch
           onChange={() => toggleDarkTheme()}

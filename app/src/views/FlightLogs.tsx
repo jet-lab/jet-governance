@@ -4,6 +4,7 @@ import { useAirdrop } from "../contexts/airdrop";
 import { InfoCircleFilled } from "@ant-design/icons";
 import React from "react";
 import { getExplorerUrl } from "../utils";
+import { FooterLinks } from "../components/FooterLinks";
 
 export const FlightLogView = () => {
   const { pendingTransactions, completeTransactions } = useAirdrop();
@@ -25,7 +26,7 @@ export const FlightLogView = () => {
   const explorerUrl = () => window.open("https://explorer.solana.com", '_blank');
 
   return (
-    <div className="view-container column-grid">
+    <div className="view-container column-grid" id="flight-logs-view">
       <div className="neu-container"  id="flight-log">
         <h1>Flight Logs</h1>
         <table>
@@ -71,6 +72,7 @@ export const FlightLogView = () => {
             </tbody>}
         </table>
       </div>
+      <FooterLinks />
     </div>
   );
 };

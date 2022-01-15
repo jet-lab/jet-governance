@@ -45,6 +45,7 @@ import { DownloadOutlined, ArrowLeftOutlined } from "@ant-design/icons";
 import { useConnectWallet } from "../contexts/connectWallet";
 import { getPubkeyIndex } from "../models/PUBKEYS_INDEX";
 import { useStakeAccount, useStakedBalance, useStakePool, useStakeProgram } from "../hooks/useStaking";
+import { FooterLinks } from "../components/FooterLinks";
 
 export const ProposalView = () => {
   const [isVoteModalVisible, setIsVoteModalVisible] = useState(false);
@@ -335,6 +336,7 @@ export const ProposalView = () => {
                 ))
               : "There are no active proposals at this time."}
           </div>
+          <FooterLinks />
         </div>
       </div>
     );
