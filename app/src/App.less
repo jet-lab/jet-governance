@@ -60,7 +60,7 @@ span,
 p,
 .proposal-card.ant-card .header,
 .ant-card-body .details {
-  font-size: 12.5px !important;
+  font-size: @sm-font-size !important;
 }
 .hidden {
   display: none;
@@ -210,7 +210,8 @@ h1 {
       }
     }
     .cluster span {
-      margin: 0 4px;
+      margin: 2px 4px;
+      font-size: @xs-font-size;
     }
     .full-width {
       margin-left: 0;
@@ -276,17 +277,6 @@ h1 {
     span:last-child {
       padding-right: 0;
     }
-    div {
-      padding-right: 9px;
-      display: flex;
-      align-items: center;
-      i {
-        margin: 0;
-        padding-right: 7px;
-        font-size: 6px;
-        margin-bottom: 3px;
-      }
-    }
   }
 
   .details {
@@ -318,7 +308,7 @@ h1 {
       margin-left: 0 !important;
     }
     p {
-      font-size: 15px;
+      font-size: @base-font-size;
       line-height: 26px;
       margin-bottom: 26px;
     }
@@ -377,7 +367,7 @@ button,
     flex-grow: 1;
     .amount {
       margin-left: 20px;
-      font-size: 12px !important;
+      font-size: @sm-font-size !important;
     }
   }
   .voters {

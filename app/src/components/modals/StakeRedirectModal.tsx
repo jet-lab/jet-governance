@@ -11,8 +11,8 @@ export const StakeRedirectModal = (props: {
     onClose,
   } = props;
   
-  // Handlers for stake redirect modal
   const handleOk = () => {
+    // Redirect to front page
     onClose();
   };
 
@@ -22,6 +22,7 @@ export const StakeRedirectModal = (props: {
       visible={visible}
       okText="I understand"
       onOk={handleOk}
+      onCancel={onClose}
       cancelButtonProps={{ style: { display: "none " } }}
     >
       <p>You gotta stake!</p>

@@ -14,7 +14,8 @@ const InitModalContext = createContext<InitModal>({
 // App init context provider
 export function InitModalProvider(props: { children: any }) {
   const [hideInitModal, setHideInitModal] = useState(localStorage.getItem('hideInitModal') === 'true');
-  useEffect(() => {    
+
+  useEffect(() => {
     localStorage.setItem('hideInitModal', JSON.stringify(hideInitModal))
   }, [hideInitModal]);
   
@@ -23,10 +24,10 @@ export function InitModalProvider(props: { children: any }) {
       hideInitModal, 
       setHideInitModal
     }}>
-      {/* <InitModal
+      <InitModal
         showModal={!hideInitModal}
-        cancelInitModal={() => setHideInitModal(false)}
-      /> */}
+        cancelInitModal={() => setHideInitModal(true)}
+      />
       {props.children}
     </InitModalContext.Provider>
   );

@@ -37,7 +37,7 @@ export const VerifyModal = (props: {
       title: '2. Confirm location',
       okText: "Okay",
       onOk: () => handlePhoneVerify(),
-      onCancel: () => onClose(),
+      onCancel: () => null,
       content: [
         <>
           <p>
@@ -48,31 +48,34 @@ export const VerifyModal = (props: {
           </strong></p>
           <Input />
         </>],
-      closable: true
+      closable: false
     }, {
       title: '3. Enter your secure access code',
       okText: "Okay",
       onOk: () => handleConfirmCode(),
-      onCancel: () => onClose(),
+      onCancel: () => null,
       content: [
         <>
           <p>You will receive a secure access code via SMS. Enter the code here to proceed.</p>
           <Input />
         </>],
-      closable: true
+      closable: false
     }, {
       title: 'Access Denied',
       okText: "Okay",
       onOk: () => null,
       onCancel: () => null,
-      content: 'You have been denied access to JetGovern.',
+      okButtonProps: { style: { display: "none " } },
+      content: [<p>You have been denied access to JetGovern.</p>],
       closable: false
     }, {
       title: 'Stake Jet to begin voting',
       okText: "Okay",
       onOk: () => onClose(),
       onCancel: () => onClose(),
-      content: [<p>Your wallet has been verified and you now have full access to the app. You will not need to verify your location again to interact with JetGovern.</p>],
+      content: [
+        <p>Your wallet has been verified and you now have full access to the app. You will not need to verify your location again to interact with JetGovern.</p>
+      ],
       closable: true
     }
   ]
@@ -85,6 +88,7 @@ export const VerifyModal = (props: {
       onOk={steps[current].onOk}
       onCancel={steps[current].onCancel}
       closable={steps[current].closable}
+      okButtonProps={steps[current].okButtonProps}
       cancelButtonProps={{ style: { display: "none " } }}
     >
       {steps[current].content}
