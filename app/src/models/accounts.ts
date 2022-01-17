@@ -885,7 +885,7 @@ export class VoteRecord {
     switch (this.accountType) {
   // TODO: Move away from VoteRecordV1?
       case GovernanceAccountType.VoteRecordV1: {
-        return this.voteWeight?.yes?.isZero() ? VoteKind.Approve : VoteKind.Deny;
+        return this.voteWeight?.yes?.isZero() ? VoteKind.Deny : VoteKind.Approve;
       }
       case GovernanceAccountType.VoteRecordV2: {
         switch (this.vote?.voteType) {
@@ -893,7 +893,7 @@ export class VoteRecord {
             return VoteKind.Approve;
           }
           case VoteKind.Deny: {
-            return VoteKind.Approve;
+            return VoteKind.Deny;
           }
           default:
             throw new Error('Invalid voteKind');

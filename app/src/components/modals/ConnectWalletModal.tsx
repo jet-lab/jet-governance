@@ -9,14 +9,10 @@ export function ConnectWalletModal() {
 
   return (
     <Modal footer={null}
+      title="1. Connect wallet"
       visible={connecting && !connected} 
       onCancel={() => setConnecting(false)}>
       <div className="connect-wallet-modal flex-centered column">
-        <img src="img/jet/jet_logo_gradient.png"
-          width="120px"
-          height="auto" 
-          alt="Jet Protocol" 
-        />
         <span>
         <strong>Vote</strong>, <strong>earn rewards</strong>, and <strong>check for airdrops</strong> by connecting your wallet.
         </span>

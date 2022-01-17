@@ -80,7 +80,7 @@ export const ProposalView = () => {
 
   const { connected } = useWallet();
   const { stakedJet } = useStakedBalance(stakeAccount, stakePool);
-  const isStaked = stakedJet != undefined && stakedJet > 0;
+  const isStaked = stakedJet !== undefined && stakedJet > 0;
 
   const handleVoteModal = () => {
     setIsVoteModalVisible(true);
@@ -121,7 +121,6 @@ export const ProposalView = () => {
       proposal.pubkey,
       tokenOwnerRecord?.pubkey
     );
-    const hasVoteTimeExpired = useHasVoteTimeExpired(governance, proposal);
 
     useEffect(() => {
       if (
@@ -133,7 +132,12 @@ export const ProposalView = () => {
       ) {
         setVote(YesNoVote.No);
       }
-    }, [voteRecord, connected]);
+      // else if (
+      //   voteRecord?.tryUnwrap()?.info.getVoterDisplayData().group === "Abstain"
+      // ) {
+      //   setVote(YesNoVote.Abstain);
+      // }
+    }, [voteRecord]);
 
     // const instructions = useInstructionsByProposal(proposal.pubkey);
     // const signatories = useSignatoriesByProposal(proposal.pubkey);

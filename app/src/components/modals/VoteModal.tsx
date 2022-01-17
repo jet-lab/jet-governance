@@ -52,9 +52,9 @@ export const VoteModal = (props: {
 
   useEffect(() => {
     // If not staked, redirect to stake modal
-    // if (!isStaked) {
-    //   return setCurrent(3)
-    // };
+    if (!isStaked) {
+      return setCurrent(3)
+    };
 
     if (vote === undefined) {
       setCurrent(0)
@@ -73,13 +73,14 @@ export const VoteModal = (props: {
 
   // Handlers for vote modal
   const confirmVote = async (vote: YesNoVote) => {
-    // await castVote(
-    //   rpcContext,
-    //   governance.info.realm,
-    //   proposal,
-    //   tokenOwnerRecord!.pubkey,
-    //   vote
-    // );
+    await castVote(
+      rpcContext,
+      governance.info.realm,
+      proposal,
+      tokenOwnerRecord!.pubkey,
+      vote
+    );
+    // Fixme! Current state does not update after confirmvote
     setCurrent(2);
   };
 
