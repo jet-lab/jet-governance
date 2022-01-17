@@ -1,4 +1,4 @@
-import { useMemo, useState, useEffect } from "react";
+import React, { useMemo, useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { ResultProgressBar } from "../components/proposal/ResultProgressBar";
 import { Divider, Spin, Button, Tooltip } from "antd";
@@ -6,7 +6,6 @@ import { ProposalCard } from "../components/ProposalCard";
 import { VoterList } from "../components/proposal/VoterList";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { VoteModal } from "../components/modals/VoteModal";
-import React from "react";
 import {
   useGovernance,
   useProposal,
@@ -38,7 +37,6 @@ import { bnToIntLossy } from "../tools/units";
 import { LABELS } from "../constants";
 import ReactMarkdown from "react-markdown";
 import { voteRecordCsvDownload } from "../actions/voteRecordCsvDownload";
-import { StakeRedirectModal } from "../components/modals/StakeRedirectModal";
 import { YesNoVote } from "../models/instructions";
 import { useHasVoteTimeExpired } from "../hooks/useHasVoteTimeExpired";
 import { DownloadOutlined, ArrowLeftOutlined } from "@ant-design/icons";
@@ -294,18 +292,18 @@ export const ProposalView = () => {
             >
               Abstain
             </Button>
-              <Button
-                type="primary"
-                onClick={
-                  !connected
-                    ? () => setConnecting(true)
-                    : () => handleVoteModal()
-                }
-              size="large"
-              disabled={!isStaked || vote === undefined}
-              >
-                Vote
-              </Button>
+            <Button
+              type="primary"
+              onClick={
+                !connected
+                  ? () => setConnecting(true)
+                  : () => handleVoteModal()
+              }
+            size="large"
+            disabled={(connected && !isStaked) || (connected && vote === undefined)}
+            >
+              Vote
+            </Button>
             <VoteModal
               vote={vote}
               visible={isVoteModalVisible}
@@ -316,7 +314,7 @@ export const ProposalView = () => {
               stakeAccount={stakeAccount}
               stakePool={stakePool}
             />
-            {!isStaked && connected ? <span className="secondary-text">You must have staked JET in order to vote on proposals.</span> : vote === undefined && connected ? <span className="secondary-text">Please select an option to submit your vote.</span> : ""}
+            {!isStaked && connected ? <span className="helper-text">You must have JET staked in order to vote on proposals.</span> : vote === undefined && connected ? <span className="helper-text">Please select an option to submit your vote.</span> : ""}
           </div>
         </div>
 
