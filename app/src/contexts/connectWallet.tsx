@@ -3,6 +3,7 @@ import React, { createContext, useContext, useState, useEffect } from "react";
 import { notify } from "../utils";
 import { VerifyModal } from "../components/modals/VerifyModal"
 import { isAddressWhitelisted, isAddressAuthenticated } from "../models/WHITELISTED_ADDRESSES"
+import { InitModal } from "../components/modals/InitModal";
 
 // Connecting wallet context
 interface ConnectWallet {
@@ -18,7 +19,10 @@ export const ConnectWalletProvider = (props: { children: any }) => {
   const { publicKey } = useWallet();
   const [connecting, setConnecting] = useState(false);
   const [connected, setConnected] = useState(publicKey);
-  const [init, setInit] = useState(true)
+  const [initApp, setInitApp] = useState(true)
+
+  const [initModalVisible, setInitModalVisible] = useState(true)
+
   const [verifyModalVisible, setVerifyModalVisible] = useState(true);
   const [authenticated, setAuthenticated] = useState(false);
   const [verified, setVerified] = useState(false);
@@ -37,7 +41,7 @@ export const ConnectWalletProvider = (props: { children: any }) => {
     if (publicKey && authenticated === true) {
       if (verified === false) {
         // Do not let user access app
-        return setInit(false);
+        return setInitApp(false);
       } else if (verified === true) {
         // Do not show verify modal again
         setVerifyModalVisible(false)
@@ -47,13 +51,18 @@ export const ConnectWalletProvider = (props: { children: any }) => {
 
   return (
     <ConnectWalletContext.Provider value={{ connecting, setConnecting }}>
+      {!publicKey && <InitModal
+        showModal={initModalVisible}
+        cancelInitModal={() => setInitModalVisible(false)}
+      />}
+
       {publicKey && <VerifyModal
         visible={verifyModalVisible}
         onClose={() => setVerifyModalVisible(false)}
         verified={verified}
         authenticated={authenticated}
       />}
-      {init && props.children}
+      {initApp && props.children}
     </ConnectWalletContext.Provider>
   );
 };

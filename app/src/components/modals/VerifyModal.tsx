@@ -1,5 +1,4 @@
 import { Modal, Input } from "antd";
-import { access } from "fs";
 import React, { useEffect, useState } from "react";
 
 export const VerifyModal = (props: {

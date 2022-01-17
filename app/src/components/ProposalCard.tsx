@@ -20,15 +20,10 @@ export const ProposalCard = (props: { proposal: ParsedAccount<Proposal>, governa
     }
   } = props;
 
-  const { programId } = useRpcContext();
-
-  // Truncate headline if too long
-  // TODO: REMOVE BEFORE MAINNET: Headlines should not be truncated
   var headlineUrl = useMemo(() => getProposalUrl(
     proposalAddress,
-    programId,
     headline.substring(0, 15).replace(" ", "-")),
-    [proposalAddress, programId, headline])
+    [proposalAddress, headline])
   const proposalStr = useMemo(() => proposalAddress.toString(), [proposalAddress])
 
   // Active votes show progress bar

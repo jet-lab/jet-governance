@@ -49,8 +49,6 @@ import { FooterLinks } from "../components/FooterLinks";
 
 export const ProposalView = () => {
   const [isVoteModalVisible, setIsVoteModalVisible] = useState(false);
-  const [isStakeRedirectModalVisible, setIsStakeRedirectModalVisible] =
-    useState(false);
   const [vote, setVote] = useState<YesNoVote | undefined>(undefined);
 
   const proposalAddress = useKeyParam();
@@ -85,11 +83,7 @@ export const ProposalView = () => {
   const isStaked = stakedJet != undefined && stakedJet > 0;
 
   const handleVoteModal = () => {
-    if (!isStaked) {
-      setIsStakeRedirectModalVisible(true);
-    } else {
-      setIsVoteModalVisible(true);
-    }
+    setIsVoteModalVisible(true);
   };
 
   return proposal && governance && governingTokenMint && realm ? (
@@ -309,10 +303,7 @@ export const ProposalView = () => {
               tokenOwnerRecord={tokenOwnerRecord}
               stakeAccount={stakeAccount}
               stakePool={stakePool}
-            />
-            <StakeRedirectModal
-              visible={isStakeRedirectModalVisible}
-              onClose={() => setIsStakeRedirectModalVisible(false)}
+              isStaked={isStaked}
             />
           </div>
         </div>

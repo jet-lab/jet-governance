@@ -1,4 +1,5 @@
 import { PublicKey } from '@solana/web3.js';
+import { OYSTER_GOV_PROGRAM_ID } from '../utils';
 
 export function getRealmUrl(
   realm: PublicKey | string,
@@ -9,10 +10,9 @@ export function getRealmUrl(
 
 export function getProposalUrl(
   proposal: PublicKey | string,
-  programId: PublicKey | string,
   title?: string,
 ) {
-  return getItemUrl('proposal', proposal, programId, title)
+  return getItemUrl('proposal', proposal, OYSTER_GOV_PROGRAM_ID, title)
 }
 
 export function getOysterProposalUrl(

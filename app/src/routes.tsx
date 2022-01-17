@@ -14,7 +14,6 @@ import { HomeView } from "./views/Home";
 import { FlightLogView } from "./views/FlightLogs";
 import { AirdropView } from "./views/Airdrop";
 import { AirdropHistory } from "./views/AirdropHistory";
-import { InitModalProvider } from "./contexts/initModal";
 import { ProposalView } from "./views/Proposal";
 import { DarkThemeProvider } from "./contexts/darkTheme";
 import { ConnectWalletProvider } from "./contexts/connectWallet";
@@ -40,7 +39,6 @@ export function Routes() {
             <ConnectionProvider>
               <WalletProvider>
                 <ConnectWalletProvider>
-                  <InitModalProvider>
                     <AirdropProvider>
                       <AccountsProvider>
                         <GovernanceProvider>
@@ -100,7 +98,6 @@ export function Routes() {
                         </GovernanceProvider>
                       </AccountsProvider>
                     </AirdropProvider>
-                  </InitModalProvider>
                 </ConnectWalletProvider>
               </WalletProvider>
             </ConnectionProvider>

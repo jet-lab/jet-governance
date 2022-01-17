@@ -1,5 +1,5 @@
 import { Modal, Steps } from "antd";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { ParsedAccount } from "../../contexts";
 import { Governance, Proposal, TokenOwnerRecord } from "../../models/accounts";
 import { YesNoVote } from "../../models/instructions";
@@ -14,6 +14,10 @@ import { StakeAccount, StakePool } from "@jet-lab/jet-engine";
 import { useStakedBalance } from "../../hooks/useStaking";
 import { castVote } from "../../actions/castVote";
 import { getPubkeyIndex } from "../../models/PUBKEYS_INDEX";
+import { getProposalUrl } from "../../tools/routeTools";
+import { OYSTER_GOV_PROGRAM_ID } from "../../utils";
+import { head } from "lodash";
+import { Link } from "react-router-dom";
 
 export const VoteModal = (props: {
   vote: YesNoVote | undefined;
@@ -24,6 +28,7 @@ export const VoteModal = (props: {
   tokenOwnerRecord?: ParsedAccount<TokenOwnerRecord>;
   stakeAccount: StakeAccount | undefined,
   stakePool: StakePool | undefined
+  isStaked: boolean;
 }) => {
   const {
     vote,
@@ -33,16 +38,30 @@ export const VoteModal = (props: {
     proposal,
     tokenOwnerRecord,
     stakeAccount,
-    stakePool
+    stakePool,
+    isStaked
   } = props;
   
   const [current, setCurrent] = useState(0);
 
-  const { endDate } = useCountdown(proposal.info, governance.info);
+  const { endDate, countdown } = useCountdown(proposal.info, governance.info);
   const rpcContext = useRpcContext();
 
   let voteText: string;
   const { stakedJet } = useStakedBalance(stakeAccount, stakePool);
+
+  useEffect(() => {
+    // If not staked, redirect to stake modal
+    // if (!isStaked) {
+    //   return setCurrent(3)
+    // };
+
+    if (vote === undefined) {
+      setCurrent(0)
+    } else {
+      setCurrent(1)
+    }
+  }, [vote, isStaked])
 
   if (vote === YesNoVote.Yes) {
     voteText = "in favor of";
@@ -54,13 +73,13 @@ export const VoteModal = (props: {
 
   // Handlers for vote modal
   const confirmVote = async (vote: YesNoVote) => {
-    await castVote(
-      rpcContext,
-      governance.info.realm,
-      proposal,
-      tokenOwnerRecord!.pubkey,
-      vote
-    );
+    // await castVote(
+    //   rpcContext,
+    //   governance.info.realm,
+    //   proposal,
+    //   tokenOwnerRecord!.pubkey,
+    //   vote
+    // );
     setCurrent(2);
   };
 
@@ -68,13 +87,19 @@ export const VoteModal = (props: {
   const proposals = useProposalsByGovernance(JET_GOVERNANCE);
   const activeProposals = proposals.filter((p) => p.info.isVoting());
 
-  useEffect(() => {
-    if (vote === undefined) {
-      setCurrent(0)
-    } else {
-      setCurrent(1)
-    }
-  }, [vote])
+  
+
+  const proposalMap = (proposal: ParsedAccount<Proposal>) => {
+    const headlineUrl = getProposalUrl(
+      proposal.pubkey,
+      proposal.info.name.substring(0, 15).replace(" ", "-"))
+
+    return (
+    <div>
+      <p><Link to={headlineUrl}><u>Proposal {getPubkeyIndex(proposal.pubkey.toBase58())}</u></Link>: {proposal.info.name}. <span className="secondary-text">Ends in {countdown}</span>
+    </p>
+    </div>
+  )}
 
   const steps = [
     {
@@ -83,20 +108,25 @@ export const VoteModal = (props: {
       onOk: () => {},
       onCancel: () => onClose(),
       content: [<p>Please select a vote.</p>],
-      closable: true
+      closable: true,
+      cancelButtonProps: { display: "none " },
     },
     {
-      title: `You are about to vote ${voteText} proposal "${proposal.info.name}"`,
-      okText: "Confirm vote",
+      title: `Confirm vote`,
+      okText: "Confirm",
       onOk: () => {vote !== undefined && confirmVote(vote)},
-      onCancel: () => { },
+      onCancel: () => onClose(),
       content: [<>
+        <p>
+          You are about to vote <strong>{voteText}</strong> proposal "{proposal.info.name}".
+        </p>
         <p>
           You have {Intl.NumberFormat().format(stakedJet)} JET staked, and
           will be able to unstake these funds when voting ends on {endDate}.
         </p>
       </>],
-      closable: true
+      closable: true,
+      cancelButtonProps: undefined,
     },
     {
       title: `All set`,
@@ -113,12 +143,24 @@ export const VoteModal = (props: {
 
         <p>
           {activeProposals && activeProposals.length > 0
-            ? activeProposals?.map((proposal) => `HELLO ${proposal.info.name}`)
-            : "There are no active proposals at this time."}
+            ? activeProposals?.map((proposal) => proposalMap(proposal)) : "There are no active proposals at this time."}
         </p>
       </>],
-      closable: true
-    },
+      closable: true,
+      cancelButtonProps: { display: "none " },
+    }, {
+      title: `Before you can vote, you have to stake some JET tokens.`,
+      okText: "I understand",
+      onOk: () => onClose(),
+      onCancel: () => onClose(),
+      content: [<>
+        <p>
+          Stake it all, stake it all!
+        </p>
+      </>],
+      closable: true,
+      cancelButtonProps: { display: "none " },
+    }
   ];
 
   return (
@@ -128,9 +170,17 @@ export const VoteModal = (props: {
       okText={steps[current].okText}
       onOk={steps[current].onOk}
       onCancel={steps[current].onCancel}
-      cancelButtonProps={{ style: { display: "none " } }}
+      cancelButtonProps={{ style: steps[current].cancelButtonProps }}
     >
       {steps[current].content}
     </Modal>
   );
 };
+function proposalAddress(proposalAddress: any, programId: any, arg2: any): string {
+  throw new Error("Function not implemented.");
+}
+
+function programId(proposalAddress: (proposalAddress: any, programId: any, arg2: any) => string, programId: any, arg2: any): string {
+  throw new Error("Function not implemented.");
+}
+
