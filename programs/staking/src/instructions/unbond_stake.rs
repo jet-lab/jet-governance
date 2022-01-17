@@ -11,6 +11,7 @@ pub struct UnbondStake<'info> {
     pub owner: Signer<'info>,
 
     /// The payer for rent
+    #[account(mut)]
     pub payer: Signer<'info>,
 
     /// The account owning the stake to be unbonded

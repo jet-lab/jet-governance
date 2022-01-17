@@ -54,6 +54,11 @@ impl StakePool {
         self.shares_unbonded = self.shares_unbonded.checked_add(amount.shares).unwrap();
     }
 
+    pub fn rebond(&mut self, amount: &FullAmount) {
+        self.withdraw(amount);
+        self.deposit(amount);
+    }
+
     pub fn convert_amount(&self, vault_amount: u64, amount: Amount) -> FullAmount {
         let tokens = std::cmp::max(vault_amount, 1);
         let shares = std::cmp::max(self.shares_bonded, 1);
@@ -118,6 +123,11 @@ pub struct StakeAccount {
 impl StakeAccount {
     pub fn deposit(&mut self, amount: &FullAmount) {
         self.shares = self.shares.checked_add(amount.shares).unwrap();
+    }
+
+    pub fn rebond(&mut self, amount: &FullAmount) {
+        self.withdraw_unbonded(amount);
+        self.deposit(amount);
     }
 
     pub fn unbond(&mut self, amount: &FullAmount) -> Result<(), ErrorCode> {

@@ -57,6 +57,11 @@ pub mod jet_staking {
         instructions::unbond_stake_handler(ctx, bump, seed, amount)
     }
 
+    /// Cancel a previous request to unbond stake
+    pub fn cancel_unbond(ctx: Context<CancelUnbond>) -> ProgramResult {
+        instructions::cancel_unbond_handler(ctx)
+    }
+
     /// Withdraw stake that was previously unbonded
     pub fn withdraw_unbonded(ctx: Context<WithdrawUnbonded>) -> ProgramResult {
         instructions::withdraw_unbonded_handler(ctx)
