@@ -90,6 +90,8 @@ describe("airdrop-staking", () => {
   let stakerUnbond: PublicKey;
   let airdropVault: PublicKey;
 
+  let stakerUnbondBump: number;
+
   let distAccount: PublicKey;
   let distVault: PublicKey;
 
@@ -269,16 +271,48 @@ describe("airdrop-staking", () => {
   });
 
   it("user unbonds stake", async () => {
-    let bumpSeed: number;
     let unbondSeed = Buffer.alloc(4);
 
-    [stakerUnbond, bumpSeed] = await PublicKey.findProgramAddress(
+    [stakerUnbond, stakerUnbondBump] = await PublicKey.findProgramAddress(
       [stakerAccount.toBuffer(), unbondSeed],
       StakingProgram.programId
     );
 
     await StakingProgram.rpc.unbondStake(
-      bumpSeed,
+      stakerUnbondBump,
+      0,
+      { kind: { tokens: {} }, value: new u64(4_200_000_000) },
+      {
+        accounts: {
+          owner: staker.publicKey,
+          payer: wallet.publicKey,
+          stakeAccount: stakerAccount,
+          stakePool: stakeAcc.stakePool,
+          stakePoolVault: stakeAcc.stakePoolVault,
+          unbondingAccount: stakerUnbond,
+          systemProgram: SystemProgram.programId,
+        },
+        signers: [staker],
+      }
+    );
+  });
+
+  it("user cancels unbonding", async () => {
+    await StakingProgram.rpc.cancelUnbond({
+      accounts: {
+        owner: staker.publicKey,
+        stakeAccount: stakerAccount,
+        stakePool: stakeAcc.stakePool,
+        unbondingAccount: stakerUnbond,
+        receiver: wallet.publicKey,
+      },
+      signers: [staker],
+    });
+  });
+
+  it("user unbonds again", async () => {
+    await StakingProgram.rpc.unbondStake(
+      stakerUnbondBump,
       0,
       { kind: { tokens: {} }, value: new u64(4_200_000_000) },
       {

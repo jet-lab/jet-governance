@@ -25,8 +25,6 @@ pub struct CancelUnbond<'info> {
               close = receiver,
               has_one = stake_account)]
     pub unbonding_account: Account<'info, UnbondingAccount>,
-
-    pub system_program: Program<'info, System>,
 }
 
 pub fn cancel_unbond_handler(ctx: Context<CancelUnbond>) -> ProgramResult {
