@@ -97,8 +97,8 @@ impl TokenDistribution {
     }
 
     fn distributed_amount_linear(&self, timestamp: u64) -> u64 {
-        let range = (self.end_at - self.begin_at) as u128;
-        let remaining = (self.end_at - timestamp) as u128;
+        let range = std::cmp::max(1, self.end_at - self.begin_at) as u128;
+        let remaining = std::cmp::max(1, self.end_at.saturating_sub(timestamp)) as u128;
 
         let distributed = (remaining * self.target_amount as u128) / range;
         assert!(distributed < std::u64::MAX as u128);

@@ -90,6 +90,9 @@ describe("airdrop-staking", () => {
   let stakerUnbond: PublicKey;
   let airdropVault: PublicKey;
 
+  let distAccount: PublicKey;
+  let distVault: PublicKey;
+
   before(async () => {
     testToken = await Token.createMint(
       provider.connection,
@@ -133,7 +136,8 @@ describe("airdrop-staking", () => {
     let bumpSeed: number;
 
     [stakerAuth, bumpSeed] = await PublicKey.findProgramAddress(
-      [staker.publicKey.toBuffer()], AuthProgram.programId
+      [staker.publicKey.toBuffer()],
+      AuthProgram.programId
     );
 
     await AuthProgram.rpc.createUserAuth(bumpSeed, {
@@ -141,9 +145,9 @@ describe("airdrop-staking", () => {
         user: staker.publicKey,
         payer: wallet.publicKey,
         auth: stakerAuth,
-        systemProgram: SystemProgram.programId
+        systemProgram: SystemProgram.programId,
       },
-      signers: [staker]
+      signers: [staker],
     });
   });
 
@@ -152,8 +156,8 @@ describe("airdrop-staking", () => {
       accounts: {
         // FIXME: ?? authority signer should be .. something
         authority: wallet.publicKey,
-        auth: stakerAuth
-      }
+        auth: stakerAuth,
+      },
     });
   });
 
@@ -369,13 +373,67 @@ describe("airdrop-staking", () => {
     assert.equal(updatedAta.amount.toNumber(), 0);
   });
 
-  it("transfer staking reward", async () => {
+  it("create reward distribution", async () => {
+    let bumpSeed: number;
+    let vaultBumpSeed: number;
+    let distSeed = "foo";
+
+    [distAccount, bumpSeed] = await PublicKey.findProgramAddress(
+      [Buffer.from(distSeed)],
+      RewardsProgram.programId
+    );
+
+    [distVault, vaultBumpSeed] = await PublicKey.findProgramAddress(
+      [distAccount.toBuffer(), Buffer.from("vault")],
+      RewardsProgram.programId
+    );
+
+    const fundingAta = await testToken.getOrCreateAssociatedAccountInfo(
+      wallet.publicKey
+    );
     await testToken.mintTo(
-      stakeAcc.stakePoolVault,
+      fundingAta.address,
       wallet.publicKey,
       [],
       5_800_000_000
     );
+
+    await RewardsProgram.rpc.distributionCreate(
+      {
+        amount: new u64(5_800_000_000),
+        authority: wallet.publicKey,
+        bumpSeed: bumpSeed,
+        seed: distSeed,
+        targetAccount: stakeAcc.stakePoolVault,
+        vaultBump: vaultBumpSeed,
+        beginAt: new u64(0),
+        endAt: new u64(0),
+      },
+      {
+        accounts: {
+          distribution: distAccount,
+          vault: distVault,
+          payerRent: wallet.publicKey,
+          payerTokenAuthority: wallet.publicKey,
+          payerTokenAccount: fundingAta.address,
+          tokenMint: testToken.publicKey,
+          tokenProgram: TOKEN_PROGRAM_ID,
+          systemProgram: SystemProgram.programId,
+          rent: SYSVAR_RENT_PUBKEY,
+        },
+      }
+    );
+  });
+
+  it("distribute reward", async () => {
+    await RewardsProgram.rpc.distributionRelease({
+      accounts: {
+        distribution: distAccount,
+        vault: distVault,
+        targetAccount: stakeAcc.stakePoolVault,
+        tokenProgram: TOKEN_PROGRAM_ID,
+      },
+    });
   });
 
   it("mint max votes", async () => {

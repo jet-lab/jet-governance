@@ -29,7 +29,7 @@ impl<'info> DistributionRelease<'info> {
             Transfer {
                 from: self.vault.to_account_info(),
                 to: self.target_account.to_account_info(),
-                authority: self.vault.to_account_info(),
+                authority: self.distribution.to_account_info(),
             },
         )
     }

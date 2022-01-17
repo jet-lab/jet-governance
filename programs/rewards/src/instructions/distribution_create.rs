@@ -94,6 +94,7 @@ pub fn distribution_create_handler(
 
     distribution.address = distribution.key();
     distribution.seed.as_mut().write(params.seed.as_bytes())?;
+    distribution.seed_len = params.seed.len() as u8;
     distribution.bump_seed[0] = params.bump_seed;
 
     distribution.authority = params.authority;
