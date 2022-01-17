@@ -28,7 +28,6 @@ export const VoteModal = (props: {
   tokenOwnerRecord?: ParsedAccount<TokenOwnerRecord>;
   stakeAccount: StakeAccount | undefined,
   stakePool: StakePool | undefined
-  isStaked: boolean;
 }) => {
   const {
     vote,
@@ -38,8 +37,7 @@ export const VoteModal = (props: {
     proposal,
     tokenOwnerRecord,
     stakeAccount,
-    stakePool,
-    isStaked
+    stakePool
   } = props;
   
   const [current, setCurrent] = useState(0);
@@ -51,17 +49,12 @@ export const VoteModal = (props: {
   const { stakedJet } = useStakedBalance(stakeAccount, stakePool);
 
   useEffect(() => {
-    // If not staked, redirect to stake modal
-    if (!isStaked) {
-      return setCurrent(3)
-    };
-
     if (vote === undefined) {
       setCurrent(0)
     } else {
       setCurrent(1)
     }
-  }, [vote, isStaked])
+  }, [vote])
 
   if (vote === YesNoVote.Yes) {
     voteText = "in favor of";
@@ -87,8 +80,6 @@ export const VoteModal = (props: {
   // Handlers for tx success all set modal
   const proposals = useProposalsByGovernance(JET_GOVERNANCE);
   const activeProposals = proposals.filter((p) => p.info.isVoting());
-
-  
 
   const proposalMap = (proposal: ParsedAccount<Proposal>) => {
     const headlineUrl = getProposalUrl(
@@ -145,18 +136,6 @@ export const VoteModal = (props: {
         <p>
           {activeProposals && activeProposals.length > 0
             ? activeProposals?.map((proposal) => proposalMap(proposal)) : "There are no active proposals at this time."}
-        </p>
-      </>],
-      closable: true,
-      cancelButtonProps: { display: "none " },
-    }, {
-      title: `Before you can vote, you have to stake some JET tokens.`,
-      okText: "I understand",
-      onOk: () => onClose(),
-      onCancel: () => onClose(),
-      content: [<>
-        <p>
-          Stake it all, stake it all!
         </p>
       </>],
       closable: true,

@@ -1,12 +1,14 @@
-import { Divider, Tooltip } from "antd";
+import { Divider, Tooltip, Button } from "antd";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { useAirdrop } from "../contexts/airdrop";
 import { InfoCircleFilled } from "@ant-design/icons";
-import React from "react";
+import React, { useState } from "react";
 import { getExplorerUrl } from "../utils";
 import { FooterLinks } from "../components/FooterLinks";
+import { RestakeModal } from "../components/modals/RestakeModal";
 
 export const FlightLogView = () => {
+  const [restakeModal, setRestakeModal] = useState(false);
   const { pendingTransactions, completeTransactions } = useAirdrop();
   const { connected } = useWallet();
 
@@ -23,11 +25,12 @@ export const FlightLogView = () => {
   };
 
   // Open explorer
-  const explorerUrl = () => window.open("https://explorer.solana.com", '_blank');
+  const explorerUrl = () =>
+    window.open("https://explorer.solana.com", "_blank");
 
   return (
     <div className="view-container column-grid" id="flight-logs-view">
-      <div className="neu-container"  id="flight-log">
+      <div className="neu-container" id="flight-log">
         <h1>Flight Logs</h1>
         <table>
           <thead>
@@ -40,7 +43,7 @@ export const FlightLogView = () => {
             <tr className="table-divider"></tr>
           </thead>
 
-          {connected &&
+          {connected && (
             <tbody>
               {pendingTransactions.map((row) => (
                 <tr>
@@ -53,8 +56,20 @@ export const FlightLogView = () => {
                     >
                       <InfoCircleFilled />
                     </Tooltip>
+                    <RestakeModal
+                      showModal={restakeModal}
+                      stakeAmount={row.amount}
+                      onClose={() => setRestakeModal(false)}
+                    />
                   </td>
-                  <td className="italics" onClick={explorerUrl}>{row.transaction}</td>
+                  <td className="italics">
+                    <i className="italics"
+                      onClick={explorerUrl}>{row.action}</i>{" "}
+                    <Button type="dashed"
+                      onClick={() => setRestakeModal(true)}>
+                      Restake
+                    </Button>
+                  </td>
                   <td className="italics">{row.amount}</td>
                 </tr>
               ))}
@@ -65,11 +80,14 @@ export const FlightLogView = () => {
                 <tr>
                   <td>{formatDate(row.date)}</td>
                   <td>{row.status}</td>
-                  <td className="asset" onClick={explorerUrl}>{row.transaction}</td>
+                  <td className="asset" onClick={explorerUrl}>
+                    {row.action}
+                  </td>
                   <td className="reserve-detail center-text">{row.amount}</td>
                 </tr>
               ))}
-            </tbody>}
+            </tbody>
+          )}
         </table>
       </div>
       <FooterLinks />

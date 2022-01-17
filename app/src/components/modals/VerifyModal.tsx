@@ -11,7 +11,7 @@ export const VerifyModal = (props: {
 }) => {
   const { visible, onClose, verified, authenticated } = props;
   const [current, setCurrent] = useState(0);
-  const { connected, disconnect } = useWallet();
+  const { connected, disconnect, publicKey } = useWallet();
   const { setConnecting } = useConnectWallet();
 
   useEffect(() => {
@@ -20,7 +20,7 @@ export const VerifyModal = (props: {
     } else if (authenticated && verified) {
       return onClose();
     }
-  }, [verified, authenticated, onClose]);
+  }, [publicKey, verified, authenticated, setConnecting, onClose]);
 
   const handlePhoneVerify = () => {
     setCurrent(2);

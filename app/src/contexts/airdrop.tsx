@@ -22,19 +22,19 @@ interface AirdropConfig {
   transactionHistory: {
     date: Date;
     status: string;
-    transaction: string;
+    action: string;
     amount: number
   }[];
   pendingTransactions: {
     date: Date;
     status: string;
-    transaction: string;
+    action: string;
     amount: number
   }[];
   completeTransactions: {
     date: Date;
     status: string;
-    transaction: string;
+    action: string;
     amount: number
   }[];
 }
@@ -139,27 +139,27 @@ export function AirdropProvider({ children = undefined as any }) {
   const transactionHistory = [{
     date: new Date("25 Dec 2021"),
     status: "Pending",
-    transaction: 'Unstaked',
+    action: 'Unstaked complete on DATE',
     amount: 3500
   }, {
     date: new Date("25 Nov 2020"),
     status: "Complete",
-    transaction: 'Unstaked',
+    action: 'Unstaked',
     amount: 3500
   }, {
     date: new Date("25 Sep 2020"),
     status: "Complete",
-    transaction: 'Staked from ?? airdrop',
+    action: 'Staked from ?? airdrop',
     amount: 3500
   }, {
     date: new Date("25 Dec 2020"),
     status: "Complete",
-    transaction: `Staked from wallet ${publicKey && shortenAddress(publicKey?.toString())}`,
+    action: `Staked from wallet ${publicKey && shortenAddress(publicKey?.toString())}`,
     amount: 3500
   }, {
     date: new Date("25 Jul 2020"),
     status: "Pending",
-    transaction: 'Account opened',
+    action: 'Unstaked complete on DATE',
     amount: 3500
     }]
   

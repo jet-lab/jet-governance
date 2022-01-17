@@ -19,11 +19,11 @@ export const ConnectWalletProvider = (props: { children: any }) => {
   const [connecting, setConnecting] = useState(false);
   const [connected, setConnected] = useState(publicKey);
 
-  const [initModalVisible, setInitModalVisible] = useState(true)
-
   const [verifyModalVisible, setVerifyModalVisible] = useState(true);
   const [authenticated, setAuthenticated] = useState(false);
   const [verified, setVerified] = useState(false);
+
+  // TODO FIXME: Modal should appear if wallet is connected by user and !verified, defaulting to step 3.
 
   useEffect(() => {
     // Check if address has been previously authenticated
@@ -40,7 +40,7 @@ export const ConnectWalletProvider = (props: { children: any }) => {
         // Do not show verify modal again
         setVerifyModalVisible(false)
       }
-    }, [publicKey, verified, authenticated]);  
+    }, [publicKey, verified, authenticated]);
 
   return (
     <ConnectWalletContext.Provider value={{ connecting, setConnecting }}>

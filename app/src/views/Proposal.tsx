@@ -1,7 +1,7 @@
 import { useMemo, useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { ResultProgressBar } from "../components/proposal/ResultProgressBar";
-import { Divider, Spin, Button } from "antd";
+import { Divider, Spin, Button, Tooltip } from "antd";
 import { ProposalCard } from "../components/ProposalCard";
 import { VoterList } from "../components/proposal/VoterList";
 import { useWallet } from "@solana/wallet-adapter-react";
@@ -44,7 +44,12 @@ import { useHasVoteTimeExpired } from "../hooks/useHasVoteTimeExpired";
 import { DownloadOutlined, ArrowLeftOutlined } from "@ant-design/icons";
 import { useConnectWallet } from "../contexts/connectWallet";
 import { getPubkeyIndex } from "../models/PUBKEYS_INDEX";
-import { useStakeAccount, useStakedBalance, useStakePool, useStakeProgram } from "../hooks/useStaking";
+import {
+  useStakeAccount,
+  useStakedBalance,
+  useStakePool,
+  useStakeProgram,
+} from "../hooks/useStaking";
 import { FooterLinks } from "../components/FooterLinks";
 
 export const ProposalView = () => {
@@ -74,9 +79,9 @@ export const ProposalView = () => {
   const proposals = useProposalsByGovernance(JET_GOVERNANCE);
   const activeProposals = proposals.filter((p) => p.info.isVoting());
 
-  const stakeProgram = useStakeProgram()
-  const stakePool = useStakePool(stakeProgram)
-  const stakeAccount = useStakeAccount(stakeProgram, stakePool)
+  const stakeProgram = useStakeProgram();
+  const stakePool = useStakePool(stakeProgram);
+  const stakeAccount = useStakeAccount(stakeProgram, stakePool);
 
   const { connected } = useWallet();
   const { stakedJet } = useStakedBalance(stakeAccount, stakePool);
@@ -277,7 +282,7 @@ export const ProposalView = () => {
               onClick={() => setVote(YesNoVote.No)}
               className={`vote-select ${
                 vote === YesNoVote.No ? "selected" : ""
-                }`}
+              }`}
               size="large"
             >
               Against
@@ -289,15 +294,18 @@ export const ProposalView = () => {
             >
               Abstain
             </Button>
-            <Button
-              type="primary"
-              onClick={
-                !connected ? () => setConnecting(true) : () => handleVoteModal()
-              }
+              <Button
+                type="primary"
+                onClick={
+                  !connected
+                    ? () => setConnecting(true)
+                    : () => handleVoteModal()
+                }
               size="large"
-            >
-              Vote
-            </Button>
+              disabled={!isStaked || vote === undefined}
+              >
+                Vote
+              </Button>
             <VoteModal
               vote={vote}
               visible={isVoteModalVisible}
@@ -307,8 +315,8 @@ export const ProposalView = () => {
               tokenOwnerRecord={tokenOwnerRecord}
               stakeAccount={stakeAccount}
               stakePool={stakePool}
-              isStaked={isStaked}
             />
+            {!isStaked && connected ? <span className="secondary-text">You must have staked JET in order to vote on proposals.</span> : vote === undefined && connected ? <span className="secondary-text">Please select an option to submit your vote.</span> : ""}
           </div>
         </div>
 
