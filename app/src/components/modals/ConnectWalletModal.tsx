@@ -9,7 +9,7 @@ export function ConnectWalletModal() {
 
   return (
     <Modal footer={null}
-      title="1. Connect wallet"
+      title="Connect wallet"
       visible={connecting && !connected} 
       onCancel={() => setConnecting(false)}>
       <div className="connect-wallet-modal flex-centered column">

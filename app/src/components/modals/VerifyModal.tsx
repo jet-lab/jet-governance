@@ -2,6 +2,7 @@ import { useWallet } from "@solana/wallet-adapter-react";
 import { Modal, Input } from "antd";
 import React, { useEffect, useState } from "react";
 import { useConnectWallet } from "../../contexts/connectWallet";
+import axios from "axios";
 
 export const VerifyModal = (props: {
   visible: boolean;
@@ -13,24 +14,86 @@ export const VerifyModal = (props: {
   const [current, setCurrent] = useState(0);
   const { connected, disconnect, publicKey } = useWallet();
   const { setConnecting } = useConnectWallet();
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [code, setCode] = useState("");
 
   useEffect(() => {
-    if (authenticated && !verified) {
-      return setCurrent(3);
-    } else if (authenticated && verified) {
-      return onClose();
+    if (publicKey && authenticated) {
+      if (verified) {
+        return onClose();
+      } else if (!verified) {
+        return setCurrent(3);
+      }
+    } else if (publicKey && !authenticated) {
+      return setCurrent(1);
     }
   }, [publicKey, verified, authenticated, setConnecting, onClose]);
 
+  const handleInputPhoneNumber = (e: string) => {
+    setPhoneNumber(e);
+  };
+  const enterKeyPhoneVerify = (e: any) => {
+    if (e.code === 'Enter') {
+      handlePhoneVerify();
+    }
+  }
   const handlePhoneVerify = () => {
-    setCurrent(2);
+    // auth/sms begin a new SMS verification session
+    // axios
+    //   .put("https://api.jetprotocol.io/v1/auth/sms", {
+    //     originator: "Governance",
+    //     phoneNumber: phoneNumber,
+    //   })
+    //   .then((res) => {
+    //     console.log(res.data);
+    //     if (res.data === 201) {
+    //       // Successfully sent SMS verification code
+    //       setCurrent(2);
+    //     } else if (res.data === 400) {
+    //       // Payload validation failed or provided phone number was not a valid mobile number.
+    //     } else if (res.data === 403) {
+    //       // The provided mobile number originates from a geo-banned region.
+    //       setCurrent(3);
+    //     } else if (res.data === 500) {
+    //       // Unknown or MessageBird API error.
+    //     }
+    //   })
+    //   .catch(console.error);
+    
+      setCurrent(2);
   };
 
-  const handleConfirmCode = () => {
-    if (authenticated && !verified) {
-      return setCurrent(3);
+  const handleInputCode = (e: string) => {
+    setCode(e);
+  };
+  const enterKeyInputCode = (e: any) => {
+    if (e.code === 'Enter') {
+      handleConfirmCode();
     }
-    setCurrent(3);
+  }
+  const handleConfirmCode = () => {
+    // auth/sms/verify verify SMS token
+    // axios
+    //   .post("https://api.jetprotocol.io/v1/auth/sms/verify", {
+    //     originator: "Governance",
+    //     code: code,
+    //   })
+    //   .then((res) => {
+    //     console.log(res.data);
+    //     if (res.data === 204) {
+    //       // The verification was successful and transaction was confirmed.
+    //       setCurrent(4)
+    //     } else if (res.data === 400) {
+    //       // Payload validation failed.
+    //       setCurrent(3)
+    //     } else if (res.data === 500) {
+    //       // Unknown or MessageBird API error.
+    //       setCurrent(5)
+    //     }
+    //   })
+    //   .catch(console.error);
+
+    setCurrent(4);
   };
 
   const handleAccessDenied = () => {
@@ -42,12 +105,12 @@ export const VerifyModal = (props: {
 
   const handleAuthenticate = () => {
     if (connected && !authenticated) {
-      setCurrent(3)
+      setCurrent(3);
     } else if (!connected) {
-      setConnecting(true)
+      setConnecting(true);
       onClose();
     }
-  }
+  };
 
   const steps = [
     {
@@ -58,7 +121,9 @@ export const VerifyModal = (props: {
       content: [
         <>
           <p>
-          Welcome to Jet Govern—the governance app for Jet Protocol. Here, you earn rewards and help pilot the direction of Jet Protocol by staking your JET into the app.
+            Welcome to Jet Govern—the governance app for Jet Protocol. Here, you
+            earn rewards and help pilot the direction of Jet Protocol by staking
+            your JET into the app.
           </p>
 
           <p>
@@ -69,7 +134,7 @@ export const VerifyModal = (props: {
       closable: connected && !authenticated ? true : false,
     },
     {
-      title: "2. Confirm location",
+      title: "Confirm location",
       okText: "Okay",
       onOk: () => handlePhoneVerify(),
       onCancel: () => null,
@@ -85,13 +150,15 @@ export const VerifyModal = (props: {
               partner, and is used solely for regional access.
             </strong>
           </p>
-          <Input />
+          <Input
+            onChange={(e) => handleInputPhoneNumber(e.target.value)}
+            onKeyPress={(e) => enterKeyPhoneVerify(e)}/>
         </>,
       ],
       closable: false,
     },
     {
-      title: "3. Enter your secure access code",
+      title: "Enter your secure access code",
       okText: "Okay",
       onOk: () => handleConfirmCode(),
       onCancel: () => null,
@@ -101,7 +168,9 @@ export const VerifyModal = (props: {
             You will receive a secure access code via SMS. Enter the code here
             to proceed.
           </p>
-          <Input />
+          <Input
+            onChange={(e) => handleInputCode(e.target.value)}
+            onKeyPress={(e) => enterKeyInputCode(e)}/>
         </>,
       ],
       closable: false,
@@ -117,6 +186,41 @@ export const VerifyModal = (props: {
           JetGovern is not available in your area. You will now be disconnected,
           but can continue to browse while disconnected.
         </p>,
+      ],
+      closable: true,
+    },
+    {
+      title: "Stake JET to earn and vote!",
+      okText: "Okay",
+      onOk: () => onClose(),
+      onCancel: () => onClose(),
+      okButtonProps: "Okay",
+      content: [
+        <>
+          <p>
+            Your wallet has been verified and you now have full access to the
+            JetGovern module. You will not need to verify again.
+          </p>
+
+          <p>
+            To begin, make sure you have some JET tokens staked. Once they are
+            staked, you will begin earning rewards and may vote on active
+            proposals (1 staked JET token = 1 vote).
+          </p>
+        </>,
+      ],
+      closable: true,
+    },
+    {
+      title: "Please try again",
+      okText: "Okay",
+      onOk: () => onClose(),
+      onCancel: () => onClose(),
+      okButtonProps: "Okay",
+      content: [
+        <p>
+          We have encountered an unknown error, please try again.
+        </p>
       ],
       closable: true,
     },

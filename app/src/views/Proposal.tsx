@@ -285,13 +285,13 @@ export const ProposalView = () => {
             >
               Against
             </Button>
-            <Button
+            {/* <Button
               onClick={() => console.log(vote)}
               className={`vote-select`}
               size="large"
             >
               Abstain
-            </Button>
+            </Button> */}
             <Button
               type="primary"
               onClick={

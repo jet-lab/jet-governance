@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { InputNumber } from 'antd';
 
 export const Input = (props: {
   type: 'text' | 'number';
