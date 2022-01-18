@@ -69,7 +69,7 @@ export function Routes() {
                                   />
 
                                   {/** Old oyster paths */}
-                                  <Route
+                                  {/* <Route
                                     exact
                                     path="/realms"
                                     component={() => <AllRealmsView />}
@@ -90,7 +90,7 @@ export function Routes() {
                                     exact
                                     path="/devtools"
                                     children={<DevToolsView />}
-                                  />
+                                  /> */}
                                 </ScrollToTop>
                               </Switch>
                             </AppLayout>

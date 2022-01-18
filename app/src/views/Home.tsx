@@ -187,9 +187,6 @@ export const HomeView = () => {
               onClose={() => setShowUnstakeModal(false)}
             />
             <Button
-              onClick={() => null}
-              disabled={!connected && true}
-              className="full-width"
               type="dashed"
             >
               Withdraw
@@ -197,26 +194,28 @@ export const HomeView = () => {
           </div>
         </div>
 
-        <FooterLinks />
-
-        <Switch
+        <div>
+          <Switch
           onChange={() => toggleDarkTheme()}
           checked={darkTheme}
           checkedChildren="dark"
           unCheckedChildren="light"
-        />
-        <Button onClick={getAirdrop}>GET JET</Button>
+          />
+          <Button onClick={getAirdrop}>GET JET</Button>
+        </div>
+
+        <FooterLinks />
       </div>
 
       <div id="show-proposals">
         <div className="flex justify-between header">
           <h2>Proposals</h2>
           <div className="filter-status">
-            <span onClick={() => setShowing("active")}>Active</span>
-            <span onClick={() => setShowing("inactive")}>Inactive</span>
-            <span onClick={() => setShowing("passed")}>Passed</span>
-            <span onClick={() => setShowing("rejected")}>Rejected</span>
-            <span onClick={() => setShowing("all")}>All</span>
+            <span onClick={() => setShowing("active")} className={showing === "active" ? "active" : undefined}>Active</span>
+            <span onClick={() => setShowing("inactive")} className={showing === "inactive" ? "active" : undefined}>Inactive</span>
+            <span onClick={() => setShowing("passed")} className={showing === "passed" ? "active" : undefined}>Passed</span>
+            <span onClick={() => setShowing("rejected")} className={showing === "rejected" ? "active" : undefined}>Rejected</span>
+            <span onClick={() => setShowing("all")} className={showing === "all" ? "active" : undefined}>All</span>
           </div>
         </div>
 

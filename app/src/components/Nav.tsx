@@ -49,7 +49,7 @@ export function Nav() {
               className={`nav-link ${pathname === link.route ? 'active' : ''} ${link.class}`}
               key={link.route}
             >
-                {link.title} {link.badge ? (<span className="badge"><span className="text-gradient">{link.badge}</span></span>) : ""}
+                {link.title}{link.badge ? (<span className="badge"><span className="text-gradient">{link.badge}</span></span>) : ""}
             </Link>
           )}
           <Button className="secondary-btn flex-centered"

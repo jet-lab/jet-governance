@@ -44,6 +44,10 @@ export const VoteModal = (props: {
 
   const { endDate, countdown } = useCountdown(proposal.info, governance.info);
   const rpcContext = useRpcContext();
+  const voteRecord = useTokenOwnerVoteRecord(
+    proposal.pubkey,
+    tokenOwnerRecord?.pubkey
+  );
 
   let voteText: string;
   const { stakedJet } = useStakedBalance(stakeAccount, stakePool);
@@ -66,15 +70,17 @@ export const VoteModal = (props: {
 
   // Handlers for vote modal
   const confirmVote = async (vote: YesNoVote) => {
-    await castVote(
-      rpcContext,
-      governance.info.realm,
-      proposal,
-      tokenOwnerRecord!.pubkey,
-      vote
-    );
-    // Fixme! Current state does not update after confirmvote
-    setCurrent(2);
+    if (tokenOwnerRecord) {
+      //Fixme: withdraw existing vote before sending new tx
+      castVote(
+        rpcContext,
+        governance.info.realm,
+        proposal,
+        tokenOwnerRecord.pubkey,
+        vote,
+        voteRecord?.tryUnwrap()!.pubkey // Turn this into a public key
+      ).then(() => setCurrent(2));
+    }
   };
 
   // Handlers for tx success all set modal

@@ -90,6 +90,7 @@ export const FlightLogView = () => {
           )}
         </table>
       </div>
+      <div className="spacer"/>
       <FooterLinks />
     </div>
   );
