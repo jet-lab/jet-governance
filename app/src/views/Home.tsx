@@ -49,7 +49,7 @@ export const HomeView = () => {
   const { stakedJet, unstakedJet, unbondingJet, unlockedVotes } =
     useStakedBalance(stakeAccount, stakePool);
 
-  let governance = useGovernance(JET_GOVERNANCE);
+  let governance = useGovernance();
 
   const totalDailyReward = 1000000;
   const totalStake = 1500000;

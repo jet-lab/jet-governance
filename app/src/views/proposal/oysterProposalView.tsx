@@ -52,7 +52,7 @@ export const OysterProposalView = () => {
   let proposalKey = useKeyParam();
   let proposal = useProposal(proposalKey);
 
-  let governance = useGovernance(proposal?.info.governance);
+  let governance = useGovernance();
   let realm = useRealm(governance?.info.realm);
 
   const governingTokenMint = useMint(proposal?.info.governingTokenMint);

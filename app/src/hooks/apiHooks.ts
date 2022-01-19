@@ -20,6 +20,7 @@ import {
   useGovernanceAccountsByFilter,
 } from './accountHooks';
 import { useRpcContext } from './useRpcContext';
+import { JET_GOVERNANCE } from '../utils';
 
 // ----- Realm Config ---------
 
@@ -40,10 +41,10 @@ export function useRealmConfig(realm: PublicKey) {
 
 // ----- Governance -----
 
-export function useGovernance(governance: PublicKey | undefined) {
+export function useGovernance() {
   return useGovernanceAccountByPubkey<Governance>(
     Governance,
-    governance,
+    JET_GOVERNANCE,
   )?.tryUnwrap();
 }
 

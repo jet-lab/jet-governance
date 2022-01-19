@@ -31,7 +31,7 @@ export const GovernanceView = () => {
   const { tokenMap } = useConnectionConfig();
 
   const governanceKey = useKeyParam();
-  const governance = useGovernance(governanceKey);
+  const governance = useGovernance();
   const realm = useRealm(governance?.info.realm);
   const proposals = useProposalsByGovernance(governanceKey);
   const communityMintInfo = useMint(realm?.info.communityMint);

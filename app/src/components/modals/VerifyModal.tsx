@@ -75,9 +75,11 @@ export const VerifyModal = (props: {
     // auth/sms/verify verify SMS token
     // axios
     //   .post("https://api.jetprotocol.io/v1/auth/sms/verify", {
-    //     originator: "Governance",
-    //     code: code,
-    //   })
+    //   "network": "mainnet-beta",
+    //   "publicKey": "string",
+    //   "token": code,
+    //   "verificationId": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+    // })
     //   .then((res) => {
     //     console.log(res.data);
     //     if (res.data === 204) {
