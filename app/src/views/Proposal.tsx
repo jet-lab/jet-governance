@@ -55,16 +55,11 @@ export const ProposalView = () => {
   const proposal = useProposal(proposalAddress);
 
   let governance = useGovernance();
-  let realm = useRealm(governance?.info.realm);
+  let realm = useRealm();
 
   const voteRecords = useVoteRecordsByProposal(proposal?.pubkey);
 
-  const tokenOwnerRecords = useTokenOwnerRecords(
-    governance?.info.realm,
-    proposal?.info.isVoteFinalized() // TODO: for finalized votes show a single item for abstained votes
-      ? undefined
-      : proposal?.info.governingTokenMint
-  );
+  const tokenOwnerRecords = useTokenOwnerRecords();
 
   const { allHasVoted } = useVoterDisplayData(voteRecords, tokenOwnerRecords);
 
@@ -116,7 +111,7 @@ const InnerProposalView = (props: {
   const isStaked = true;
   // const isStaked = stakedJet !== undefined && stakedJet > 0;
 
-  const proposals = useProposalsByGovernance(JET_GOVERNANCE);
+  const proposals = useProposalsByGovernance();
   const activeProposals = proposals.filter((p) => p.info.isVoting());
 
   const proposalAddress = useKeyParam();

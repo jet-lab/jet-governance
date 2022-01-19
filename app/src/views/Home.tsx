@@ -35,7 +35,7 @@ export const HomeView = () => {
   const { darkTheme, toggleDarkTheme } = useDarkTheme();
 
   // ----- Proposals -----
-  const proposals = useProposalsByGovernance(JET_GOVERNANCE);
+  const proposals = useProposalsByGovernance();
   const filteredProposals = useProposalFilters(proposals);
 
   // ----- Staking -----

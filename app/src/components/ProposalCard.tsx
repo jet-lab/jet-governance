@@ -4,7 +4,6 @@ import { Card, Progress } from "antd";
 import { Governance, Proposal, ProposalState } from "../models/accounts";
 import { ParsedAccount } from "../contexts";
 import { getProposalUrl } from "../tools/routeTools";
-import { useRpcContext } from "../hooks/useRpcContext";
 import { useCountdown } from "../hooks/proposalHooks";
 import { getPubkeyIndex } from "../models/PUBKEYS_INDEX";
 

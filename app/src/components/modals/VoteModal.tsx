@@ -9,13 +9,11 @@ import {
 } from "../../hooks/apiHooks";
 import { useCountdown } from "../../hooks/proposalHooks";
 import { useRpcContext } from "../../hooks/useRpcContext";
-import { JET_GOVERNANCE } from "../../utils";
 import { StakeAccount, StakePool } from "@jet-lab/jet-engine";
 import { useStakedBalance } from "../../hooks/useStaking";
 import { castVote } from "../../actions/castVote";
 import { getPubkeyIndex } from "../../models/PUBKEYS_INDEX";
 import { getProposalUrl } from "../../tools/routeTools";
-import { OYSTER_GOV_PROGRAM_ID } from "../../utils";
 import { head } from "lodash";
 import { Link } from "react-router-dom";
 
@@ -84,17 +82,19 @@ export const VoteModal = (props: {
   };
 
   // Handlers for tx success all set modal
-  const proposals = useProposalsByGovernance(JET_GOVERNANCE);
+  const proposals = useProposalsByGovernance();
   const activeProposals = proposals.filter((p) => p.info.isVoting());
 
-  const proposalMap = (proposal: ParsedAccount<Proposal>) => {
+  const proposalMap = (proposal: ParsedAccount<Proposal>, key: number) => {
     const headlineUrl = getProposalUrl(
       proposal.pubkey,
       proposal.info.name.substring(0, 15).replace(" ", "-"))
 
     return (
-    <div>
-      <p><Link to={headlineUrl}><u>Proposal {getPubkeyIndex(proposal.pubkey.toBase58())}</u></Link>: {proposal.info.name}. <span className="secondary-text">Ends in {countdown}</span>
+    <div key={key}>
+        <p>
+          <Link to={headlineUrl}><u>Proposal {getPubkeyIndex(proposal.pubkey.toBase58())}</u></Link>:
+          {proposal.info.name}. <span className="secondary-text">Ends in {countdown}</span>
     </p>
     </div>
   )}
@@ -141,7 +141,7 @@ export const VoteModal = (props: {
 
         <p>
           {activeProposals && activeProposals.length > 0
-            ? activeProposals?.map((proposal) => proposalMap(proposal)) : "There are no active proposals at this time."}
+            ? activeProposals?.map((proposal, key) => proposalMap(proposal, key)) : "There are no active proposals at this time."}
         </p>
       </>],
       closable: true,

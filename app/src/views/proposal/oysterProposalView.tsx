@@ -53,18 +53,13 @@ export const OysterProposalView = () => {
   let proposal = useProposal(proposalKey);
 
   let governance = useGovernance();
-  let realm = useRealm(governance?.info.realm);
+  let realm = useRealm();
 
   const governingTokenMint = useMint(proposal?.info.governingTokenMint);
 
   const voteRecords = useVoteRecordsByProposal(proposal?.pubkey);
 
-  const tokenOwnerRecords = useTokenOwnerRecords(
-    governance?.info.realm,
-    proposal?.info.isVoteFinalized() // TODO: for finalized votes show a single item for abstained votes
-      ? undefined
-      : proposal?.info.governingTokenMint,
-  );
+  const tokenOwnerRecords = useTokenOwnerRecords();
 
   const { allData } = useVoterDisplayData(voteRecords, tokenOwnerRecords)
   const voterDisplayData = allData

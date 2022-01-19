@@ -309,5 +309,5 @@ export const dateToString = (date: Date) => {
   const minute = date.getUTCMinutes().toString().padStart(2, '0');
   const second = date.getUTCSeconds().toString().padStart(2, '0');
 
-  return `${day} ${months[month]} ${year}, ${hour}:${minute} UTC`
+  return `${day} ${months[month]} ${year}, ${hour}:${minute}:${second} UTC +0`
 }

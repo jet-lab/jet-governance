@@ -20,7 +20,7 @@ import {
   useGovernanceAccountsByFilter,
 } from './accountHooks';
 import { useRpcContext } from './useRpcContext';
-import { JET_GOVERNANCE } from '../utils';
+import { JET_GOVERNANCE, JET_REALM, JET_TOKEN_MINT } from '../utils';
 
 // ----- Realm Config ---------
 
@@ -48,9 +48,9 @@ export function useGovernance() {
   )?.tryUnwrap();
 }
 
-export function useGovernancesByRealm(realm: PublicKey | undefined) {
+export function useGovernancesByRealm() {
   return useGovernanceAccountsByFilter<Governance>(Governance, [
-    pubkeyFilter(1, realm),
+    pubkeyFilter(1, JET_REALM),
   ]);
 }
 
@@ -63,9 +63,9 @@ export function useProposal(proposal: PublicKey | undefined) {
   )?.tryUnwrap();
 }
 
-export function useProposalsByGovernance(governance: PublicKey | undefined) {
+export function useProposalsByGovernance() {
   return useGovernanceAccountsByFilter<Proposal>(Proposal, [
-    pubkeyFilter(1, governance),
+    pubkeyFilter(1, JET_GOVERNANCE),
   ]);
 }
 
@@ -78,13 +78,10 @@ export function useTokenOwnerRecord(tokenOwnerRecord: PublicKey | undefined) {
   );
 }
 
-export function useTokenOwnerRecords(
-  realm: PublicKey | undefined,
-  governingTokenMint: PublicKey | undefined,
-) {
+export function useTokenOwnerRecords() {
   return useGovernanceAccountsByFilter<TokenOwnerRecord>(TokenOwnerRecord, [
-    pubkeyFilter(1, realm),
-    pubkeyFilter(1 + 32, governingTokenMint),
+    pubkeyFilter(1, JET_REALM),
+    pubkeyFilter(1 + 32, JET_TOKEN_MINT),
   ]);
 }
 

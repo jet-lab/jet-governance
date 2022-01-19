@@ -16,7 +16,7 @@ export function SetRealmAuthorityButton({
   realm: ParsedAccount<Realm>;
 }) {
   const rpcContext = useRpcContext();
-  const governances = useGovernancesByRealm(realm?.pubkey);
+  const governances = useGovernancesByRealm();
 
   const onSubmit = async (values: { realmAuthority: string }) => {
     const realmAuthority = new PublicKey(values.realmAuthority);

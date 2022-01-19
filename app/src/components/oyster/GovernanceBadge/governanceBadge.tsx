@@ -20,7 +20,7 @@ export function GovernanceBadge({
   size?: number;
   showVotingCount?: boolean;
 }) {
-  const proposals = useProposalsByGovernance(governance?.pubkey);
+  const proposals = useProposalsByGovernance();
   const { tokenMap } = useConnectionConfig();
   const tokenAccount = useTokenAccount(governance.info.governedAccount);
 
