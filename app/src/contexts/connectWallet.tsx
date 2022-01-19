@@ -15,7 +15,7 @@ const ConnectWalletContext = createContext<ConnectWallet>({
 });
 
 export const ConnectWalletProvider = (props: { children: any }) => {
-  const { publicKey } = useWallet();
+  const { publicKey, disconnect } = useWallet();
   const [connecting, setConnecting] = useState(false);
   const [connected, setConnected] = useState(publicKey);
 
@@ -30,17 +30,22 @@ export const ConnectWalletProvider = (props: { children: any }) => {
     if (publicKey && isAddressAuthenticated(publicKey.toString())) {
       setAuthenticated(true);
     }
-
     // Check if address is whitelisted
     if (publicKey && isAddressWhitelisted(publicKey.toString())) {
       setVerified(true);
     };
-
-    if (publicKey && authenticated === true && verified === true) {
-        // Do not show verify modal again
-        setVerifyModalVisible(false)
-      }
-    }, [publicKey, verified, authenticated]);
+  }, [publicKey, verified, authenticated]);
+  
+  useEffect(() => {
+    if (publicKey && authenticated === true && verified === false) {
+      // if (verified === true){
+      // // Do not show verify modal again
+      //   setVerifyModalVisible(false)
+      // } else if (verified === false) {
+      disconnect();
+      // }
+    }
+  }, [publicKey, verified, authenticated, disconnect])
 
   return (
     <ConnectWalletContext.Provider value={{ connecting, setConnecting }}>

@@ -82,7 +82,7 @@ export function CastVoteButton({
                 governance.info.realm,
                 proposal,
                 tokenOwnerRecord.pubkey,
-                vote,
+                vote
               );
             }
           },

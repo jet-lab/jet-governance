@@ -1,18 +1,20 @@
 import { Account, PublicKey, TransactionInstruction } from '@solana/web3.js';
 
-import { Proposal } from '../models/accounts';
+import { Proposal, VoteRecord } from '../models/accounts';
 import { withCastVote } from '../models/withCastVote';
 import { Vote, YesNoVote } from '../models/instructions';
 import { sendTransactionWithNotifications } from '../tools/transactions';
 import { RpcContext } from '../models/core/api';
 import { ParsedAccount } from '../contexts';
+import { withRelinquishVote } from '../models/withRelinquishVote';
 
 export const castVote = async (
   { connection, wallet, programId, programVersion, walletPubkey }: RpcContext,
   realm: PublicKey,
   proposal: ParsedAccount<Proposal>,
-  tokeOwnerRecord: PublicKey,
+  tokenOwnerRecord: PublicKey,
   yesNoVote: YesNoVote,
+  voteRecord?: ParsedAccount<VoteRecord> | undefined,
 ) => {
   let signers: Account[] = [];
   let instructions: TransactionInstruction[] = [];
@@ -20,6 +22,21 @@ export const castVote = async (
   let governanceAuthority = walletPubkey;
   let payer = walletPubkey;
 
+  if (voteRecord) {
+    // FIXME! Relinquish before casting new vote failing.
+    await withRelinquishVote(
+      instructions,
+      programId,
+      proposal.info.governance,
+      proposal.pubkey,
+      tokenOwnerRecord,
+      proposal.info.governingTokenMint,
+      voteRecord!.pubkey,
+      governanceAuthority,
+      payer
+    );
+}
+  
   await withCastVote(
     instructions,
     programId,
@@ -28,7 +45,7 @@ export const castVote = async (
     proposal.info.governance,
     proposal.pubkey,
     proposal.info.tokenOwnerRecord,
-    tokeOwnerRecord,
+    tokenOwnerRecord,
     governanceAuthority,
     proposal.info.governingTokenMint,
     Vote.fromYesNoVote(yesNoVote),

@@ -78,7 +78,7 @@ export const VoteModal = (props: {
         proposal,
         tokenOwnerRecord.pubkey,
         vote,
-        voteRecord?.tryUnwrap()!.pubkey // Turn this into a public key
+        voteRecord?.tryUnwrap()
       ).then(() => setCurrent(2));
     }
   };

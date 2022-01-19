@@ -885,8 +885,6 @@ export class VoteRecord {
     switch (this.accountType) {
   // TODO: Move away from VoteRecordV1?
       case GovernanceAccountType.VoteRecordV1: {
-        console.log("vote record type", this.accountType)
-        console.log("governance account", GovernanceAccountType)
         return this.voteWeight?.yes?.isZero() ? VoteKind.Deny : VoteKind.Approve;
       }
       case GovernanceAccountType.VoteRecordV2: {
