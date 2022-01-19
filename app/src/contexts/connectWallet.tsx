@@ -42,7 +42,9 @@ export const ConnectWalletProvider = (props: { children: any }) => {
       // // Do not show verify modal again
       //   setVerifyModalVisible(false)
       // } else if (verified === false) {
+      setVerifyModalVisible(true);
       disconnect();
+      setConnecting(false);
       // }
     }
   }, [publicKey, verified, authenticated, disconnect])
