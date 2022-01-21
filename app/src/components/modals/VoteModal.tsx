@@ -1,7 +1,7 @@
 import { Modal, Steps } from "antd";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { ParsedAccount } from "../../contexts";
-import { Governance, Proposal, TokenOwnerRecord } from "../../models/accounts";
+import { Governance, Proposal, TokenOwnerRecord, VoteRecord } from "../../models/accounts";
 import { YesNoVote } from "../../models/instructions";
 import {
   useProposalsByGovernance,
@@ -16,8 +16,19 @@ import { getPubkeyIndex } from "../../models/PUBKEYS_INDEX";
 import { getProposalUrl } from "../../tools/routeTools";
 import { head } from "lodash";
 import { Link } from "react-router-dom";
+import { relinquishVote } from "../../actions/relinquishVote";
 
-export const VoteModal = (props: {
+export const VoteModal = ({
+  vote,
+  visible,
+  onClose,
+  governance,
+  proposal,
+  tokenOwnerRecord,
+  stakeAccount,
+  stakePool,
+  voteRecord
+}: {
   vote: YesNoVote | undefined;
   visible: boolean;
   onClose: () => void;
@@ -26,26 +37,12 @@ export const VoteModal = (props: {
   tokenOwnerRecord?: ParsedAccount<TokenOwnerRecord>;
   stakeAccount: StakeAccount | undefined,
   stakePool: StakePool | undefined
-}) => {
-  const {
-    vote,
-    visible,
-    onClose,
-    governance,
-    proposal,
-    tokenOwnerRecord,
-    stakeAccount,
-    stakePool
-  } = props;
-  
+  voteRecord: ParsedAccount<VoteRecord> | undefined;
+}) => {  
   const [current, setCurrent] = useState(0);
 
   const { endDate, countdown } = useCountdown(proposal.info, governance.info);
   const rpcContext = useRpcContext();
-  const voteRecord = useTokenOwnerVoteRecord(
-    proposal.pubkey,
-    tokenOwnerRecord?.pubkey
-  );
 
   let voteText: string;
   const { stakedJet } = useStakedBalance(stakeAccount, stakePool);
@@ -68,17 +65,29 @@ export const VoteModal = (props: {
 
   // Handlers for vote modal
   const confirmVote = async (vote: YesNoVote) => {
-    if (tokenOwnerRecord) {
+    if (tokenOwnerRecord && voteRecord && !voteRecord?.info.isRelinquished) {
       //Fixme: withdraw existing vote before sending new tx
-      castVote(
+      relinquishVote(
         rpcContext,
-        governance.info.realm,
         proposal,
         tokenOwnerRecord.pubkey,
-        vote,
-        voteRecord?.tryUnwrap()
-      ).then(() => setCurrent(2));
+        voteRecord!.pubkey,
+        false,
+      )
+      console.log("vote relinquishing")
     }
+    if (tokenOwnerRecord) {
+    castVote(
+      rpcContext,
+      governance.info.realm,
+      proposal,
+      tokenOwnerRecord.pubkey,
+      vote
+    )
+      .then(() => setCurrent(2))
+      .catch(() => setCurrent(3));
+    }
+
   };
 
   // Handlers for tx success all set modal
@@ -93,8 +102,7 @@ export const VoteModal = (props: {
     return (
     <div key={key}>
         <p>
-          <Link to={headlineUrl}><u>Proposal {getPubkeyIndex(proposal.pubkey.toBase58())}</u></Link>:
-          {proposal.info.name}. <span className="secondary-text">Ends in {countdown}</span>
+          <Link to={headlineUrl}><u>Proposal {getPubkeyIndex(proposal.pubkey.toBase58())}</u></Link>: {proposal.info.name}. <span className="secondary-text">Ends in {countdown}</span>
     </p>
     </div>
   )}
@@ -142,6 +150,19 @@ export const VoteModal = (props: {
         <p>
           {activeProposals && activeProposals.length > 0
             ? activeProposals?.map((proposal, key) => proposalMap(proposal, key)) : "There are no active proposals at this time."}
+        </p>
+      </>],
+      closable: true,
+      cancelButtonProps: { display: "none " },
+    },
+    {
+      title: `Uh-oh`,
+      okText: "Okay",
+      onOk: () => onClose(),
+      onCancel: () => onClose(),
+      content: [<>
+      <p>
+          We're not really sure what went wrong here, please refresh your browser and try again.
         </p>
       </>],
       closable: true,
