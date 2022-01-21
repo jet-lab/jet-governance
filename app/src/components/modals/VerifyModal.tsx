@@ -4,13 +4,12 @@ import React, { useEffect, useState } from "react";
 import { useConnectWallet } from "../../contexts/connectWallet";
 import axios from "axios";
 
-export const VerifyModal = (props: {
+export const VerifyModal = ({ visible, onClose, verified, authenticated }: {
   visible: boolean;
   onClose: () => void;
   verified: boolean;
   authenticated: boolean;
 }) => {
-  const { visible, onClose, verified, authenticated } = props;
   const [current, setCurrent] = useState(0);
   const { connected, disconnect, publicKey } = useWallet();
   const { setConnecting } = useConnectWallet();

@@ -16,8 +16,7 @@ interface VoterTableProps {
   decimals: number;
 }
 
-export const VoterTable = (props: VoterTableProps) => {
-  const { data, total, endpoint, decimals } = props;
+export const VoterTable = ({ data, total, endpoint, decimals }: VoterTableProps) => {
   const breakpoint = useBreakpoint();
 
   const columns = [

@@ -7,13 +7,11 @@ import { useProposalContext } from "../../contexts/proposal";
 import { useBN } from "../../hooks/useStaking";
 import React from "react";
 
-export const StakeModal = (props: {
+export const StakeModal = ({ visible, onClose, amount } : {
   visible: boolean;
   onClose: () => void;
   amount: number | undefined;
 }) => {
-  const { visible, onClose, amount } = props;
-
   const [current, setCurrent] = useState(0);
   const [submitLoading, setSubmitLoading] = useState(false);
   const { publicKey } = useWallet();

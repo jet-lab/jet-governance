@@ -7,17 +7,16 @@ import { getProposalUrl } from "../tools/routeTools";
 import { useCountdown } from "../hooks/proposalHooks";
 import { getPubkeyIndex } from "../models/PUBKEYS_INDEX";
 
-export const ProposalCard = (props: { proposal: ParsedAccount<Proposal>, governance: ParsedAccount<Governance> }) => {
-  const {
-    proposal: {
-      info: proposal,
-      pubkey: proposalAddress,
-      info: { name: headline }
-    },
-    governance: {
-      info: governance
-    }
-  } = props;
+export const ProposalCard = ({
+  proposal: {
+    info: proposal,
+    pubkey: proposalAddress,
+    info: { name: headline }
+  },
+  governance: {
+    info: governance
+  }
+}: { proposal: ParsedAccount<Proposal>, governance: ParsedAccount<Governance> }) => {
 
   var headlineUrl = useMemo(() => getProposalUrl(
     proposalAddress,

@@ -75,19 +75,17 @@ export const ProposalView = () => {
   );
 };
 
-const InnerProposalView = (props: {
+const InnerProposalView = ({
+  proposal,
+  governance,
+  // realm,
+  voterDisplayData,
+}: {
   proposal: ParsedAccount<Proposal>;
   governance: ParsedAccount<Governance>;
   realm: ParsedAccount<Realm>;
   voterDisplayData: VoterDisplayData[];
 }) => {
-  const {
-    proposal,
-    governance,
-    // realm,
-    voterDisplayData,
-  } = props;
-
   const [isVoteModalVisible, setIsVoteModalVisible] = useState(false);
   const [vote, setVote] = useState<YesNoVote | undefined>(undefined);
 
@@ -304,6 +302,7 @@ const InnerProposalView = (props: {
             tokenOwnerRecord={tokenOwnerRecord}
             stakeAccount={stakeAccount}
             stakePool={stakePool}
+            voteRecord={voteRecord?.tryUnwrap()}
           />
           {!isStaked && connected ? <span className="helper-text">You must have JET staked in order to vote on proposals.</span> : vote === undefined && connected ? <span className="helper-text">Please select an option to submit your vote.</span> : ""}
         </div>

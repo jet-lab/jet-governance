@@ -3,13 +3,12 @@ import { useMint } from '../../../contexts/accounts';
 import { useAccountByMint } from '../../../hooks';
 import { TokenIcon } from '../TokenIcon';
 
-export const TokenDisplay = (props: {
+export const TokenDisplay = ({ showBalance, mintAddress, name, icon }: {
   name: string;
   mintAddress: string;
   icon?: JSX.Element;
   showBalance?: boolean;
 }) => {
-  const { showBalance, mintAddress, name, icon } = props;
   const tokenMint = useMint(mintAddress);
   const tokenAccount = useAccountByMint(mintAddress);
 

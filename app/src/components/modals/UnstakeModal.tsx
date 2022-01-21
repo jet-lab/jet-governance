@@ -2,14 +2,13 @@ import { useState } from "react";
 import { Modal } from "antd";
 import React from "react";
 
-export const UnstakeModal = (props: {
+export const UnstakeModal = ({ visible, onClose, resetInput, amount }: {
   visible: boolean;
   onClose: () => void;
   resetInput: () => void,
   amount: number | null;
 }) => {
   const [current, setCurrent] = useState(0);
-  const { visible, onClose, resetInput, amount } = props;
 
   const handleSubmitUnstake = () => {
     setCurrent(1);

@@ -2,13 +2,11 @@ import { useState, useEffect } from "react";
 import { Modal, Timeline } from "antd";
 import React from "react";
 
-export const ClaimModal = (props: {
+export const ClaimModal = ({ showModal, stakeAmount, setShowModal }: {
   showModal: boolean;
   stakeAmount: number | null;
   setShowModal: Function;
 }) => {
-  const { showModal, stakeAmount, setShowModal } = props;
-
   const handleOk = () => {
     setShowModal(false);
   };

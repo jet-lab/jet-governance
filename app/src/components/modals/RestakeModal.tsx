@@ -2,12 +2,11 @@ import { useState, useEffect } from "react";
 import { Modal, Timeline } from "antd";
 import React from "react";
 
-export const RestakeModal = (props: {
+export const RestakeModal = ({ showModal, stakeAmount, onClose }: {
   showModal: boolean;
   stakeAmount: number | null;
   onClose: () => void;
 }) => {
-  const { showModal, stakeAmount, onClose } = props;
 
   const handleOk = () => {
     onClose();

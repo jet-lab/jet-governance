@@ -4,13 +4,12 @@ import { shortenAddress, abbreviateNumber, fromLamports } from "../../utils";
 import { JET_TOKEN_MINT } from "../../utils";
 
 
-export const Stakeholders = (props: {
+export const Stakeholders = ({ type, amount, address, thisUser }: {
   type: string,
   amount: number,
   address: string,
   thisUser?: boolean
 }) => {
-  const { type, amount, address, thisUser } = props;
   const [vote, setVote] = useState("undecided")
 
   useEffect(() => {

@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { shortenAddress, abbreviateNumber } from "../../utils";
 
-export const Row = (props: any) => {
-  const { type, amount, address } = props;
+export const Row = ({ type, amount, address }: any) => {
   const [color, setColor] = useState("hsla(0, 1%, 62%, 1)")
   const [vote, setVote] = useState("abstain")
   const [gradient, setGradient] = useState(false);

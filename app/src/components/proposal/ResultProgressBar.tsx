@@ -3,10 +3,9 @@ import { Progress } from 'antd';
 import { abbreviateNumber, JET_TOKEN_MINT, fromLamports } from "../../utils";
 import { useMint } from "../../contexts";
 
-export const ResultProgressBar = (props: {
+export const ResultProgressBar = ({ type, amount, total }: {
   type: string, amount: number, total: number
 }) => {
-  const { type, amount, total } = props;
   const [color, setColor] = useState("")
   const [vote, setVote] = useState("in favor")
   

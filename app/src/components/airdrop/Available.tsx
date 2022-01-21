@@ -5,7 +5,7 @@ import { ClaimModal } from "../modals/ClaimModal";
 import React from "react";
 import { getRemainingTime } from "../../utils";
 
-export const Available = (props: {
+export const Available = ({ name, description, amount, end, claimed, announced }: {
   name: string,
   description: string,
   amount: number,
@@ -14,7 +14,6 @@ export const Available = (props: {
   announced: boolean
 }) => {
   const [showModal, setShowModal] = useState(false);
-  const { name, description, amount, end, claimed, announced } = props;
   const [currentTime, setCurrentTime] = useState(Date.now());
 
   // Update current time every second
