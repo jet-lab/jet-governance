@@ -6,7 +6,8 @@ declare_id!("JPALXR88jy2fG3miuu4n3o8Jef4K2Cgc3Uypr3Y8RNX");
 mod authority {
     use super::*;
 
-    declare_id!("JPALXR88jy2fG3miuu4n3o8Jef4K2Cgc3Uypr3Y8RNX");
+    // The public key of the keypair authority in the Jet Protocol API
+    declare_id!("23JJHdYjPL6uPAapH3JjaMgHmZUN29aAf9uSNdgk4TGC");
 }
 
 #[account]
