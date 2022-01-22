@@ -99,6 +99,7 @@ mod error {
         AirdropFinal,
         AirdropInsufficientRewardBalance,
         AirdropExpired,
+        RecipientsNotSorted,
         ClaimNotVerified,
 
         DistributionNotEnded,

@@ -60,6 +60,19 @@ impl Airdrop {
             target.reward_total = target.reward_total.checked_add(amount).unwrap();
         }
 
+        if start_idx == 0 {
+            // skip ordering check, since its the first entry
+            return Ok(());
+        }
+
+        // Make sure the list of recipients is SORTED
+        let range = &target.recipients[start_idx as usize - 1..target.recipients_total as usize];
+        let is_sorted = range.windows(2).all(|i| i[0].recipient <= i[1].recipient);
+
+        if !is_sorted {
+            return Err(ErrorCode::RecipientsNotSorted);
+        }
+
         Ok(())
     }
 

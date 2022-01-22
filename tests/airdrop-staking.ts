@@ -11,12 +11,11 @@ import { JetRewards } from "../target/types/jet_rewards";
 import { JetStaking } from "../target/types/jet_staking";
 import { JetAuth } from "../target/types/jet_auth";
 import { assert } from "chai";
+import { string } from "yargs";
 
 const RewardsProgram = anchor.workspace.JetRewards as Program<JetRewards>;
 const StakingProgram = anchor.workspace.JetStaking as Program<JetStaking>;
 const AuthProgram = anchor.workspace.JetAuth as Program<JetAuth>;
-
-const AIRDROP_FLAG_VERIFICATION_REQUIRED = 1 << 0;
 
 interface StakePoolBumpSeeds {
   stakePool: number;
@@ -79,6 +78,9 @@ describe("airdrop-staking", () => {
   const stakeSeed = "test";
   const staker = Keypair.generate();
   const airdropKey = Keypair.generate();
+  const airdropRecipients = Array.from({ length: 200 })
+    .map((_) => Keypair.generate())
+    .sort((a, b) => a.publicKey.toBuffer().compare(b.publicKey.toBuffer()));
 
   let testToken: Token;
   let voteToken: Token;
@@ -197,7 +199,7 @@ describe("airdrop-staking", () => {
       stakePool: stakeAcc.stakePool,
       shortDesc: "integ-test-airdrop",
       vaultBump: bumpSeed,
-      flags: new anchor.BN(AIRDROP_FLAG_VERIFICATION_REQUIRED),
+      flags: new anchor.BN(0),
     };
 
     await RewardsProgram.rpc.airdropCreate(params, {
@@ -557,5 +559,144 @@ describe("airdrop-staking", () => {
     } catch (e) {
       assert.equal(e.code, 6001);
     }
+  });
+
+  it("create mass airdrop", async () => {
+    let bumpSeed: number;
+
+    [airdropVault, bumpSeed] = await PublicKey.findProgramAddress(
+      [airdropKey.publicKey.toBuffer(), Buffer.from("vault")],
+      RewardsProgram.programId
+    );
+
+    const params = {
+      expireAt: new anchor.BN(Date.now() / 1000 + 1000),
+      stakePool: stakeAcc.stakePool,
+      shortDesc: "integ-test-airdrop",
+      vaultBump: bumpSeed,
+      flags: new anchor.BN(0),
+    };
+
+    await RewardsProgram.rpc.airdropCreate(params, {
+      accounts: {
+        airdrop: airdropKey.publicKey,
+        authority: wallet.publicKey,
+        rewardVault: airdropVault,
+        payer: wallet.publicKey,
+        tokenMint: testToken.publicKey,
+        tokenProgram: TOKEN_PROGRAM_ID,
+        systemProgram: SystemProgram.programId,
+        rent: SYSVAR_RENT_PUBKEY,
+      },
+      signers: [airdropKey],
+      instructions: [
+        await RewardsProgram.account.airdrop.createInstruction(airdropKey),
+      ],
+    });
+
+    await testToken.mintTo(
+      airdropVault,
+      wallet.payer,
+      [],
+      new u64(2_000_000_000)
+    );
+
+    const chunkSize = 24;
+    const chunks = Math.floor(airdropRecipients.length / chunkSize);
+
+    for (let i = 0; i < airdropRecipients.length; i += chunkSize) {
+      let chunk = airdropRecipients.slice(i, i + chunkSize);
+
+      const addParams = {
+        startIndex: new anchor.BN(i),
+        recipients: chunk.map((k) => {
+          return {
+            amount: new anchor.BN(10_000_000),
+            recipient: k.publicKey,
+          };
+        }),
+      };
+
+      await RewardsProgram.rpc.airdropAddRecipients(addParams, {
+        accounts: {
+          airdrop: airdropKey.publicKey,
+          authority: wallet.publicKey,
+        },
+      });
+    }
+
+    await RewardsProgram.rpc.airdropFinalize({
+      accounts: {
+        airdrop: airdropKey.publicKey,
+        rewardVault: airdropVault,
+        authority: wallet.publicKey,
+      },
+    });
+  });
+
+  it("recipients claim from mass airdrop", async () => {
+    await Promise.all(
+      airdropRecipients.map((recipient) =>
+        (async () => {
+          let [recipientAuth, authBumpSeed] =
+            await PublicKey.findProgramAddress(
+              [recipient.publicKey.toBuffer()],
+              AuthProgram.programId
+            );
+
+          await AuthProgram.rpc.createUserAuth(authBumpSeed, {
+            accounts: {
+              user: recipient.publicKey,
+              payer: wallet.publicKey,
+              auth: recipientAuth,
+              systemProgram: SystemProgram.programId,
+            },
+            signers: [recipient],
+          });
+
+          await AuthProgram.rpc.authenticate({
+            accounts: {
+              authority: wallet.publicKey,
+              auth: recipientAuth,
+            },
+          });
+
+          let [recipientStakeAccount, stakeBumpSeed] =
+            await PublicKey.findProgramAddress(
+              [stakeAcc.stakePool.toBuffer(), recipient.publicKey.toBuffer()],
+              StakingProgram.programId
+            );
+
+          await StakingProgram.rpc.initStakeAccount(stakeBumpSeed, {
+            accounts: {
+              owner: recipient.publicKey,
+              auth: recipientAuth,
+              stakePool: stakeAcc.stakePool,
+              stakeAccount: recipientStakeAccount,
+              payer: wallet.publicKey,
+              systemProgram: SystemProgram.programId,
+            },
+            signers: [recipient],
+          });
+
+          await RewardsProgram.rpc.airdropClaim({
+            accounts: {
+              airdrop: airdropKey.publicKey,
+              rewardVault: airdropVault,
+              recipient: recipient.publicKey,
+              receiver: wallet.publicKey,
+              stakePool: stakeAcc.stakePool,
+              stakePoolVault: stakeAcc.stakePoolVault,
+              stakeAccount: recipientStakeAccount,
+              stakingProgram: StakingProgram.programId,
+              tokenProgram: TOKEN_PROGRAM_ID,
+            },
+            signers: [recipient],
+          });
+        })()
+      )
+    );
+
+    assert.equal(0, (await testToken.getAccountInfo(airdropVault)).amount.toNumber());
   });
 });
