@@ -35,11 +35,11 @@ export const UnstakeModal = ({ visible, onClose, resetInput, amount }: {
           <p>
             Unstaked tokens have a 29.5-day unbonding period. During this period, you will not earn any rewards.
           </p>
-          <p className="text-gradient">
-            To continue voting and earning rewards with these tokens, you may restake on the Flight Logs page at any point during the unbonding period.
-          </p>
           <p>
             Your flight log will reflect a status of unbonding until this period has completed. You can view detailed information about your token availability by visiting the Flight Logs page.
+          </p>
+          <p className="text-gradient">
+            To continue voting and earning rewards with these tokens, you may restake on the Flight Logs page at any point during the unbonding period.
           </p>
         </>
       ],

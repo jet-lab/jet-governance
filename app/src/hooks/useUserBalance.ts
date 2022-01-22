@@ -3,16 +3,12 @@ import { useMemo, useState } from "react";
 import { useMint } from "../contexts";
 import { fromLamports } from "../utils";
 import { useUserAccounts } from "./useUserAccounts";
+import { JET_TOKEN_MINT } from "../utils";
 
 export function useUserBalance(
-  mintAddress?: PublicKey | string,
   account?: PublicKey
 ) {
-  const mint = useMemo(
-    () =>
-      typeof mintAddress === "string" ? mintAddress : mintAddress?.toBase58(),
-    [mintAddress]
-  );
+  const mint = JET_TOKEN_MINT.toString();
   const { userAccounts } = useUserAccounts();
   const [balanceInUSD, setBalanceInUSD] = useState(0);
 

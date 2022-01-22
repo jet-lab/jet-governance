@@ -225,11 +225,11 @@ const InnerProposalView = ({
                 amount={bnToIntLossy(no)}
                 total={bnToIntLossy(total)}
               />
-              <ResultProgressBar
+              {/* <ResultProgressBar
                 type="abstain"
                 amount={bnToIntLossy(abstain)}
                 total={bnToIntLossy(total)}
-              />
+              /> */}
             </div>
 
             <div className="voters">
@@ -257,12 +257,6 @@ const InnerProposalView = ({
           }`}
           id="your-vote"
         >
-          <RelinquishVoteButton
-            proposal={proposal}
-            tokenOwnerRecord={tokenOwnerRecord}
-            voteRecord={voteRecord?.tryUnwrap()}
-            hasVoteTimeExpired={false}
-          />
           <Button
             onClick={() => setVote(YesNoVote.Yes)}
             className={`vote-select ${

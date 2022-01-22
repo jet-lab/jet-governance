@@ -13,7 +13,7 @@ import {
 import { Input } from "../components/Input";
 import { StakeModal } from "../components/modals/StakeModal";
 import { UnstakeModal } from "../components/modals/UnstakeModal";
-import { InfoCircleFilled } from "@ant-design/icons";
+import { InfoCircleFilled, PlusOutlined } from "@ant-design/icons";
 import { useAirdrop } from "../contexts/airdrop";
 import { useRpcContext } from "../hooks/useRpcContext";
 import { jetFaucet } from "../actions/jetFaucet";
@@ -22,6 +22,7 @@ import { JET_GOVERNANCE } from "../utils";
 import { useProposalFilters } from "../hooks/proposalHooks";
 import { ReactFitty } from "react-fitty";
 import { FooterLinks } from "../components/FooterLinks";
+import { useUserBalance } from "../hooks";
 
 export const HomeView = () => {
   const [showStakeModal, setShowStakeModal] = useState(false);
@@ -48,6 +49,7 @@ export const HomeView = () => {
   );
   const { stakedJet, unstakedJet, unbondingJet, unlockedVotes } =
     useStakedBalance(stakeAccount, stakePool);
+  const { balance } = useUserBalance();
 
   let governance = useGovernance();
 
@@ -83,6 +85,10 @@ export const HomeView = () => {
     );
   };
 
+  const showMoreApr = () => {
+    document.getElementById("show-more-apr")?.classList.toggle("hidden")
+  }
+
   return (
     <div className="view-container content-body column-grid" id="home">
       <div id="your-info">
@@ -107,7 +113,7 @@ export const HomeView = () => {
           <div id="wallet-overview" className="flex justify-between column">
             <div className="flex justify-between" id="current-staking-apr">
               <span>
-                Current Staking APR{" "}
+                {connected ? `${((365 * userDailyReward) / totalStake).toFixed(0)}% Staking APR` : `Current Staking APR `}
                 <Tooltip
                   title="The displayed APR depends upon many factors, including the total number of JET staked in the module and the amount of protocol revenue flowing to depositors."
                   overlayClassName="no-arrow"
@@ -115,9 +121,10 @@ export const HomeView = () => {
                   <InfoCircleFilled />
                 </Tooltip>
               </span>
-              <span>{((365 * userDailyReward) / totalStake).toFixed(0)}%</span>
+              <span>{connected ? <PlusOutlined style={{marginRight: 0}} onClick={showMoreApr} /> : `${((365 * userDailyReward) / totalStake).toFixed(0)}%`}</span>
             </div>
-            <div className="flex justify-between cluster">
+            <div className={connected ? "hidden" : undefined} id="show-more-apr">
+              <div className="flex justify-between cluster">
               <span>Est. Daily Reward</span>
               <span>{userDailyReward}</span>
             </div>
@@ -125,9 +132,17 @@ export const HomeView = () => {
               <span>Est. Monthly Reward</span>
               <span>{userDailyReward * 30}</span>
             </div>
+            </div>
+
           </div>
           <Divider />
           <div className="flex column">
+            {connected && (
+              <div className="flex justify-between cluster">
+                  <span>Wallet Balance</span>
+                  <span>{new Intl.NumberFormat().format(balance)}</span>
+                </div>
+            )}
             <div className="flex justify-between cluster">
               <span>Staked JET</span>
               <span>{new Intl.NumberFormat().format(stakedJet)}</span>
@@ -147,8 +162,8 @@ export const HomeView = () => {
                   <span>{new Intl.NumberFormat().format(unbondingJet)}</span>
                 </div>
                 <div className="flex justify-between cluster">
-                  <span>Available for Withdrawal</span>
-                  <span>{new Intl.NumberFormat().format(unstakedJet)}</span>
+                  <span className="text-gradient bold">Available for Withdrawal</span>
+                  <span className="text-gradient bold">{new Intl.NumberFormat().format(unstakedJet)}</span>
                 </div>
               </>
             )}

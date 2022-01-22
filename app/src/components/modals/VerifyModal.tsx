@@ -4,7 +4,12 @@ import React, { useEffect, useState } from "react";
 import { useConnectWallet } from "../../contexts/connectWallet";
 import axios from "axios";
 
-export const VerifyModal = ({ visible, onClose, verified, authenticated }: {
+export const VerifyModal = ({
+  visible,
+  onClose,
+  verified,
+  authenticated,
+}: {
   visible: boolean;
   onClose: () => void;
   verified: boolean;
@@ -32,10 +37,10 @@ export const VerifyModal = ({ visible, onClose, verified, authenticated }: {
     setPhoneNumber(e);
   };
   const enterKeyPhoneVerify = (e: any) => {
-    if (e.code === 'Enter') {
+    if (e.code === "Enter") {
       handlePhoneVerify();
     }
-  }
+  };
   const handlePhoneVerify = () => {
     // auth/sms begin a new SMS verification session
     // axios
@@ -58,18 +63,18 @@ export const VerifyModal = ({ visible, onClose, verified, authenticated }: {
     //     }
     //   })
     //   .catch(console.error);
-    
-      setCurrent(2);
+
+    setCurrent(2);
   };
 
   const handleInputCode = (e: string) => {
     setCode(e);
   };
   const enterKeyInputCode = (e: any) => {
-    if (e.code === 'Enter') {
+    if (e.code === "Enter") {
       handleConfirmCode();
     }
-  }
+  };
   const handleConfirmCode = () => {
     // auth/sms/verify verify SMS token
     // axios
@@ -89,7 +94,7 @@ export const VerifyModal = ({ visible, onClose, verified, authenticated }: {
     //       setCurrent(3)
     //     } else if (res.data === 500) {
     //       // Unknown or MessageBird API error.
-    //       setCurrent(5)
+    //       setCurrent(6)
     //     }
     //   })
     //   .catch(console.error);
@@ -114,6 +119,7 @@ export const VerifyModal = ({ visible, onClose, verified, authenticated }: {
   };
 
   const steps = [
+    // 0: Init
     {
       title: "Stake your JET to earn rewards and start voting today!",
       okText: "Okay",
@@ -134,6 +140,7 @@ export const VerifyModal = ({ visible, onClose, verified, authenticated }: {
       ],
       closable: connected && !authenticated ? true : false,
     },
+    // 1: Confirm location
     {
       title: "Confirm location",
       okText: "Okay",
@@ -153,11 +160,13 @@ export const VerifyModal = ({ visible, onClose, verified, authenticated }: {
           </p>
           <Input
             onChange={(e) => handleInputPhoneNumber(e.target.value)}
-            onKeyPress={(e) => enterKeyPhoneVerify(e)}/>
+            onKeyPress={(e) => enterKeyPhoneVerify(e)}
+          />
         </>,
       ],
       closable: false,
     },
+    // 2
     {
       title: "Enter your secure access code",
       okText: "Okay",
@@ -171,11 +180,13 @@ export const VerifyModal = ({ visible, onClose, verified, authenticated }: {
           </p>
           <Input
             onChange={(e) => handleInputCode(e.target.value)}
-            onKeyPress={(e) => enterKeyInputCode(e)}/>
+            onKeyPress={(e) => enterKeyInputCode(e)}
+          />
         </>,
       ],
       closable: false,
     },
+    // 3
     {
       title: "Access Denied",
       okText: "Okay",
@@ -190,10 +201,11 @@ export const VerifyModal = ({ visible, onClose, verified, authenticated }: {
       ],
       closable: true,
     },
+    // 4
     {
       title: "Stake JET to earn and vote!",
       okText: "Okay",
-      onOk: () => onClose(),
+      onOk: () => setCurrent(5),
       onCancel: () => onClose(),
       okButtonProps: "Okay",
       content: [
@@ -212,17 +224,41 @@ export const VerifyModal = ({ visible, onClose, verified, authenticated }: {
       ],
       closable: true,
     },
+    // 5
+    {
+      title: "Unstaking from the module",
+      okText: "Okay",
+      onOk: () => onClose(),
+      onCancel: () => onClose(),
+      okButtonProps: "Okay",
+      content: [
+        <>
+          <p>
+            When unstaking from JetGovern, your tokens enter a 29.5-day
+            unbonding period.
+          </p>
+          <p>During the unbonding period, you will not earn any rewards.</p>
+          <p>
+            Additionally, votes you have cast on any active proposals will be
+            rescinded. This means that if you vote and then unstake before the
+            voting is finished, your vote will not count.
+          </p>
+          <p>
+            To make sure your vote counts, only unstake once a vote has
+            completed! For more information check out our docs.
+          </p>
+        </>,
+      ],
+      closable: true,
+    },
+    // 6
     {
       title: "Please try again",
       okText: "Okay",
       onOk: () => onClose(),
       onCancel: () => onClose(),
       okButtonProps: "Okay",
-      content: [
-        <p>
-          We have encountered an unknown error, please try again.
-        </p>
-      ],
+      content: [<p>We have encountered an unknown error, please try again.</p>],
       closable: true,
     },
   ];
