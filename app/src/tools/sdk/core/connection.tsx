@@ -89,35 +89,6 @@ export async function signTransaction({
   }
 }
 
-export async function signTransactions({
-  transactionsAndSigners,
-  wallet,
-  connection,
-}: {
-  transactionsAndSigners: {
-    transaction: Transaction;
-    signers?: Array<Account>;
-  }[];
-  wallet: WalletContextState;
-  connection: Connection;
-}) {
-  const { publicKey, signAllTransactions } = wallet;
-  if (!publicKey) throw new WalletNotConnectedError();
-  if(!signAllTransactions) throw new SignTransactionError();
-
-  const blockhash = (await connection.getRecentBlockhash('max')).blockhash;
-  transactionsAndSigners.forEach(({ transaction, signers = [] }) => {
-    transaction.recentBlockhash = blockhash;
-    transaction.setSigners(publicKey, ...signers.map(s => s.publicKey));
-    if (signers?.length > 0) {
-      transaction.partialSign(...signers);
-    }
-  });
-  return await signAllTransactions(
-    transactionsAndSigners.map(({ transaction }) => transaction),
-  );
-}
-
 export async function sendSignedTransaction({
   signedTransaction,
   connection,
