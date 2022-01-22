@@ -98,7 +98,7 @@ impl TokenDistribution {
 
     fn distributed_amount_linear(&self, timestamp: u64) -> u64 {
         let range = std::cmp::max(1, self.end_at - self.begin_at) as u128;
-        let remaining = std::cmp::max(1, self.end_at.saturating_sub(timestamp)) as u128;
+        let remaining = self.end_at.saturating_sub(timestamp) as u128;
         let target_amount = self.target_amount as u128;
 
         let distributed = target_amount - (remaining * target_amount) / range;
@@ -124,5 +124,19 @@ mod test {
 
         let now = 1642721054;
         assert_eq!(234567902, dist.distributed_amount(now));
+    }
+
+    #[test]
+    fn linear_distribution_at_limit() {
+        let dist = TokenDistribution {
+            distributed: 0,
+            target_amount: 1000000000000,
+            begin_at: 0,
+            end_at: 0,
+            kind: DistributionKind::Linear,
+        };
+
+        let now = 1642721054;
+        assert_eq!(dist.target_amount, dist.distributed_amount(now));
     }
 }
