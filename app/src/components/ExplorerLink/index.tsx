@@ -36,6 +36,7 @@ export const ExplorerLink = (props: {
       href={getExplorerUrl(address, endpoint, type, props.connection)}
       // eslint-disable-next-line react/jsx-no-target-blank
       target="_blank"
+      rel="noreferrer"
       title={address}
       style={props.style}
     >

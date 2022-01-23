@@ -5,7 +5,6 @@ import {
   Transaction
 } from '@solana/web3.js';
 import { WalletContextState } from "@solana/wallet-adapter-react";
-import React from 'react';
 import { DEFAULT_TX_TIMEOUT, sendTransaction2 } from './sdk/core/connection';
 import { ExplorerLink } from '../components';
 import { notify, isTransactionTimeoutError, isSendTransactionError } from '../utils';

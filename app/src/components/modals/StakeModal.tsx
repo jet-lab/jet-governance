@@ -1,45 +1,54 @@
 import { useState } from "react";
 import { Modal } from "antd";
-import { explorerUrl } from "../../utils";
-import { StakeAccount } from "@jet-lab/jet-engine";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { useProposalContext } from "../../contexts/proposal";
 import { useBN } from "../../hooks/useStaking";
-import React from "react";
+import { addStake } from "../../actions/addStake";
+import { useRpcContext } from "../../hooks/useRpcContext";
+import { PublicKey } from "@solana/web3.js";
 
-export const StakeModal = ({ visible, onClose, amount } : {
-  visible: boolean;
+export const StakeModal = (props: {
+  visible: boolean,
   onClose: () => void;
   amount: number | undefined;
+  realm: PublicKey;
 }) => {
+  const {
+    visible,
+    onClose,
+    amount,
+    realm,
+  } = props;
+
   const [current, setCurrent] = useState(0);
   const [submitLoading, setSubmitLoading] = useState(false);
   const { publicKey } = useWallet();
-  const { stakeProgram, stakePool, stakeAccount, jetAccount, voteAccount } =
-    useProposalContext();
-  const stakeLamports = useBN(amount, stakePool?.collateralMint.decimals);
+  const {
+    stakePool,
+    jetAccount,
+  } = useProposalContext()
+  const rpcContext = useRpcContext();
+  const stakeLamports = useBN(amount, stakePool?.collateralMint.decimals)
   // Handlers for staking info modal
 
   const handleSubmitTx = () => {
-    console.log(stakePool, publicKey, jetAccount);
     if (!stakePool || !publicKey || !jetAccount) {
       return;
     }
 
     setSubmitLoading(true);
-    console.log("foo");
-    StakeAccount.addStake(
+    addStake(
+      rpcContext,
+      realm,
       stakePool,
       publicKey,
-      jetAccount.address,
       stakeLamports
     )
-      .then((txid) => {
-        console.log(txid);
+      .then(() => {
         setSubmitLoading(false);
         setCurrent(1);
       })
-      .catch((err) => {
+      .catch((err: any) => {
         console.error(err);
         setSubmitLoading(false);
         setCurrent(2);

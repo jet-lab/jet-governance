@@ -5,12 +5,12 @@ import { Modal } from "antd";
 
 export function ConnectWalletModal() {
   const { wallets, select, connected, wallet } = useWallet();
-  const { connecting, setConnecting } = useConnectWallet();
+  const { connecting, setConnecting, welcoming } = useConnectWallet();
 
   return (
     <Modal footer={null}
       title="Connect wallet"
-      visible={connecting && !connected} 
+      visible={connecting && !connected && !welcoming} 
       onCancel={() => setConnecting(false)}>
       <div className="connect-wallet-modal flex-centered column">
         <span>

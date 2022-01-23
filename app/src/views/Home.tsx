@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useProposalContext } from "../contexts/proposal";
 import { ProposalCard } from "../components/ProposalCard";
 import { Button, Divider, notification, Tooltip, Switch } from "antd";
@@ -18,7 +18,7 @@ import { useAirdrop } from "../contexts/airdrop";
 import { useRpcContext } from "../hooks/useRpcContext";
 import { jetFaucet } from "../actions/jetFaucet";
 import { useGovernance, useProposalsByGovernance } from "../hooks/apiHooks";
-import { JET_GOVERNANCE } from "../utils";
+import { JET_REALM } from "../utils";
 import { useProposalFilters } from "../hooks/proposalHooks";
 import { ReactFitty } from "react-fitty";
 import { FooterLinks } from "../components/FooterLinks";
@@ -41,27 +41,30 @@ export const HomeView = () => {
 
   // ----- Staking -----
   const stakeProgram = useStakeProgram();
-  const stakePool = useStakePool(stakeProgram);
-  const stakeAccount = useStakeAccount(stakeProgram, stakePool);
-  const unbondingAccounts = useUnbondingAccountsByStakeAccount(
-    stakeProgram,
-    stakeAccount
-  );
-  const { stakedJet, unstakedJet, unbondingJet, unlockedVotes } =
-    useStakedBalance(stakeAccount, stakePool);
+  const stakePool = useStakePool(stakeProgram)
+  const stakeAccount = useStakeAccount(stakeProgram, stakePool)
+  const unbondingAccounts = useUnbondingAccountsByStakeAccount(stakeProgram, stakeAccount)
+  const {
+    stakedJet,
+    unstakedJet,
+    unbondingJet,
+    unlockedVotes,
+  } = useStakedBalance(stakeAccount, stakePool);
   const { balance } = useUserBalance();
 
   let governance = useGovernance();
 
-  const totalDailyReward = 1000000;
-  const totalStake = 1500000;
-  const userDailyReward = (totalDailyReward * (stakedJet ?? 0)) / totalStake;
+  const totalDailyReward = 1000000
+  const totalStake = 1500000
+  const userDailyReward = totalDailyReward * (stakedJet ?? 0) / totalStake
 
   // Devnet only: airdrop JET tokens
   const getAirdrop = async () => {
     try {
-      await jetFaucet(rpcContext);
-    } catch {}
+      if (stakeProgram) {
+        await jetFaucet(stakeProgram?.provider);
+      }
+    } catch { }
   };
 
   const openNotification = () => {
@@ -186,6 +189,7 @@ export const HomeView = () => {
             <StakeModal
               visible={showStakeModal}
               onClose={() => setShowStakeModal(false)}
+              realm={JET_REALM}
               amount={inputAmount ?? 0}
             />
             <Button

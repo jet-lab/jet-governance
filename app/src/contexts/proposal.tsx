@@ -3,7 +3,6 @@ import { Program } from "@project-serum/anchor";
 import React, { useState, useContext } from "react";
 import { StakedBalance, useAssociatedTokenAccount, useStakeAccount, useStakedBalance, useStakePool, useStakeProgram } from "../hooks/useStaking";
 import { AccountInfo as TokenAccount } from "@solana/spl-token"
-import { useWallet } from "@solana/wallet-adapter-react";
 
 export type ProposalFilter = "active" | "inactive" | "passed" | "rejected" | "all";
 

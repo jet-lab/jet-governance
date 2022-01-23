@@ -1,61 +1,68 @@
 import { useWallet } from "@solana/wallet-adapter-react";
-import React, { createContext, useContext, useState, useEffect } from "react";
-import { notify } from "../utils";
+import { createContext, useContext, useState } from "react";
+import { createUserAuth } from "../actions/createUserAuth";
 import { VerifyModal } from "../components/modals/VerifyModal"
-import { isAddressWhitelisted, isAddressAuthenticated } from "../models/WHITELISTED_ADDRESSES"
+import { useAuthAccount, useAuthProgram } from "../hooks/useStaking";
 
 // Connecting wallet context
 interface ConnectWallet {
   connecting: boolean,
   setConnecting: (connecting: boolean) => void
+  welcoming: boolean,
+  setWelcoming: (welcoming: boolean) => void
+  setAuthorizationConfirmed: (authorizationConfirmed: boolean) => void
 };
 const ConnectWalletContext = createContext<ConnectWallet>({
   connecting: false,
-  setConnecting: () => {}
+  setConnecting: () => { },
+  welcoming: false,
+  setWelcoming: () => { },
+  setAuthorizationConfirmed: () => { }
 });
 
 export const ConnectWalletProvider = (props: { children: any }) => {
-  const { publicKey, disconnect } = useWallet();
+  const wallet = useWallet();
+  const { publicKey, connected, disconnect } = wallet;
   const [connecting, setConnecting] = useState(false);
-  const [connected, setConnected] = useState(publicKey);
+  const [welcoming, setWelcoming] = useState(false);
+  const [authorizationConfirmed, setAuthorizationConfirmed] = useState(false);
 
-  const [verifyModalVisible, setVerifyModalVisible] = useState(true);
-  const [authenticated, setAuthenticated] = useState(false);
-  const [verified, setVerified] = useState(false);
+  const authProgram = useAuthProgram()
+  const { authAccount, loading: authAccountLoading } = useAuthAccount(authProgram)
 
-  // TODO FIXME: Modal should appear if wallet is connected by user and !verified, defaulting to step 3.
-
-  useEffect(() => {
-    // Check if address has been previously authenticated
-    if (publicKey && isAddressAuthenticated(publicKey.toString())) {
-      setAuthenticated(true);
+  const connect = (connecting: boolean) => {
+    if (connecting) {
+      setConnecting(true);
+      setWelcoming(true);
+      setAuthorizationConfirmed(false);
     }
-    // Check if address is whitelisted
-    if (publicKey && isAddressWhitelisted(publicKey.toString())) {
-      setVerified(true);
-    };
-  }, [publicKey, verified, authenticated]);
-  
-  useEffect(() => {
-    if (publicKey && authenticated === true && verified === false) {
-      // if (verified === true){
-      // // Do not show verify modal again
-      //   setVerifyModalVisible(false)
-      // } else if (verified === false) {
-      setVerifyModalVisible(true);
-      disconnect();
-      setConnecting(false);
-      // }
+    else {
+      setConnecting(false)
+      setWelcoming(false);
     }
-  }, [publicKey, verified, authenticated, disconnect])
+  }
+
+  const createAuthAccount = async () => {
+    if (authAccountLoading || authAccount || !authProgram || !publicKey) {
+      return true;
+    }
+
+    let success = true;
+    try {
+      await createUserAuth(authProgram, wallet, publicKey, publicKey)
+    } catch (ex) {
+      success = false;
+    }
+    return success;
+  }
 
   return (
-    <ConnectWalletContext.Provider value={{ connecting, setConnecting }}>
+    <ConnectWalletContext.Provider value={{ connecting, setConnecting: connect, welcoming, setWelcoming, setAuthorizationConfirmed }}>
       <VerifyModal
-        visible={verifyModalVisible}
-        onClose={() => setVerifyModalVisible(false)}
-        verified={verified}
-        authenticated={authenticated}
+        visible={welcoming || (connected && !authorizationConfirmed)}
+        authAccount={authAccount}
+        authAccountLoading={authAccountLoading}
+        createAuthAccount={createAuthAccount}
       />
       {props.children}
     </ConnectWalletContext.Provider>
@@ -64,6 +71,6 @@ export const ConnectWalletProvider = (props: { children: any }) => {
 
 export const useConnectWallet = () => {
   const context = useContext(ConnectWalletContext);
-  
+
   return context;
 };
