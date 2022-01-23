@@ -44,7 +44,7 @@ export const VoteModal = ({
   const { endDate, countdown } = useCountdown(proposal.info, governance.info);
   const rpcContext = useRpcContext();
 
-  let voteText: string;
+  let voteText: string = "";
   const { stakedJet } = useStakedBalance(stakeAccount, stakePool);
 
   useEffect(() => {
@@ -59,35 +59,22 @@ export const VoteModal = ({
     voteText = "in favor of";
   } else if (vote === YesNoVote.No) {
     voteText = "against";
-  } /*if (vote === "abstain")*/ else {
-    voteText = "to abstain from";
   }
 
   // Handlers for vote modal
   const confirmVote = async (vote: YesNoVote) => {
-    if (tokenOwnerRecord && voteRecord && !voteRecord?.info.isRelinquished) {
-      //Fixme: withdraw existing vote before sending new tx
-      relinquishVote(
-        rpcContext,
-        proposal,
-        tokenOwnerRecord.pubkey,
-        voteRecord!.pubkey,
-        false,
-      )
-      console.log("vote relinquishing")
-    }
     if (tokenOwnerRecord) {
     castVote(
       rpcContext,
       governance.info.realm,
       proposal,
       tokenOwnerRecord.pubkey,
-      vote
+      vote,
+      voteRecord ? voteRecord!.pubkey : undefined
     )
       .then(() => setCurrent(2))
       .catch(() => setCurrent(3));
     }
-
   };
 
   // Handlers for tx success all set modal
