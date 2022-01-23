@@ -245,7 +245,7 @@ export const VerifyModal = ({
           </p>
           <p>
             To make sure your vote counts, only unstake once a vote has
-            completed! For more information check out our docs.
+            completed! For more information check out our <a>docs</a>.
           </p>
         </>,
       ],
