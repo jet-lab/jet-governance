@@ -38,9 +38,11 @@ export const UnstakeModal = ({ visible, onClose, resetInput, amount }: {
           <p>
             Your flight log will reflect a status of unbonding until this period has completed. You can view detailed information about your token availability by visiting the Flight Logs page.
           </p>
-          <p className="text-gradient">
+          <div className="emphasis">
+            <p>
             To continue voting and earning rewards with these tokens, you may restake on the Flight Logs page at any point during the unbonding period.
-          </p>
+            </p>
+          </div>
         </>
       ],
       closable: true,
