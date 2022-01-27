@@ -381,24 +381,44 @@ export class Governance {
 }
 
 export class TokenOwnerRecord {
+  /** Governance account type */
   accountType = GovernanceAccountType.TokenOwnerRecord;
 
+  /** The Realm the TokenOwnerRecord belongs to */
   realm: PublicKey;
 
+  /** Governing Token Mint the TokenOwnerRecord holds deposit for */
   governingTokenMint: PublicKey;
 
+  /** The owner (either single or multisig) of the deposited governing SPL Tokens
+      This is who can authorize a withdrawal of the tokens */
   governingTokenOwner: PublicKey;
 
+  /** The amount of governing tokens deposited into the Realm
+      This amount is the voter weight used when voting on proposals */
   governingTokenDepositAmount: BN;
 
+  /** The number of votes cast by TokenOwner but not relinquished yet.
+      Every time a vote is cast this number is increased and it's always
+      decreased when relinquishing a vote regardless of the vote state */
   unrelinquishedVotesCount: number;
 
+  /** The total number of votes cast by the TokenOwner
+      If TokenOwner withdraws vote while voting is still in progress total_votes_count is
+      decreased and the vote doesn't count towards the total */
   totalVotesCount: number;
 
+  /** The number of outstanding proposals the TokenOwner currently owns
+      The count is increased when TokenOwner creates a proposal
+      and decreased  once it's either voted on (Succeeded or Defeated) or Cancelled
+      By default it's restricted to 1 outstanding Proposal per token owner */
   outstandingProposalCount: number;
 
+  /** Reserved space for future versions */
   reserved: Uint8Array;
 
+  /** A single account that is allowed to operate governance with the deposited governing tokens
+      It can be delegated to by the governing_token_owner or current governance_delegate */
   governanceDelegate?: PublicKey;
 
   constructor(args: {
@@ -883,7 +903,7 @@ export class VoteRecord {
   }
   getVoteKind(): VoteKind {
     switch (this.accountType) {
-  // TODO: Move away from VoteRecordV1?
+      // TODO: Move away from VoteRecordV1?
       case GovernanceAccountType.VoteRecordV1: {
         return this.voteWeight?.yes?.isZero() ? VoteKind.Deny : VoteKind.Approve;
       }

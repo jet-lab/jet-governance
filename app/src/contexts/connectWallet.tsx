@@ -1,8 +1,10 @@
+import { Auth } from "@jet-lab/jet-engine";
+import { useProvider } from "@jet-lab/jet-engine/lib/common";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { createContext, useContext, useState } from "react";
 import { createUserAuth } from "../actions/createUserAuth";
 import { VerifyModal } from "../components/modals/VerifyModal"
-import { useAuthAccount, useAuthProgram } from "../hooks/useStaking";
+import { useConnection } from "./connection";
 
 // Connecting wallet context
 interface ConnectWallet {
@@ -22,13 +24,15 @@ const ConnectWalletContext = createContext<ConnectWallet>({
 
 export const ConnectWalletProvider = (props: { children: any }) => {
   const wallet = useWallet();
-  const { publicKey, connected, disconnect } = wallet;
+  const connection = useConnection();
+  const { publicKey, connected } = wallet;
   const [connecting, setConnecting] = useState(false);
   const [welcoming, setWelcoming] = useState(false);
   const [authorizationConfirmed, setAuthorizationConfirmed] = useState(false);
 
-  const authProgram = useAuthProgram()
-  const { authAccount, loading: authAccountLoading } = useAuthAccount(authProgram)
+  const provider = useProvider(connection, wallet);
+  const authProgram = Auth.useAuthProgram(provider)
+  const { authAccount, loading: authAccountLoading } = Auth.useAuthAccount(authProgram, wallet.publicKey)
 
   const connect = (connecting: boolean) => {
     if (connecting) {

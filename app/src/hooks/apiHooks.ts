@@ -21,6 +21,8 @@ import {
 } from './accountHooks';
 import { useRpcContext } from './useRpcContext';
 import { JET_GOVERNANCE, JET_REALM, JET_TOKEN_MINT } from '../utils';
+import { useMemo } from 'react';
+import BN from 'bn.js';
 
 // ----- Realm Config ---------
 
@@ -177,6 +179,13 @@ export const useVoteRecordsByProposal = (proposal: PublicKey | undefined) => {
   ]);
 };
 
+export const useWalletVoteRecords = () => {
+  const { wallet } = useRpcContext();
+  return useGovernanceAccountsByFilter<VoteRecord>(VoteRecord, [
+    pubkeyFilter(1 + 32, wallet.publicKey),
+  ]);
+};
+
 export const useTokenOwnerVoteRecord = (
   proposal: PublicKey,
   tokenOwnerRecord: PublicKey | undefined,
@@ -195,3 +204,17 @@ export const useTokenOwnerVoteRecord = (
     [tokenOwnerRecord, proposal],
   );
 };
+
+export function useBN(number: number | undefined, exponent: number | null | undefined = null) {
+  return useMemo(() => {
+    if (number === undefined) {
+      return new BN(0)
+    } else if (exponent === undefined) {
+      return new BN(0)
+    } else if (exponent === null) {
+      return new BN(number.toLocaleString(undefined, {}))
+    } else {
+      return new BN(BigInt(number * 10 ** 9).toString())
+    }
+  }, [number, exponent])
+}

@@ -1,11 +1,17 @@
-import { useState } from "react";
-import { Modal } from "antd";
+import { PropsWithChildren, useState } from "react";
+import { Modal, ModalProps } from "antd";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { useProposalContext } from "../../contexts/proposal";
-import { useBN } from "../../hooks/useStaking";
 import { addStake } from "../../actions/addStake";
 import { useRpcContext } from "../../hooks/useRpcContext";
 import { PublicKey } from "@solana/web3.js";
+import { useBN } from "../../hooks/apiHooks";
+
+enum Steps {
+  Start = 0,
+  Success = 1,
+  Error = 2,
+}
 
 export const StakeModal = (props: {
   visible: boolean,
@@ -20,8 +26,8 @@ export const StakeModal = (props: {
     realm,
   } = props;
 
-  const [current, setCurrent] = useState(0);
-  const [submitLoading, setSubmitLoading] = useState(false);
+  const [current, setCurrent] = useState<Steps>(Steps.Start);
+  const [loading, setLoading] = useState(false);
   const { publicKey } = useWallet();
   const {
     stakePool,
@@ -36,7 +42,7 @@ export const StakeModal = (props: {
       return;
     }
 
-    setSubmitLoading(true);
+    setLoading(true);
     addStake(
       rpcContext,
       realm,
@@ -45,77 +51,63 @@ export const StakeModal = (props: {
       stakeLamports
     )
       .then(() => {
-        setSubmitLoading(false);
-        setCurrent(1);
+        setLoading(false);
+        setCurrent(Steps.Success);
       })
       .catch((err: any) => {
         console.error(err);
-        setSubmitLoading(false);
-        setCurrent(2);
+        setLoading(false);
+        setCurrent(Steps.Error);
       });
   };
 
-  const steps = [
-    {
-      title: `You are staking ${
-        amount && Intl.NumberFormat("us-US").format(amount)
+  const steps: PropsWithChildren<ModalProps>[] = []
+  steps[Steps.Start] = {
+    title: `You are staking ${amount && Intl.NumberFormat("us-US").format(amount)
       } JET into the platform.`,
-      okText: "I understand.",
-      onOk: () => handleSubmitTx(),
-      onCancel: () => onClose(),
-      okButtonProps: { loading: submitLoading },
-      content: [
-        <>
-          <p>
-            Staking tokens gives your voice a vote and entitles you to rewards
-            sourced from protocol revenue.
-          </p>
-          <p>
-            Remember: To unstake your tokens, there will be a 29.5-day unbonding
-            period. For more information, please <a>read the docs.</a>
-          </p>
-        </>
-      ],
-      closable: true,
-      cancelButtonProps: undefined,
-    },
-    {
-      title: `All set!`,
-      okText: "Okay",
-      onOk: () => onClose(),
-      onCancel: () => onClose(),
-      okButtonProps: { loading: submitLoading },
-      content: [
-        <p>You've staked {
-        amount && Intl.NumberFormat("us-US").format(amount)
-        } JET into JetGovern and can begin using to vote on active proposals immediately.</p>
-      ],
-      closable: true,
-      cancelButtonProps: { display: "none " },
-    },
-    {
-      title: `Error.`,
-      okText: "I understand.",
-      onOk: () => onClose(),
-      onCancel: () => onClose(),
-      okButtonProps: { loading: submitLoading },
-      content: `Staking tokens yields X% APR.`,
-      closable: true,
-      cancelButtonProps: undefined,
-    },
-  ];
+    okText: "I understand.",
+    onOk: () => handleSubmitTx(),
+    onCancel: () => onClose(),
+    okButtonProps: { loading: loading },
+    closable: true,
+    children:
+      <>
+        <p>
+          Staking tokens gives your voice a vote and entitles you to rewards
+          sourced from protocol revenue.
+        </p>
+        <p>
+          Remember: To unstake your tokens, there will be a 29.5-day unbonding
+          period. For more information, please <a>read the docs</a>.
+        </p>
+      </>,
+  }
+  steps[Steps.Success] = {
+    title: `All set!`,
+    okText: "Okay",
+    onOk: () => onClose(),
+    onCancel: () => onClose(),
+    closable: true,
+    cancelButtonProps: { style: { display: "none" } },
+    children:
+      <p>
+        You've staked {amount && Intl.NumberFormat("us-US").format(amount)}
+        JET into JetGovern and can begin using to vote on active proposals immediately.
+      </p>,
+  }
+  steps[Steps.Error] = {
+    title: `Error.`,
+    okText: "I understand.",
+    onOk: () => onClose(),
+    onCancel: () => onClose(),
+    children: `Staking tokens yields X% APR.`,
+    closable: true,
+  }
 
   return (
     <Modal
-      title={steps[current].title}
-      visible={visible}
-      okText={steps[current].okText}
-      onOk={steps[current].onOk}
-      okButtonProps={steps[current].okButtonProps}
-      onCancel={steps[current].onCancel}
-      cancelButtonProps={{ style: steps[current].cancelButtonProps }}
-    >
-      {steps[current].content}
-    </Modal>
+      visible={visible} 
+      {...steps[current]}
+    />
   );
 };

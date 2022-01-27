@@ -91,6 +91,9 @@ export function useGovernanceAccountByPda<TAccount extends GovernanceAccount>(
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
     return () => { isCancelled = true; }
+
+    // Disable eslint warning. Adding getPda causes an infinite loop 
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pdaArgsKey]);
 
   return useGovernanceAccountByPubkey<TAccount>(accountClass, pda);

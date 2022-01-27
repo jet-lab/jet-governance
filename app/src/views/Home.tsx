@@ -3,13 +3,6 @@ import { useProposalContext } from "../contexts/proposal";
 import { ProposalCard } from "../components/ProposalCard";
 import { Button, Divider, notification, Tooltip, Switch } from "antd";
 import { useDarkTheme } from "../contexts/darkTheme";
-import {
-  useStakeAccount,
-  useStakeProgram,
-  useStakedBalance,
-  useStakePool,
-  useUnbondingAccountsByStakeAccount,
-} from "../hooks/useStaking";
 import { Input } from "../components/Input";
 import { StakeModal } from "../components/modals/StakeModal";
 import { UnstakeModal } from "../components/modals/UnstakeModal";
@@ -17,46 +10,72 @@ import { InfoCircleFilled, PlusOutlined } from "@ant-design/icons";
 import { useAirdrop } from "../contexts/airdrop";
 import { useRpcContext } from "../hooks/useRpcContext";
 import { jetFaucet } from "../actions/jetFaucet";
-import { useGovernance, useProposalsByGovernance } from "../hooks/apiHooks";
 import { JET_REALM } from "../utils";
-import { useProposalFilters } from "../hooks/proposalHooks";
 import { ReactFitty } from "react-fitty";
 import { FooterLinks } from "../components/FooterLinks";
-import { useUserBalance } from "../hooks";
+import { bnToNumber } from "@jet-lab/jet-engine";
 
 export const HomeView = () => {
-  const [showStakeModal, setShowStakeModal] = useState(false);
-  const [showUnstakeModal, setShowUnstakeModal] = useState(false);
+  const [stakeModalVisible, setStakeModalVisible] = useState(false);
+  const [unstakeModalVisible, setUnstakeModalVisible] = useState(false);
 
-  const { showing, setShowing } = useProposalContext();
   const [inputAmount, setInputAmount] = useState<number | undefined>();
   const { vestedAirdrops } = useAirdrop();
   const rpcContext = useRpcContext();
   const connected = rpcContext.wallet.connected;
   const { darkTheme, toggleDarkTheme } = useDarkTheme();
 
-  // ----- Proposals -----
-  const proposals = useProposalsByGovernance();
-  const filteredProposals = useProposalFilters(proposals);
-
-  // ----- Staking -----
-  const stakeProgram = useStakeProgram();
-  const stakePool = useStakePool(stakeProgram)
-  const stakeAccount = useStakeAccount(stakeProgram, stakePool)
-  const unbondingAccounts = useUnbondingAccountsByStakeAccount(stakeProgram, stakeAccount)
   const {
-    stakedJet,
-    unstakedJet,
-    unbondingJet,
-    unlockedVotes,
-  } = useStakedBalance(stakeAccount, stakePool);
-  const { balance } = useUserBalance();
+    proposalFilter,
+    setProposalFilter,
 
-  let governance = useGovernance();
+    proposalsByGovernance,
+    filteredProposalsByGovernance,
+
+    stakeProgram,
+    stakePool,
+    stakeAccount,
+    unbondingAccounts,
+    stakeBalance: {
+      stakedJet,
+      unstakedJet,
+      unbondingJet,
+      unlockedVotes,
+    },
+
+    jetAccount,
+    jetMint,
+
+    governance,
+    tokenOwnerRecord,
+    walletVoteRecords,
+  } = useProposalContext();
 
   const totalDailyReward = 1000000
   const totalStake = 1500000
   const userDailyReward = totalDailyReward * (stakedJet ?? 0) / totalStake
+
+  const handleStake = () => {
+    if(!jetMint || !inputAmount || !jetAccount) {
+      return;
+    }
+    const balance = bnToNumber(jetAccount.amount) / 10 ** jetMint.decimals
+    const stakable = Math.min(inputAmount, balance)
+
+    setInputAmount(stakable);
+    setStakeModalVisible(true)
+  }
+
+  const handleUnstake = () => {
+    if(!jetMint || !inputAmount ||!tokenOwnerRecord) {
+      return;
+    }
+    const balance = bnToNumber(tokenOwnerRecord.info.governingTokenDepositAmount) / 10 ** jetMint.decimals
+    const stakable = Math.min(inputAmount, balance)
+    
+    setInputAmount(stakable);
+    setUnstakeModalVisible(true)
+  }
 
   // Devnet only: airdrop JET tokens
   const getAirdrop = async () => {
@@ -143,7 +162,7 @@ export const HomeView = () => {
             {connected && (
               <div className="flex justify-between cluster">
                   <span>Wallet Balance</span>
-                  <span>{new Intl.NumberFormat().format(balance)}</span>
+                  <span>{new Intl.NumberFormat().format(jetAccount ? bnToNumber(jetAccount.amount) : 0)}</span>
                 </div>
             )}
             <div className="flex justify-between cluster">
@@ -173,37 +192,37 @@ export const HomeView = () => {
             <Input
               type="number"
               token
-              value={inputAmount == undefined ? "" : inputAmount}
+              value={inputAmount === undefined ? "" : inputAmount}
               maxInput={unlockedVotes ? unlockedVotes : undefined}
               disabled={!connected}
               onChange={(value: number) => setInputAmount(value)}
               submit={() => null}
             />
             <Button
-              onClick={() => setShowStakeModal(true)}
-              disabled={!connected && true}
+              onClick={() => handleStake()}
+              disabled={!connected}
               className="full-width"
             >
               Stake
             </Button>
             <StakeModal
-              visible={showStakeModal}
-              onClose={() => setShowStakeModal(false)}
+              visible={stakeModalVisible}
+              onClose={() => setStakeModalVisible(false)}
               realm={JET_REALM}
               amount={inputAmount ?? 0}
             />
             <Button
-              onClick={() => setShowUnstakeModal(true)}
-              disabled={!connected && true}
+              onClick={() => handleUnstake()}
+              disabled={!connected}
               className="full-width"
             >
               Unstake
             </Button>
             <UnstakeModal
-              visible={showUnstakeModal}
+              visible={unstakeModalVisible}
               amount={inputAmount ?? 0}
               resetInput={() => setInputAmount(undefined)}
-              onClose={() => setShowUnstakeModal(false)}
+              onClose={() => setUnstakeModalVisible(false)}
             />
             <Button
               type="dashed"
@@ -230,16 +249,16 @@ export const HomeView = () => {
         <div className="flex justify-between header">
           <h2>Proposals</h2>
           <div className="filter-status">
-            <span onClick={() => setShowing("active")} className={showing === "active" ? "active" : undefined}>Active</span>
-            <span onClick={() => setShowing("inactive")} className={showing === "inactive" ? "active" : undefined}>Inactive</span>
-            <span onClick={() => setShowing("passed")} className={showing === "passed" ? "active" : undefined}>Passed</span>
-            <span onClick={() => setShowing("rejected")} className={showing === "rejected" ? "active" : undefined}>Rejected</span>
-            <span onClick={() => setShowing("all")} className={showing === "all" ? "active" : undefined}>All</span>
+            <span onClick={() => setProposalFilter("active")} className={proposalFilter === "active" ? "active" : undefined}>Active</span>
+            <span onClick={() => setProposalFilter("inactive")} className={proposalFilter === "inactive" ? "active" : undefined}>Inactive</span>
+            <span onClick={() => setProposalFilter("passed")} className={proposalFilter === "passed" ? "active" : undefined}>Passed</span>
+            <span onClick={() => setProposalFilter("rejected")} className={proposalFilter === "rejected" ? "active" : undefined}>Rejected</span>
+            <span onClick={() => setProposalFilter("all")} className={proposalFilter === "all" ? "active" : undefined}>All</span>
           </div>
         </div>
 
         <div id="proposal-cards">
-          {filteredProposals.map(
+          {filteredProposalsByGovernance.map(
             (proposal) =>
               governance && (
                 <ProposalCard

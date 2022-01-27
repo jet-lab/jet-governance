@@ -1,22 +1,18 @@
-import { Modal, Steps } from "antd";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { Modal } from "antd";
+import { useEffect, useState } from "react";
 import { ParsedAccount } from "../../contexts";
 import { Governance, Proposal, TokenOwnerRecord, VoteRecord } from "../../models/accounts";
 import { YesNoVote } from "../../models/instructions";
 import {
   useProposalsByGovernance,
-  useTokenOwnerVoteRecord,
 } from "../../hooks/apiHooks";
 import { useCountdown } from "../../hooks/proposalHooks";
 import { useRpcContext } from "../../hooks/useRpcContext";
-import { StakeAccount, StakePool } from "@jet-lab/jet-engine";
-import { useStakedBalance } from "../../hooks/useStaking";
+import { StakeAccount, StakeBalance, StakePool } from "@jet-lab/jet-engine";
 import { castVote } from "../../actions/castVote";
 import { getPubkeyIndex } from "../../models/PUBKEYS_INDEX";
 import { getProposalUrl } from "../../tools/routeTools";
-import { head } from "lodash";
 import { Link } from "react-router-dom";
-import { relinquishVote } from "../../actions/relinquishVote";
 
 export const VoteModal = ({
   vote,
@@ -27,7 +23,8 @@ export const VoteModal = ({
   tokenOwnerRecord,
   stakeAccount,
   stakePool,
-  voteRecord
+  voteRecord,
+  stakeBalance
 }: {
   vote: YesNoVote | undefined;
   visible: boolean;
@@ -36,8 +33,9 @@ export const VoteModal = ({
   proposal: ParsedAccount<Proposal>;
   tokenOwnerRecord?: ParsedAccount<TokenOwnerRecord>;
   stakeAccount: StakeAccount | undefined,
-  stakePool: StakePool | undefined
-  voteRecord: ParsedAccount<VoteRecord> | undefined;
+  stakePool: StakePool | undefined,
+  voteRecord: ParsedAccount<VoteRecord> | undefined,
+  stakeBalance: StakeBalance
 }) => {  
   const [current, setCurrent] = useState(0);
 
@@ -45,7 +43,7 @@ export const VoteModal = ({
   const rpcContext = useRpcContext();
 
   let voteText: string = "";
-  const { stakedJet } = useStakedBalance(stakeAccount, stakePool);
+  const stakedJet = stakeBalance.stakedJet;
 
   useEffect(() => {
     if (vote === undefined) {

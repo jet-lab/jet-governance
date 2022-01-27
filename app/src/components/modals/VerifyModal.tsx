@@ -200,11 +200,11 @@ export const VerifyModal = ({
           Welcome to Jet Govern—the governance app for Jet Protocol. Here, you
           earn rewards and help pilot the direction of Jet Protocol by staking
           your JET into the app.
-          </p>
+        </p>
 
         <p>
           To start voting, connect your wallet and deposit some JET today!
-          </p>
+        </p>
       </>,
     closable: false,
   }
@@ -221,13 +221,13 @@ export const VerifyModal = ({
       <>
         <p>
           Due to regulatory restrictions, only users in authorized regions are
-            able to access JetGovern. <a>Read more</a>
+          able to access JetGovern. <a>Read more</a>
         </p>
         <p>
           <strong>
             This information is never stored with us or our SMS verification
             partner, and is used solely for regional access.
-            </strong>
+          </strong>
         </p>
         <Input
           placeholder={"Phone number"}
@@ -247,7 +247,7 @@ export const VerifyModal = ({
         <p>
           You will receive a secure access code via SMS. Enter the code here
           to proceed.
-          </p>
+        </p>
         <Input
           onChange={(e) => handleInputCode(e.target.value)}
           onKeyPress={(e) => enterKeyInputCode(e)} />

@@ -1,6 +1,5 @@
 import BN from "bn.js";
-import moment from "moment";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { ZERO } from "../constants";
 import { ParsedAccount } from "../contexts";
 import { useProposalContext } from "../contexts/proposal";
@@ -11,28 +10,28 @@ import {
   TokenOwnerRecord,
   VoteRecord,
 } from "../models/accounts";
-import { dateToString, getRemainingTime } from "../utils";
+import { dateToString } from "../utils";
 
 export const useProposalFilters = (proposals: ParsedAccount<Proposal>[]) => {
-  const { showing } = useProposalContext();
+  const { proposalFilter } = useProposalContext();
 
   return useMemo(() => {
-    if (showing === "active") {
+    if (proposalFilter === "active") {
       return proposals.filter((p) => p.info.isVoting());
-    } else if (showing === "inactive") {
+    } else if (proposalFilter === "inactive") {
       return proposals.filter(
         (p) => p.info.isVoteFinalized() || p.info.isPreVotingState()
       );
-    } else if (showing === "passed") {
+    } else if (proposalFilter === "passed") {
       return proposals.filter((p) => p.info.state === ProposalState.Succeeded);
-    } else if (showing === "rejected") {
+    } else if (proposalFilter === "rejected") {
       return proposals.filter((p) => p.info.state === ProposalState.Defeated);
-    } else if (showing === "all") {
+    } else if (proposalFilter === "all") {
       return proposals;
     } else {
       return proposals;
     }
-  }, [showing, proposals]);
+  }, [proposalFilter, proposals]);
 };
 
 export function useCountdown(proposal: Proposal, governance: Governance) {

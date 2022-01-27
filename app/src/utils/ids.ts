@@ -20,6 +20,10 @@ export let JET_GOVERNANCE = new PublicKey(
   "FRuFWBrp1Kh6LpAi9CRvjk97C6YpCR7AERq62N2CZFUg"
 );
 
+export const GOVERNANCE_PROGRAM_ID = new PublicKey(
+  "GovER5Lthms3bLBqWub97yVrMmEogzX7xNjdXpPPCVZw"
+);
+
 export let TOKEN_PROGRAM_ID = new PublicKey(
   'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA',
 );

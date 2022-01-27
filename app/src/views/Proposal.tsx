@@ -29,9 +29,8 @@ import {
 } from "../hooks/proposalHooks";
 import { useKeyParam } from "../hooks/useKeyParam";
 import { useRealm } from "../contexts/GovernanceContext";
-import { ParsedAccount, useMint } from "../contexts";
+import { ParsedAccount } from "../contexts";
 import { Governance, Proposal, Realm } from "../models/accounts";
-import { MintInfo } from "@solana/spl-token";
 import { useLoadGist } from "../hooks/useLoadGist";
 import { bnToIntLossy } from "../tools/units";
 import { LABELS } from "../constants";
@@ -41,21 +40,13 @@ import { YesNoVote } from "../models/instructions";
 import { DownloadOutlined, ArrowLeftOutlined } from "@ant-design/icons";
 import { useConnectWallet } from "../contexts/connectWallet";
 import { getPubkeyIndex } from "../models/PUBKEYS_INDEX";
-import {
-  useStakeAccount,
-  useStakedBalance,
-  useStakePool,
-  useStakeProgram,
-} from "../hooks/useStaking";
 import { FooterLinks } from "../components/FooterLinks";
-import { RelinquishVoteButton } from "./proposal/components/buttons/relinquishVoteButton";
+import { useProposalContext } from "../contexts/proposal";
+import { StakeAccount, StakeBalance, StakePool } from "@jet-lab/jet-engine";
 
 export const ProposalView = () => {
   const proposalAddress = useKeyParam();
   const proposal = useProposal(proposalAddress);
-
-  let governance = useGovernance();
-  let realm = useRealm();
 
   const voteRecords = useVoteRecordsByProposal(proposal?.pubkey);
 
@@ -63,12 +54,21 @@ export const ProposalView = () => {
 
   const { allHasVoted } = useVoterDisplayData(voteRecords, tokenOwnerRecords);
 
-  return proposal && governance && realm ? (
+  const {
+    stakePool,
+    stakeAccount,
+    stakeBalance,
+    governance,
+  } = useProposalContext();
+
+  return proposal && governance && stakePool && stakeAccount ? (
     <InnerProposalView
       proposal={proposal}
       governance={governance}
-      realm={realm}
       voterDisplayData={allHasVoted}
+      stakePool={stakePool}
+      stakeAccount={stakeAccount}
+      stakeBalance={stakeBalance}
     />
   ) : (
     <Spin />
@@ -78,13 +78,17 @@ export const ProposalView = () => {
 const InnerProposalView = ({
   proposal,
   governance,
-  // realm,
   voterDisplayData,
+  stakePool,
+  stakeAccount,
+  stakeBalance,
 }: {
   proposal: ParsedAccount<Proposal>;
   governance: ParsedAccount<Governance>;
-  realm: ParsedAccount<Realm>;
   voterDisplayData: VoterDisplayData[];
+  stakePool: StakePool;
+  stakeAccount: StakeAccount;
+  stakeBalance: StakeBalance;
 }) => {
   const [isVoteModalVisible, setIsVoteModalVisible] = useState(false);
   const [vote, setVote] = useState<YesNoVote | undefined>(undefined);
@@ -101,11 +105,10 @@ const InnerProposalView = ({
   const handleVoteModal = () => {
     setIsVoteModalVisible(true);
   };
-  const stakeProgram = useStakeProgram();
+
   const { connected } = useWallet();
-  const stakePool = useStakePool(stakeProgram);
-  const stakeAccount = useStakeAccount(stakeProgram, stakePool);
-  const { stakedJet } = useStakedBalance(stakeAccount, stakePool);
+
+  // FIXME!
   const isStaked = true;
   // const isStaked = stakedJet !== undefined && stakedJet > 0;
 
@@ -139,7 +142,7 @@ const InnerProposalView = ({
     () => proposalAddress.toBase58(),
     [proposalAddress]
   );
-  const { yes, no, abstain, total, yesPercent, yesAbstainPercent } =
+  const { yes, no, total } =
     proposal.info.getVoteCounts();
   const { startDate, endDate } = useCountdown(proposal.info, governance.info);
 
@@ -297,6 +300,7 @@ const InnerProposalView = ({
             stakeAccount={stakeAccount}
             stakePool={stakePool}
             voteRecord={voteRecord?.tryUnwrap()}
+            stakeBalance={stakeBalance}
           />
           {!isStaked && connected ? <span className="helper-text">You must have JET staked in order to vote on proposals.</span> : vote === undefined && connected ? <span className="helper-text">Please select an option to submit your vote.</span> : ""}
         </div>
