@@ -4,7 +4,7 @@ import { ReactNode, useEffect, useState } from "react";
 import { useConnectWallet } from "../../contexts/connectWallet";
 import axios from "axios";
 import { useConnectionConfig } from "../../contexts";
-import { UserAuthentication } from "@jet-lab/jet-engine/lib/auth/auth";
+import { Auth } from "@jet-lab/jet-engine/lib/auth/auth";
 
 enum Steps {
   Welcome = 0,
@@ -23,7 +23,7 @@ export const VerifyModal = ({
   createAuthAccount,
 }: {
   visible: boolean;
-  authAccount: UserAuthentication | undefined;
+  authAccount: Auth | undefined;
   authAccountLoading: boolean;
   createAuthAccount: () => Promise<boolean>
 }) => {
@@ -42,17 +42,17 @@ export const VerifyModal = ({
 
   useEffect(() => {
     if (current === Steps.Welcome && welcomeConfirmed && !authAccountLoading) {
-      if (!authAccount || !authAccount.complete) {
+      if (!authAccount || !authAccount.userAuthentication.complete) {
         setWelcoming(false)
         setCurrent(Steps.ConfirmLocation)
       }
-      else if (authAccount.allowed) {
+      else if (authAccount.userAuthentication.allowed) {
         setCurrent(Steps.AccessGranted1)
       } else {
         setCurrent(Steps.AccessDenied)
       }
-    } else if (authAccount && authAccount.complete) {
-      if (authAccount.allowed) {
+    } else if (authAccount && authAccount.userAuthentication.complete) {
+      if (authAccount.userAuthentication.allowed) {
         setCurrent(Steps.AccessGranted1)
       } else {
         setCurrent(Steps.AccessDenied)
@@ -80,11 +80,17 @@ export const VerifyModal = ({
       return;
     }
 
+    let phone = phoneNumber;
+    phone = phone.trim();
+    if(!phone.includes("+")){
+      phone = `+${phone}`
+    }
+
     // auth/sms begin a new SMS verification session
     axios
       .put("https://api.jetprotocol.io/v1/auth/sms", {
         originator: "Governance",
-        phoneNumber: phoneNumber,
+        phoneNumber: phone,
       })
       .then((res) => {
         console.log(res.status, res.data);
@@ -108,7 +114,7 @@ export const VerifyModal = ({
         }
       })
       .catch(err => {
-        console.error(JSON.stringify(err))
+        console.error(JSON.stringify(err), err?.response?.body, err?.response?.data)
         setPhoneVerifyLoading(false)
         setCurrent(Steps.UnknownError)
       });
@@ -128,7 +134,7 @@ export const VerifyModal = ({
     axios
       .post("https://api.jetprotocol.io/v1/auth/sms/verify", {
         "network": env,
-        "publicKey": publicKey?.toBase58(),
+        "publicKey": authAccount?.address.toBase58(),
         "token": code,
         "verificationId": verificationId
       })
@@ -148,7 +154,7 @@ export const VerifyModal = ({
         }
       })
       .catch(err => {
-        console.error(JSON.stringify(err))
+        console.error(JSON.stringify(err), err?.response?.body, err?.response?.data)
         setConfirmCodeLoading(false)
         setCurrent(Steps.UnknownError)
       });
@@ -171,8 +177,8 @@ export const VerifyModal = ({
 
   const handleAuthenticate = () => {
     if (connected) {
-      if (authAccount && authAccount.complete) {
-        if (authAccount.allowed) {
+      if (authAccount && authAccount.userAuthentication.complete) {
+        if (authAccount.userAuthentication.allowed) {
           setCurrent(Steps.AccessGranted1);
         } else {
           setCurrent(Steps.AccessDenied);
