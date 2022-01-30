@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import { useMemo } from "react";
 import { Link } from "react-router-dom";
 import { Card, Progress } from "antd";
 import { Governance, Proposal, ProposalState } from "../models/accounts";

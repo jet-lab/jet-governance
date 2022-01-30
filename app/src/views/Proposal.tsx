@@ -1,13 +1,12 @@
-import React, { useMemo, useState, useEffect } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { ResultProgressBar } from "../components/proposal/ResultProgressBar";
-import { Divider, Spin, Button, Tooltip } from "antd";
+import { Divider, Spin, Button } from "antd";
 import { ProposalCard } from "../components/ProposalCard";
 import { VoterList } from "../components/proposal/VoterList";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { VoteModal } from "../components/modals/VoteModal";
 import {
-  useGovernance,
   useProposal,
   useProposalsByGovernance,
   useTokenOwnerRecords,
@@ -16,21 +15,13 @@ import {
   useTokenOwnerVoteRecord,
 } from "../hooks/apiHooks";
 import {
-  fromLamports,
-  JET_GOVERNANCE,
-  shortenAddress,
-  JET_TOKEN_MINT,
-} from "../utils";
-import {
   useCountdown,
-  useProposalFilters,
   useVoterDisplayData,
   VoterDisplayData,
 } from "../hooks/proposalHooks";
 import { useKeyParam } from "../hooks/useKeyParam";
-import { useRealm } from "../contexts/GovernanceContext";
 import { ParsedAccount } from "../contexts";
-import { Governance, Proposal, Realm } from "../models/accounts";
+import { Governance, Proposal } from "../models/accounts";
 import { useLoadGist } from "../hooks/useLoadGist";
 import { bnToIntLossy } from "../tools/units";
 import { LABELS } from "../constants";
@@ -297,8 +288,6 @@ const InnerProposalView = ({
             governance={governance}
             proposal={proposal}
             tokenOwnerRecord={tokenOwnerRecord}
-            stakeAccount={stakeAccount}
-            stakePool={stakePool}
             voteRecord={voteRecord?.tryUnwrap()}
             stakeBalance={stakeBalance}
           />

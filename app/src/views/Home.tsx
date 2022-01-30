@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useProposalContext } from "../contexts/proposal";
 import { ProposalCard } from "../components/ProposalCard";
@@ -25,6 +26,7 @@ export const HomeView = () => {
   const connected = rpcContext.wallet.connected;
   const { darkTheme, toggleDarkTheme } = useDarkTheme();
 
+  /* eslint-disable @typescript-eslint/no-unused-vars */
   const {
     proposalFilter,
     setProposalFilter,
@@ -50,6 +52,7 @@ export const HomeView = () => {
     tokenOwnerRecord,
     walletVoteRecords,
   } = useProposalContext();
+  /* eslint-enable @typescript-eslint/no-unused-vars */
 
   const totalDailyReward = 1000000
   const totalStake = 1500000
@@ -59,7 +62,7 @@ export const HomeView = () => {
     if(!jetMint || !inputAmount || !jetAccount) {
       return;
     }
-    const balance = bnToNumber(jetAccount.amount) / 10 ** jetMint.decimals
+    const balance = bnToNumber(jetAccount.info.amount) / 10 ** jetMint.decimals
     const stakable = Math.min(inputAmount, balance)
 
     setInputAmount(stakable);
@@ -155,14 +158,14 @@ export const HomeView = () => {
               <span>{userDailyReward * 30}</span>
             </div>
             </div>
-
           </div>
+          
           <Divider />
           <div className="flex column">
             {connected && (
               <div className="flex justify-between cluster">
                   <span>Wallet Balance</span>
-                  <span>{new Intl.NumberFormat().format(jetAccount ? bnToNumber(jetAccount.amount) : 0)}</span>
+                  <span>{new Intl.NumberFormat().format(jetAccount ? bnToNumber(jetAccount.info.amount) : 0)}</span>
                 </div>
             )}
             <div className="flex justify-between cluster">

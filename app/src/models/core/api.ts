@@ -2,7 +2,6 @@ import { Connection, PublicKey } from '@solana/web3.js';
 import bs58 from 'bs58';
 import { ProgramAccountWithType } from '../core/accounts';
 import { Schema } from 'borsh';
-import { getErrorMessage } from '../../tools/script';
 import { WalletContextState } from "@solana/wallet-adapter-react"
 import { WalletNotConnectedError } from '@solana/wallet-adapter-base';
 import { ParsedAccount } from '../../contexts';

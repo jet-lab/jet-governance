@@ -1,9 +1,6 @@
 import {
-  MessageSignerWalletAdapterProps,
   SignerWalletAdapter,
-  SignerWalletAdapterProps,
   WalletAdapterNetwork,
-  WalletAdapterProps,
   WalletError,
   WalletNotConnectedError,
 } from '@solana/wallet-adapter-base';
@@ -12,21 +9,14 @@ import {
   WalletProvider as BaseWalletProvider
 } from '@solana/wallet-adapter-react';
 import {
-  getLedgerWallet,
   getPhantomWallet,
-  getSlopeWallet,
   getSolflareWallet,
   getSolletWallet,
   getSolongWallet,
   getMathWallet,
-  getSolletExtensionWallet,
-  getTorusWallet,
-  Wallet,
-  WalletName,
 } from '@solana/wallet-adapter-wallets';
-import { PublicKey, Transaction } from '@solana/web3.js';
 import { Button, Modal } from "antd";
-import React, { createContext, FC, ReactNode, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import { createContext, ReactNode, useCallback, useContext, useMemo, useState } from 'react';
 import { notify } from "../utils";
 import { useConnectionConfig } from "./connection";
 
@@ -91,7 +81,6 @@ export const WalletModal = () => {
 };
 
 export const WalletModalProvider = ({ children }: { children: ReactNode }) => {
-  const { publicKey } = useWallet();
   const [visible, setVisible] = useState(false);
 
   return (
@@ -131,6 +120,7 @@ export const WalletProvider = ({ children }: {children: ReactNode }) => {
       getMathWallet(),
       getSolletWallet({ network }),
     ],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     []
   );
 

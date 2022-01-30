@@ -22,9 +22,9 @@ export function getExplorerUrl(
 
     let cluster;
 
-    if (env?.ChainId == ChainId.Testnet) {
+    if (env?.ChainId === ChainId.Testnet) {
       cluster = 'testnet';
-    } else if (env?.ChainId == ChainId.Devnet) {
+    } else if (env?.ChainId === ChainId.Devnet) {
       if (env?.name === 'localnet') {
         cluster = `custom&customUrl=${encodeURIComponent(
           'http://127.0.0.1:8899',

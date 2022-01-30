@@ -8,7 +8,7 @@ import {
 } from "../../hooks/apiHooks";
 import { useCountdown } from "../../hooks/proposalHooks";
 import { useRpcContext } from "../../hooks/useRpcContext";
-import { StakeAccount, StakeBalance, StakePool } from "@jet-lab/jet-engine";
+import { StakeBalance } from "@jet-lab/jet-engine";
 import { castVote } from "../../actions/castVote";
 import { getPubkeyIndex } from "../../models/PUBKEYS_INDEX";
 import { getProposalUrl } from "../../tools/routeTools";
@@ -21,8 +21,6 @@ export const VoteModal = ({
   governance,
   proposal,
   tokenOwnerRecord,
-  stakeAccount,
-  stakePool,
   voteRecord,
   stakeBalance
 }: {
@@ -32,8 +30,6 @@ export const VoteModal = ({
   governance: ParsedAccount<Governance>;
   proposal: ParsedAccount<Proposal>;
   tokenOwnerRecord?: ParsedAccount<TokenOwnerRecord>;
-  stakeAccount: StakeAccount | undefined,
-  stakePool: StakePool | undefined,
   voteRecord: ParsedAccount<VoteRecord> | undefined,
   stakeBalance: StakeBalance
 }) => {  

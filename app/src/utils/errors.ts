@@ -18,9 +18,7 @@ export function isSendTransactionError(
 }
 
 export class SignTransactionError extends Error {
-  constructor(message?: string) {
-    super(message);
-  }
+
 }
 
 export function isSignTransactionError(

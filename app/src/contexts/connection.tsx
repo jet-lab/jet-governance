@@ -27,8 +27,7 @@ import {
   TransactionTimeoutError,
 } from '../utils/errors';
 import { WalletContextState } from '@solana/wallet-adapter-react';
-import { indexOf } from 'lodash';
-import { WalletNotConnectedError } from '@solana/wallet-adapter-base';
+ import { WalletNotConnectedError } from '@solana/wallet-adapter-base';
 
 export type ENV = 'mainnet-beta' | 'testnet' | 'devnet' | 'localnet';
 
@@ -144,6 +143,7 @@ export function ConnectionProvider({ children = undefined as any }) {
       setTokenMap(knownMints);
       setTokens(list);
     });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [env]);
 
   setProgramIds(env);
@@ -327,12 +327,12 @@ export const sendTransactions = async (
       .catch(reason => {
         // @ts-ignore
         failCallback(signedTxns[i], i);
-        if (sequenceType == SequenceType.StopOnFailure) {
+        if (sequenceType === SequenceType.StopOnFailure) {
           breakEarlyObject.breakEarly = true;
         }
       });
 
-    if (sequenceType != SequenceType.Parallel) {
+    if (sequenceType !== SequenceType.Parallel) {
       await signedTxnPromise;
       if (breakEarlyObject.breakEarly) {
         return i; // REturn the txn we failed on by index
@@ -342,7 +342,7 @@ export const sendTransactions = async (
     }
   }
 
-  if (sequenceType != SequenceType.Parallel) {
+  if (sequenceType !== SequenceType.Parallel) {
     await Promise.all(pendingTxns);
   }
 

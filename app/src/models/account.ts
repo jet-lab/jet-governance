@@ -76,7 +76,7 @@ export function approve(
     Token.createApproveInstruction(
       tokenProgram,
       account,
-      delegate ?? transferAuthority.publicKey,
+      delegateKey,
       owner,
       [],
       amount,

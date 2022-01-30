@@ -1,6 +1,5 @@
 import { PublicKey } from "@solana/web3.js";
 import { VoterDisplayData } from "../hooks/proposalHooks";
-import { fromLamports } from "../utils";
 
 /** Downloads vote records in CSV format */
 export function voteRecordCsvDownload(itemAddress: PublicKey, votes: VoterDisplayData[]) {

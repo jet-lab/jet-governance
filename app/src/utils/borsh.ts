@@ -1,6 +1,5 @@
 import { PublicKey } from '@solana/web3.js';
 import {
-  serialize,
   BinaryReader,
   Schema,
   BorshError,

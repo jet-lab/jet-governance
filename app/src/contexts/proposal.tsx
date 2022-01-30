@@ -1,10 +1,10 @@
 import { StakeAccount, StakeBalance, StakeClient, StakePool, UnbondingAccount } from "@jet-lab/jet-engine";
 import { Program } from "@project-serum/anchor";
 import React, { useState, useContext } from "react";
-import { AccountInfo as TokenAccount, MintInfo } from "@solana/spl-token"
+import { MintInfo } from "@solana/spl-token"
 import { useGovernance, useProposalsByGovernance, useWalletTokenOwnerRecord, useWalletVoteRecords } from "../hooks/apiHooks";
 import { JET_REALM, JET_GOVERNANCE } from "../utils";
-import { ParsedAccount, useMint } from ".";
+import { ParsedAccount } from ".";
 import { Governance, Proposal, TokenOwnerRecord, VoteRecord } from "../models/accounts";
 import { useProposalFilters } from "../hooks/proposalHooks";
 import { useWallet } from "@solana/wallet-adapter-react";
@@ -26,7 +26,7 @@ interface ProposalContextState {
   unbondingAccounts?: UnbondingAccount[]
   stakeBalance: StakeBalance
 
-  jetAccount?: TokenAccount
+  jetAccount?: AssociatedToken
   jetMint?: MintInfo
   voteMint?: MintInfo
 
@@ -57,6 +57,7 @@ export const useProposalContext = () => {
 
 export function ProposalProvider({ children = undefined as any }) {
   const wallet = useWallet()
+  const walletAddress = wallet.publicKey ?? undefined;
   const connection = useConnection()
   const [proposalFilter, setProposalFilter] = useState<ProposalFilter>("active");
 
@@ -68,13 +69,13 @@ export function ProposalProvider({ children = undefined as any }) {
   const provider = useProvider(connection, wallet)
   const stakeProgram = StakeClient.use(provider);
   const stakePool = StakePool.use(stakeProgram);
-  const stakeAccount = StakeAccount.use(stakeProgram, stakePool, wallet.publicKey)
+  const stakeAccount = StakeAccount.use(stakeProgram, stakePool, walletAddress)
   const unbondingAccounts = UnbondingAccount.useByStakeAccount(stakeProgram, stakeAccount)
   const stakeBalance = StakeAccount.useBalance(stakeAccount, stakePool)
   
-  const jetAccount = AssociatedToken.use(provider, stakePool?.stakePool.tokenMint, wallet.publicKey)
-  const jetMint = AssociatedToken.useMint(provider, stakePool?.stakePool.tokenMint);
-  const voteMint = AssociatedToken.useMint(provider, stakePool?.stakePool.stakeVoteMint);
+  const jetAccount = AssociatedToken.use(connection, stakePool?.stakePool.tokenMint, walletAddress)
+  const jetMint = AssociatedToken.useMint(connection, stakePool?.stakePool.tokenMint);
+  const voteMint = AssociatedToken.useMint(connection, stakePool?.stakePool.stakeVoteMint);
 
   // ----- Governance Records -----
   const governance = useGovernance();

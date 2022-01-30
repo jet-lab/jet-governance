@@ -2,8 +2,7 @@ import { Divider, Tooltip, Button } from "antd";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { useAirdrop } from "../contexts/airdrop";
 import { InfoCircleFilled } from "@ant-design/icons";
-import React, { useState } from "react";
-import { getExplorerUrl } from "../utils";
+import { useState } from "react";
 import { FooterLinks } from "../components/FooterLinks";
 import { RestakeModal } from "../components/modals/RestakeModal";
 

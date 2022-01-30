@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+import { useState, useMemo } from "react";
 import { Progress } from 'antd';
 import { abbreviateNumber, JET_TOKEN_MINT, fromLamports } from "../../utils";
 import { useMint } from "../../contexts";

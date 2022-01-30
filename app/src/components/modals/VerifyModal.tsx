@@ -28,7 +28,7 @@ export const VerifyModal = ({
   createAuthAccount: () => Promise<boolean>
 }) => {
   const [current, setCurrent] = useState<Steps>(Steps.Welcome);
-  const { connected, disconnect, publicKey } = useWallet();
+  const { connected, disconnect } = useWallet();
   const { setConnecting, setWelcoming, setAuthorizationConfirmed } = useConnectWallet();
   const [phoneNumber, setPhoneNumber] = useState("");
   // The ID of the SMS verification session with MessageBird.

@@ -1,6 +1,6 @@
 import { notify } from "../utils";
 import { JET_FAUCET_DEVNET, JET_TOKEN_MINT } from "../utils/ids";
-import { Airdrop } from "@jet-lab/jet-engine";
+import { TokenFaucet } from "@jet-lab/jet-engine";
 import { Provider } from "@project-serum/anchor";
 import { ExplorerLink } from "../components";
 
@@ -22,7 +22,7 @@ export const jetFaucet = async (
     description: 'Please wait...',
     type: 'warn',
   });
-  let txid = await Airdrop.airdropToken(
+  let txid = await TokenFaucet.airdropToken(
     provider,
     JET_FAUCET_DEVNET,
     provider.wallet.publicKey,

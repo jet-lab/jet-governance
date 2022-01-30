@@ -1,11 +1,5 @@
 import { HashRouter, Route, Switch } from "react-router-dom";
-import React from "react";
 import GovernanceProvider from "./contexts/GovernanceContext";
-import { AllRealmsView } from "./views";
-import { OysterProposalView } from "./views/proposal/oysterProposalView";
-import { GovernanceView } from "./views/governance/governanceView";
-import { DevToolsView } from "./views/devtools/DevToolsView";
-import { RealmView } from "./views/realm/realmView";
 
 import { ErrorBoundary } from "react-error-boundary";
 
@@ -13,7 +7,6 @@ import { AppErrorBanner } from "./components/appErrorBanner/appErrorBanner";
 import { HomeView } from "./views/Home";
 import { FlightLogView } from "./views/FlightLogs";
 import { AirdropView } from "./views/Airdrop";
-import { AirdropHistory } from "./views/AirdropHistory";
 import { ProposalView } from "./views/Proposal";
 import { DarkThemeProvider } from "./contexts/darkTheme";
 import { ConnectWalletProvider } from "./contexts/connectWallet";

@@ -1,6 +1,4 @@
-import { useState, useEffect } from "react";
-import { Modal, Timeline } from "antd";
-import React from "react";
+import { Modal } from "antd";
 
 export const GlossaryModal = ({ visible, onClose }: {
   visible: boolean;

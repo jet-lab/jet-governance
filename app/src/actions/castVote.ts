@@ -1,13 +1,11 @@
-import { Account, PublicKey, Transaction, TransactionInstruction } from '@solana/web3.js';
+import { PublicKey, Transaction, TransactionInstruction } from '@solana/web3.js';
 
-import { Proposal, VoteRecord } from '../models/accounts';
+import { Proposal } from '../models/accounts';
 import { withCastVote } from '../models/withCastVote';
 import { Vote, YesNoVote } from '../models/instructions';
 import { RpcContext } from '../models/core/api';
 import { ParsedAccount } from '../contexts';
-import { useWallet } from "@solana/wallet-adapter-react";
 import { withRelinquishVote } from '../models/withRelinquishVote';
-import { Provider } from '@project-serum/anchor';
 import { sendAllTransactionsWithNotifications } from '../tools/transactions';
 
 export const castVote = async (

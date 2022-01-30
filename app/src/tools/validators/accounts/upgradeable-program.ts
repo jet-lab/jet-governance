@@ -5,6 +5,7 @@ import { ParsedAccountData, AccountInfo, PublicKey } from '@solana/web3.js';
 import { type, number, literal, nullable, Infer, create } from 'superstruct';
 import { PublicKeyFromString } from '../pubkey';
 
+/* eslint-disable @typescript-eslint/no-redeclare */
 export type ProgramAccountInfo = Infer<typeof ProgramAccountInfo>;
 export const ProgramAccountInfo = type({
   programData: PublicKeyFromString,
@@ -40,6 +41,7 @@ export const ProgramBufferAccount = type({
   type: literal('buffer'),
   info: ProgramBufferAccountInfo,
 });
+/* eslint-enable @typescript-eslint/no-redeclare */
 
 export function validateProgramBufferAccount(
   info: AccountInfo<Buffer | ParsedAccountData>,

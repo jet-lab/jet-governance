@@ -1,6 +1,5 @@
-import { useState, useEffect } from "react";
-import { Modal, Timeline } from "antd";
-import React from "react";
+import { useState } from "react";
+import { Modal } from "antd";
 
 export const RestakeModal = ({ showModal, stakeAmount, onClose }: {
   showModal: boolean;
