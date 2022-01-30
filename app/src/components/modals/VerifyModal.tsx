@@ -5,6 +5,8 @@ import { useConnectWallet } from "../../contexts/connectWallet";
 import axios from "axios";
 import { useConnectionConfig } from "../../contexts";
 import { Auth } from "@jet-lab/jet-engine/lib/auth/auth";
+import CountryPhoneInput, { CountryPhoneInputValue } from "antd-country-phone-input";
+import "antd-country-phone-input/dist/index.css"
 
 enum Steps {
   Welcome = 0,
@@ -30,7 +32,7 @@ export const VerifyModal = ({
   const [current, setCurrent] = useState<Steps>(Steps.Welcome);
   const { connected, disconnect } = useWallet();
   const { setConnecting, setWelcoming, setAuthorizationConfirmed } = useConnectWallet();
-  const [phoneNumber, setPhoneNumber] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState<CountryPhoneInputValue>({short: 'US'});
   // The ID of the SMS verification session with MessageBird.
   const [verificationId, setVerificationId] = useState<string>()
   // The verification token received from the SMS recipient.
@@ -60,8 +62,9 @@ export const VerifyModal = ({
     }
   }, [authAccount, authAccountLoading, current, setWelcoming, welcomeConfirmed])
 
-  const handleInputPhoneNumber = (e: string) => {
+  const handleInputPhoneNumber = (e: CountryPhoneInputValue) => {
     setPhoneNumber(e);
+    console.log(`+${phoneNumber.code}${phoneNumber.phone}`)
   };
   const enterKeyPhoneVerify = (e: any) => {
     if (e.code === "Enter") {
@@ -80,17 +83,11 @@ export const VerifyModal = ({
       return;
     }
 
-    let phone = phoneNumber;
-    phone = phone.trim();
-    if(!phone.includes("+")){
-      phone = `+${phone}`
-    }
-
     // auth/sms begin a new SMS verification session
     axios
       .put("https://api.jetprotocol.io/v1/auth/sms", {
         originator: "Governance",
-        phoneNumber: phone,
+        phoneNumber: `+${phoneNumber.code}${phoneNumber.phone}`,
       })
       .then((res) => {
         console.log(res.status, res.data);
@@ -235,9 +232,10 @@ export const VerifyModal = ({
             partner, and is used solely for regional access.
           </strong>
         </p>
-        <Input
+        <CountryPhoneInput
           placeholder={"Phone number"}
-          onChange={(e: any) => handleInputPhoneNumber(e.target.value)}
+          value={phoneNumber}
+          onChange={(e: CountryPhoneInputValue) => handleInputPhoneNumber(e)}
           onKeyPress={(e: any) => enterKeyPhoneVerify(e)} />
       </>,
     closable: false,
@@ -275,7 +273,7 @@ export const VerifyModal = ({
   steps[Steps.AccessGranted1] = {
     title: "Stake JET to earn and vote!",
     okText: "Okay",
-    onOk: () => setCurrent(Steps.AccessGranted2),
+    onOk: () => console.log(current),
     onCancel: () => setCurrent(Steps.AccessGranted2),
     content:
       <>

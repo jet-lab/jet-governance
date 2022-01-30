@@ -19,6 +19,8 @@ import {
 } from "./contexts";
 import { ScrollToTop } from "./contexts/scrollToTop";
 import { ProposalProvider } from "./contexts/proposal";
+import { ConfigProvider } from "antd-country-phone-input";
+import en from 'world_countries_lists/data/en/world.json';
 
 export function Routes() {
   return (
@@ -31,6 +33,7 @@ export function Routes() {
           <DarkThemeProvider>
             <ConnectionProvider>
               <WalletProvider>
+                <ConfigProvider locale={en}>
                 <ConnectWalletProvider>
                     <AirdropProvider>
                       <AccountsProvider>
@@ -91,7 +94,8 @@ export function Routes() {
                         </GovernanceProvider>
                       </AccountsProvider>
                     </AirdropProvider>
-                </ConnectWalletProvider>
+                  </ConnectWalletProvider>
+                  </ConfigProvider>
               </WalletProvider>
             </ConnectionProvider>
           </DarkThemeProvider>

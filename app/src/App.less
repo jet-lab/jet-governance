@@ -9,11 +9,14 @@
 }
 
 /* Styles between these lines should be included at the next version of the jet-antd library */
+.hidden {
+  display: none;
+}
+
 button.inactive {
   filter: blur(2px);
 }
-L
-.ant-modal-content {
+L .ant-modal-content {
   a {
     text-decoration: underline;
     margin: 0;
@@ -64,7 +67,8 @@ L
 .italics {
   font-style: italic;
 }
-strong, .bold {
+strong,
+.bold {
   font-weight: @subheader-weight !important;
 }
 p {
@@ -77,10 +81,10 @@ h1 {
   color: @dark-grey;
   margin: unset;
 }
-.footer-links span{
+.footer-links span {
   cursor: pointer;
 }
-.wide .ant-modal-content{
+.wide .ant-modal-content {
   max-width: unset !important;
 }
 
@@ -120,7 +124,8 @@ h1 {
   -webkit-animation-duration: 5.5s;
   -webkit-animation-iteration-count: infinite;
   -webkit-background-size: 50px 100%;
-  &.active, &:hover {
+  &.active,
+  &:hover {
     -webkit-text-fill-color: unset;
   }
 }
@@ -153,15 +158,71 @@ h1 {
   }
 }
 
+/* Verify modal flow */
+.ant-input-affix-wrapper {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+  min-width: 0;
+  color: rgba(0, 0, 0, 0.85);
+  background-image: none;
+  border: 1px solid #d9d9d9;
+  border-radius: 2px;
+  transition: all 0.3s;
+  display: inline-flex;
+  &::before {
+    width: 0;
+    visibility: hidden;
+    content: "\a0";
+  }
+}
+.ant-select-dropdown .rc-virtual-list {
+  z-index: 1001;
+}
+.ant-select-selection-search {
+  display: unset;
+}
+.ant-select-dropdown-hidden {
+  display: none;
+}
+.ant-select-single .ant-select-selector .ant-select-selection-item:after,
+.ant-select-single .ant-select-selector .ant-select-selection-placeholder:after,
+.ant-select-single .ant-select-selector:after {
+  display: inline-block;
+  width: 0;
+  visibility: hidden;
+  content: "\a0";
+}
+.ant-select-selection-item {
+  flex: 1 1;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.ant-select-single .ant-select-selector .ant-select-selection-item,
+.ant-select-single .ant-select-selector .ant-select-selection-placeholder {
+  padding: 0;
+  line-height: 30px;
+  transition: all 0.3s;
+}
+.ant-select-show-search.ant-select:not(.ant-select-customize-input)
+  .ant-select-selector {
+  cursor: text;
+}
+.ant-select {
+  margin: 0;
+  border-radius: 0;
+  box-shadow: none;
+  padding: 0;
+  cursor: text;
+}
+
 /* Proposal card component */
 span,
 p,
 .proposal-card.ant-card .header,
 .ant-card-body .details {
   font-size: @sm-font-size !important;
-}
-.hidden {
-  display: none;
 }
 
 .proposal-card.ant-card {
@@ -207,7 +268,8 @@ p,
 /* Styles for home page */
 
 #home {
-  h2, .neu-inset {
+  h2,
+  .neu-inset {
     margin-bottom: 20px;
   }
   #your-info {
@@ -298,7 +360,8 @@ p,
     span {
       padding: 0 10px;
       cursor: pointer;
-      &:hover, &.active {
+      &:hover,
+      &.active {
         text-decoration: underline;
       }
     }
@@ -392,7 +455,7 @@ button,
     margin-top: 10px;
   }
   &[disabled] {
-    cursor: not-allowed
+    cursor: not-allowed;
   }
 }
 
@@ -502,9 +565,9 @@ button,
   color: @dark-grey;
 }
 
-#flight-logs-view{
+#flight-logs-view {
   grid-template-rows: auto 1fr auto;
-    height: 85vh;
+  height: 85vh;
   #flight-log {
     grid-column: 2 / 8;
   }
@@ -519,10 +582,8 @@ button,
 
 /* Medium devices (landscape tablets, 768px and up) */
 @media only screen and (min-width: 768px) {
-  
 }
 
 /* Extra small devices (phones, 600px and down) */
 @media only screen and (max-width: 600px) {
-  
 }
