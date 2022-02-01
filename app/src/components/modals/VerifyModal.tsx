@@ -6,7 +6,6 @@ import axios from "axios";
 import { useConnectionConfig } from "../../contexts";
 import { Auth } from "@jet-lab/jet-engine/lib/auth/auth";
 import CountryPhoneInput, { CountryPhoneInputValue } from "antd-country-phone-input";
-import "antd-country-phone-input/dist/index.css"
 
 enum Steps {
   Welcome = 0,
@@ -32,7 +31,7 @@ export const VerifyModal = ({
   const [current, setCurrent] = useState<Steps>(Steps.Welcome);
   const { connected, disconnect } = useWallet();
   const { setConnecting, setWelcoming, setAuthorizationConfirmed } = useConnectWallet();
-  const [phoneNumber, setPhoneNumber] = useState<CountryPhoneInputValue>({short: 'US'});
+  const [phoneNumber, setPhoneNumber] = useState<CountryPhoneInputValue>({ short: 'US' });
   // The ID of the SMS verification session with MessageBird.
   const [verificationId, setVerificationId] = useState<string>()
   // The verification token received from the SMS recipient.
@@ -50,21 +49,23 @@ export const VerifyModal = ({
       }
       else if (authAccount.userAuthentication.allowed) {
         setCurrent(Steps.AccessGranted1)
+
       } else {
         setCurrent(Steps.AccessDenied)
       }
     } else if (authAccount && authAccount.userAuthentication.complete) {
       if (authAccount.userAuthentication.allowed) {
-        setCurrent(Steps.AccessGranted1)
+        setAuthorizationConfirmed(true)
+        setWelcomeConfirmed(false);
+        setCurrent(Steps.Welcome)
       } else {
         setCurrent(Steps.AccessDenied)
       }
     }
-  }, [authAccount, authAccountLoading, current, setWelcoming, welcomeConfirmed])
+  }, [authAccount, authAccountLoading, current, setWelcoming, welcomeConfirmed, setAuthorizationConfirmed])
 
   const handleInputPhoneNumber = (e: CountryPhoneInputValue) => {
     setPhoneNumber(e);
-    console.log(`+${phoneNumber.code}${phoneNumber.phone}`)
   };
   const enterKeyPhoneVerify = (e: any) => {
     if (e.code === "Enter") {
@@ -254,7 +255,9 @@ export const VerifyModal = ({
         </p>
         <Input
           onChange={(e) => handleInputCode(e.target.value)}
-          onKeyPress={(e) => enterKeyInputCode(e)} />
+          onKeyPress={(e) => enterKeyInputCode(e)}
+          maxLength={6}
+        />
       </>,
     closable: false,
   }
@@ -273,7 +276,7 @@ export const VerifyModal = ({
   steps[Steps.AccessGranted1] = {
     title: "Stake JET to earn and vote!",
     okText: "Okay",
-    onOk: () => console.log(current),
+    onOk: () => setCurrent(Steps.AccessGranted2),
     onCancel: () => setCurrent(Steps.AccessGranted2),
     content:
       <>

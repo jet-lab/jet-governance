@@ -161,60 +161,86 @@ h1 {
 /* Verify modal flow */
 .ant-input-affix-wrapper {
   position: relative;
-  display: inline-block;
   width: 100%;
   min-width: 0;
   color: rgba(0, 0, 0, 0.85);
   background-image: none;
-  border: 1px solid #d9d9d9;
   border-radius: 2px;
   transition: all 0.3s;
-  display: inline-flex;
+  display: flex;
+  align-items: center;
+  box-shadow: @neu-shadow-inset;
   &::before {
     width: 0;
     visibility: hidden;
     content: "\a0";
   }
+  input {
+    box-shadow: unset;
+    background: transparent;
+    &.ant-input {
+      padding: 0 10px 0 10px;
+    }
+  }
+  .ant-input-prefix {
+    width: 85px;
+    .ant-select-selection-search-input {
+      width: 85px;
+    }
+    .ant-select-single .ant-select-selector {
+      .ant-select-selection-item,
+      .ant-select-selection-placeholder {
+        padding: 0;
+        line-height: 30px;
+        transition: all 0.3s;
+      }
+    }
+  }
+  .ant-select-selection-search {
+    display: unset;
+  }
+  .ant-select-dropdown-hidden {
+    display: none;
+  }
+  .ant-select-single .ant-select-selector {
+    display: flex;
+    align-items: center;
+    max-height: 15px;
+    min-width: 30px;
+    .ant-select-selection-item:after,
+    .ant-select-selection-placeholder:after,
+    &:after {
+      display: inline-block;
+      width: 0;
+      visibility: hidden;
+      content: "\a0";
+    }
+  }
+  .ant-select-selection-item {
+    flex: 1 1;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    position: absolute;
+  }
+  .ant-select-show-search.ant-select:not(.ant-select-customize-input)
+    .ant-select-selector {
+    cursor: text;
+  }
+  .ant-select {
+    min-width: 95px;
+    margin: 0;
+    border-radius: 0;
+    box-shadow: none;
+    padding: 0 5px;
+    cursor: text;
+  }
+}
+.rc-virtual-list-holder-inner {
+  background: @grey;
 }
 .ant-select-dropdown .rc-virtual-list {
   z-index: 1001;
-}
-.ant-select-selection-search {
-  display: unset;
-}
-.ant-select-dropdown-hidden {
-  display: none;
-}
-.ant-select-single .ant-select-selector .ant-select-selection-item:after,
-.ant-select-single .ant-select-selector .ant-select-selection-placeholder:after,
-.ant-select-single .ant-select-selector:after {
-  display: inline-block;
-  width: 0;
-  visibility: hidden;
-  content: "\a0";
-}
-.ant-select-selection-item {
-  flex: 1 1;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
-.ant-select-single .ant-select-selector .ant-select-selection-item,
-.ant-select-single .ant-select-selector .ant-select-selection-placeholder {
-  padding: 0;
-  line-height: 30px;
-  transition: all 0.3s;
-}
-.ant-select-show-search.ant-select:not(.ant-select-customize-input)
-  .ant-select-selector {
-  cursor: text;
-}
-.ant-select {
-  margin: 0;
-  border-radius: 0;
-  box-shadow: none;
-  padding: 0;
-  cursor: text;
 }
 
 /* Proposal card component */
