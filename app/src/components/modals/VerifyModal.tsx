@@ -15,6 +15,7 @@ enum Steps {
   AccessGranted1 = 4,
   AccessGranted2 = 5,
   UnknownError = 6,
+  PhoneInvalid = 7
 }
 
 export const VerifyModal = ({
@@ -64,6 +65,12 @@ export const VerifyModal = ({
     }
   }, [authAccount, authAccountLoading, current, setWelcoming, welcomeConfirmed, setAuthorizationConfirmed])
 
+  useEffect(() => {
+    if (!connected) {
+      setCurrent(Steps.Welcome)
+    }
+  }, [connected])
+
   const handleInputPhoneNumber = (e: CountryPhoneInputValue) => {
     setPhoneNumber(e);
   };
@@ -97,24 +104,28 @@ export const VerifyModal = ({
           // Successfully sent SMS verification code
           setVerificationId(res.data.id)
           setCurrent(Steps.EnterSMSCode);
-        } else if (res.status === 400) {
-          // Payload validation failed or provided phone number was not a valid mobile number.
-          setCurrent(Steps.EnterSMSCode);
-        } else if (res.status === 403) {
-          // The provided mobile number originates from a geo-banned region.
-          console.log("Phone number geo-banned")
-          setCurrent(Steps.AccessDenied);
-        } else if (res.status === 500) {
-          // Unknown or MessageBird API error.
-          setCurrent(Steps.UnknownError);
         } else {
+          console.log("error", res)
           setCurrent(Steps.UnknownError);
         }
       })
       .catch(err => {
         console.error(JSON.stringify(err), err?.response?.body, err?.response?.data)
+        console.error("response status", err.response.status)
         setPhoneVerifyLoading(false)
-        setCurrent(Steps.UnknownError)
+        if (err.response.status === 400) {
+          // Payload validation failed or provided phone number was not a valid mobile number.
+          setCurrent(Steps.PhoneInvalid);
+        } else if (err.response.status === 403) {
+          // The provided mobile number originates from a geo-banned region.
+          console.log("Phone number geo-banned")
+          setCurrent(Steps.AccessDenied);
+        } else if (err.response.status === 500) {
+          // Unknown or MessageBird API error.
+          setCurrent(Steps.UnknownError);
+        } else {
+          setCurrent(Steps.UnknownError)
+        }
       });
   };
 
@@ -325,6 +336,18 @@ export const VerifyModal = ({
     content:
       <p>
         We have encountered an unknown error, please try again.
+      </p>,
+    closable: true,
+  }
+  steps[Steps.PhoneInvalid] = {
+    title: "Phone number invalid",
+    okText: "Okay",
+    okButtonProps: undefined,
+    onOk: () => setCurrent(Steps.ConfirmLocation),
+    onCancel: () => setCurrent(Steps.ConfirmLocation),
+    content:
+      <p>
+        Please enter a valid phone number.
       </p>,
     closable: true,
   }
