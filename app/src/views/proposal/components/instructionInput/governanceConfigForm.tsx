@@ -28,7 +28,7 @@ export const GovernanceConfigForm = ({
 }) => {
   const idlAddress = useAnchorIdlAddress(governance.info.governedAccount);
   const { programId } = useRpcContext();
-  const realm = useRealm();
+  const realm = useRealm(governance?.info.realm);
 
   const onCreate = async (values: GovernanceConfigValues) => {
     const config = getGovernanceConfig(values);

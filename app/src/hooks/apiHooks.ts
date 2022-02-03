@@ -50,9 +50,9 @@ export function useGovernance() {
   )?.tryUnwrap();
 }
 
-export function useGovernancesByRealm() {
+export function useGovernancesByRealm(realm: PublicKey | undefined) {
   return useGovernanceAccountsByFilter<Governance>(Governance, [
-    pubkeyFilter(1, JET_REALM),
+    pubkeyFilter(1, realm),
   ]);
 }
 
@@ -99,6 +99,8 @@ export function useWalletTokenOwnerRecord(
       if (!realm || !wallet?.publicKey || !governingTokenMint) {
         return;
       }
+
+      console.log("realmWallet", realm.toString())
 
       return await getTokenOwnerRecordAddress(
         programId,

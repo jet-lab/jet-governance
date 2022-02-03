@@ -29,8 +29,8 @@ export const RealmView = () => {
   let realmKey = useKeyParam();
   const { programIdBase58 } = useRpcContext();
 
-  const realm = useRealm();
-  const governances = useGovernancesByRealm();
+  const realm = useRealm(realmKey);
+  const governances = useGovernancesByRealm(realm?.pubkey);
 
   const communityTokenOwnerRecord = useWalletTokenOwnerRecord(
     realm?.pubkey,

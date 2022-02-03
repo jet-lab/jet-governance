@@ -11,10 +11,12 @@ import { InfoCircleFilled, PlusOutlined } from "@ant-design/icons";
 import { useAirdrop } from "../contexts/airdrop";
 import { useRpcContext } from "../hooks/useRpcContext";
 import { jetFaucet } from "../actions/jetFaucet";
-import { JET_REALM } from "../utils";
+import { JET_REALM, JET_TOKEN_MINT } from "../utils";
 import { ReactFitty } from "react-fitty";
 import { FooterLinks } from "../components/FooterLinks";
 import { bnToNumber } from "@jet-lab/jet-engine";
+import { fromLamports } from "../utils";
+import { useMint } from "../contexts";
 
 export const HomeView = () => {
   const [stakeModalVisible, setStakeModalVisible] = useState(false);
@@ -58,6 +60,8 @@ export const HomeView = () => {
   const totalStake = 1500000
   const userDailyReward = totalDailyReward * (stakedJet ?? 0) / totalStake
 
+  const mint = useMint(JET_TOKEN_MINT)
+
   const handleStake = () => {
     if(!jetMint || !inputAmount || !jetAccount) {
       return;
@@ -68,7 +72,7 @@ export const HomeView = () => {
     setInputAmount(stakable);
     setStakeModalVisible(true)
   }
-
+  
   const handleUnstake = () => {
     if(!jetMint || !inputAmount ||!tokenOwnerRecord) {
       return;
@@ -165,7 +169,7 @@ export const HomeView = () => {
             {connected && (
               <div className="flex justify-between cluster">
                   <span>Wallet Balance</span>
-                  <span>{new Intl.NumberFormat().format(jetAccount ? bnToNumber(jetAccount.info.amount) : 0)}</span>
+                  <span>{new Intl.NumberFormat().format(jetAccount ? fromLamports(jetAccount.info.amount, mint) : 0)}</span>
                 </div>
             )}
             <div className="flex justify-between cluster">

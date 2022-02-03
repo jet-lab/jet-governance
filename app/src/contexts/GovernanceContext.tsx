@@ -204,7 +204,7 @@ export function useRealms() {
   return Object.values(ctx.realms);
 }
 
-export function useRealm() {
+export function useRealm(realm: PublicKey | undefined) {
   const ctx = useGovernanceContext();
-  return JET_REALM && ctx.realms[JET_REALM.toBase58()];
+  return realm && ctx.realms[realm.toBase58()];
 }
