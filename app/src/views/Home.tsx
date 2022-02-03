@@ -203,7 +203,7 @@ export const HomeView = () => {
               maxInput={unlockedVotes ? unlockedVotes : undefined}
               disabled={!connected}
               onChange={(value: number) => setInputAmount(value)}
-              submit={() => null}
+              submit={() => handleStake()}
             />
             <Button
               onClick={() => handleStake()}

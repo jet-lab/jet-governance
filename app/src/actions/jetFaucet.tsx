@@ -29,7 +29,7 @@ export const jetFaucet = async (
     JET_TOKEN_MINT
   );
   notify({
-    message: "Devnet JET airdrop received.",
+    message: "Devnet JET airdrop received. Please refresh your page to update your wallet balance.",
     type: 'success',
     description: (
       <>

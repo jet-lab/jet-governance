@@ -5,6 +5,7 @@ import { bnToIntLossy } from '../tools/units';
 import { Vote, VoteKind } from './instructions';
 import { PROGRAM_VERSION_V1, PROGRAM_VERSION_V2 } from './registry/api';
 import { VoteType as DisplayVoteType } from "../hooks/proposalHooks"
+import { bnToNumber } from '@jet-lab/jet-engine';
 
 /// Seed  prefix for Governance Program PDAs
 export const GOVERNANCE_PROGRAM_SEED = 'governance';
@@ -695,19 +696,19 @@ export class Proposal {
     switch (this.state) {
       case ProposalState.Succeeded:
       case ProposalState.Defeated:
-        return this.votingCompletedAt ? this.votingCompletedAt.toNumber() : 0;
+        return this.votingCompletedAt ? bnToNumber(this.votingCompletedAt) : 0;
       case ProposalState.Completed:
       case ProposalState.Cancelled:
-        return this.closedAt ? this.closedAt.toNumber() : 0;
+        return this.closedAt ? bnToNumber(this.closedAt) : 0;
       case ProposalState.Executing:
       case ProposalState.ExecutingWithErrors:
-        return this.executingAt ? this.executingAt.toNumber() : 0;
+        return this.executingAt ? bnToNumber(this.executingAt) : 0;
       case ProposalState.Draft:
-        return this.draftAt.toNumber();
+        return bnToNumber(this.draftAt);
       case ProposalState.SigningOff:
-        return this.signingOffAt ? this.signingOffAt.toNumber() : 0;
+        return this.signingOffAt ? bnToNumber(this.signingOffAt) : 0;
       case ProposalState.Voting:
-        return this.votingAt ? this.votingAt.toNumber() : 0;
+        return this.votingAt ? bnToNumber(this.votingAt) : 0;
     }
   }
 

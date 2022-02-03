@@ -100,7 +100,10 @@ export const StakeModal = (props: {
     okText: "I understand.",
     onOk: () => onClose(),
     onCancel: () => onClose(),
-    children: `Staking tokens yields X% APR.`,
+    children:
+      <p>
+        We have encountered an unknown error.
+      </p>,
     closable: true,
   }
 
