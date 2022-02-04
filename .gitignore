@@ -17,3 +17,6 @@ yarn-error.log
 
 # Used by Jetbrains IDEs
 .idea
+
+# Used by rewards-cli
+/tools/cli/*.json

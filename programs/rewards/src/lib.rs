@@ -2,10 +2,10 @@ use anchor_lang::prelude::*;
 
 declare_id!("JET777rQuPU8BatFbhp6irc1NAbozxTheBqNo25eLQP");
 
-mod instructions;
-mod state;
+pub mod instructions;
+pub mod state;
 
-use instructions::*;
+pub use instructions::*;
 
 #[program]
 pub mod jet_rewards {

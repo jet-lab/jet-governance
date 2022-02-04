@@ -177,3 +177,15 @@ bitflags::bitflags! {
     pub struct AirdropFlags: u64 {
     }
 }
+
+impl std::fmt::Debug for Airdrop {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        f.debug_struct("Airdrop")
+            .field("address", &self.address)
+            .field("reward_vault", &self.reward_vault)
+            .field("authority", &self.authority)
+            .field("stake_pool", &self.stake_pool)
+            .field("short_desc", &self.short_desc)
+            .finish()
+    }
+}

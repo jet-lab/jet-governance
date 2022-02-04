@@ -4,11 +4,11 @@ use crate::state::*;
 
 #[derive(AnchorSerialize, AnchorDeserialize)]
 pub struct AirdropAddRecipientsParams {
-    start_index: u64,
-    recipients: Vec<AirdropRecipientParam>,
+    pub start_index: u64,
+    pub recipients: Vec<AirdropRecipientParam>,
 }
 
-#[derive(AnchorSerialize, AnchorDeserialize)]
+#[derive(Clone, Copy, AnchorSerialize, AnchorDeserialize)]
 pub struct AirdropRecipientParam {
     /// The amount to receive
     pub amount: u64,

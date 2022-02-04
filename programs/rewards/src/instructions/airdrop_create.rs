@@ -5,7 +5,7 @@ use anchor_spl::token::{Token, TokenAccount};
 
 use crate::state::*;
 
-#[derive(AnchorDeserialize, AnchorSerialize)]
+#[derive(Debug, AnchorDeserialize, AnchorSerialize)]
 pub struct AirdropCreateParams {
     /// The expiration time for the airdrop
     pub expire_at: i64,
