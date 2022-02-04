@@ -52,7 +52,7 @@ pub fn unbond_stake_handler(
     let clock = Clock::get()?;
 
     let vault_amount = token::accessor::amount(&ctx.accounts.stake_pool_vault)?;
-    let full_amount = stake_pool.convert_amount(vault_amount, amount);
+    let full_amount = stake_pool.convert_amount(vault_amount, amount)?;
 
     stake_pool.unbond(&full_amount);
     stake_account.unbond(&full_amount)?;

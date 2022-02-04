@@ -47,7 +47,7 @@ pub fn add_stake_handler(ctx: Context<AddStake>, amount: Amount) -> ProgramResul
     let stake_account = &mut ctx.accounts.stake_account;
 
     let vault_amount = token::accessor::amount(&ctx.accounts.stake_pool_vault)?;
-    let full_amount = stake_pool.convert_amount(vault_amount, amount);
+    let full_amount = stake_pool.convert_amount(vault_amount, amount)?;
 
     stake_pool.deposit(&full_amount);
     stake_account.deposit(&full_amount);

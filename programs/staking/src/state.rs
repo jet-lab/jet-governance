@@ -59,16 +59,25 @@ impl StakePool {
         self.deposit(amount);
     }
 
-    pub fn convert_amount(&self, vault_amount: u64, amount: Amount) -> FullAmount {
+    pub fn convert_amount(
+        &self,
+        vault_amount: u64,
+        amount: Amount,
+    ) -> Result<FullAmount, ErrorCode> {
+        if amount.value == 0 {
+            msg!("the amount cannot be zero");
+            return Err(ErrorCode::InvalidAmount);
+        }
+
         let tokens = std::cmp::max(vault_amount, 1);
         let shares = std::cmp::max(self.shares_bonded, 1);
 
         let full_amount = FullAmount { shares, tokens };
 
-        match amount.kind {
+        Ok(match amount.kind {
             AmountKind::Tokens => full_amount.with_tokens(amount.value),
             AmountKind::Shares => full_amount.with_shares(amount.value),
-        }
+        })
     }
 }
 

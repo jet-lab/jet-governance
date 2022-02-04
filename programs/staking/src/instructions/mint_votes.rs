@@ -50,7 +50,7 @@ pub fn mint_votes_handler(ctx: Context<MintVotes>, amount: Amount) -> ProgramRes
     let stake_account = &mut ctx.accounts.stake_account;
 
     let vault_amount = token::accessor::amount(&ctx.accounts.stake_pool_vault)?;
-    let full_amount = stake_pool.convert_amount(vault_amount, amount);
+    let full_amount = stake_pool.convert_amount(vault_amount, amount)?;
 
     stake_account.mint_votes(&full_amount)?;
 

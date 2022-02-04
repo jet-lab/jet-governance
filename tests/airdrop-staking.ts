@@ -6,7 +6,11 @@ import {
   SystemProgram,
   SYSVAR_RENT_PUBKEY,
 } from "@solana/web3.js";
-import { Token, TOKEN_PROGRAM_ID, u64 } from "@solana/spl-token";
+import {
+  Token,
+  TOKEN_PROGRAM_ID,
+  u64,
+} from "@solana/spl-token";
 import { JetRewards } from "../target/types/jet_rewards";
 import { JetStaking } from "../target/types/jet_staking";
 import { JetAuth } from "../target/types/jet_auth";
@@ -221,7 +225,7 @@ describe("airdrop-staking", () => {
 
     await testToken.mintTo(
       airdropVault,
-      wallet.payer,
+      wallet.publicKey,
       [],
       new u64(5_000_000_000)
     );
@@ -472,6 +476,34 @@ describe("airdrop-staking", () => {
     });
   });
 
+  it("mint zero votes", async () => {
+    try {
+      const voteAta = await voteToken.getOrCreateAssociatedAccountInfo(
+        wallet.publicKey
+      );
+
+      await StakingProgram.rpc.mintVotes(
+        { kind: { tokens: {} }, value: new u64(0) },
+        {
+          accounts: {
+            owner: staker.publicKey,
+            stakePool: stakeAcc.stakePool,
+            stakePoolVault: stakeAcc.stakePoolVault,
+            stakeVoteMint: stakeAcc.stakeVoteMint,
+            stakeAccount: stakerAccount,
+            voterTokenAccount: voteAta.address,
+            tokenProgram: TOKEN_PROGRAM_ID,
+          },
+          signers: [staker],
+        }
+      );
+
+      assert.ok(false);
+    } catch (e) {
+      assert.equal(e.code, 6005);
+    }
+  });
+
   it("mint max votes", async () => {
     const voteAta = await voteToken.getOrCreateAssociatedAccountInfo(
       wallet.publicKey
@@ -697,6 +729,9 @@ describe("airdrop-staking", () => {
       )
     );
 
-    assert.equal(0, (await testToken.getAccountInfo(airdropVault)).amount.toNumber());
+    assert.equal(
+      0,
+      (await testToken.getAccountInfo(airdropVault)).amount.toNumber()
+    );
   });
 });

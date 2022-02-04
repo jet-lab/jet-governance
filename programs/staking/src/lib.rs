@@ -128,5 +128,6 @@ mod error {
         CollateralLocked,
         NotYetUnbonded,
         StakeRemaining,
+        InvalidAmount,
     }
 }
