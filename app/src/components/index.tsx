@@ -6,5 +6,4 @@ export { NumericInput } from './oyster/Input/numeric';
 export { ActionConfirmation } from './modals/ActionConfirmation/index';
 export { TokenIcon } from './oyster/TokenIcon';
 export { TokenDisplay } from './oyster/TokenDisplay';
-export { ConnectButton } from "./ConnectButton";
 export { Settings } from "./Settings";

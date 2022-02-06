@@ -10,7 +10,7 @@ import { shortenAddress } from "../utils";
 export function Nav() {
   const { pathname } = useLocation();
   const { connected, disconnect, publicKey } = useWallet();
-  const { setConnecting } = useConnectWallet();
+  const { setConnecting, resetAuth } = useConnectWallet();
   const [drawerOpened, setDrawerOpened] = useState(false);
   const { unclaimedAirdrops } = useAirdrop(); 
 
@@ -21,6 +21,11 @@ export function Nav() {
     {title: `Claims`, class:'shimmer', badge: unclaimedAirdrops(), route: '/claims'},
     {title: 'Flight Logs', route: '/flight-logs'}
   ];
+
+  const disconnectAndResetAuth = () => {
+    disconnect();
+    resetAuth();
+  }
 
   return (
     <div className="navbar-container flex-centered column">
@@ -55,7 +60,7 @@ export function Nav() {
           <Button className="secondary-btn flex-centered"
             type="ghost"
             title={connected ? "disconnect" : "connect"}
-            onClick={() => connected ? disconnect() : setConnecting(true)}>
+            onClick={() => connected ? disconnectAndResetAuth() : setConnecting(true)}>
             {connected 
               ? `${shortenAddress(publicKey ? publicKey.toString() : '')} CONNECTED` 
                 : "CONNECT WALLET"}

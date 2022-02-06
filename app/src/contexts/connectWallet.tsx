@@ -13,13 +13,15 @@ interface ConnectWallet {
   welcoming: boolean,
   setWelcoming: (welcoming: boolean) => void
   setAuthorizationConfirmed: (authorizationConfirmed: boolean) => void
+  resetAuth: () => void;
 };
 const ConnectWalletContext = createContext<ConnectWallet>({
   connecting: false,
   setConnecting: () => { },
   welcoming: false,
   setWelcoming: () => { },
-  setAuthorizationConfirmed: () => { }
+  setAuthorizationConfirmed: () => { },
+  resetAuth: () => { },
 });
 
 export const ConnectWalletProvider = (props: { children: any }) => {
@@ -33,6 +35,11 @@ export const ConnectWalletProvider = (props: { children: any }) => {
   const provider = useProvider(connection, wallet);
   const authProgram = Auth.useAuthProgram(provider)
   const { authAccount, loading: authAccountLoading } = Auth.useAuthAccount(authProgram, wallet.publicKey)
+
+  const resetAuth = () => {
+    setWelcoming(false);
+    setAuthorizationConfirmed(false);
+  }
 
   const connect = (connecting: boolean) => {
     if (connecting) {
@@ -61,7 +68,7 @@ export const ConnectWalletProvider = (props: { children: any }) => {
   }
 
   return (
-    <ConnectWalletContext.Provider value={{ connecting, setConnecting: connect, welcoming, setWelcoming, setAuthorizationConfirmed }}>
+    <ConnectWalletContext.Provider value={{ connecting, setConnecting: connect, welcoming, setWelcoming, setAuthorizationConfirmed, resetAuth }}>
       <VerifyModal
         visible={welcoming || (connected && !authorizationConfirmed)}
         authAccount={authAccount}

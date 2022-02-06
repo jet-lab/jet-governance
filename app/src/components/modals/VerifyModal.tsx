@@ -31,7 +31,7 @@ export const VerifyModal = ({
 }) => {
   const [current, setCurrent] = useState<Steps>(Steps.Welcome);
   const { connected, disconnect } = useWallet();
-  const { setConnecting, setWelcoming, setAuthorizationConfirmed } = useConnectWallet();
+  const { setConnecting, setWelcoming, setAuthorizationConfirmed, resetAuth } = useConnectWallet();
   const [phoneNumber, setPhoneNumber] = useState<CountryPhoneInputValue>({ short: 'US' });
   // The ID of the SMS verification session with MessageBird.
   const [verificationId, setVerificationId] = useState<string>()
@@ -173,8 +173,7 @@ export const VerifyModal = ({
     // Disconnect user and close all modals.
     disconnect();
     setConnecting(false);
-    setAuthorizationConfirmed(true)
-    setWelcomeConfirmed(false);
+    resetAuth()
     setCurrent(Steps.Welcome)
   };
 
