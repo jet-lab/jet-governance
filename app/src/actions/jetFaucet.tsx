@@ -3,10 +3,14 @@ import { JET_FAUCET_DEVNET, JET_TOKEN_MINT } from "../utils/ids";
 import { TokenFaucet } from "@jet-lab/jet-engine";
 import { Provider } from "@project-serum/anchor";
 import { ExplorerLink } from "../components";
+import { PublicKey } from "@solana/web3.js";
 
 
 export const jetFaucet = async (
-  provider: Provider
+  provider: Provider,
+  faucet: PublicKey,
+  mint: PublicKey,
+  tokenDesc: string,
 ) => {
   if (!provider.wallet.publicKey) {
     notify({
@@ -18,18 +22,18 @@ export const jetFaucet = async (
     return;
   }
   notify({
-    message: `Requesting Devnet JET airdrop...`,
+    message: `Requesting ${tokenDesc} airdrop...`,
     description: 'Please wait...',
     type: 'warn',
   });
   let txid = await TokenFaucet.airdropToken(
     provider,
-    JET_FAUCET_DEVNET,
+    faucet,
     provider.wallet.publicKey,
-    JET_TOKEN_MINT
+    mint
   );
   notify({
-    message: "Devnet JET airdrop received. Please refresh your page to update your wallet balance.",
+    message: `${tokenDesc} airdrop received. Please refresh your page to update your wallet balance.`,
     type: 'success',
     description: (
       <>

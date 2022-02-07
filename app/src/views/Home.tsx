@@ -11,12 +11,12 @@ import { InfoCircleFilled, PlusOutlined } from "@ant-design/icons";
 import { useAirdrop } from "../contexts/airdrop";
 import { useRpcContext } from "../hooks/useRpcContext";
 import { jetFaucet } from "../actions/jetFaucet";
-import { JET_REALM, JET_TOKEN_MINT } from "../utils";
+import { COUNCIL_FAUCET_DEVNET, COUNCIL_TOKEN_MINT, JET_FAUCET_DEVNET, JET_REALM, JET_TOKEN_MINT } from "../utils";
 import { ReactFitty } from "react-fitty";
 import { FooterLinks } from "../components/FooterLinks";
 import { bnToNumber } from "@jet-lab/jet-engine";
 import { fromLamports } from "../utils";
-import { useMint } from "../contexts";
+import { useConnectionConfig, useMint } from "../contexts";
 
 export const HomeView = () => {
   const [stakeModalVisible, setStakeModalVisible] = useState(false);
@@ -27,7 +27,7 @@ export const HomeView = () => {
   const rpcContext = useRpcContext();
   const connected = rpcContext.wallet.connected;
   const { darkTheme, toggleDarkTheme } = useDarkTheme();
-
+  const { env } = useConnectionConfig()
   /* eslint-disable @typescript-eslint/no-unused-vars */
   const {
     proposalFilter,
@@ -63,7 +63,7 @@ export const HomeView = () => {
   const mint = useMint(JET_TOKEN_MINT)
 
   const handleStake = () => {
-    if(!jetMint || !inputAmount || !jetAccount) {
+    if (!jetMint || !inputAmount || !jetAccount) {
       return;
     }
     const balance = bnToNumber(jetAccount.info.amount) / 10 ** jetMint.decimals
@@ -72,23 +72,31 @@ export const HomeView = () => {
     setInputAmount(stakable);
     setStakeModalVisible(true)
   }
-  
+
   const handleUnstake = () => {
-    if(!jetMint || !inputAmount ||!tokenOwnerRecord) {
+    if (!jetMint || !inputAmount || !tokenOwnerRecord) {
       return;
     }
     const balance = bnToNumber(tokenOwnerRecord.info.governingTokenDepositAmount) / 10 ** jetMint.decimals
     const stakable = Math.min(inputAmount, balance)
-    
+
     setInputAmount(stakable);
     setUnstakeModalVisible(true)
   }
 
   // Devnet only: airdrop JET tokens
-  const getAirdrop = async () => {
+  const getJetAirdrop = async () => {
     try {
       if (stakeProgram) {
-        await jetFaucet(stakeProgram?.provider);
+        await jetFaucet(stakeProgram?.provider, JET_FAUCET_DEVNET, JET_TOKEN_MINT, "Devnet JET");
+      }
+    } catch { }
+  };
+  // Devnet only: airdrop Council tokens
+  const getCouncilAirdrop = async () => {
+    try {
+      if (stakeProgram) {
+        await jetFaucet(stakeProgram?.provider, COUNCIL_FAUCET_DEVNET, COUNCIL_TOKEN_MINT, "Devnet Council token");
       }
     } catch { }
   };
@@ -150,27 +158,27 @@ export const HomeView = () => {
                   <InfoCircleFilled />
                 </Tooltip>
               </span>
-              <span>{connected ? <PlusOutlined style={{marginRight: 0}} onClick={showMoreApr} /> : `${((365 * userDailyReward) / totalStake).toFixed(0)}%`}</span>
+              <span>{connected ? <PlusOutlined style={{ marginRight: 0 }} onClick={showMoreApr} /> : `${((365 * userDailyReward) / totalStake).toFixed(0)}%`}</span>
             </div>
             <div className={connected ? "hidden" : undefined} id="show-more-apr">
               <div className="flex justify-between cluster">
-              <span>Est. Daily Reward</span>
-              <span>{userDailyReward}</span>
-            </div>
-            <div className="flex justify-between cluster">
-              <span>Est. Monthly Reward</span>
-              <span>{userDailyReward * 30}</span>
-            </div>
+                <span>Est. Daily Reward</span>
+                <span>{userDailyReward}</span>
+              </div>
+              <div className="flex justify-between cluster">
+                <span>Est. Monthly Reward</span>
+                <span>{userDailyReward * 30}</span>
+              </div>
             </div>
           </div>
-          
+
           <Divider />
           <div className="flex column">
             {connected && (
               <div className="flex justify-between cluster">
-                  <span>Wallet Balance</span>
-                  <span>{new Intl.NumberFormat().format(jetAccount ? fromLamports(jetAccount.info.amount, mint) : 0)}</span>
-                </div>
+                <span>Wallet Balance</span>
+                <span>{new Intl.NumberFormat().format(jetAccount ? fromLamports(jetAccount.info.amount, mint) : 0)}</span>
+              </div>
             )}
             <div className="flex justify-between cluster">
               <span>Staked JET</span>
@@ -241,12 +249,24 @@ export const HomeView = () => {
 
         <div>
           <Switch
-          onChange={() => toggleDarkTheme()}
-          checked={darkTheme}
-          checkedChildren="dark"
-          unCheckedChildren="light"
+            onChange={() => toggleDarkTheme()}
+            checked={darkTheme}
+            checkedChildren="dark"
+            unCheckedChildren="light"
           />
-          <Button onClick={getAirdrop}>GET JET</Button>
+          <br/>
+          <Button
+            onClick={getJetAirdrop}
+            style={{ display: env === "mainnet-beta" ? "none" : "" }}
+          >
+            GET JET
+          </Button>
+          <Button
+            onClick={getCouncilAirdrop}
+            style={{ display: env === "mainnet-beta" ? "none" : "" }}
+          >
+            GET COUNCIL TOKEN
+          </Button>
         </div>
 
         <FooterLinks />

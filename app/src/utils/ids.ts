@@ -10,6 +10,12 @@ export let JET_TOKEN_MINT = new PublicKey(
 export const JET_FAUCET_DEVNET = new PublicKey(
   "4RqY4p1xXMcMF1xrGYtJG8aaQDR7s8GHkjfSHFqcBmQV"
 );
+export const COUNCIL_TOKEN_MINT = new PublicKey(
+  "GBZ2J49hpCLM8HDFav7gQ2zJNC3LCV264y42WhoqdEYo"
+);
+export const COUNCIL_FAUCET_DEVNET = new PublicKey(
+  "3AJLr1kbsC8btrizbYTWPCvfTfCJpK7JYHHpmZdy7sgM"
+);
 export const OYSTER_GOV_PROGRAM_ID = new PublicKey(
   "GovER5Lthms3bLBqWub97yVrMmEogzX7xNjdXpPPCVZw"
 );
