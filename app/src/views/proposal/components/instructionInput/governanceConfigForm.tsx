@@ -1,7 +1,6 @@
 import { Form, FormInstance } from 'antd';
 import { Governance } from '../../../../models/accounts';
 import { TransactionInstruction } from '@solana/web3.js';
-import React from 'react';
 
 import { formDefaults } from '../../../../tools/forms';
 import { useAnchorIdlAddress } from '../../../../tools/anchor/anchorHooks';

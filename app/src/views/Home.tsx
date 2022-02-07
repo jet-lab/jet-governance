@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { useProposalContext } from "../contexts/proposal";
 import { ProposalCard } from "../components/ProposalCard";
-import { Button, Divider, notification, Tooltip, Switch } from "antd";
+import { Button, Divider, notification, Tooltip, Switch, Popover } from "antd";
 import { useDarkTheme } from "../contexts/darkTheme";
 import { Input } from "../components/Input";
 import { StakeModal } from "../components/modals/StakeModal";
@@ -17,6 +17,7 @@ import { FooterLinks } from "../components/FooterLinks";
 import { bnToNumber } from "@jet-lab/jet-engine";
 import { fromLamports } from "../utils";
 import { useConnectionConfig, useMint } from "../contexts";
+import { useWithdrawVotesAbility } from "../hooks/proposalHooks";
 
 export const HomeView = () => {
   const [stakeModalVisible, setStakeModalVisible] = useState(false);
@@ -54,6 +55,7 @@ export const HomeView = () => {
     tokenOwnerRecord,
     walletVoteRecords,
   } = useProposalContext();
+  const withdrawVotesAbility = useWithdrawVotesAbility(tokenOwnerRecord);
   /* eslint-enable @typescript-eslint/no-unused-vars */
 
   const totalDailyReward = 1000000
@@ -74,7 +76,8 @@ export const HomeView = () => {
   }
 
   const handleUnstake = () => {
-    if (!jetMint || !inputAmount || !tokenOwnerRecord) {
+
+    if (!jetMint || inputAmount === undefined || !tokenOwnerRecord) {
       return;
     }
     const balance = bnToNumber(tokenOwnerRecord.info.governingTokenDepositAmount) / 10 ** jetMint.decimals
@@ -226,12 +229,12 @@ export const HomeView = () => {
               realm={JET_REALM}
               amount={inputAmount ?? 0}
             />
-            <Button
-              onClick={() => handleUnstake()}
-              disabled={!connected}
-              className="full-width"
-            >
-              Unstake
+              <Button
+                onClick={() => handleUnstake()}
+                disabled={!connected || !withdrawVotesAbility}
+                className="full-width"
+              >
+                Unstake
             </Button>
             <UnstakeModal
               visible={unstakeModalVisible}
@@ -254,7 +257,7 @@ export const HomeView = () => {
             checkedChildren="dark"
             unCheckedChildren="light"
           />
-          <br/>
+          <br />
           <Button
             onClick={getJetAirdrop}
             style={{ display: env === "mainnet-beta" ? "none" : "" }}

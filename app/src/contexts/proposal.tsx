@@ -8,17 +8,15 @@ import { ParsedAccount } from ".";
 import { Governance, Proposal, TokenOwnerRecord, VoteRecord } from "../models/accounts";
 import { useAirdropsByWallet, useClaimsCount, useProposalFilters } from "../hooks/proposalHooks";
 import { useWallet } from "@solana/wallet-adapter-react";
-import { AssociatedToken, useProvider } from "@jet-lab/jet-engine/lib/common";
+import { AssociatedToken } from "@jet-lab/jet-engine/lib/common";
 import { useConnection } from "./connection";
+import { useRealmByPubkey, useProvider } from "../hooks/apiHooks";
 
 export type ProposalFilter = "active" | "inactive" | "passed" | "rejected" | "all";
 
 interface ProposalContextState {
   proposalFilter: ProposalFilter
   setProposalFilter: (showing: ProposalFilter) => void
-  
-  proposalsByGovernance: ParsedAccount<Proposal>[]
-  filteredProposalsByGovernance: ParsedAccount<Proposal>[]
 
   stakeProgram?: Program
   stakePool?: StakePool
@@ -38,6 +36,8 @@ interface ProposalContextState {
   governance?: ParsedAccount<Governance>,
   tokenOwnerRecord?: ParsedAccount<TokenOwnerRecord>
   walletVoteRecords: ParsedAccount<VoteRecord>[]
+  proposalsByGovernance: ParsedAccount<Proposal>[]
+  filteredProposalsByGovernance: ParsedAccount<Proposal>[]
 }
 
 const ProposalContext = React.createContext<ProposalContextState>({
@@ -68,12 +68,8 @@ export function ProposalProvider({ children = undefined as any }) {
   const connection = useConnection()
   const [proposalFilter, setProposalFilter] = useState<ProposalFilter>("active");
 
-  // ----- Proposals -----
-  const proposalsByGovernance = useProposalsByGovernance();
-  const filteredProposalsByGovernance = useProposalFilters(proposalsByGovernance);
-
   // ----- Staking -----
-  const provider = useProvider(connection, wallet)
+  const provider = useProvider(connection, wallet);
   const stakeProgram = StakeClient.use(provider);
   const stakePool = StakePool.use(stakeProgram);
   const stakeAccount = StakeAccount.use(stakeProgram, stakePool, walletAddress)
@@ -91,19 +87,19 @@ export function ProposalProvider({ children = undefined as any }) {
   const jetMint = AssociatedToken.useMint(connection, stakePool?.stakePool.tokenMint);
   const voteMint = AssociatedToken.useMint(connection, stakePool?.stakePool.stakeVoteMint);
 
-  // ----- Governance Records -----
-  const governance = useGovernance();
-  const tokenOwnerRecord = useWalletTokenOwnerRecord(JET_REALM, JET_GOVERNANCE)
+  // ----- Governance -----
+  const realm = useRealmByPubkey(JET_REALM)
+  const governance = useGovernance(JET_GOVERNANCE);
+  const tokenOwnerRecord = useWalletTokenOwnerRecord(JET_REALM, realm?.info.communityMint)
   const walletVoteRecords = useWalletVoteRecords();
+  const proposalsByGovernance = useProposalsByGovernance(JET_GOVERNANCE);
+  const filteredProposalsByGovernance = useProposalFilters(proposalsByGovernance);
 
   return (
     <ProposalContext.Provider
       value={{
         proposalFilter,
         setProposalFilter,
-
-        proposalsByGovernance,
-        filteredProposalsByGovernance,
 
         stakeProgram,
         stakePool,
@@ -123,6 +119,8 @@ export function ProposalProvider({ children = undefined as any }) {
         governance,
         tokenOwnerRecord,
         walletVoteRecords,
+        proposalsByGovernance,
+        filteredProposalsByGovernance,
       }}
     >
       {children}

@@ -14,7 +14,6 @@ import { EventEmitter } from 'eventemitter3';
 import { useLocation } from 'react-router-dom';
 import { getProgramVersion, PROGRAM_VERSION } from '../models/registry/api';
 import { ParsedAccount, useConnection, useConnectionConfig } from '.';
-import { JET_REALM } from '../utils';
 
 export interface GovernanceContextState {
   realms: Record<string, ParsedAccount<Realm>>;

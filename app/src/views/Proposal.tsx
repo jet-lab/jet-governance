@@ -8,7 +8,6 @@ import { useWallet } from "@solana/wallet-adapter-react";
 import { VoteModal } from "../components/modals/VoteModal";
 import {
   useProposal,
-  useProposalsByGovernance,
   useTokenOwnerRecords,
   useVoteRecordsByProposal,
   useWalletTokenOwnerRecord,
@@ -41,18 +40,24 @@ export const ProposalView = () => {
 
   const voteRecords = useVoteRecordsByProposal(proposal?.pubkey);
 
-  const tokenOwnerRecords = useTokenOwnerRecords();
-
-  const { allHasVoted } = useVoterDisplayData(voteRecords, tokenOwnerRecords);
-
   const {
     stakePool,
     stakeAccount,
     stakeBalance,
     governance,
+    proposalsByGovernance
   } = useProposalContext();
 
-  return proposal && governance && stakePool && stakeAccount ? (
+  const tokenOwnerRecords = useTokenOwnerRecords(
+    governance?.info.realm,
+    proposal?.info.isVoteFinalized() // TODO: for finalized votes show a single item for abstained votes
+      ? undefined
+      : proposal?.info.governingTokenMint
+  );
+
+  const { allHasVoted } = useVoterDisplayData(voteRecords, tokenOwnerRecords);
+
+  return proposal && governance && stakePool && stakeAccount && proposalsByGovernance ? (
     <InnerProposalView
       proposal={proposal}
       governance={governance}
@@ -60,6 +65,7 @@ export const ProposalView = () => {
       stakePool={stakePool}
       stakeAccount={stakeAccount}
       stakeBalance={stakeBalance}
+      proposalsByGovernance={proposalsByGovernance}
     />
   ) : (
     <Spin />
@@ -73,6 +79,7 @@ const InnerProposalView = ({
   stakePool,
   stakeAccount,
   stakeBalance,
+  proposalsByGovernance,
 }: {
   proposal: ParsedAccount<Proposal>;
   governance: ParsedAccount<Governance>;
@@ -80,6 +87,7 @@ const InnerProposalView = ({
   stakePool: StakePool;
   stakeAccount: StakeAccount;
   stakeBalance: StakeBalance;
+  proposalsByGovernance: ParsedAccount<Proposal>[];
 }) => {
   const [isVoteModalVisible, setIsVoteModalVisible] = useState(false);
   const [vote, setVote] = useState<YesNoVote | undefined>(undefined);
@@ -103,8 +111,7 @@ const InnerProposalView = ({
   const isStaked = true;
   // const isStaked = stakedJet !== undefined && stakedJet > 0;
 
-  const proposals = useProposalsByGovernance();
-  const activeProposals = proposals.filter((p) => p.info.isVoting());
+  const activeProposals = proposalsByGovernance.filter((p) => p.info.isVoting());
 
   const proposalAddress = useKeyParam();
   const { setConnecting } = useConnectWallet();

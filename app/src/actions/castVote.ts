@@ -7,6 +7,7 @@ import { RpcContext } from '../models/core/api';
 import { ParsedAccount } from '../contexts';
 import { withRelinquishVote } from '../models/withRelinquishVote';
 import { sendAllTransactionsWithNotifications } from '../tools/transactions';
+import { Provider } from '@project-serum/anchor';
 
 export const castVote = async (
   { connection, wallet, programId, programVersion, walletPubkey }: RpcContext,
@@ -68,11 +69,11 @@ export const castVote = async (
     signers: []
   })
 
+  const provider = new Provider(connection, wallet as any, Provider.defaultOptions())
   await sendAllTransactionsWithNotifications(
-    connection,
-    wallet,
+    provider,
     allTxs,
     'Voting on proposal',
-    'Proposal voted on',
+    'Vote cast',
   );
 };

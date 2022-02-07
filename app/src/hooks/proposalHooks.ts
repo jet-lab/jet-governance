@@ -202,3 +202,7 @@ export function useClaimsCount(airdrops: AirdropTarget[] | undefined) {
     return claims;
   },[airdrops])
 }
+
+export function useWithdrawVotesAbility(tokenOwnerRecord: ParsedAccount<TokenOwnerRecord> | undefined) {
+  return tokenOwnerRecord?.info.outstandingProposalCount === 0;
+}

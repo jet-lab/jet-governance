@@ -1,5 +1,8 @@
+import { Provider } from '@project-serum/anchor';
 import { useWallet } from '@solana/wallet-adapter-react';
-import { PublicKey } from '@solana/web3.js';
+import { Connection, PublicKey } from '@solana/web3.js';
+import BN from 'bn.js';
+import { useMemo } from 'react';
 import {
   getRealmConfigAddress,
   getSignatoryRecordAddress,
@@ -8,6 +11,7 @@ import {
   Governance,
   Proposal,
   ProposalInstruction,
+  Realm,
   RealmConfigAccount,
   SignatoryRecord,
   TokenOwnerRecord,
@@ -20,9 +24,16 @@ import {
   useGovernanceAccountsByFilter,
 } from './accountHooks';
 import { useRpcContext } from './useRpcContext';
-import { JET_GOVERNANCE, JET_REALM, JET_TOKEN_MINT } from '../utils';
-import { useMemo } from 'react';
-import BN from 'bn.js';
+
+// ----- Realm -----
+
+/** Loads the realm. This hook is different from useRealm because it loads from the rpc instead of internally using the governance context */
+export function useRealmByPubkey(realm: PublicKey | undefined) {
+  return useGovernanceAccountByPubkey<Realm>(
+    Realm,
+    realm,
+  )?.tryUnwrap();
+}
 
 // ----- Realm Config ---------
 
@@ -43,10 +54,10 @@ export function useRealmConfig(realm: PublicKey) {
 
 // ----- Governance -----
 
-export function useGovernance() {
+export function useGovernance(governance: PublicKey | undefined) {
   return useGovernanceAccountByPubkey<Governance>(
     Governance,
-    JET_GOVERNANCE,
+    governance,
   )?.tryUnwrap();
 }
 
@@ -65,9 +76,9 @@ export function useProposal(proposal: PublicKey | undefined) {
   )?.tryUnwrap();
 }
 
-export function useProposalsByGovernance() {
+export function useProposalsByGovernance(governance: PublicKey | undefined) {
   return useGovernanceAccountsByFilter<Proposal>(Proposal, [
-    pubkeyFilter(1, JET_GOVERNANCE),
+    pubkeyFilter(1, governance),
   ]);
 }
 
@@ -80,10 +91,13 @@ export function useTokenOwnerRecord(tokenOwnerRecord: PublicKey | undefined) {
   );
 }
 
-export function useTokenOwnerRecords() {
+export function useTokenOwnerRecords(
+  realm: PublicKey | undefined,
+  governingTokenMint: PublicKey | undefined,
+) {
   return useGovernanceAccountsByFilter<TokenOwnerRecord>(TokenOwnerRecord, [
-    pubkeyFilter(1, JET_REALM),
-    pubkeyFilter(1 + 32, JET_TOKEN_MINT),
+    pubkeyFilter(1, realm),
+    pubkeyFilter(1 + 32, governingTokenMint),
   ]);
 }
 
@@ -99,8 +113,6 @@ export function useWalletTokenOwnerRecord(
       if (!realm || !wallet?.publicKey || !governingTokenMint) {
         return;
       }
-
-      console.log("realmWallet", realm.toString())
 
       return await getTokenOwnerRecordAddress(
         programId,
@@ -206,6 +218,10 @@ export const useTokenOwnerVoteRecord = (
     [tokenOwnerRecord, proposal],
   );
 };
+
+export function useProvider(connection: Connection | undefined, wallet: any) {
+  return useMemo(() => connection && wallet && new Provider(connection, wallet, { skipPreflight: true}), [connection, wallet])
+}
 
 export function useBN(number: number | undefined, exponent: number | null | undefined = null) {
   return useMemo(() => {

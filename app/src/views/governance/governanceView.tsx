@@ -1,12 +1,11 @@
 import { Badge, Col, List, Row, Space, Typography } from 'antd';
-import React, { useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useRealm } from '../../contexts/GovernanceContext';
 
 import { useGovernance, useProposalsByGovernance } from '../../hooks/apiHooks';
 import { ProposalStateBadge } from '../proposal/components/header/proposalStateBadge';
 import { useHistory } from 'react-router-dom';
 import { NewProposalButton } from './buttons/newProposalButton';
-import { useKeyParam } from '../../hooks/useKeyParam';
 import { Proposal, ProposalState } from '../../models/accounts';
 import { ClockCircleOutlined } from '@ant-design/icons';
 import { getOysterProposalUrl } from '../../tools/routeTools';
@@ -18,6 +17,7 @@ import {
 } from '../../tools/units';
 import { TokenIcon, ExplorerLink } from '../../components';
 import { useConnectionConfig, useMint } from '../../contexts';
+import { useKeyParam } from '../../hooks/useKeyParam';
 
 const { Text } = Typography;
 
@@ -30,14 +30,11 @@ export const GovernanceView = () => {
   const [, setPage] = useState(0);
   const { tokenMap } = useConnectionConfig();
 
-  const governance = useGovernance();
+  const governanceKey = useKeyParam();
+  const governance = useGovernance(governanceKey);
   const realm = useRealm(governance?.info.realm);
-  const proposals = useProposalsByGovernance();
-  const communityMintInfo = useMint();
-
-  const token = tokenMap.get(
-    realm?.info.communityMint?.toBase58() || '',
-  ) as any;
+  const proposals = useProposalsByGovernance(governanceKey);
+  const communityMintInfo = useMint(realm?.info.communityMint);
 
   const communityMint = realm?.info.communityMint?.toBase58() || '';
 

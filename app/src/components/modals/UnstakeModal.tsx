@@ -3,6 +3,7 @@ import { Modal, ModalProps } from "antd";
 import { useProposalContext } from "../../contexts/proposal";
 import { rescindAndUnstake } from "../../actions/rescindAndUnstake";
 import { BN } from "@project-serum/anchor";
+import { useRpcContext } from "../../hooks/useRpcContext";
 
 enum Steps {
   Start = 0,
@@ -30,16 +31,14 @@ export const UnstakeModal = ({
     tokenOwnerRecord,
     walletVoteRecords,
   } = useProposalContext();
+  const rpcContext = useRpcContext();
 
   const [current, setCurrent] = useState(Steps.Start);
   const [loading, setLoading] = useState(false);
 
   const rescind = useMemo(() => {
-    if (!tokenOwnerRecord) {
-      return true;
-    }
-    return tokenOwnerRecord.info.unrelinquishedVotesCount > 0;
-  }, [tokenOwnerRecord])
+    return walletVoteRecords.find(voteRecord => !voteRecord.info.isRelinquished);
+  }, [walletVoteRecords])
 
 
   const handleSubmitUnstake = () => {
@@ -50,6 +49,7 @@ export const UnstakeModal = ({
     const unstakeAmount = new BN(amount * 10 ** voteMint.decimals);
     setLoading(true);
     rescindAndUnstake(
+      rpcContext,
       stakeProgram,
       stakePool,
       stakeAccount,
@@ -61,7 +61,8 @@ export const UnstakeModal = ({
         setLoading(false)
         setCurrent(Steps.Success);
       })
-      .catch(() => {
+      .catch(err => {
+        console.log(err)
         setLoading(false)
         setCurrent(Steps.Start);
         resetInput()

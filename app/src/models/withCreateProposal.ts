@@ -10,7 +10,6 @@ import { CreateProposalArgs } from './instructions';
 import { GOVERNANCE_PROGRAM_SEED, VoteType } from './accounts';
 import { PROGRAM_VERSION_V1 } from './registry/api';
 import { programIds } from '../utils';
-import { JET_TOKEN_MINT } from '../utils/ids';
 
 export const withCreateProposal = async (
   instructions: TransactionInstruction[],

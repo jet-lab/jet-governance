@@ -3,12 +3,17 @@ import { BN, Program } from "@project-serum/anchor";
 import { SendTxRequest } from "@project-serum/anchor/dist/cjs/provider";
 import { Transaction, TransactionInstruction } from "@solana/web3.js";
 import { ParsedAccount } from "../contexts";
+import { approve } from "../models";
 import { Governance, TokenOwnerRecord, VoteRecord } from "../models/accounts";
+import { RpcContext } from "../models/core/api";
+import { withDepositGoverningTokens } from "../models/withDepositGoverningTokens";
 import { withRelinquishVote } from "../models/withRelinquishVote";
 import { withWithdrawGoverningTokens } from "../models/withWithdrawGoverningTokens";
+import { sendAllTransactionsWithNotifications } from "../tools/transactions";
 import { GOVERNANCE_PROGRAM_ID } from "../utils";
 
 export const rescindAndUnstake = async (
+  { programVersion, walletPubkey }: RpcContext,
   stakeProgram: Program,
   stakePool: StakePool,
   stakeAccount: StakeAccount,
@@ -17,23 +22,19 @@ export const rescindAndUnstake = async (
   walletVoteRecords: ParsedAccount<VoteRecord>[],
   amount: BN,
 ) => {
-  // Create vote token account
-  // Rescind vote records
-  // Withdraw Votes
-  // Burn votes
-  // Unstake
-  // Close vote token account
 
-  const wallet = stakeProgram.provider.wallet.publicKey;
   const voteMint = stakePool.addresses.stakeVoteMint.address;
-
+  const unbondingSeed = UnbondingAccount.randomSeed();
   const unrelinquished = walletVoteRecords.filter(voteRecord => !voteRecord.info.isRelinquished)
-  const relinquishTxs: Transaction[] = [];
+  const transactions: Transaction[] = [];
+  const remainingStake = tokenOwnerRecord.info.governingTokenDepositAmount.sub(amount);
+
+  // Rescind vote records
   for (let i = 0; i < unrelinquished.length; i++) {
     const voteRecord = unrelinquished[i];
     const ix: TransactionInstruction[] = [];
-    const governanceAuthority = wallet;
-    const beneficiary = wallet;
+    const governanceAuthority = walletPubkey;
+    const beneficiary = walletPubkey;
 
     await withRelinquishVote(
       ix,
@@ -46,51 +47,33 @@ export const rescindAndUnstake = async (
       governanceAuthority,
       beneficiary,
     )
-    relinquishTxs.push(new Transaction().add(...ix))
+    transactions.push(new Transaction().add(...ix))
   }
 
   const instructions: TransactionInstruction[] = []
 
-  const voteTokens = await AssociatedToken.withCreate(
+  // Create vote token account
+  const voterTokenAccount = await AssociatedToken.withCreate(instructions, stakeProgram.provider, walletPubkey, voteMint)
+  // Unstake Votes
+  await withWithdrawGoverningTokens(instructions, GOVERNANCE_PROGRAM_ID, governance.info.realm, voterTokenAccount, voteMint, walletPubkey);
+  const transferAuthority = approve(
     instructions,
-    stakeProgram.provider,
-    wallet,
-    voteMint)
-
-  await withWithdrawGoverningTokens(
-    instructions,
-    GOVERNANCE_PROGRAM_ID,
-    governance.info.realm,
-    voteTokens,
-    voteMint,
-    wallet);
-
-  await StakeAccount.withBurnVotes(
-    instructions,
-    stakePool,
-    stakeAccount,
-    wallet,
-    voteTokens,
+    [],
+    voterTokenAccount,
+    walletPubkey,
     amount,
-  )
-
-  const unbondingSeed = UnbondingAccount.randomSeed()
-  UnbondingAccount.withUnbondStake(
-    instructions,
-    stakePool,
-    stakeAccount,
-    unbondingSeed,
-    amount
-  )
-
-  await AssociatedToken.withClose(
-    instructions,
-    wallet,
-    voteMint,
-    wallet)
+  );
+  // Restake Remaining Votes
+  await withDepositGoverningTokens(instructions, GOVERNANCE_PROGRAM_ID, programVersion, governance.info.realm, voterTokenAccount, voteMint, walletPubkey, transferAuthority.publicKey, walletPubkey, remainingStake)
+  // Burn votes
+  await StakeAccount.withBurnVotes(instructions, stakePool, stakeAccount, walletPubkey, voterTokenAccount, amount)
+  // Unstake Jet
+  await UnbondingAccount.withUnbondStake(instructions, stakePool, stakeAccount, unbondingSeed, amount)
+  // Close vote token account
+  await AssociatedToken.withClose(instructions, walletPubkey, voteMint, walletPubkey)
 
   const reqs: SendTxRequest[] = [
-    ...relinquishTxs.map(tx => {
+    ...transactions.map(tx => {
       return {
         tx,
         signers: []
@@ -98,10 +81,14 @@ export const rescindAndUnstake = async (
     }),
     {
       tx: new Transaction().add(...instructions),
-      signers: []
+      signers: [transferAuthority]
     }
   ]
 
   // FIXME! Send all with notifications
-  return await stakeProgram.provider.sendAll(reqs);
+  return await sendAllTransactionsWithNotifications(
+    stakeProgram.provider,
+    reqs,
+    "Unstaking tokens",
+    "Tokens have begun unbonding")
 }

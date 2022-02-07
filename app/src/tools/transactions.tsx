@@ -55,9 +55,8 @@ export async function sendTransactionWithNotifications(
     } catch (txError) {
       if (isTransactionTimeoutError(txError)) {
         notify({
-          message: `Transaction hasn't been confirmed within ${
-            DEFAULT_TX_TIMEOUT / 1000
-          }s. Please check on Solana Explorer`,
+          message: `Transaction hasn't been confirmed within ${DEFAULT_TX_TIMEOUT / 1000
+            }s. Please check on Solana Explorer`,
           description: (
             <>
               <ExplorerLink
@@ -96,8 +95,7 @@ export async function sendTransactionWithNotifications(
 
 // For sending multiple transactions
 export async function sendAllTransactionsWithNotifications(
-  connection: Connection,
-  wallet: WalletContextState,
+  provider: Provider,
   transactions: SendTxRequest[],
   pendingMessage: string,
   successMessage: string,
@@ -109,68 +107,58 @@ export async function sendAllTransactionsWithNotifications(
   });
 
   try {
+    let txid = await provider.sendAll(transactions);
 
-  // FIXME: make oyster and anchor wallet types compatible with an adapter pattern
-  // instead of using as any
-    const provider = new Provider(connection, wallet as any, Provider.defaultOptions())
-
-    try {      
-      let txid = await provider.sendAll(transactions);
-
-      txid.map(tx => notify({
-        message: successMessage,
-        type: 'success',
+    const last = txid[txid.length - 1]
+    notify({
+      message: successMessage,
+      type: 'success',
+      description: (
+        <>
+          {'Transaction: '}
+          <ExplorerLink
+            address={last}
+            type="transaction"
+            short
+            connection={provider.connection}
+          />
+        </>
+      ),
+    })
+  } catch (txError) {
+    console.error(txError);
+    if (isTransactionTimeoutError(txError)) {
+      notify({
+        message: `Transaction hasn't been confirmed within ${DEFAULT_TX_TIMEOUT / 1000
+          }s. Please check on Solana Explorer`,
         description: (
           <>
-            {'Transaction: '}
             <ExplorerLink
-              address={tx}
+              address={txError.txId}
               type="transaction"
               short
-              connection={connection}
+              connection={provider.connection}
             />
           </>
         ),
-      }))
-      ;
-    } catch (txError) {
-      if (isTransactionTimeoutError(txError)) {
-        notify({
-          message: `Transaction hasn't been confirmed within ${
-            DEFAULT_TX_TIMEOUT / 1000
-          }s. Please check on Solana Explorer`,
-          description: (
-            <>
-              <ExplorerLink
-                address={txError.txId}
-                type="transaction"
-                short
-                connection={connection}
-              />
-            </>
-          ),
-          type: 'warn',
-        });
-      } else if (isSendTransactionError(txError)) {
-        notify({
-          message: 'Transaction error',
-          description: (
-            <>
-              <ExplorerLink
-                address={txError.txId}
-                type="transaction"
-                short
-                connection={connection}
-              />
-            </>
-          ),
-          type: 'error',
-        });
-      }
-      throw txError;
+        type: 'warn',
+      });
+    } else if (isSendTransactionError(txError)) {
+      notify({
+        message: 'Transaction error',
+        description: (
+          <>
+            <ExplorerLink
+              address={txError.txId}
+              type="transaction"
+              short
+              connection={provider.connection}
+            />
+          </>
+        ),
+        type: 'error',
+      });
     }
-  } catch (ex) {
-    console.error(ex);
-    throw ex;
+    throw txError;
   }
 }

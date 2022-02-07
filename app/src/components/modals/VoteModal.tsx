@@ -13,6 +13,7 @@ import { castVote } from "../../actions/castVote";
 import { getPubkeyIndex } from "../../models/PUBKEYS_INDEX";
 import { getProposalUrl } from "../../tools/routeTools";
 import { Link } from "react-router-dom";
+import { JET_GOVERNANCE } from "../../utils";
 
 export const VoteModal = ({
   vote,
@@ -72,7 +73,7 @@ export const VoteModal = ({
   };
 
   // Handlers for tx success all set modal
-  const proposals = useProposalsByGovernance();
+  const proposals = useProposalsByGovernance(JET_GOVERNANCE);
   const activeProposals = proposals.filter((p) => p.info.isVoting());
 
   const proposalMap = (proposal: ParsedAccount<Proposal>, key: number) => {
@@ -164,11 +165,4 @@ export const VoteModal = ({
     </Modal>
   );
 };
-function proposalAddress(proposalAddress: any, programId: any, arg2: any): string {
-  throw new Error("Function not implemented.");
-}
-
-function programId(proposalAddress: (proposalAddress: any, programId: any, arg2: any) => string, programId: any, arg2: any): string {
-  throw new Error("Function not implemented.");
-}
 

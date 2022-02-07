@@ -7,7 +7,6 @@ import {
   TransactionInstruction,
 } from '@solana/web3.js';
 import { Token } from '@solana/spl-token';
-import React from 'react';
 import { formDefaults } from '../../../../tools/forms';
 import { validateTokenAccount } from '../../../../tools/validators/accounts/token';
 import { AccountFormItem } from '../../../../components/oyster/AccountFormItem/accountFormItem';
@@ -15,7 +14,6 @@ import {
   getMintMinAmountAsDecimal,
   parseMintNaturalAmountFromDecimal,
 } from '../../../../tools/units';
-import { utils } from '@project-serum/anchor';
 import { ExplorerLink } from '../../../../components';
 import { ParsedAccount, useMint } from '../../../../contexts';
 import { programIds } from '../../../../utils';
