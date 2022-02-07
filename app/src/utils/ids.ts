@@ -14,10 +14,10 @@ export const OYSTER_GOV_PROGRAM_ID = new PublicKey(
   "GovER5Lthms3bLBqWub97yVrMmEogzX7xNjdXpPPCVZw"
 );
 export let JET_REALM = new PublicKey(
-  "9YDowTE7R1qr8wYYLJMvofQK5NrK2TqUn7u59r7VUTDm"
+  "ASRAHYwEVhV3mGUarRvaE59ZUpKA8qKbNbLtipqT6J3G"
 );
 export let JET_GOVERNANCE = new PublicKey(
-  "FRuFWBrp1Kh6LpAi9CRvjk97C6YpCR7AERq62N2CZFUg"
+  "FJBrF515muB9p4zzQYh3CUgf51fKdd813BhRX4oUVryA"
 );
 
 export const GOVERNANCE_PROGRAM_ID = new PublicKey(
@@ -173,10 +173,10 @@ export const setProgramIds = (envName: string) => {
     );
   } else if (envName === "devnet") {
     JET_REALM = new PublicKey(
-      "AirPnqSFcEjHhC4z6mA9eoXYjjwQojCr7gV89FFds6T8"
+      "ASRAHYwEVhV3mGUarRvaE59ZUpKA8qKbNbLtipqT6J3G"
     );
     JET_GOVERNANCE = new PublicKey(
-      "AeZg3yTkWKU4a1WV21J9kH8wR67uxPTNbTxxU5AfR6eJ"
+      "FJBrF515muB9p4zzQYh3CUgf51fKdd813BhRX4oUVryA"
     );
     JET_TOKEN_MINT = new PublicKey(
       "FRuFWBrp1Kh6LpAi9CRvjk97C6YpCR7AERq62N2CZFUg"

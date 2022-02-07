@@ -11,14 +11,15 @@ import { AppLayout } from '../../components/Layout/layout';
 
 export const AllRealmsView = () => {
   const history = useHistory();
-  const realm = useRealms().filter((g) => g.info.name === "Much Shib");
+  let realms = useRealms();
+  realms = realms.filter((g) => g.info.name === "Flying Spaghetti DAO");
   const { programIdBase58 } = useRpcContext();
   const tokenOwnerRecords = useWalletTokenOwnerRecords();
 
   const realmItems = useMemo(() => {
     
 
-    return realm.map(r => {
+    return realms.map(r => {
         const communityTokenOwnerRecord = tokenOwnerRecords.find(
           tor =>
             tor.info.governingTokenMint.toBase58() ===
@@ -51,7 +52,7 @@ export const AllRealmsView = () => {
           ),
         };
       });
-  }, [realm, tokenOwnerRecords, programIdBase58]);
+  }, [realms, tokenOwnerRecords, programIdBase58]);
 
   return (
     <AppLayout>

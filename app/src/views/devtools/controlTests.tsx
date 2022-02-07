@@ -1,5 +1,4 @@
-import { BN } from 'bn.js';
-import React from 'react';
+import BN from 'bn.js';
 import { VoteScore } from '../proposal/components/vote/voteScore';
 
 import { Space } from 'antd';

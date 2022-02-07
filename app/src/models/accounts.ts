@@ -696,19 +696,19 @@ export class Proposal {
     switch (this.state) {
       case ProposalState.Succeeded:
       case ProposalState.Defeated:
-        return this.votingCompletedAt ? bnToNumber(this.votingCompletedAt) : 0;
+        return bnToNumber(this.votingCompletedAt);
       case ProposalState.Completed:
       case ProposalState.Cancelled:
-        return this.closedAt ? bnToNumber(this.closedAt) : 0;
+        return bnToNumber(this.closedAt);
       case ProposalState.Executing:
       case ProposalState.ExecutingWithErrors:
-        return this.executingAt ? bnToNumber(this.executingAt) : 0;
+        return bnToNumber(this.executingAt);
       case ProposalState.Draft:
         return bnToNumber(this.draftAt);
       case ProposalState.SigningOff:
-        return this.signingOffAt ? bnToNumber(this.signingOffAt) : 0;
+        return bnToNumber(this.signingOffAt);
       case ProposalState.Voting:
-        return this.votingAt ? bnToNumber(this.votingAt) : 0;
+        return bnToNumber(this.votingAt);
     }
   }
 

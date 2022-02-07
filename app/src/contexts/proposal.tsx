@@ -1,4 +1,4 @@
-import { StakeAccount, StakeBalance, StakeClient, StakePool, UnbondingAccount } from "@jet-lab/jet-engine";
+import { Airdrop, AirdropTarget, RewardsClient, StakeAccount, StakeBalance, StakeClient, StakePool, UnbondingAccount } from "@jet-lab/jet-engine";
 import { Program } from "@project-serum/anchor";
 import React, { useState, useContext } from "react";
 import { MintInfo } from "@solana/spl-token"
@@ -6,7 +6,7 @@ import { useGovernance, useProposalsByGovernance, useWalletTokenOwnerRecord, use
 import { JET_REALM, JET_GOVERNANCE } from "../utils";
 import { ParsedAccount } from ".";
 import { Governance, Proposal, TokenOwnerRecord, VoteRecord } from "../models/accounts";
-import { useProposalFilters } from "../hooks/proposalHooks";
+import { useAirdropsByWallet, useClaimsCount, useProposalFilters } from "../hooks/proposalHooks";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { AssociatedToken, useProvider } from "@jet-lab/jet-engine/lib/common";
 import { useConnection } from "./connection";
@@ -26,6 +26,11 @@ interface ProposalContextState {
   unbondingAccounts?: UnbondingAccount[]
   stakeBalance: StakeBalance
 
+  rewardsProgram?: Program,
+  airdrops?: Airdrop[],
+  airdropsByWallet?: AirdropTarget[],
+  claimsCount: number
+
   jetAccount?: AssociatedToken
   jetMint?: MintInfo
   voteMint?: MintInfo
@@ -41,6 +46,8 @@ const ProposalContext = React.createContext<ProposalContextState>({
 
   proposalsByGovernance: [],
   filteredProposalsByGovernance: [],
+
+  claimsCount: 0,
 
   stakeBalance: {
     unstakedJet: 0,
@@ -72,7 +79,14 @@ export function ProposalProvider({ children = undefined as any }) {
   const stakeAccount = StakeAccount.use(stakeProgram, stakePool, walletAddress)
   const unbondingAccounts = UnbondingAccount.useByStakeAccount(stakeProgram, stakeAccount)
   const stakeBalance = StakeAccount.useBalance(stakeAccount, stakePool)
-  
+
+  // ----- Rewards Airdrops -----
+  const rewardsProgram = RewardsClient.use(provider)
+  const airdrops = Airdrop.useAll(rewardsProgram)
+  const airdropsByWallet = useAirdropsByWallet(airdrops, walletAddress)
+  const claimsCount = useClaimsCount(airdropsByWallet);
+
+  // ----- Wallet -----
   const jetAccount = AssociatedToken.use(connection, stakePool?.stakePool.tokenMint, walletAddress)
   const jetMint = AssociatedToken.useMint(connection, stakePool?.stakePool.tokenMint);
   const voteMint = AssociatedToken.useMint(connection, stakePool?.stakePool.stakeVoteMint);
@@ -96,6 +110,11 @@ export function ProposalProvider({ children = undefined as any }) {
         stakeAccount,
         unbondingAccounts,
         stakeBalance,
+
+        rewardsProgram,
+        airdrops,
+        airdropsByWallet,
+        claimsCount,
 
         jetAccount,
         jetMint,

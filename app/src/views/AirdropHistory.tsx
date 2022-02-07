@@ -1,8 +1,8 @@
-import React from "react"
 import { Divider, Progress, Collapse, Timeline } from "antd";
 import { useWallet } from "@solana/wallet-adapter-react";
-import { useAirdrop } from "../contexts/airdrop";
 import { Available } from "../components/airdrop/Available";
+import { useProposalContext } from "../contexts/proposal";
+import { useAirdrop } from "../contexts/airdrop";
 
 interface Airdrop {
   name: string;
@@ -15,11 +15,20 @@ interface Airdrop {
 
 export const AirdropHistory = () => {
   const { connected } = useWallet();
-  const { airdrops, claimedAirdrops, vestingAirdrops, totalAirdropped } =
+
+  // ----- Dummy Data -----
+  const { airdrops: dummyAirdrops, claimedAirdrops, vestingAirdrops, totalAirdropped } =
     useAirdrop();
 
   const vesting: Airdrop[] = vestingAirdrops();
   const claimed: Airdrop[] = claimedAirdrops();
+
+  // ----- Real Data -----
+  const {
+    airdrops,
+    airdropsByWallet,
+    claimsCount
+  } = useProposalContext();
 
   const { Panel } = Collapse;
 
@@ -71,7 +80,7 @@ export const AirdropHistory = () => {
 
           <h1>Available</h1>
           {connected &&
-            airdrops?.map((airdrop) => (
+            dummyAirdrops?.map((airdrop) => (
               <Available
                 name={airdrop.name}
                 description={airdrop.description}

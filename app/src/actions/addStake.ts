@@ -4,7 +4,6 @@ import { approve } from "../models";
 import { RpcContext } from "../models/core/api";
 import { withDepositGoverningTokens } from "../models/withDepositGoverningTokens";
 import { sendTransactionWithNotifications } from "../tools/transactions";
-import { JET_TOKEN_MINT } from "../utils";
 import { AssociatedToken, StakeAccount, StakePool } from "@jet-lab/jet-engine"
 
 export const addStake = async (
@@ -19,12 +18,12 @@ export const addStake = async (
 
   const provider = stakePool.program.provider;
   const voteMint = stakePool.addresses.stakeVoteMint.address;
-  const collateralMint = stakePool.addresses.stakeCollateralMint.address
-  const collateralTokenAccount = await AssociatedToken.derive(collateralMint, owner);
+  const tokenMint = stakePool.stakePool.tokenMint
+  const tokenAccount = AssociatedToken.derive(tokenMint, owner);
 
   const voterTokenAccount = await AssociatedToken.withCreate(instructions, provider, owner, voteMint)
   await StakeAccount.withCreate(instructions, stakePool.program, stakePool.addresses.stakePool.address, owner);
-  await StakeAccount.withAddStake(instructions, stakePool, owner, collateralTokenAccount, amount)
+  await StakeAccount.withAddStake(instructions, stakePool, owner, tokenAccount, amount)
   await StakeAccount.withMintVotes(instructions, stakePool, owner, voterTokenAccount, amount)
 
   const transferAuthority = approve(
@@ -43,7 +42,7 @@ export const addStake = async (
     programVersion,
     realm,
     voterTokenAccount,
-    JET_TOKEN_MINT,
+    voteMint,
     walletPubkey,
     transferAuthority.publicKey,
     walletPubkey,

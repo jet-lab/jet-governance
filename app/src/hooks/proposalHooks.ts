@@ -1,3 +1,5 @@
+import { Airdrop, AirdropTarget } from "@jet-lab/jet-engine";
+import { PublicKey } from "@solana/web3.js";
 import BN from "bn.js";
 import { useMemo, useState } from "react";
 import { ZERO } from "../constants";
@@ -46,7 +48,7 @@ export function useCountdown(proposal: Proposal, governance: Governance) {
     return "TEST"
     // return getRemainingTime(currentTime, proposal.getVotingDeadline(governance)?.toNumber())
   }
-  
+
   const startDate = useMemo(
     () =>
       proposal.votingAt
@@ -170,4 +172,33 @@ export function useVoterDisplayData(
       allData: data
     };
   }, [voteRecords, tokenOwnerRecords]);
+}
+
+export function useAirdropsByWallet(airdrops: Airdrop[] | undefined, wallet: PublicKey | undefined) {
+  return useMemo(() => {
+    if (!airdrops || !wallet) {
+      return undefined
+    }
+
+    return (airdrops
+      .map(airdrop => airdrop.getRecipient(wallet))
+      .filter(recipient => !!recipient) as AirdropTarget[])
+      .sort((a,b) => a?.amount.gt(b?.amount) ? -1 : 1)
+  }, [airdrops, wallet])
+}
+
+export function useClaimsCount(airdrops: AirdropTarget[] | undefined) {
+  return useMemo(() => {
+    if(!airdrops) {
+      return 0;
+    }
+    let claims = 0;
+    for (let i = 0; i < airdrops.length; i++) {
+      const airdrop = airdrops[i];
+      if(airdrop.amount.gtn(0)){
+        claims++;
+      }
+    }
+    return claims;
+  },[airdrops])
 }
