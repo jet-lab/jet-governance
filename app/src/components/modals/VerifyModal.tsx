@@ -17,6 +17,7 @@ enum Steps {
   UnknownError = 6,
   PhoneInvalid = 7
 }
+const API_KEY = "4c10a126-1f09-4a11-bf43-b81f7f583b52"
 
 export const VerifyModal = ({
   visible,
@@ -96,6 +97,10 @@ export const VerifyModal = ({
       .put("https://api.jetprotocol.io/v1/auth/sms", {
         originator: "Governance",
         phoneNumber: `+${phoneNumber.code}${phoneNumber.phone}`,
+      }, {
+        headers: {
+          "Authorization": API_KEY
+        }
       })
       .then((res) => {
         console.log(res.status, res.data);
@@ -146,6 +151,10 @@ export const VerifyModal = ({
         "publicKey": authAccount?.address.toBase58(),
         "token": code,
         "verificationId": verificationId
+      }, {
+        headers: {
+          "Authorization": API_KEY
+        }
       })
       .then((res) => {
         console.log(res.status, res.data);
