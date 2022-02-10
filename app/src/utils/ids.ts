@@ -16,9 +16,6 @@ export const COUNCIL_TOKEN_MINT = new PublicKey(
 export const COUNCIL_FAUCET_DEVNET = new PublicKey(
   "3AJLr1kbsC8btrizbYTWPCvfTfCJpK7JYHHpmZdy7sgM"
 );
-export const OYSTER_GOV_PROGRAM_ID = new PublicKey(
-  "GovER5Lthms3bLBqWub97yVrMmEogzX7xNjdXpPPCVZw"
-);
 export let JET_REALM = new PublicKey(
   "ASRAHYwEVhV3mGUarRvaE59ZUpKA8qKbNbLtipqT6J3G"
 );

@@ -40,11 +40,10 @@ export const HomeView = () => {
     stakeProgram,
     stakePool,
     stakeAccount,
-    unbondingAccounts,
+    unbondingTotal,
     stakeBalance: {
       stakedJet,
       unstakedJet,
-      unbondingJet,
       unlockedVotes,
     },
 
@@ -199,7 +198,7 @@ export const HomeView = () => {
                       <InfoCircleFilled />
                     </Tooltip>
                   </span>
-                  <span>{new Intl.NumberFormat().format(unbondingJet)}</span>
+                  <span>{new Intl.NumberFormat().format(unbondingTotal)}</span>
                 </div>
                 <div className="flex justify-between cluster">
                   <span className="text-gradient bold">Available for Withdrawal</span>

@@ -5,7 +5,7 @@ import { withAddSignatory } from '../models/withAddSignatory';
 import { sendTransactionWithNotifications } from '../tools/transactions';
 import { RpcContext } from '../models/core/api';
 import { VoteType } from '../models/accounts';
-import { JET_TOKEN_MINT, OYSTER_GOV_PROGRAM_ID } from "../utils/ids";
+import { GOVERNANCE_PROGRAM_ID, JET_TOKEN_MINT } from "../utils/ids";
 
 export const createProposal = async (
   { connection, wallet, programVersion, walletPubkey }: RpcContext,
@@ -29,7 +29,7 @@ export const createProposal = async (
 
   const proposalAddress = await withCreateProposal(
     instructions,
-    OYSTER_GOV_PROGRAM_ID,
+    GOVERNANCE_PROGRAM_ID,
     programVersion,
     realm,
     governance,
@@ -49,7 +49,7 @@ export const createProposal = async (
   // Add the proposal creator as the default signatory
   await withAddSignatory(
     instructions,
-    OYSTER_GOV_PROGRAM_ID,
+    GOVERNANCE_PROGRAM_ID,
     proposalAddress,
     tokenOwnerRecord,
     governanceAuthority,

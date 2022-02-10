@@ -1,6 +1,6 @@
 import { PublicKey } from "@solana/web3.js";
 import { GOVERNANCE_PROGRAM_SEED } from "./accounts";
-import { JET_TOKEN_MINT, JET_GOVERNANCE, OYSTER_GOV_PROGRAM_ID } from "../utils";
+import { JET_TOKEN_MINT, JET_GOVERNANCE, GOVERNANCE_PROGRAM_ID } from "../utils";
 
 export const getFirstTwoHundredPubkeys = async () => {
   let proposalIndexBuffer = Buffer.alloc(4);
@@ -14,7 +14,7 @@ export const getFirstTwoHundredPubkeys = async () => {
         JET_TOKEN_MINT.toBuffer(),
         proposalIndexBuffer,
       ],
-      OYSTER_GOV_PROGRAM_ID
+      GOVERNANCE_PROGRAM_ID
     );
     pubkeysIndex.push(proposalAddress.toString())
   }

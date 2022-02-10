@@ -22,6 +22,7 @@ interface ProposalContextState {
   stakePool?: StakePool
   stakeAccount?: StakeAccount
   unbondingAccounts?: UnbondingAccount[]
+  unbondingTotal: number
   stakeBalance: StakeBalance
 
   rewardsProgram?: Program,
@@ -48,6 +49,7 @@ const ProposalContext = React.createContext<ProposalContextState>({
   filteredProposalsByGovernance: [],
 
   claimsCount: 0,
+  unbondingTotal: 0,
 
   stakeBalance: {
     unstakedJet: 0,
@@ -74,6 +76,7 @@ export function ProposalProvider({ children = undefined as any }) {
   const stakePool = StakePool.use(stakeProgram);
   const stakeAccount = StakeAccount.use(stakeProgram, stakePool, walletAddress)
   const unbondingAccounts = UnbondingAccount.useByStakeAccount(stakeProgram, stakeAccount)
+  const unbondingTotal = UnbondingAccount.useUnbondingAmountTotal(unbondingAccounts)
   const stakeBalance = StakeAccount.useBalance(stakeAccount, stakePool)
 
   // ----- Rewards Airdrops -----
@@ -105,6 +108,7 @@ export function ProposalProvider({ children = undefined as any }) {
         stakePool,
         stakeAccount,
         unbondingAccounts,
+        unbondingTotal,
         stakeBalance,
 
         rewardsProgram,
