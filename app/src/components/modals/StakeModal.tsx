@@ -1,4 +1,4 @@
-import { PropsWithChildren, useState } from "react";
+import { ReactNode, useState } from "react";
 import { Modal, ModalProps } from "antd";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { useProposalContext } from "../../contexts/proposal";
@@ -61,7 +61,7 @@ export const StakeModal = (props: {
       });
   };
 
-  const steps: PropsWithChildren<ModalProps>[] = []
+  const steps: (ModalProps & { content: ReactNode })[] = []
   steps[Steps.Start] = {
     title: `You are staking ${amount && Intl.NumberFormat("us-US").format(amount)
       } JET into the platform.`,
@@ -70,7 +70,7 @@ export const StakeModal = (props: {
     onCancel: () => onClose(),
     okButtonProps: { loading: loading },
     closable: true,
-    children:
+    content:
       <>
         <p>
           Staking tokens gives your voice a vote and entitles you to rewards
@@ -89,18 +89,23 @@ export const StakeModal = (props: {
     onCancel: () => onClose(),
     closable: true,
     cancelButtonProps: { style: { display: "none" } },
-    children:
-      <p>
-        You've staked {amount && Intl.NumberFormat("us-US").format(amount)}
-        JET into JetGovern and can begin using to vote on active proposals immediately.
-      </p>,
-  }
+    content: 
+      <>
+        <p>
+          You've staked {amount && Intl.NumberFormat("us-US").format(amount)}
+          JET into JetGovern and can begin using to vote on active proposals
+          immediately.
+        </p>
+        <p>Please refresh your page to see your update balance.</p>
+      </>
+    ,
+  };
   steps[Steps.Error] = {
     title: `Error.`,
     okText: "I understand.",
     onOk: () => onClose(),
     onCancel: () => onClose(),
-    children:
+    content:
       <p>
         We have encountered an unknown error.
       </p>,
@@ -109,8 +114,16 @@ export const StakeModal = (props: {
 
   return (
     <Modal
-      visible={visible} 
-      {...steps[current]}
-    />
+      title={steps[current].title}
+      visible={visible}
+      okText={steps[current].okText}
+      onOk={steps[current].onOk}
+      okButtonProps={steps[current].okButtonProps}
+      onCancel={steps[current].onCancel}
+      closable={steps[current].closable}
+      cancelButtonProps={{ style: { display: "none " } }}
+    >
+      {steps[current].content}
+    </Modal>
   );
 };

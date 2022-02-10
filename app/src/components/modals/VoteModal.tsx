@@ -1,5 +1,5 @@
-import { Modal } from "antd";
-import { useEffect, useState } from "react";
+import { Modal, ModalProps } from "antd";
+import { ReactNode, useEffect, useState } from "react";
 import { ParsedAccount } from "../../contexts";
 import { Governance, Proposal, TokenOwnerRecord, VoteRecord } from "../../models/accounts";
 import { YesNoVote } from "../../models/instructions";
@@ -14,6 +14,13 @@ import { getPubkeyIndex } from "../../models/PUBKEYS_INDEX";
 import { getProposalUrl } from "../../tools/routeTools";
 import { Link } from "react-router-dom";
 import { JET_GOVERNANCE } from "../../utils";
+
+enum Steps {
+  ConfirmVote = 0,
+  VoteSuccess = 1,
+  NoVoteError = 2,
+  UnknownError = 3
+}
 
 export const VoteModal = ({
   vote,
@@ -44,9 +51,9 @@ export const VoteModal = ({
 
   useEffect(() => {
     if (vote === undefined) {
-      setCurrent(0)
+      setCurrent(Steps.NoVoteError)
     } else {
-      setCurrent(1)
+      setCurrent(Steps.ConfirmVote)
     }
   }, [vote])
 
@@ -67,8 +74,8 @@ export const VoteModal = ({
       vote,
       voteRecord ? voteRecord!.pubkey : undefined
     )
-      .then(() => setCurrent(2))
-      .catch(() => setCurrent(3));
+      .then(() => setCurrent(Steps.VoteSuccess))
+      .catch(() => setCurrent(Steps.UnknownError));
     }
   };
 
@@ -89,68 +96,67 @@ export const VoteModal = ({
     </div>
   )}
 
-  const steps = [
-    {
-      title: 'Set a vote!',
-      okText: "Okay",
-      onOk: () => {},
-      onCancel: () => onClose(),
-      content: [<p>Please select a vote.</p>],
-      closable: true,
-      cancelButtonProps: { display: "none " },
-    },
-    {
-      title: `Confirm vote`,
-      okText: "Confirm",
-      onOk: () => {vote !== undefined && confirmVote(vote)},
-      onCancel: () => onClose(),
-      content: [<>
-        <p>
-          You are about to vote <strong>{voteText}</strong> proposal "{proposal.info.name}".
-        </p>
-        <p>
-          You have {Intl.NumberFormat().format(stakedJet)} JET staked, and
-          will be able to unstake these funds when voting ends on {endDate}.
-        </p>
-      </>],
-      closable: true,
-      cancelButtonProps: undefined,
-    },
-    {
-      title: `All set`,
-      okText: "Okay",
-      onOk: () => onClose(),
-      onCancel: () => onClose(),
-      content: [<>
+  const steps: (ModalProps & { content: ReactNode })[] = []
+  steps[Steps.ConfirmVote] = {
+    title: "Confirm vote",
+    okText: "Confirm",
+    onOk: () => {vote !== undefined && confirmVote(vote)},
+    onCancel: () => onClose(),
+    content:
+      <>
       <p>
-          You've successfully voted <strong>{voteText}</strong> proposal #{getPubkeyIndex(proposal.pubkey.toBase58())}:{" "}
-          {proposal.info.name}.
-        </p>
-
-        <h2 className="text-gradient" style={{marginLeft: 0}}>Vote on other proposals:</h2>
-
-        <p>
-          {activeProposals && activeProposals.length > 0
-            ? activeProposals?.map((proposal, key) => proposalMap(proposal, key)) : "There are no active proposals at this time."}
-        </p>
-      </>],
-      closable: true,
-      cancelButtonProps: { display: "none " },
-    },
-    {
+        You are about to vote <strong>{voteText}</strong> proposal "{proposal.info.name}".
+      </p>
+      <p>
+        You have {Intl.NumberFormat().format(stakedJet)} JET staked, and
+        will be able to unstake these funds when voting ends on {endDate}.
+      </p>
+    </>,
+    closable: true,
+    cancelButtonProps: undefined,
+  }
+  steps[Steps.VoteSuccess] = {
+    title: `All set`,
+    okText: "Okay",
+    onOk: () => onClose(),
+    onCancel: () => onClose(),
+    content:
+      <>
+      <p>
+        You've successfully voted <strong>{voteText}</strong> proposal #{getPubkeyIndex(proposal.pubkey.toBase58())}:{" "}
+        {proposal.info.name}.
+      </p>
+      <h2 className="text-gradient" style={{marginLeft: 0}}>Vote on other proposals:</h2>
+      <p>
+        {activeProposals && activeProposals.length > 0
+          ? activeProposals?.map((proposal, key) => proposalMap(proposal, key)) : "There are no active proposals at this time."}
+      </p>
+    </>,
+    closable: true,
+    cancelButtonProps: { style: { display: "none " } },
+  }
+  steps[Steps.NoVoteError] = {
+    title: 'Set a vote!',
+    okText: "Okay",
+    onOk: () => {},
+    onCancel: () => onClose(),
+    content: [<p>Please select a vote.</p>],
+    closable: true,
+    cancelButtonProps: { style: { display: "none " } },
+  }
+  steps[Steps.UnknownError] = {
       title: `Uh-oh`,
       okText: "Okay",
       onOk: () => onClose(),
       onCancel: () => onClose(),
-      content: [<>
+      content: <>
       <p>
           We're not really sure what went wrong here, please refresh your browser and try again.
         </p>
-      </>],
+      </>,
       closable: true,
-      cancelButtonProps: { display: "none " },
+      cancelButtonProps: { style: { display: "none " } },
     }
-  ];
 
   return (
     <Modal

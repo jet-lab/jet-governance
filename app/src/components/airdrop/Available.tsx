@@ -50,7 +50,7 @@ export const Available = ({ name, description, amount, end, claimed, announced }
       </Button>
 
       <ClaimModal
-        showModal={showModal}
+        visible={showModal}
         stakeAmount={1000}
         setShowModal={setShowModal}
       />

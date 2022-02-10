@@ -1,4 +1,4 @@
-import { PropsWithChildren, useMemo, useState } from "react";
+import { ReactNode, useMemo, useState } from "react";
 import { Modal, ModalProps } from "antd";
 import { useProposalContext } from "../../contexts/proposal";
 import { rescindAndUnstake } from "../../actions/rescindAndUnstake";
@@ -75,7 +75,7 @@ export const UnstakeModal = ({
     onClose();
   };
 
-  const steps: PropsWithChildren<ModalProps>[] = []
+  const steps: (ModalProps & { content: ReactNode })[] = []
   steps[Steps.Start] = {
     title: `You're unstaking ${amount && Intl.NumberFormat("us-US").format(amount)} JET from the platform.`,
     okText: "Confirm unstake",
@@ -83,7 +83,7 @@ export const UnstakeModal = ({
     onOk: () => handleSubmitUnstake(),
     onCancel: () => onClose(),
     closable: true,
-    children:
+    content:
       <>
         {rescind && <p>
           You currently have votes cast on active proposals, which will be rescinded upon unbonding. If you wish to keep your votes, wait until the voting period has ended before unstaking.
@@ -108,7 +108,7 @@ export const UnstakeModal = ({
     onCancel: () => handleCancel(),
     closable: true,
     cancelButtonProps: { style: { display: "none" } },
-    children:
+    content:
       <>
         <p>
           You've unstaked {

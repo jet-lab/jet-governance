@@ -56,7 +56,7 @@ export const FlightLogView = () => {
                       <InfoCircleFilled />
                     </Tooltip>
                     <RestakeModal
-                      showModal={restakeModal}
+                      visible={restakeModal}
                       stakeAmount={row.amount}
                       onClose={() => setRestakeModal(false)}
                     />

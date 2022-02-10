@@ -15,7 +15,9 @@ enum Steps {
   AccessGranted1 = 4,
   AccessGranted2 = 5,
   UnknownError = 6,
-  PhoneInvalid = 7
+  PhoneInvalid = 7,
+  VpnBlocked = 8,
+  InvalidToken = 9
 }
 const API_KEY = "4c10a126-1f09-4a11-bf43-b81f7f583b52"
 
@@ -67,10 +69,10 @@ export const VerifyModal = ({
   }, [authAccount, authAccountLoading, current, setWelcoming, welcomeConfirmed, setAuthorizationConfirmed])
 
   useEffect(() => {
-    if (!connected) {
-      setCurrent(Steps.Welcome)
-    }
-  }, [connected])
+    // Reset to welcome modal on change of connection or visibility
+    // when users disconnect partway through the modal flow
+    setCurrent(Steps.Welcome)
+  }, [connected, visible])
 
   const handleInputPhoneNumber = (e: CountryPhoneInputValue) => {
     setPhoneNumber(e);
@@ -123,11 +125,16 @@ export const VerifyModal = ({
           setCurrent(Steps.PhoneInvalid);
         } else if (err.response.status === 403) {
           // The provided mobile number originates from a geo-banned region.
-          console.log("Phone number geo-banned")
-          setCurrent(Steps.AccessDenied);
+          if (err?.response?.data.error[0] === "the ip of the requester has been detected as a threat or anonymized.") {
+            console.error("VPN blocked")
+            setCurrent(Steps.VpnBlocked)
+          } else {
+            console.error("Phone number geo-banned")
+            setCurrent(Steps.AccessDenied);
+          }
         } else if (err.response.status === 500) {
           // Unknown or MessageBird API error.
-          setCurrent(Steps.UnknownError);
+            setCurrent(Steps.UnknownError);
         } else {
           setCurrent(Steps.UnknownError)
         }
@@ -174,8 +181,31 @@ export const VerifyModal = ({
       .catch(err => {
         console.error(JSON.stringify(err), err?.response?.body, err?.response?.data)
         setConfirmCodeLoading(false)
-        setCurrent(Steps.UnknownError)
-      });
+          if (err.response.status === 400) {
+            // Payload validation failed or provided phone number was not a valid mobile number.
+            setCurrent(Steps.PhoneInvalid);
+          } else if (err.response.status === 403) {
+            // The provided mobile number originates from a geo-banned region.
+            if (err?.response?.data.error[0] === "the ip of the requester has been detected as a threat or anonymized.") {
+              console.error("VPN blocked")
+              setCurrent(Steps.VpnBlocked)
+            } else {
+              console.error("Phone number geo-banned")
+              setCurrent(Steps.AccessDenied);
+            }
+          } else if (err.response.status === 500) {
+            if (err?.response?.data.error[0] === "api error(s): The token is invalid. (code: 10, parameter: token)") {
+              // Token is invalid
+              console.error("Invalid token")
+              setCurrent(Steps.InvalidToken)
+            } else {
+              // Unknown or MessageBird API error.
+              setCurrent(Steps.UnknownError);
+            }
+          } else {
+            setCurrent(Steps.UnknownError)
+          }
+        });
   };
 
   const handleAccessDenied = () => {
@@ -235,8 +265,7 @@ export const VerifyModal = ({
     title: "Confirm location",
     okText: "Okay",
     okButtonProps: {
-      disabled: authAccountLoading,
-      loading: phoneVerifyLoading
+      disabled: authAccountLoading || phoneNumber.phone === undefined,
     },
     onOk: () => handlePhoneVerify(),
     onCancel: () => null,
@@ -251,6 +280,9 @@ export const VerifyModal = ({
             This information is never stored with us or our SMS verification
             partner, and is used solely for regional access.
           </strong>
+        </p>
+        <p>
+          As this verification happens on-chain, you will need SOL for your verification transaction.
         </p>
         <CountryPhoneInput
           placeholder={"Phone number"}
@@ -356,6 +388,30 @@ export const VerifyModal = ({
     content:
       <p>
         Please enter a valid phone number.
+      </p>,
+    closable: true,
+  }
+  steps[Steps.VpnBlocked] = {
+    title: "VPN detected",
+    okText: "Okay",
+    okButtonProps: undefined,
+    onOk: () => setCurrent(Steps.ConfirmLocation),
+    onCancel: () => setCurrent(Steps.ConfirmLocation),
+    content:
+      <p>
+        We have detected that you are using a VPN. Please turn off your VPN and try again to verify your wallet.
+      </p>,
+    closable: true,
+  }
+  steps[Steps.InvalidToken] = {
+    title: "Invalid Token",
+    okText: "Okay",
+    okButtonProps: undefined,
+    onOk: () => setCurrent(Steps.ConfirmLocation),
+    onCancel: () => setCurrent(Steps.ConfirmLocation),
+    content:
+      <p>
+        You have entered an invalid token. Please try again.
       </p>,
     closable: true,
   }
