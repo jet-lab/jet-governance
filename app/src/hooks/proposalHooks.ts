@@ -1,4 +1,4 @@
-import { Airdrop, AirdropTarget } from "@jet-lab/jet-engine";
+import { Airdrop, AirdropTarget, UnbondingAccount } from "@jet-lab/jet-engine";
 import { PublicKey } from "@solana/web3.js";
 import BN from "bn.js";
 import { useMemo, useState } from "react";
@@ -35,6 +35,25 @@ export const useProposalFilters = (proposals: ParsedAccount<Proposal>[]) => {
     }
   }, [proposalFilter, proposals]);
 };
+
+export function useSortedUnbondingAccounts(unbondingAccounts: UnbondingAccount[] | undefined) {
+  return useMemo(() => {
+    const unbonding: UnbondingAccount[] = []
+    const complete: UnbondingAccount[] = []
+
+    if (unbondingAccounts) {
+      for (let i = 0; i < unbondingAccounts.length; i++) {
+        const account = unbondingAccounts[i];
+        if (account.unbondingAccount.amount.tokens.isZero()) {
+          complete.push(account)
+        } else {
+          unbonding.push(account)
+        }
+      }
+    }
+    return { unbonding, complete }
+  }, [unbondingAccounts])
+}
 
 export function useCountdown(proposal: Proposal, governance: Governance) {
   const [currentTime, setCurrentTime] = useState(Date.now());
@@ -183,24 +202,24 @@ export function useAirdropsByWallet(airdrops: Airdrop[] | undefined, wallet: Pub
     return (airdrops
       .map(airdrop => airdrop.getRecipient(wallet))
       .filter(recipient => !!recipient) as AirdropTarget[])
-      .sort((a,b) => a?.amount.gt(b?.amount) ? -1 : 1)
+      .sort((a, b) => a?.amount.gt(b?.amount) ? -1 : 1)
   }, [airdrops, wallet])
 }
 
 export function useClaimsCount(airdrops: AirdropTarget[] | undefined) {
   return useMemo(() => {
-    if(!airdrops) {
+    if (!airdrops) {
       return 0;
     }
     let claims = 0;
     for (let i = 0; i < airdrops.length; i++) {
       const airdrop = airdrops[i];
-      if(airdrop.amount.gtn(0)){
+      if (airdrop.amount.gtn(0)) {
         claims++;
       }
     }
     return claims;
-  },[airdrops])
+  }, [airdrops])
 }
 
 export function useWithdrawVotesAbility(tokenOwnerRecord: ParsedAccount<TokenOwnerRecord> | undefined) {

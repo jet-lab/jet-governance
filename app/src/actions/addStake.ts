@@ -56,7 +56,7 @@ export const addStake = async (
     wallet,
     instructions,
     signers,
-    'Depositing governing tokens',
-    'Tokens have been deposited',
+    'Staking governing tokens',
+    'Tokens have been staked',
   );
 };

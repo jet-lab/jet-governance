@@ -1,18 +1,32 @@
 import { Divider, Tooltip, Button } from "antd";
 import { useWallet } from "@solana/wallet-adapter-react";
-import { useAirdrop } from "../contexts/airdrop";
 import { InfoCircleFilled } from "@ant-design/icons";
 import { useState } from "react";
 import { FooterLinks } from "../components/FooterLinks";
 import { RestakeModal } from "../components/modals/RestakeModal";
+import { useProposalContext } from "../contexts/proposal";
+import { useSortedUnbondingAccounts } from "../hooks/proposalHooks";
+import { BN } from "@project-serum/anchor";
+import { bnToNumber } from "@jet-lab/jet-engine";
+import { fromLamports } from "../utils";
+import { MintInfo } from "@solana/spl-token";
 
 export const FlightLogView = () => {
   const [restakeModal, setRestakeModal] = useState(false);
-  const { pendingTransactions, completeTransactions } = useAirdrop();
+  const {
+    unbondingAccounts,
+    stakeAccount,
+    jetMint
+  } = useProposalContext();
+  const {
+    unbonding,
+    complete
+  } = useSortedUnbondingAccounts(unbondingAccounts);
   const { connected } = useWallet();
 
   // Formatters for historical txns
-  const formatDate = (date: Date) => {
+  const formatDate = (time: BN) => {
+    const date = new Date(bnToNumber(time))
     const padTo2Digits = (num: number) => {
       return num.toString().padStart(2, "0");
     };
@@ -22,6 +36,10 @@ export const FlightLogView = () => {
       padTo2Digits(date.getDate()),
     ].join("-");
   };
+
+  const toTokens = (lamports: BN, mint: MintInfo | undefined) => {
+    return fromLamports(lamports, mint).toLocaleString(undefined, { maximumFractionDigits: 0 })
+  }
 
   // Open explorer
   const explorerUrl = () =>
@@ -44,11 +62,11 @@ export const FlightLogView = () => {
 
           {connected && (
             <tbody>
-              {pendingTransactions.map((row) => (
+              {unbonding.map((row) => (
                 <tr>
-                  <td className="italics">{formatDate(row.date)}</td>
+                  <td className="italics">{formatDate(row.unbondingAccount.unbondedAt)}</td>
                   <td className="italics">
-                    {row.status}{" "}
+                    Unbonding{" "}
                     <Tooltip
                       title="Unstaking transactions require a 29.5-day unbonding period. before withdrawal to your wallet is enabled. Status will show as 'unbonding' until this period completes."
                       mouseEnterDelay={0.1}
@@ -57,39 +75,44 @@ export const FlightLogView = () => {
                     </Tooltip>
                     <RestakeModal
                       visible={restakeModal}
-                      stakeAmount={row.amount}
                       onClose={() => setRestakeModal(false)}
+                      unbondingAccount={row}
+                      stakeAccount={stakeAccount}
+                      jetMint={jetMint}
                     />
                   </td>
                   <td className="italics">
-                    <i className="italics"
-                      onClick={explorerUrl}>{row.action}</i>{" "}
+                    <i className="italics">
+                      Unstake complete on {formatDate(row.unbondingAccount.unbondedAt)}
+                    </i>{" "}
                     <Button type="dashed"
                       onClick={() => setRestakeModal(true)}>
                       Restake
                     </Button>
                   </td>
-                  <td className="italics">{row.amount}</td>
+                  <td className="italics">{toTokens(row.unbondingAccount.amount.tokens, jetMint)}</td>
                 </tr>
               ))}
-              <td colSpan={4}>
-                <Divider />
-              </td>
-              {completeTransactions.map((row) => (
+              <tr>
+                <td colSpan={4}>
+                  <Divider />
+                </td>
+              </tr>
+              {complete.map((row) => (
                 <tr>
-                  <td>{formatDate(row.date)}</td>
-                  <td>{row.status}</td>
+                  <td>{formatDate(row.unbondingAccount.unbondedAt)}</td>
+                  <td>Complete</td>
                   <td className="asset" onClick={explorerUrl}>
-                    {row.action}
+                    Unstaked
                   </td>
-                  <td className="reserve-detail center-text">{row.amount}</td>
+                  <td className="reserve-detail center-text">– {toTokens(row.unbondingAccount.amount.tokens, jetMint)}</td>
                 </tr>
               ))}
             </tbody>
           )}
         </table>
       </div>
-      <div className="spacer"/>
+      <div className="spacer" />
       <FooterLinks />
     </div>
   );
