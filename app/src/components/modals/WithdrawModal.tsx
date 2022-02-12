@@ -1,9 +1,9 @@
 import { PropsWithChildren, useState } from "react";
 import { Modal, ModalProps } from "antd";
-import { restake } from "../../actions/restake";
 import { useRpcContext } from "../../hooks/useRpcContext";
 import { UnbondingAccount } from "@jet-lab/jet-engine";
 import { fromLamports } from "../../utils";
+import { withdrawUnbonded } from "../../actions/withdrawUnbonded";
 import { useProposalContext } from "../../contexts/proposal";
 
 enum Steps {
@@ -12,7 +12,7 @@ enum Steps {
   Error = 2,
 }
 
-export const RestakeModal = ({
+export const WithdrawModal = ({
   visible,
   onClose,
   unbondingAccount,
@@ -24,10 +24,7 @@ export const RestakeModal = ({
   const rpcContext = useRpcContext();
   const [current, setCurrent] = useState<Steps>(Steps.Confirm);
   const [loading, setLoading] = useState(false);
-  const {
-    stakeAccount,
-    jetMint,
-  } = useProposalContext()
+  const { stakeAccount, jetMint, stakePool } = useProposalContext();
   
   const stakeAmount = fromLamports(
     unbondingAccount?.unbondingAccount.amount.tokens,
@@ -35,12 +32,12 @@ export const RestakeModal = ({
   );
 
   const handleOk = () => {
-    if (!unbondingAccount || !stakeAccount) {
+    if (!unbondingAccount || !stakeAccount || !stakePool) {
       return;
     }
 
     setLoading(true);
-    restake(rpcContext, unbondingAccount, stakeAccount)
+    withdrawUnbonded(rpcContext, unbondingAccount, stakeAccount, stakePool)
       .then(() => {
         setCurrent(Steps.Success);
       })
@@ -60,7 +57,7 @@ export const RestakeModal = ({
   const steps: PropsWithChildren<ModalProps>[] = [];
 
   steps[Steps.Confirm] = {
-    title: `Confirm you'd like to restake?`,
+    title: `Confirm you'd like to withdraw?`,
     okText: "I understand.",
     onOk: () => handleOk(),
     onCancel: () => handleClose(),
@@ -69,13 +66,12 @@ export const RestakeModal = ({
     children: (
       <>
         <p>
-          Choosing to restake will cancel your unstake transaction and you will
-          immediately be able to vote and earn rewards with this amount.
+          Choosing to withdraw will return your governance tokens to your
+          wallet.
         </p>
 
         <p>
-          Votes that were rescinded when unstaking will not reactivate, and must
-          be recast.
+          Withdrawn governance tokens will not be able to vote on proposals.
         </p>
       </>
     ),
@@ -90,8 +86,8 @@ export const RestakeModal = ({
     children: (
       <>
         <p>
-          You've restaked {Intl.NumberFormat("us-US").format(stakeAmount)} JET
-          into JetGovern and can begin voting on active proposals immediately.
+          You've withdrawn {Intl.NumberFormat("us-US").format(stakeAmount)} JET
+          from JetGovern.
         </p>
         <p>Please refresh your page to see your update balance.</p>
       </>

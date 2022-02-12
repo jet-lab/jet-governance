@@ -1,11 +1,11 @@
 import { useCallback, useState } from 'react';
 import { MintInfo } from '@solana/spl-token';
-
 import { TokenAccount } from './../models';
 import { PublicKey } from '@solana/web3.js';
 import BN from 'bn.js';
 import { WAD, ZERO } from '../constants';
 import { TokenInfo } from '@solana/spl-token-registry';
+import { bnToNumber } from '@jet-lab/jet-engine';
 
 export type KnownTokenMap = Map<string, TokenInfo>;
 
@@ -296,6 +296,19 @@ export function timeout(ms: number) {
   return new Promise((res) => {
     setTimeout(() => res(true), ms);
   });
+};
+
+// Formatters for historical txns
+export function dateFromUnixTimestamp (time: BN | undefined) {
+  const date = new Date(bnToNumber(time));
+  const padTo2Digits = (num: number) => {
+    return num.toString().padStart(2, "0");
+  };
+  return [
+    date.getFullYear(),
+    padTo2Digits(date.getMonth() + 1),
+    padTo2Digits(date.getDate()),
+  ].join("-");
 };
 
 export const dateToString = (date: Date) => {

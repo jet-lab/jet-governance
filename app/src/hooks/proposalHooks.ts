@@ -36,25 +36,6 @@ export const useProposalFilters = (proposals: ParsedAccount<Proposal>[]) => {
   }, [proposalFilter, proposals]);
 };
 
-export function useSortedUnbondingAccounts(unbondingAccounts: UnbondingAccount[] | undefined) {
-  return useMemo(() => {
-    const unbonding: UnbondingAccount[] = []
-    const complete: UnbondingAccount[] = []
-
-    if (unbondingAccounts) {
-      for (let i = 0; i < unbondingAccounts.length; i++) {
-        const account = unbondingAccounts[i];
-        if (account.unbondingAccount.amount.tokens.isZero()) {
-          complete.push(account)
-        } else {
-          unbonding.push(account)
-        }
-      }
-    }
-    return { unbonding, complete }
-  }, [unbondingAccounts])
-}
-
 export function useCountdown(proposal: Proposal, governance: Governance) {
   const [currentTime, setCurrentTime] = useState(Date.now());
 
@@ -222,6 +203,9 @@ export function useClaimsCount(airdrops: AirdropTarget[] | undefined) {
   }, [airdrops])
 }
 
+/** Returns if the user can unstake.
+ * False when a user has voted on proposals.
+ * False when a user has created a proposal that is not complete. */
 export function useWithdrawVotesAbility(tokenOwnerRecord: ParsedAccount<TokenOwnerRecord> | undefined) {
   return tokenOwnerRecord?.info.outstandingProposalCount === 0;
 }
