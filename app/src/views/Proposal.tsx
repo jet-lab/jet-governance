@@ -58,7 +58,7 @@ export const ProposalView = () => {
 
   const { allHasVoted } = useVoterDisplayData(voteRecords, tokenOwnerRecords);
 
-  return proposal && governance && stakePool && stakeAccount && proposalsByGovernance ? (
+  return proposal && governance && stakePool && proposalsByGovernance ? (
     <InnerProposalView
       proposal={proposal}
       governance={governance}
@@ -86,7 +86,7 @@ const InnerProposalView = ({
   governance: ProgramAccount<Governance>;
   voterDisplayData: VoterDisplayData[];
   stakePool: StakePool;
-  stakeAccount: StakeAccount;
+  stakeAccount: StakeAccount | undefined;
   stakeBalance: StakeBalance;
   proposalsByGovernance: ProgramAccount<Proposal>[];
 }) => {
