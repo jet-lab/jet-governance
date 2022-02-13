@@ -1,7 +1,7 @@
 import { StakeAccount } from "@jet-lab/jet-engine";
 import { UnbondingAccount } from "@jet-lab/jet-engine";
+import { RpcContext } from "@solana/spl-governance";
 import { sendTransactionWithNotifications } from "../tools/transactions";
-import { RpcContext } from "./../models/core/api";
 
 export const restake = async (
   rpcContext: RpcContext,

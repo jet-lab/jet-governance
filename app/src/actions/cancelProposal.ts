@@ -1,30 +1,42 @@
-import { Account, TransactionInstruction } from '@solana/web3.js';
+import {
+  Keypair,
+  PublicKey,
+  Transaction,
+  TransactionInstruction,
+} from '@solana/web3.js'
 
-import { Proposal } from '../models/accounts';
-
-import { withCancelProposal } from '../models/withCancelProposal';
-import { sendTransactionWithNotifications } from '../tools/transactions';
-import { RpcContext } from '../models/core/api';
-import { ParsedAccount } from '../contexts';
+import { getGovernanceProgramVersion, RpcContext } from '@solana/spl-governance'
+import { Proposal } from '@solana/spl-governance'
+import { ProgramAccount } from '@solana/spl-governance'
+import { withCancelProposal } from '@solana/spl-governance'
+import { sendTransactionWithNotifications } from '../tools/transactions'
 
 export const cancelProposal = async (
-  { connection, wallet, programId, programVersion, walletPubkey }: RpcContext,
-  proposal: ParsedAccount<Proposal>,
+  { connection, wallet, programId, walletPubkey }: RpcContext,
+  realmPk: PublicKey,
+  proposal: ProgramAccount<Proposal> | undefined
 ) => {
-  let governanceAuthority = walletPubkey;
+  const instructions: TransactionInstruction[] = []
+  const signers: Keypair[] = []
+  const governanceAuthority = walletPubkey
 
-  let signers: Account[] = [];
-  let instructions: TransactionInstruction[] = [];
+  // Explicitly request the version before making RPC calls to work around race conditions in resolving
+  // the version for RealmInfo
+  const programVersion = await getGovernanceProgramVersion(
+    connection,
+    programId
+  )
 
   withCancelProposal(
     instructions,
     programId,
     programVersion,
-    proposal.pubkey,
-    proposal.info.tokenOwnerRecord,
-    governanceAuthority,
-    proposal.info.governance,
-  );
+    realmPk,
+    proposal!.account.governance,
+    proposal!.pubkey,
+    proposal!.account.tokenOwnerRecord,
+    governanceAuthority
+  )
 
   await sendTransactionWithNotifications(
     connection,

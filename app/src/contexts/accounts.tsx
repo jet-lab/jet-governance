@@ -43,7 +43,7 @@ export type AccountParser = (
   data: AccountInfo<Buffer>,
 ) => ParsedAccountBase | undefined;
 
-export interface ParsedAccount<T> extends ParsedAccountBase {
+export interface ProgramAccount<T> extends ParsedAccountBase {
   info: T;
 }
 

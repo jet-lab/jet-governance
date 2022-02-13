@@ -5,7 +5,7 @@ import { useProposalContext } from "../../contexts/proposal";
 import { addStake } from "../../actions/addStake";
 import { useRpcContext } from "../../hooks/useRpcContext";
 import { PublicKey } from "@solana/web3.js";
-import { useBN } from "../../hooks/apiHooks";
+import { useBN } from "../../hooks";
 
 enum Steps {
   Start = 0,

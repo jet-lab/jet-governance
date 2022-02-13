@@ -1,10 +1,10 @@
+import { RpcContext } from '@solana/spl-governance';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { PublicKey } from '@solana/web3.js';
 import { useEffect, useState } from 'react';
 import { useConnection, useConnectionConfig } from '../contexts';
 
 import { useProgramInfo } from '../contexts/GovernanceContext';
-import { RpcContext } from '../models/core/api';
 
 export function useRpcContext() {
   const { endpoint } = useConnectionConfig();
@@ -16,7 +16,7 @@ export function useRpcContext() {
     new RpcContext(
       new PublicKey(programId),
       programVersion,
-      wallet,
+      wallet as any,
       connection,
       endpoint,
     ),
@@ -28,7 +28,7 @@ export function useRpcContext() {
         new RpcContext(
           new PublicKey(programId),
           programVersion,
-          wallet,
+          wallet as any,
           connection,
           endpoint,
         ),

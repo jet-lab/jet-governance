@@ -2,14 +2,13 @@
 import { useState } from "react";
 import { useProposalContext } from "../contexts/proposal";
 import { ProposalCard } from "../components/ProposalCard";
-import { Button, Divider, notification, Tooltip, Switch, Popover } from "antd";
+import { Button, Divider, notification, Tooltip, Switch } from "antd";
 import { useDarkTheme } from "../contexts/darkTheme";
 import { Input } from "../components/Input";
 import { StakeModal } from "../components/modals/StakeModal";
 import { UnstakeModal } from "../components/modals/UnstakeModal";
 import { InfoCircleFilled, PlusOutlined } from "@ant-design/icons";
 import { useAirdrop } from "../contexts/airdrop";
-import { useRpcContext } from "../hooks/useRpcContext";
 import { jetFaucet } from "../actions/jetFaucet";
 import { COUNCIL_FAUCET_DEVNET, COUNCIL_TOKEN_MINT, JET_FAUCET_DEVNET, JET_REALM, JET_TOKEN_MINT } from "../utils";
 import { ReactFitty } from "react-fitty";
@@ -18,6 +17,7 @@ import { bnToNumber } from "@jet-lab/jet-engine";
 import { fromLamports } from "../utils";
 import { useConnectionConfig, useMint } from "../contexts";
 import { useWithdrawVotesAbility } from "../hooks/proposalHooks";
+import { useWallet } from "@solana/wallet-adapter-react";
 
 export const HomeView = () => {
   const [stakeModalVisible, setStakeModalVisible] = useState(false);
@@ -25,8 +25,7 @@ export const HomeView = () => {
 
   const [inputAmount, setInputAmount] = useState<number | undefined>();
   const { vestedAirdrops } = useAirdrop();
-  const rpcContext = useRpcContext();
-  const connected = rpcContext.wallet.connected;
+  const { connected } = useWallet();
   const { darkTheme, toggleDarkTheme } = useDarkTheme();
   const { env } = useConnectionConfig()
   /* eslint-disable @typescript-eslint/no-unused-vars */
@@ -79,7 +78,7 @@ export const HomeView = () => {
     if (!jetMint || inputAmount === undefined || !tokenOwnerRecord) {
       return;
     }
-    const balance = bnToNumber(tokenOwnerRecord.info.governingTokenDepositAmount) / 10 ** jetMint.decimals
+    const balance = bnToNumber(tokenOwnerRecord.account.governingTokenDepositAmount) / 10 ** jetMint.decimals
     const stakable = Math.min(inputAmount, balance)
 
     setInputAmount(stakable);

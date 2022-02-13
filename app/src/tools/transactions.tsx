@@ -1,21 +1,21 @@
 import {
-  Account,
   TransactionInstruction,
   Connection,
-  Transaction
+  Transaction,
+  Keypair
 } from '@solana/web3.js';
-import { WalletContextState } from "@solana/wallet-adapter-react";
 import { DEFAULT_TX_TIMEOUT, sendTransaction2 } from './sdk/core/connection';
 import { ExplorerLink } from '../components';
 import { notify, isTransactionTimeoutError, isSendTransactionError } from '../utils';
 import { Provider } from '@project-serum/anchor';
 import { SendTxRequest } from '@project-serum/anchor/dist/cjs/provider';
+import { WalletSigner } from '@solana/spl-governance';
 
 export async function sendTransactionWithNotifications(
   connection: Connection,
-  wallet: WalletContextState,
+  wallet: WalletSigner,
   instructions: TransactionInstruction[],
-  signers: Account[],
+  signers: Keypair[],
   pendingMessage: string,
   successMessage: string,
 ) {

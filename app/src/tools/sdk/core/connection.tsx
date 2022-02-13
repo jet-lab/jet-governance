@@ -1,16 +1,16 @@
 import {
-  Account,
   Commitment,
   Connection,
+  Keypair,
   RpcResponseAndContext,
   SendTransactionError,
   SimulatedTransactionResponse,
   Transaction,
   TransactionSignature,
 } from '@solana/web3.js';
-import { WalletContextState } from "@solana/wallet-adapter-react";
 import { WalletNotConnectedError } from '@solana/wallet-adapter-base';
 import { SignTransactionError, TransactionTimeoutError } from '../../../utils';
+import { WalletSigner } from '@solana/spl-governance';
 
 export async function sleep(ms: number) {
   return new Promise(resolve => setTimeout(resolve, ms));
@@ -34,8 +34,8 @@ export async function sendTransaction2({
   timeout = DEFAULT_TX_TIMEOUT,
 }: {
   transaction: Transaction;
-  wallet: WalletContextState;
-  signers?: Array<Account>;
+  wallet: WalletSigner;
+  signers?: Keypair[];
   connection: Connection;
   sendingMessage?: string;
   successMessage?: string;
@@ -61,8 +61,8 @@ export async function signTransaction({
   connection,
 }: {
   transaction: Transaction;
-  wallet: WalletContextState;
-  signers?: Array<Account>;
+  wallet: WalletSigner;
+  signers?: Keypair[];
   connection: Connection;
 }) {
   const { publicKey, signTransaction } = wallet;

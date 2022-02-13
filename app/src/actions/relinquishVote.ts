@@ -1,42 +1,50 @@
-import { Account, PublicKey, TransactionInstruction } from '@solana/web3.js';
+import {
+  Keypair,
+  PublicKey,
+  Transaction,
+  TransactionInstruction,
+} from '@solana/web3.js'
 
-import { Proposal } from '../models/accounts';
-import { withRelinquishVote } from '../models/withRelinquishVote';
-import { sendTransactionWithNotifications } from '../tools/transactions';
-import { RpcContext } from '../models/core/api';
-import { ParsedAccount } from '../contexts';
+import { Proposal } from '@solana/spl-governance'
+import { RpcContext } from '@solana/spl-governance'
+import { ProgramAccount } from '@solana/spl-governance'
+import { withRelinquishVote } from '@solana/spl-governance'
+import { sendTransactionWithNotifications } from '../tools/transactions'
 
 export const relinquishVote = async (
   { connection, wallet, programId, walletPubkey }: RpcContext,
-  proposal: ParsedAccount<Proposal>,
+  proposal: ProgramAccount<Proposal>,
   tokenOwnerRecord: PublicKey,
   voteRecord: PublicKey,
-  IsWithdrawal: boolean,
-) => {
-  let signers: Account[] = [];
-  let instructions: TransactionInstruction[] = [];
+  isWithdrawal: boolean,
+  ) => {
+    const signers: Keypair[] = []
+    const instructions: TransactionInstruction[] = []
 
-  let governanceAuthority = walletPubkey;
-  let beneficiary = walletPubkey;
+  const governanceAuthority = walletPubkey
+  const beneficiary = walletPubkey
 
   withRelinquishVote(
     instructions,
     programId,
-    proposal.info.governance,
+    proposal.account.governance,
     proposal.pubkey,
     tokenOwnerRecord,
-    proposal.info.governingTokenMint,
+    proposal.account.governingTokenMint,
     voteRecord,
     governanceAuthority,
-    beneficiary,
-  );
+    beneficiary
+  )
+
+  const transaction = new Transaction()
+  transaction.add(...instructions)
 
   await sendTransactionWithNotifications(
     connection,
     wallet,
     instructions,
     signers,
-    IsWithdrawal ? 'Withdrawing vote from proposal' : 'Releasing voting tokens',
-    IsWithdrawal ? 'Vote withdrawn' : 'Tokens released',
+    isWithdrawal ? 'Withdrawing vote from proposal' : 'Releasing voting tokens',
+    isWithdrawal ? 'Vote withdrawn' : 'Tokens released',
   );
-};
+}

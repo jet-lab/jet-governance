@@ -1,33 +1,29 @@
 import { AssociatedToken, StakeAccount, StakePool, UnbondingAccount } from "@jet-lab/jet-engine";
 import { BN, Program } from "@project-serum/anchor";
 import { SendTxRequest } from "@project-serum/anchor/dist/cjs/provider";
+import { Governance, ProgramAccount, TokenOwnerRecord, VoteRecord, withDepositGoverningTokens, withRelinquishVote, withWithdrawGoverningTokens } from "@solana/spl-governance";
 import { Transaction, TransactionInstruction } from "@solana/web3.js";
-import { ParsedAccount } from "../contexts";
-import { approve } from "../models";
-import { Governance, TokenOwnerRecord, VoteRecord } from "../models/accounts";
-import { RpcContext } from "../models/core/api";
-import { withDepositGoverningTokens } from "../models/withDepositGoverningTokens";
-import { withRelinquishVote } from "../models/withRelinquishVote";
-import { withWithdrawGoverningTokens } from "../models/withWithdrawGoverningTokens";
+import { RpcContext } from "@solana/spl-governance";
 import { sendAllTransactionsWithNotifications } from "../tools/transactions";
 import { GOVERNANCE_PROGRAM_ID } from "../utils";
+import { withApprove } from "../models";
 
 export const rescindAndUnstake = async (
   { programVersion, walletPubkey }: RpcContext,
   stakeProgram: Program,
   stakePool: StakePool,
   stakeAccount: StakeAccount,
-  governance: ParsedAccount<Governance>,
-  tokenOwnerRecord: ParsedAccount<TokenOwnerRecord>,
-  walletVoteRecords: ParsedAccount<VoteRecord>[],
+  governance: ProgramAccount<Governance>,
+  tokenOwnerRecord: ProgramAccount<TokenOwnerRecord>,
+  walletVoteRecords: ProgramAccount<VoteRecord>[],
   amount: BN,
 ) => {
 
   const voteMint = stakePool.addresses.stakeVoteMint.address;
   const unbondingSeed = UnbondingAccount.randomSeed();
-  const unrelinquished = walletVoteRecords.filter(voteRecord => !voteRecord.info.isRelinquished)
+  const unrelinquished = walletVoteRecords.filter(voteRecord => !voteRecord.account.isRelinquished)
   const transactions: Transaction[] = [];
-  const remainingStake = tokenOwnerRecord.info.governingTokenDepositAmount.sub(amount);
+  const remainingStake = tokenOwnerRecord.account.governingTokenDepositAmount.sub(amount);
 
   // Rescind vote records
   for (let i = 0; i < unrelinquished.length; i++) {
@@ -40,7 +36,7 @@ export const rescindAndUnstake = async (
       ix,
       GOVERNANCE_PROGRAM_ID,
       governance.pubkey,
-      voteRecord.info.proposal,
+      voteRecord.account.proposal,
       tokenOwnerRecord.pubkey,
       voteMint,
       voteRecord.pubkey,
@@ -55,8 +51,8 @@ export const rescindAndUnstake = async (
   // Create vote token account
   const voterTokenAccount = await AssociatedToken.withCreate(instructions, stakeProgram.provider, walletPubkey, voteMint)
   // Unstake Votes
-  await withWithdrawGoverningTokens(instructions, GOVERNANCE_PROGRAM_ID, governance.info.realm, voterTokenAccount, voteMint, walletPubkey);
-  const transferAuthority = approve(
+  await withWithdrawGoverningTokens(instructions, GOVERNANCE_PROGRAM_ID, governance.account.realm, voterTokenAccount, voteMint, walletPubkey);
+  const transferAuthority = withApprove(
     instructions,
     [],
     voterTokenAccount,
@@ -64,7 +60,7 @@ export const rescindAndUnstake = async (
     amount,
   );
   // Restake Remaining Votes
-  await withDepositGoverningTokens(instructions, GOVERNANCE_PROGRAM_ID, programVersion, governance.info.realm, voterTokenAccount, voteMint, walletPubkey, transferAuthority.publicKey, walletPubkey, remainingStake)
+  await withDepositGoverningTokens(instructions, GOVERNANCE_PROGRAM_ID, programVersion, governance.account.realm, voterTokenAccount, voteMint, walletPubkey, transferAuthority.publicKey, walletPubkey, remainingStake)
   // Burn votes
   await StakeAccount.withBurnVotes(instructions, stakePool, stakeAccount, walletPubkey, voterTokenAccount, amount)
   // Unstake Jet

@@ -1,7 +1,6 @@
 import { sleep, useLocalStorageState } from '../utils/utils';
 import {
   Account,
-  BlockhashAndFeeCalculator,
   clusterApiUrl,
   Commitment,
   Connection,
@@ -271,7 +270,7 @@ export const sendTransactions = async (
   commitment: Commitment = 'singleGossip',
   successCallback: (txid: string, ind: number) => void = (txid, ind) => {},
   failCallback: (reason: string, ind: number) => boolean = (txid, ind) => false,
-  block?: BlockhashAndFeeCalculator,
+  block?: any,
 ): Promise<number> => {
   if (!wallet.publicKey) throw new WalletNotConnectedError();
 
@@ -357,7 +356,7 @@ export const sendTransaction = async (
   awaitConfirmation = true,
   commitment: Commitment = 'singleGossip',
   includesFeePayer: boolean = false,
-  block?: BlockhashAndFeeCalculator,
+  block?: any,
 ) => {
   if (!wallet.publicKey) throw new WalletNotConnectedError();
   if(!wallet.signTransaction) throw new SignTransactionError();
@@ -475,7 +474,7 @@ export const sendTransactionWithRetry = async (
   signers: Account[],
   commitment: Commitment = 'singleGossip',
   includesFeePayer: boolean = false,
-  block?: BlockhashAndFeeCalculator,
+  block?: any,
   beforeSend?: () => void,
 ) => {
   if (!wallet.publicKey) throw new WalletNotConnectedError();

@@ -1,5 +1,4 @@
 import { PublicKey } from '@solana/web3.js';
-import { TokenSwapLayout, TokenSwapLayoutV1 } from '../models/tokenSwap';
 
 export const WRAPPED_SOL_MINT = new PublicKey(
   "So11111111111111111111111111111111111111112"
@@ -69,10 +68,6 @@ let WORMHOLE_BRIDGE: {
   wrappedMaster: string;
 };
 
-let SWAP_PROGRAM_ID: PublicKey;
-let SWAP_PROGRAM_LEGACY_IDS: PublicKey[];
-let SWAP_PROGRAM_LAYOUT: any;
-
 export const LEND_HOST_FEE_ADDRESS = process && process.env.REACT_APP_LEND_HOST_FEE_ADDRESS
   ? new PublicKey(`${process.env.REACT_APP_LEND_HOST_FEE_ADDRESS}`)
   : undefined;
@@ -91,16 +86,6 @@ export const PROGRAM_IDS = [
       bridge: '0xf92cD566Ea4864356C5491c177A430C222d7e678',
       wrappedMaster: '9A5e27995309a03f8B583feBdE7eF289FcCdC6Ae',
     }),
-    swap: () => ({
-      current: {
-        pubkey: new PublicKey('9qvG1zUp8xF1Bi4m6UdRNby1BAAuaDrUxSpv4CmRRMjL'),
-        layout: TokenSwapLayoutV1,
-      },
-      legacy: [
-        // TODO: uncomment to enable legacy contract
-        // new PublicKey("9qvG1zUp8xF1Bi4m6UdRNby1BAAuaDrUxSpv4CmRRMjL"),
-      ],
-    }),
   },
   {
     name: 'testnet',
@@ -109,13 +94,6 @@ export const PROGRAM_IDS = [
       pubkey: new PublicKey('5gQf5AUhAgWYgUCt9ouShm9H7dzzXUsLdssYwe5krKhg'),
       bridge: '0x251bBCD91E84098509beaeAfF0B9951859af66D3',
       wrappedMaster: 'E39f0b145C0aF079B214c5a8840B2B01eA14794c',
-    }),
-    swap: () => ({
-      current: {
-        pubkey: new PublicKey('2n2dsFSgmPcZ8jkmBZLGUM2nzuFqcBGQ3JEEj6RJJcEg'),
-        layout: TokenSwapLayoutV1,
-      },
-      legacy: [],
     }),
   },
 
@@ -127,13 +105,6 @@ export const PROGRAM_IDS = [
       bridge: '0xf92cD566Ea4864356C5491c177A430C222d7e678',
       wrappedMaster: '9A5e27995309a03f8B583feBdE7eF289FcCdC6Ae',
     }),
-    swap: () => ({
-      current: {
-        pubkey: new PublicKey('6Cust2JhvweKLh4CVo1dt21s2PJ86uNGkziudpkNPaCj'),
-        layout: TokenSwapLayout,
-      },
-      legacy: [new PublicKey('BSfTAcBdqmvX5iE2PW88WFNNp2DHhLUaBKk5WrnxVkcJ')],
-    }),
   },
   {
     name: 'localnet',
@@ -142,13 +113,6 @@ export const PROGRAM_IDS = [
       pubkey: new PublicKey('WormT3McKhFJ2RkiGpdw9GKvNCrB2aB54gb2uV9MfQC'),
       bridge: '0xf92cD566Ea4864356C5491c177A430C222d7e678',
       wrappedMaster: '9A5e27995309a03f8B583feBdE7eF289FcCdC6Ae',
-    }),
-    swap: () => ({
-      current: {
-        pubkey: new PublicKey('369YmCWHGxznT7GGBhcLZDRcRoGWmGKFWdmtiPy78yj7'),
-        layout: TokenSwapLayoutV1,
-      },
-      legacy: [],
     }),
   },
 ];
@@ -160,12 +124,6 @@ export const setProgramIds = (envName: string) => {
   }
 
   WORMHOLE_BRIDGE = instance.wormhole();
-
-  let swap = instance.swap();
-
-  SWAP_PROGRAM_ID = swap.current.pubkey;
-  SWAP_PROGRAM_LAYOUT = swap.current.layout;
-  SWAP_PROGRAM_LEGACY_IDS = swap.legacy;
 
 
   if (envName === 'mainnet-beta') {
@@ -190,9 +148,6 @@ export const setProgramIds = (envName: string) => {
 export const programIds = () => {
   return {
     token: TOKEN_PROGRAM_ID,
-    swap: SWAP_PROGRAM_ID,
-    swap_legacy: SWAP_PROGRAM_LEGACY_IDS,
-    swapLayout: SWAP_PROGRAM_LAYOUT,
     lending: LENDING_PROGRAM_ID,
     wormhole: WORMHOLE_BRIDGE,
 

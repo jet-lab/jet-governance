@@ -1,8 +1,7 @@
-import { Account, PublicKey, TransactionInstruction } from "@solana/web3.js";
+import { Keypair, PublicKey, TransactionInstruction } from "@solana/web3.js";
 import BN from "bn.js";
-import { approve } from "../models";
-import { RpcContext } from "../models/core/api";
-import { withDepositGoverningTokens } from "../models/withDepositGoverningTokens";
+import { withApprove } from "../models";
+import { RpcContext, withDepositGoverningTokens } from "@solana/spl-governance";
 import { sendTransactionWithNotifications } from "../tools/transactions";
 import { AssociatedToken, StakeAccount, StakePool } from "@jet-lab/jet-engine"
 
@@ -14,7 +13,7 @@ export const addStake = async (
   amount: BN
 ) => {
   let instructions: TransactionInstruction[] = [];
-  let signers: Account[] = [];
+  let signers: Keypair[] = [];
 
   const provider = stakePool.program.provider;
   const voteMint = stakePool.addresses.stakeVoteMint.address;
@@ -26,7 +25,7 @@ export const addStake = async (
   await StakeAccount.withAddStake(instructions, stakePool, owner, tokenAccount, amount)
   await StakeAccount.withMintVotes(instructions, stakePool, owner, voterTokenAccount, amount)
 
-  const transferAuthority = approve(
+  const transferAuthority = withApprove(
     instructions,
     [],
     voterTokenAccount,

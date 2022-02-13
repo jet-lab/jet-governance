@@ -2,15 +2,15 @@ import { Airdrop, AirdropTarget, RewardsClient, StakeAccount, StakeBalance, Stak
 import { Program } from "@project-serum/anchor";
 import React, { useState, useContext } from "react";
 import { MintInfo } from "@solana/spl-token"
-import { useGovernance, useProposalsByGovernance, useWalletTokenOwnerRecord, useWalletVoteRecords } from "../hooks/apiHooks";
+import { useGovernance, useProposalsByGovernance, useWalletTokenOwnerRecord } from "../hooks/apiHooks";
 import { JET_REALM, JET_GOVERNANCE } from "../utils";
-import { ParsedAccount } from ".";
-import { Governance, Proposal, TokenOwnerRecord, VoteRecord } from "../models/accounts";
-import { useAirdropsByWallet, useClaimsCount, useProposalFilters } from "../hooks/proposalHooks";
+import { useAirdropsByWallet, useClaimsCount, useProposalFilters, useWalletVoteRecords } from "../hooks/proposalHooks";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { AssociatedToken } from "@jet-lab/jet-engine/lib/common";
 import { useConnection } from "./connection";
-import { useRealmByPubkey, useProvider } from "../hooks/apiHooks";
+import { useProvider } from "../hooks/apiHooks";
+import { Governance, ProgramAccount, Proposal, Realm, TokenOwnerRecord, VoteRecord } from "@solana/spl-governance";
+import { useGovernanceAccountByPubkey } from "../hooks/accountHooks";
 
 export type ProposalFilter = "active" | "inactive" | "passed" | "rejected" | "all";
 
@@ -34,11 +34,11 @@ interface ProposalContextState {
   jetMint?: MintInfo
   voteMint?: MintInfo
 
-  governance?: ParsedAccount<Governance>,
-  tokenOwnerRecord?: ParsedAccount<TokenOwnerRecord>
-  walletVoteRecords: ParsedAccount<VoteRecord>[]
-  proposalsByGovernance: ParsedAccount<Proposal>[]
-  filteredProposalsByGovernance: ParsedAccount<Proposal>[]
+  governance?: ProgramAccount<Governance>,
+  tokenOwnerRecord?: ProgramAccount<TokenOwnerRecord>
+  walletVoteRecords: ProgramAccount<VoteRecord>[]
+  proposalsByGovernance: ProgramAccount<Proposal>[]
+  filteredProposalsByGovernance: ProgramAccount<Proposal>[]
 }
 
 const ProposalContext = React.createContext<ProposalContextState>({
@@ -91,9 +91,9 @@ export function ProposalProvider({ children = undefined as any }) {
   const voteMint = AssociatedToken.useMint(connection, stakePool?.stakePool.stakeVoteMint);
 
   // ----- Governance -----
-  const realm = useRealmByPubkey(JET_REALM)
+  const realm = useGovernanceAccountByPubkey(Realm, JET_REALM)
   const governance = useGovernance(JET_GOVERNANCE);
-  const tokenOwnerRecord = useWalletTokenOwnerRecord(JET_REALM, realm?.info.communityMint)
+  const tokenOwnerRecord = useWalletTokenOwnerRecord(JET_REALM, realm?.account.communityMint)
   const walletVoteRecords = useWalletVoteRecords();
   const proposalsByGovernance = useProposalsByGovernance(JET_GOVERNANCE);
   const filteredProposalsByGovernance = useProposalFilters(proposalsByGovernance);

@@ -1,4 +1,3 @@
-import React from 'react';
 import { Alert, Button, Space, Typography, Collapse } from 'antd';
 import { FallbackProps } from 'react-error-boundary';
 

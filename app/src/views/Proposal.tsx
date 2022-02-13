@@ -1,4 +1,4 @@
-import { useMemo, useState, useEffect } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { ResultProgressBar } from "../components/proposal/ResultProgressBar";
 import { Divider, Spin, Button } from "antd";
@@ -14,25 +14,26 @@ import {
   useTokenOwnerVoteRecord,
 } from "../hooks/apiHooks";
 import {
+  getVoteCounts,
+  getVoteType,
   useCountdown,
   useVoterDisplayData,
   VoterDisplayData,
+  VoteOption,
 } from "../hooks/proposalHooks";
 import { useKeyParam } from "../hooks/useKeyParam";
-import { ParsedAccount } from "../contexts";
-import { Governance, Proposal } from "../models/accounts";
 import { useLoadGist } from "../hooks/useLoadGist";
 import { bnToIntLossy } from "../tools/units";
 import { LABELS } from "../constants";
 import ReactMarkdown from "react-markdown";
 import { voteRecordCsvDownload } from "../actions/voteRecordCsvDownload";
-import { YesNoVote } from "../models/instructions";
 import { DownloadOutlined, ArrowLeftOutlined } from "@ant-design/icons";
 import { useConnectWallet } from "../contexts/connectWallet";
 import { getPubkeyIndex } from "../models/PUBKEYS_INDEX";
 import { FooterLinks } from "../components/FooterLinks";
 import { useProposalContext } from "../contexts/proposal";
 import { StakeAccount, StakeBalance, StakePool } from "@jet-lab/jet-engine";
+import { Governance, ProgramAccount, Proposal, ProposalState } from "@solana/spl-governance";
 
 export const ProposalView = () => {
   const proposalAddress = useKeyParam();
@@ -49,10 +50,10 @@ export const ProposalView = () => {
   } = useProposalContext();
 
   const tokenOwnerRecords = useTokenOwnerRecords(
-    governance?.info.realm,
-    proposal?.info.isVoteFinalized() // TODO: for finalized votes show a single item for abstained votes
+    governance?.account.realm,
+    proposal?.account.isVoteFinalized() // TODO: for finalized votes show a single item for abstained votes
       ? undefined
-      : proposal?.info.governingTokenMint
+      : proposal?.account.governingTokenMint
   );
 
   const { allHasVoted } = useVoterDisplayData(voteRecords, tokenOwnerRecords);
@@ -81,20 +82,19 @@ const InnerProposalView = ({
   stakeBalance,
   proposalsByGovernance,
 }: {
-  proposal: ParsedAccount<Proposal>;
-  governance: ParsedAccount<Governance>;
+  proposal: ProgramAccount<Proposal>;
+  governance: ProgramAccount<Governance>;
   voterDisplayData: VoterDisplayData[];
   stakePool: StakePool;
   stakeAccount: StakeAccount;
   stakeBalance: StakeBalance;
-  proposalsByGovernance: ParsedAccount<Proposal>[];
+  proposalsByGovernance: ProgramAccount<Proposal>[];
 }) => {
   const [isVoteModalVisible, setIsVoteModalVisible] = useState(false);
-  const [vote, setVote] = useState<YesNoVote | undefined>(undefined);
 
   const tokenOwnerRecord = useWalletTokenOwnerRecord(
-    governance.info.realm,
-    proposal.info.governingTokenMint
+    governance.account.realm,
+    proposal.account.governingTokenMint
   );
   const voteRecord = useTokenOwnerVoteRecord(
     proposal.pubkey,
@@ -111,38 +111,22 @@ const InnerProposalView = ({
   const isStaked = true;
   // const isStaked = stakedJet !== undefined && stakedJet > 0;
 
-  const activeProposals = proposalsByGovernance.filter((p) => p.info.isVoting());
+  const activeProposals = proposalsByGovernance.filter((p) => p.account.state === ProposalState.Voting);
 
   const proposalAddress = useKeyParam();
   const { setConnecting } = useConnectWallet();
 
+  const [vote, setVote] = useState<VoteOption>(VoteOption.Undecided);
   useEffect(() => {
-    if (
-      voteRecord?.tryUnwrap()?.info.getVoterDisplayData().group === "Approve"
-    ) {
-      setVote(YesNoVote.Yes);
-    } else if (
-      voteRecord?.tryUnwrap()?.info.getVoterDisplayData().group === "Reject"
-    ) {
-      setVote(YesNoVote.No);
-    }
-    // else if (
-    //   voteRecord?.tryUnwrap()?.info.getVoterDisplayData().group === "Abstain"
-    // ) {
-    //   setVote(YesNoVote.Abstain);
-    // }
+    setVote(getVoteType(voteRecord?.account.vote?.voteType))
   }, [voteRecord]);
-
-  // const instructions = useInstructionsByProposal(proposal.pubkey);
-  // const signatories = useSignatoriesByProposal(proposal.pubkey);
 
   const addressStr = useMemo(
     () => proposalAddress.toBase58(),
     [proposalAddress]
   );
-  const { yes, no, total } =
-    proposal.info.getVoteCounts();
-  const { startDate, endDate } = useCountdown(proposal.info, governance.info);
+  const { yes, no, total } = getVoteCounts(proposal);
+  const { startDate, endDate } = useCountdown(proposal, governance);
 
   const {
     loading,
@@ -150,13 +134,13 @@ const InnerProposalView = ({
     msg,
     content,
     isUrl: isDescriptionUrl,
-  } = useLoadGist(proposal.info.descriptionLink);
+  } = useLoadGist(proposal.account.descriptionLink);
 
   return (
     <div className="view-container proposal column-grid">
       <div
         className={`flex column ${
-          proposal.info.isVoting() ? "proposal-left" : "centered"
+          proposal.account.state === ProposalState.Voting ? "proposal-left" : "centered"
         }`}
       >
         <div className="description neu-container">
@@ -167,7 +151,7 @@ const InnerProposalView = ({
             </Link>{" "}
             / JUMP {getPubkeyIndex(addressStr)}
           </span>
-          <h1 className="view-header">{proposal.info.name}</h1>
+          <h1 className="view-header">{proposal.account.name}</h1>
           {
             /* Description; Github Gist or text */
             loading ? (
@@ -177,7 +161,7 @@ const InnerProposalView = ({
                 <p>
                   {LABELS.DESCRIPTION}:{" "}
                   <a
-                    href={proposal.info.descriptionLink}
+                    href={proposal.account.descriptionLink}
                     target="_blank"
                     rel="noopener noreferrer"
                   >
@@ -242,9 +226,7 @@ const InnerProposalView = ({
               </div>
               <VoterList
                 voteRecords={voterDisplayData}
-                userVoteRecord={voteRecord
-                  ?.tryUnwrap()
-                  ?.info.getVoterDisplayData()}
+                userVoteRecord={voteRecord}
               />
             </div>
           </div>
@@ -254,23 +236,23 @@ const InnerProposalView = ({
       <div className="flex column proposal-right">
         <div
           className={`neu-container flex column ${
-            !proposal.info.isVoting() && "hidden"
+            proposal.account.state !== ProposalState.Voting && "hidden"
           }`}
           id="your-vote"
         >
           <Button
-            onClick={() => setVote(YesNoVote.Yes)}
+            onClick={() => setVote(VoteOption.Yes)}
             className={`vote-select ${
-              vote === YesNoVote.Yes ? "selected" : ""
+              vote === VoteOption.Yes ? "selected" : ""
             }`}
             size="large"
           >
             In favor
           </Button>
           <Button
-            onClick={() => setVote(YesNoVote.No)}
+            onClick={() => setVote(VoteOption.No)}
             className={`vote-select ${
-              vote === YesNoVote.No ? "selected" : ""
+              vote === VoteOption.No ? "selected" : ""
             }`}
             size="large"
           >
@@ -295,18 +277,18 @@ const InnerProposalView = ({
             governance={governance}
             proposal={proposal}
             tokenOwnerRecord={tokenOwnerRecord}
-            voteRecord={voteRecord?.tryUnwrap()}
+            voteRecord={voteRecord}
             stakeBalance={stakeBalance}
           />
           {!isStaked && connected ? <span className="helper-text">You must have JET staked in order to vote on proposals.</span> : vote === undefined && connected ? <span className="helper-text">Please select an option to submit your vote.</span> : ""}
         </div>
       </div>
 
-      <Divider className={proposal.info.isVoting() ? "" : "centered"} />
+      <Divider className={proposal.account.state === ProposalState.Voting ? "" : "centered"} />
 
       <div
         className={`other-proposals ${
-          proposal.info.isVoting() ? "" : "centered"
+          proposal.account.state === ProposalState.Voting ? "" : "centered"
         }`}
       >
         <h3>Other active proposals</h3>

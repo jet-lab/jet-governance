@@ -3,7 +3,6 @@ import { MintInfo } from '@solana/spl-token';
 import { TokenAccount } from './../models';
 import { PublicKey } from '@solana/web3.js';
 import BN from 'bn.js';
-import { WAD, ZERO } from '../constants';
 import { TokenInfo } from '@solana/spl-token-registry';
 import { bnToNumber } from '@jet-lab/jet-engine';
 
@@ -139,10 +138,6 @@ export function toLamports(
 
   const precision = Math.pow(10, mint?.decimals || 0);
   return Math.floor(amount * precision);
-}
-
-export function wadToLamports(amount?: BN): BN {
-  return amount?.div(WAD) || ZERO;
 }
 
 export function fromLamports(

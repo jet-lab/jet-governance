@@ -1,30 +1,47 @@
-import { Account, PublicKey, TransactionInstruction } from '@solana/web3.js';
+import {
+  Keypair,
+  PublicKey,
+  Transaction,
+  TransactionInstruction,
+} from '@solana/web3.js'
 
-import { Proposal } from '../models/accounts';
+import { getGovernanceProgramVersion, Proposal } from '@solana/spl-governance'
 
-import { withFlagInstructionError } from '../models/withFlagInstructionError';
-import { sendTransactionWithNotifications } from '../tools/transactions';
-import { RpcContext } from '../models/core/api';
-import { ParsedAccount } from '../contexts';
+import { withFlagTransactionError } from '@solana/spl-governance'
+import { RpcContext } from '@solana/spl-governance'
+import { ProgramAccount } from '@solana/spl-governance'
+import { sendTransactionWithNotifications } from '../tools/transactions'
 
 export const flagInstructionError = async (
   { connection, wallet, programId, walletPubkey }: RpcContext,
-  proposal: ParsedAccount<Proposal>,
-  proposalInstruction: PublicKey,
+  proposal: ProgramAccount<Proposal>,
+  proposalInstruction: PublicKey
 ) => {
-  let governanceAuthority = walletPubkey;
+  const governanceAuthority = walletPubkey
 
-  let signers: Account[] = [];
-  let instructions: TransactionInstruction[] = [];
+  const signers: Keypair[] = []
+  const instructions: TransactionInstruction[] = []
 
-  withFlagInstructionError(
+  // Explicitly request the version before making RPC calls to work around race conditions in resolving
+  // the version for RealmInfo
+  const programVersion = await getGovernanceProgramVersion(
+    connection,
+    programId
+  )
+
+  withFlagTransactionError(
     instructions,
     programId,
+    programVersion,
     proposal.pubkey,
-    proposal.info.tokenOwnerRecord,
+    proposal.account.tokenOwnerRecord,
     governanceAuthority,
-    proposalInstruction,
-  );
+    proposalInstruction
+  )
+
+  const transaction = new Transaction({ feePayer: walletPubkey })
+
+  transaction.add(...instructions)
 
   await sendTransactionWithNotifications(
     connection,

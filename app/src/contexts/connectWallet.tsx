@@ -4,6 +4,7 @@ import { useWallet } from "@solana/wallet-adapter-react";
 import { createContext, useContext, useState } from "react";
 import { createUserAuth } from "../actions/createUserAuth";
 import { VerifyModal } from "../components/modals/VerifyModal"
+import { useRpcContext } from "../hooks";
 import { useConnection } from "./connection";
 
 // Connecting wallet context
@@ -27,6 +28,7 @@ const ConnectWalletContext = createContext<ConnectWallet>({
 export const ConnectWalletProvider = (props: { children: any }) => {
   const wallet = useWallet();
   const connection = useConnection();
+  const rpcContext = useRpcContext();
   const { publicKey, connected } = wallet;
   const [connecting, setConnecting] = useState(false);
   const [welcoming, setWelcoming] = useState(false);
@@ -60,7 +62,7 @@ export const ConnectWalletProvider = (props: { children: any }) => {
 
     let success = true;
     try {
-      await createUserAuth(authProgram, wallet, publicKey, publicKey)
+      await createUserAuth(rpcContext, authProgram, publicKey, publicKey)
     } catch (ex) {
       success = false;
     }

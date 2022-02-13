@@ -1,102 +1,14 @@
 import React, { useContext, useEffect, useMemo, useState } from 'react';
-
-import {
-  AccountInfo,
-  Connection,
-  KeyedAccountInfo,
-  PublicKey,
-} from '@solana/web3.js';
-import { GovernanceAccountParser } from '../models/serialisation';
-import { GovernanceAccountType, Realm } from '../models/accounts';
-import { getRealms } from '../models/api';
-import { EventEmitter } from 'eventemitter3';
-
+import { PublicKey } from '@solana/web3.js';
 import { useLocation } from 'react-router-dom';
 import { getProgramVersion, PROGRAM_VERSION } from '../models/registry/api';
-import { ParsedAccount, useConnection, useConnectionConfig } from '.';
+import { useConnection, useConnectionConfig } from '.';
+import { getRealms, ProgramAccount, Realm } from '@solana/spl-governance';
 
 export interface GovernanceContextState {
-  realms: Record<string, ParsedAccount<Realm>>;
-  changeTracker: AccountChangeTracker;
+  realms: Record<string, ProgramAccount<Realm>>;
   programId: string;
   programVersion: number;
-}
-
-class AccountRemovedEventArgs {
-  pubkey: string;
-  accountType: GovernanceAccountType;
-
-  constructor(pubkey: string, accountType: GovernanceAccountType) {
-    this.pubkey = pubkey;
-    this.accountType = accountType;
-  }
-}
-
-// An event raised when account was updated or inserted
-class AccountUpdatedEventArgs {
-  pubkey: string;
-  accountType: GovernanceAccountType;
-  accountInfo: AccountInfo<Buffer>;
-
-  constructor(
-    pubkey: string,
-    accountType: GovernanceAccountType,
-    accountInfo: AccountInfo<Buffer>,
-  ) {
-    this.pubkey = pubkey;
-    this.accountType = accountType;
-    this.accountInfo = accountInfo;
-  }
-}
-
-// Tracks local changes not supported by connection notifications
-class AccountChangeTracker {
-  // For some reasons when a single emitter is used in prod it emits both remove and update events
-  // As a workaround a single emitter per event is used
-  private removeEmitter = new EventEmitter();
-  private updateEmitter = new EventEmitter();
-
-  onAccountRemoved(callback: (args: AccountRemovedEventArgs) => void) {
-    this.removeEmitter.on(AccountRemovedEventArgs.name, callback);
-    return () =>
-      this.removeEmitter.removeListener(AccountRemovedEventArgs.name, callback);
-  }
-
-  notifyAccountRemoved(pubkey: string, accountType: GovernanceAccountType) {
-    this.removeEmitter.emit(
-      AccountRemovedEventArgs.name,
-      new AccountRemovedEventArgs(pubkey, accountType),
-    );
-  }
-
-  onAccountUpdated(callback: (args: AccountUpdatedEventArgs) => void) {
-    this.updateEmitter.on(AccountUpdatedEventArgs.name, callback);
-    return () =>
-      this.updateEmitter.removeListener(AccountUpdatedEventArgs.name, callback);
-  }
-
-  notifyAccountUpdated(
-    pubkey: string,
-    accountType: GovernanceAccountType,
-    accountInfo: AccountInfo<Buffer>,
-  ) {
-    this.updateEmitter.emit(
-      AccountUpdatedEventArgs.name,
-      new AccountUpdatedEventArgs(pubkey, accountType, accountInfo),
-    );
-  }
-
-  async fetchAndNotifyAccountUpdated(
-    connection: Connection,
-    pubkey: PublicKey,
-  ) {
-    const info = await connection.getAccountInfo(pubkey, 'recent');
-    if (info) {
-      this.notifyAccountUpdated(pubkey.toBase58(), info.data[0], info);
-    } else {
-      console.error(`Can't fetch account for ${pubkey}`);
-    }
-  }
 }
 
 export const GovernanceContext =
@@ -104,7 +16,7 @@ export const GovernanceContext =
 
 export default function GovernanceProvider({ children = null as any }) {
   const connection = useConnection();
-  const { endpoint, env } = useConnectionConfig();
+  const { env } = useConnectionConfig();
   const location = useLocation();
 
   const programId = useMemo(() => {
@@ -115,62 +27,31 @@ export default function GovernanceProvider({ children = null as any }) {
   }, [location]);
 
   const [realms, setRealms] = useState({});
-  const [changeTracker] = useState(new AccountChangeTracker());
   const [programVersion, setProgramVersion] = useState(PROGRAM_VERSION);
 
   useEffect(() => {
-    const sub = (async () => {
-      const programPk = new PublicKey(programId);
-
-      try {
-        const loadedRealms = await getRealms(endpoint, programPk);
+    const programPk = new PublicKey(programId);
+    getRealms(connection, programPk)
+      .then(loadedRealms => {
         setRealms(loadedRealms);
-      } catch (ex) {
+      })
+      .catch((ex: Error) => {
         console.error("Can't load Realms", ex);
         setRealms({});
-      }
-
-      // Use a single web socket subscription for all accounts and broadcast the updates using changeTracker
-      // Note: Do not create other subscriptions for the given program id. They would be silently ignored by the rpc endpoint
-
-      return connection.onProgramAccountChange(
-        programPk,
-        async (info: KeyedAccountInfo) => {
-          if (info.accountInfo.data[0] === GovernanceAccountType.Realm) {
-            const realm = GovernanceAccountParser(Realm)(
-              info.accountId,
-              info.accountInfo,
-            );
-            setRealms((objs: any) => ({
-              ...objs,
-              [info.accountId.toBase58()]: realm,
-            }));
-          }
-          changeTracker.notifyAccountUpdated(
-            info.accountId.toBase58(),
-            info.accountInfo.data[0],
-            info.accountInfo,
-          );
-        },
-      );
-    })();
-
-    return () => {
-      sub.then(id => connection.removeProgramAccountChangeListener(id));
-    };
-  }, [connection, programId, endpoint]); //eslint-disable-line
+      });
+  }, [connection, programId]); //eslint-disable-line
 
   useEffect(() => {
-    getProgramVersion(connection, programId, env).then(pVersion => {
-      setProgramVersion(pVersion);
-    });
+    getProgramVersion(connection, programId, env)
+      .then(pVersion => {
+        setProgramVersion(pVersion);
+      });
   }, [env, connection, programId]);
 
   return (
     <GovernanceContext.Provider
       value={{
         realms,
-        changeTracker,
         programVersion,
         programId,
       }}
@@ -191,11 +72,6 @@ export function useProgramInfo() {
     programVersion: context.programVersion,
     programId: context.programId,
   };
-}
-
-export function useAccountChangeTracker() {
-  const context = useGovernanceContext();
-  return context.changeTracker;
 }
 
 export function useRealms() {

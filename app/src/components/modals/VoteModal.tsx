@@ -1,19 +1,17 @@
 import { Modal, ModalProps } from "antd";
 import { ReactNode, useEffect, useState } from "react";
-import { ParsedAccount } from "../../contexts";
-import { Governance, Proposal, TokenOwnerRecord, VoteRecord } from "../../models/accounts";
-import { YesNoVote } from "../../models/instructions";
 import {
   useProposalsByGovernance,
 } from "../../hooks/apiHooks";
-import { useCountdown } from "../../hooks/proposalHooks";
+import { useCountdown, VoteOption } from "../../hooks/proposalHooks";
 import { useRpcContext } from "../../hooks/useRpcContext";
 import { StakeBalance } from "@jet-lab/jet-engine";
-import { castVote } from "../../actions/castVote";
 import { getPubkeyIndex } from "../../models/PUBKEYS_INDEX";
 import { getProposalUrl } from "../../tools/routeTools";
 import { Link } from "react-router-dom";
 import { JET_GOVERNANCE } from "../../utils";
+import { Governance, ProgramAccount, Proposal, ProposalState, TokenOwnerRecord, VoteRecord, YesNoVote } from "@solana/spl-governance";
+import { castVote } from "../../actions/castVote";
 
 enum Steps {
   ConfirmVote = 0,
@@ -32,18 +30,18 @@ export const VoteModal = ({
   voteRecord,
   stakeBalance
 }: {
-  vote: YesNoVote | undefined;
+  vote: VoteOption;
   visible: boolean;
   onClose: () => void;
-  governance: ParsedAccount<Governance>;
-  proposal: ParsedAccount<Proposal>;
-  tokenOwnerRecord?: ParsedAccount<TokenOwnerRecord>;
-  voteRecord: ParsedAccount<VoteRecord> | undefined,
+  governance: ProgramAccount<Governance>;
+  proposal: ProgramAccount<Proposal>;
+  tokenOwnerRecord?: ProgramAccount<TokenOwnerRecord>;
+  voteRecord: ProgramAccount<VoteRecord> | undefined,
   stakeBalance: StakeBalance
 }) => {  
   const [current, setCurrent] = useState(0);
 
-  const { endDate, countdown } = useCountdown(proposal.info, governance.info);
+  const { endDate, countdown } = useCountdown(proposal, governance);
   const rpcContext = useRpcContext();
 
   let voteText: string = "";
@@ -57,21 +55,31 @@ export const VoteModal = ({
     }
   }, [vote])
 
-  if (vote === YesNoVote.Yes) {
+  if (vote === VoteOption.Yes) {
     voteText = "in favor of";
-  } else if (vote === YesNoVote.No) {
+  } else if (vote === VoteOption.No) {
     voteText = "against";
   }
 
   // Handlers for vote modal
-  const confirmVote = async (vote: YesNoVote) => {
+  const confirmVote = async (vote: VoteOption) => {
+    let yesNoVote: YesNoVote;
+    if(vote === VoteOption.Yes) {
+      yesNoVote = YesNoVote.Yes;
+    } else if (vote===VoteOption.No) {
+      yesNoVote = YesNoVote.No;
+    } else {
+      throw new Error("Not a yes or no vote.")
+    }
+
     if (tokenOwnerRecord) {
     castVote(
       rpcContext,
-      governance.info.realm,
+      governance.account.realm,
       proposal,
       tokenOwnerRecord.pubkey,
-      vote,
+      yesNoVote,
+      undefined,
       voteRecord ? voteRecord!.pubkey : undefined
     )
       .then(() => setCurrent(Steps.VoteSuccess))
@@ -81,17 +89,17 @@ export const VoteModal = ({
 
   // Handlers for tx success all set modal
   const proposals = useProposalsByGovernance(JET_GOVERNANCE);
-  const activeProposals = proposals.filter((p) => p.info.isVoting());
+  const activeProposals = proposals.filter((p) => p.account.state === ProposalState.Voting);
 
-  const proposalMap = (proposal: ParsedAccount<Proposal>, key: number) => {
+  const proposalMap = (proposal: ProgramAccount<Proposal>, key: number) => {
     const headlineUrl = getProposalUrl(
       proposal.pubkey,
-      proposal.info.name.substring(0, 15).replace(" ", "-"))
+      proposal.account.name.substring(0, 15).replace(" ", "-"))
 
     return (
     <div key={key}>
         <p>
-          <Link to={headlineUrl}><u>Proposal {getPubkeyIndex(proposal.pubkey.toBase58())}</u></Link>: {proposal.info.name}. <span className="secondary-text">Ends in {countdown}</span>
+          <Link to={headlineUrl}><u>Proposal {getPubkeyIndex(proposal.pubkey.toBase58())}</u></Link>: {proposal.account.name}. <span className="secondary-text">Ends in {countdown}</span>
     </p>
     </div>
   )}
@@ -105,7 +113,7 @@ export const VoteModal = ({
     content:
       <>
       <p>
-        You are about to vote <strong>{voteText}</strong> proposal "{proposal.info.name}".
+        You are about to vote <strong>{voteText}</strong> proposal "{proposal.account.name}".
       </p>
       <p>
         You have {Intl.NumberFormat().format(stakedJet)} JET staked, and
@@ -124,7 +132,7 @@ export const VoteModal = ({
       <>
       <p>
         You've successfully voted <strong>{voteText}</strong> proposal #{getPubkeyIndex(proposal.pubkey.toBase58())}:{" "}
-        {proposal.info.name}.
+        {proposal.account.name}.
       </p>
       <h2 className="text-gradient" style={{marginLeft: 0}}>Vote on other proposals:</h2>
       <p>

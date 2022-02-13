@@ -1,24 +1,19 @@
-import { PublicKey, Transaction, TransactionInstruction } from '@solana/web3.js';
-
-import { Proposal } from '../models/accounts';
-import { withCastVote } from '../models/withCastVote';
-import { Vote, YesNoVote } from '../models/instructions';
-import { RpcContext } from '../models/core/api';
-import { ParsedAccount } from '../contexts';
-import { withRelinquishVote } from '../models/withRelinquishVote';
+import { PublicKey, Transaction, TransactionInstruction, Keypair } from '@solana/web3.js';
 import { sendAllTransactionsWithNotifications } from '../tools/transactions';
 import { Provider } from '@project-serum/anchor';
+import { ChatMessageBody, GOVERNANCE_CHAT_PROGRAM_ID, ProgramAccount, Proposal, RpcContext, Vote, withCastVote, withPostChatMessage, withRelinquishVote, YesNoVote } from '@solana/spl-governance';
 
 export const castVote = async (
   { connection, wallet, programId, programVersion, walletPubkey }: RpcContext,
   realm: PublicKey,
-  proposal: ParsedAccount<Proposal>,
+  proposal: ProgramAccount<Proposal>,
   tokenOwnerRecord: PublicKey,
   yesNoVote: YesNoVote,
+  message?: ChatMessageBody,
   voteRecord?: PublicKey
 ) => {
   let relinquishVoteIx: TransactionInstruction[] = [];
-  // let signers: Account[] = [];
+  let signers: Keypair[] = [];
   let castVoteIx: TransactionInstruction[] = [];
   const allTxs = [];
 
@@ -32,10 +27,10 @@ export const castVote = async (
   await withRelinquishVote(
     relinquishVoteIx,
     programId,
-    proposal.info.governance,
+    proposal.account.governance,
     proposal.pubkey,
     tokenOwnerRecord,
-    proposal.info.governingTokenMint,
+    proposal.account.governingTokenMint,
     voteRecord,
     governanceAuthority,
     payer
@@ -53,15 +48,32 @@ export const castVote = async (
     programId,
     programVersion,
     realm,
-    proposal.info.governance,
+    proposal.account.governance,
     proposal.pubkey,
-    proposal.info.tokenOwnerRecord,
+    proposal.account.tokenOwnerRecord,
     tokenOwnerRecord,
     governanceAuthority,
-    proposal.info.governingTokenMint,
+    proposal.account.governingTokenMint,
     Vote.fromYesNoVote(yesNoVote),
     payer,
   );
+  
+  if (message) {
+    await withPostChatMessage(
+      castVoteIx,
+      signers,
+      GOVERNANCE_CHAT_PROGRAM_ID,
+      programId,
+      realm,
+      proposal.account.governance,
+      proposal.pubkey,
+      tokenOwnerRecord,
+      governanceAuthority,
+      payer,
+      undefined,
+      message
+    )
+  }
 
   const castTx = new Transaction().add(...castVoteIx)
   allTxs.push({

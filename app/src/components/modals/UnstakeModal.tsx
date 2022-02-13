@@ -37,7 +37,7 @@ export const UnstakeModal = ({
   const [loading, setLoading] = useState(false);
 
   const rescind = useMemo(() => {
-    return walletVoteRecords.find(voteRecord => !voteRecord.info.isRelinquished);
+    return walletVoteRecords.find(voteRecord => !voteRecord.account.isRelinquished);
   }, [walletVoteRecords])
 
 

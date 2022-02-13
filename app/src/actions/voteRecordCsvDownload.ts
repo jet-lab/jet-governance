@@ -8,7 +8,7 @@ export function voteRecordCsvDownload(itemAddress: PublicKey, votes: VoterDispla
 
   // merge the data with CSV
   votes.forEach(function (vote) {
-    csv += [vote.title, vote.value, vote.group].join(",");
+    csv += [vote.user, vote.voteWeight, vote.voteKind].join(",");
     csv += "\n";
   });
 

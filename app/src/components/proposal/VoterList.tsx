@@ -1,21 +1,28 @@
-import React, { useState, useEffect } from "react";
+import { useState, useMemo } from "react";
 import { List, Button, Skeleton } from "antd";
 import { Stakeholders } from "./Stakeholders";
-import { VoterDisplayData } from "../../hooks/proposalHooks";
 import { bnToIntLossy } from "../../tools/units";
+import { ProgramAccount, VoteRecord } from "@solana/spl-governance";
+import { getVoterDisplayData, VoterDisplayData } from "../../hooks";
 
 export const VoterList = (props: {
   voteRecords: VoterDisplayData[],
-  userVoteRecord?: VoterDisplayData
+  userVoteRecord?: ProgramAccount<VoteRecord>
 }) => {
   const [page, setPage] = useState(1);
-  const [list, setList] = useState<VoterDisplayData[]>([]);
 
   const count = 5;
 
-  useEffect(() => {
-    setList(props.voteRecords.slice(0, count * page));
+  const list = useMemo(() => {
+    return props.voteRecords
+      .slice(0, count * page)
   }, [props.voteRecords, page]);
+
+
+  const userVote = useMemo(() => {
+    return getVoterDisplayData(props.userVoteRecord)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [props.userVoteRecord])
 
   // Function to fake lazy loading
   const onLoadMore = () => {
@@ -39,11 +46,11 @@ export const VoterList = (props: {
 
   return (
     <>
-      {props.userVoteRecord && (
+      {userVote && (
         <Stakeholders
-          type={props.userVoteRecord.group}
-          amount={bnToIntLossy(props.userVoteRecord.value)}
-          address={props.userVoteRecord.title}
+          type={userVote.voteKind}
+          amount={bnToIntLossy(userVote.voteWeight)}
+          user={userVote.user}
           thisUser={true}
         />
       )}
@@ -51,13 +58,13 @@ export const VoterList = (props: {
         itemLayout="horizontal"
         loadMore={loadMore}
         dataSource={list}
-        renderItem={(item) => item.title !== props.userVoteRecord?.title && (
+        renderItem={(item) => (!props.userVoteRecord || !item.user.equals(props.userVoteRecord.account.governingTokenOwner)) && (
           <List.Item>
             <Skeleton avatar title={false} loading={false} active>
               <Stakeholders
-                type={item.group}
-                amount={bnToIntLossy(item.value)}
-                address={item.title}
+                type={item.voteKind}
+                amount={bnToIntLossy(item.voteWeight)}
+                user={item.user}
               />
             </Skeleton>
           </List.Item>

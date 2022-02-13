@@ -1,8 +1,7 @@
 import { BN } from '@project-serum/anchor';
+import { MintMaxVoteWeightSource } from '@solana/spl-governance';
 import { MintInfo } from '@solana/spl-token';
 import { BigNumber } from 'bignumber.js';
-
-import { MintMaxVoteWeightSource } from '../models/accounts';
 
 const SECONDS_PER_DAY = 86400;
 
@@ -203,6 +202,6 @@ export function getMintMaxVoteWeight(
 }
 
 /** Converts a BN to a number that will be imprecise when greater than 2^53 */
-export function bnToIntLossy(bigNum: BN) {
-  return parseFloat(bigNum.toString());
+export function bnToIntLossy(bigNum: BN | undefined) {
+  return bigNum ? parseFloat(bigNum.toString()) : 0;
 }

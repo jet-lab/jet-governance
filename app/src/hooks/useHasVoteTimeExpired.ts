@@ -1,16 +1,15 @@
-import { ParsedAccount } from '../contexts';
-import { Governance, Proposal } from '../models/accounts';
+import { Governance, ProgramAccount, Proposal } from '@solana/spl-governance';
 import { useIsBeyondTimestamp } from './useIsBeyondTimestamp';
 
 export const useHasVoteTimeExpired = (
-  governance: ParsedAccount<Governance> | undefined,
-  proposal: ParsedAccount<Proposal>,
+  governance: ProgramAccount<Governance> | undefined,
+  proposal: ProgramAccount<Proposal>,
 ) => {
   return useIsBeyondTimestamp(
-    proposal.info.isVoteFinalized()
+    proposal.account.isVoteFinalized()
       ? 0 // If vote is finalized then set the timestamp to 0 to make it expired
-      : proposal.info.votingAt && governance
-      ? proposal.info.votingAt.toNumber() + governance.info.config.maxVotingTime
+      : proposal.account.votingAt && governance
+      ? proposal.account.votingAt.toNumber() + governance.account.config.maxVotingTime
       : undefined,
   );
 };

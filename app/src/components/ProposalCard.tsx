@@ -1,54 +1,51 @@
 import { useMemo } from "react";
 import { Link } from "react-router-dom";
 import { Card, Progress } from "antd";
-import { Governance, Proposal, ProposalState } from "../models/accounts";
-import { ParsedAccount } from "../contexts";
 import { getProposalUrl } from "../tools/routeTools";
-import { useCountdown } from "../hooks/proposalHooks";
+import { getVoteCounts, useCountdown } from "../hooks/proposalHooks";
 import { getPubkeyIndex } from "../models/PUBKEYS_INDEX";
+import { Governance, ProgramAccount, Proposal, ProposalState } from "@solana/spl-governance";
 
-export const ProposalCard = ({
-  proposal: {
-    info: proposal,
-    pubkey: proposalAddress,
-    info: { name: headline }
-  },
-  governance: {
-    info: governance
-  }
-}: { proposal: ParsedAccount<Proposal>, governance: ParsedAccount<Governance> }) => {
+export const ProposalCard = (
+  { 
+    proposal, 
+    governance 
+  }: {
+     proposal: ProgramAccount<Proposal>,
+     governance: ProgramAccount<Governance> 
+    }) => {
 
   var headlineUrl = useMemo(() => getProposalUrl(
-    proposalAddress,
-    headline.substring(0, 15).replace(" ", "-")),
-    [proposalAddress, headline])
-  const proposalStr = useMemo(() => proposalAddress.toString(), [proposalAddress])
+    proposal.pubkey,
+    proposal.account.name.substring(0, 15).replace(" ", "-")),
+    [proposal.pubkey, proposal.account.name])
+  const proposalStr = useMemo(() => proposal.pubkey.toString(), [proposal.pubkey])
 
   // Active votes show progress bar
-  const { yesPercent, yesAbstainPercent } = proposal.getVoteCounts();
+  const { yesPercent, yesAbstainPercent } = getVoteCounts(proposal);
   const { endDate } = useCountdown(proposal, governance);
 
   return (
     <Link to={headlineUrl}>
       <Card
         bordered={false}
-        className={`proposal-card clickable ${proposal.isVoting() ? "" : ""}`}
+        className={`proposal-card clickable`}
         style={{}}>
         <div>
           <div className="header">JUMP {getPubkeyIndex(proposalStr)} </div>
-          <h1>{headline}</h1>
+          <h1>{proposal.account.name}</h1>
         </div>
         <div className="details">
-          {!proposal.isPreVotingState() ?
+          {!proposal.account.isPreVotingState() ?
             <>
-              {proposal.isVoting() ? `Ends: ${endDate}` : "Voting ended"}
+              {proposal.account.state === ProposalState.Voting ? `Ends: ${endDate}` : "Voting ended"}
               <Progress
                   percent={yesAbstainPercent}
                   success={{ percent: yesPercent }}
                   showInfo={false}
-                  key={proposalAddress.toBase58()} />
+                  key={proposal.pubkey.toBase58()} />
             </> :
-            ProposalState[proposal.state]
+            ProposalState[proposal.account.state]
           }
         </div>
       </Card>

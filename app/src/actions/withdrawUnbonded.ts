@@ -1,5 +1,5 @@
 import { StakeAccount, StakePool, UnbondingAccount } from "@jet-lab/jet-engine";
-import { RpcContext } from "../models/core/api";
+import { RpcContext } from "@solana/spl-governance";
 import { sendTransactionWithNotifications } from "../tools/transactions";
 
 export const withdrawUnbonded = async (
