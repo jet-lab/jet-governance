@@ -305,6 +305,11 @@ const InnerProposalView = ({
         </div>
         <FooterLinks />
       </div>
+
+      {/* mobile vote bar */}
+      <div id="mobile-vote-bar">
+
+      </div>
     </div>
   );
 }

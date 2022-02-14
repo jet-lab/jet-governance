@@ -283,6 +283,7 @@ p,
   display: flex;
   background-color: @white;
   margin-top: 20px;
+  justify-content: center;
   .panel {
     margin: 0 10px;
   }
@@ -297,76 +298,6 @@ p,
   h2,
   .neu-inset {
     margin-bottom: 20px;
-  }
-  #your-info {
-    grid-column: 1 / 3;
-    grid-row: 1 / 3;
-    height: 85vh;
-    display: grid;
-    grid-template-rows: auto auto 1fr auto;
-    .staked-balance {
-      padding-bottom: 10px;
-      line-height: 90%;
-    }
-    .stake-info {
-      background: #e0e7f2;
-      box-shadow: inset 0px -1px 2px rgba(255, 255, 255, 0.75),
-        inset 0px 1px 2px rgba(0, 0, 0, 0.1);
-      border-radius: 15px;
-      margin-bottom: 82px;
-      width: 230px;
-      display: flex;
-      flex-direction: column;
-      padding: 20px;
-    }
-    #wallet-overview {
-      width: 100%;
-      #current-staking-apr span {
-        font-weight: 500;
-        margin-bottom: 12px;
-      }
-      span {
-        color: @black;
-      }
-    }
-    .cluster span {
-      margin: 2px 4px;
-      font-size: @xs-font-size;
-    }
-    .full-width {
-      margin-left: 0;
-      margin-right: 0;
-    }
-    #staking-input {
-      position: relative;
-      width: 100%;
-      margin-top: 10px;
-      input {
-        position: relative;
-        font-size: 20px;
-        padding-left: 50px;
-        padding-right: 80px;
-      }
-      span {
-        font-size: 20px !important;
-        color: @dark-grey;
-      }
-      .token-abbrev {
-        position: absolute;
-        top: 50%;
-        transform: translateY(-65%);
-        right: @spacing-md;
-        padding: unset;
-      }
-      img {
-        width: 25px;
-        height: auto;
-        position: absolute;
-        top: 50%;
-        transform: translateY(-50%);
-        left: @spacing-md;
-      }
-    }
   }
   #show-proposals {
     grid-row-start: 1;
@@ -399,6 +330,77 @@ p,
   .details {
     display: flex;
     flex-direction: column;
+  }
+}
+
+#your-info {
+  grid-column: 1 / 3;
+  grid-row: 1 / 3;
+  height: 85vh;
+  display: grid;
+  grid-template-rows: auto auto 1fr auto;
+  .staked-balance {
+    padding-bottom: 10px;
+    line-height: 90%;
+  }
+  .stake-info {
+    background: #e0e7f2;
+    box-shadow: inset 0px -1px 2px rgba(255, 255, 255, 0.75),
+      inset 0px 1px 2px rgba(0, 0, 0, 0.1);
+    border-radius: 15px;
+    margin-bottom: 82px;
+    width: 230px;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+  }
+  #wallet-overview {
+    width: 100%;
+    #current-staking-apr span {
+      font-weight: 500;
+      margin-bottom: 12px;
+    }
+    span {
+      color: @black;
+    }
+  }
+  .cluster span {
+    margin: 2px 4px;
+    font-size: @xs-font-size;
+  }
+  .full-width {
+    margin-left: 0;
+    margin-right: 0;
+  }
+  #staking-input {
+    position: relative;
+    width: 100%;
+    margin-top: 10px;
+    input {
+      position: relative;
+      font-size: 20px;
+      padding-left: 50px;
+      padding-right: 80px;
+    }
+    span {
+      font-size: 20px !important;
+      color: @dark-grey;
+    }
+    .token-abbrev {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-65%);
+      right: @spacing-md;
+      padding: unset;
+    }
+    img {
+      width: 25px;
+      height: auto;
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      left: @spacing-md;
+    }
   }
 }
 
@@ -606,10 +608,82 @@ button,
   }
 }
 
-/* Medium devices (landscape tablets, 768px and up) */
-@media only screen and (min-width: 768px) {
+#mobile-vote-bar {
+  display: none;
 }
 
-/* Extra small devices (phones, 600px and down) */
-@media only screen and (max-width: 600px) {
+/* Medium devices (tablets, from 840px to 1110px) */
+@media only screen and (max-width: 1110px) {
+  .column-grid {
+    grid-template-columns: repeat(6, 110px);
+    justify-content: center;
+    .centered {
+      grid-column: 2 / 6 !important;
+    }
+  }
+  #show-proposals {
+    grid-column: 3 / span 4 !important;
+    #proposal-cards {
+      display: inline-grid;
+      grid-gap: 30px;
+      grid-template-columns: 250px 250px;
+      grid-template-rows: 250px;
+      a {
+        margin: 0;
+      }
+    }
+  }
+}
+
+/* Extra small devices (840px and down) */
+@media only screen and (max-width: 840px) {
+  .column-grid {
+    display: flex !important;
+    &#home {
+      #your-info {
+        display: none;
+      }
+      #show-proposals {
+        width: 100%;
+        .filter-status {
+          display: none;
+        }
+        #proposal-cards {
+          display: flex;
+          flex-direction: column;
+          .proposal-card.ant-card {
+            max-width: unset;
+            width: unset;
+          }
+        }
+      }
+    }
+
+    #airdrop {
+      .avail-list {
+        flex-direction: column;
+        .avail-info {
+          width: 100% !important;
+          display: flex;
+          flex-direction: column;
+          span.gray {
+            margin: 0;
+          }
+          > * {
+            padding: @spacing-sm 0;
+          }
+        }
+      }
+      .claim-button {
+        width: 100% !important;
+      };
+    }
+  }
+  .proposal-right {
+    display: none;
+  }
+  .mobile-vote-bar {
+    display: flex;
+    position: sticky;
+  }
 }

@@ -8,6 +8,7 @@ import { HomeView } from "./views/Home";
 import { FlightLogView } from "./views/FlightLogs";
 import { AirdropView } from "./views/Airdrop";
 import { ProposalView } from "./views/Proposal";
+import { YourInfo } from "./components/YourInfo";
 import { DarkThemeProvider } from "./contexts/darkTheme";
 import { ConnectWalletProvider } from "./contexts/connectWallet";
 import { AirdropProvider } from "./contexts/airdrop";
@@ -43,6 +44,10 @@ export function Routes() {
                             <Switch>
                               <ScrollToTop>
                                 <Route exact path="/" children={<HomeView />} />
+                                <Route
+                                  exact path="/your-info"
+                                  children={<YourInfo />}
+                                />
                                 <Route
                                   path={"/proposal/:key"}
                                   children={<ProposalView />}

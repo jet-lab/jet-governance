@@ -13,7 +13,7 @@ export const FlightLogView = () => {
 
   return (
     <div className="view-container column-grid" id="flight-logs-view">
-      <div className="neu-container" id="flight-log">
+      <div className="neu-container centered" id="flight-log">
         <h1>Flight Logs</h1>
         <table>
           <thead>
