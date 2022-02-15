@@ -34,11 +34,13 @@ interface ProposalContextState {
   jetMint?: MintInfo
   voteMint?: MintInfo
 
+  realm?: ProgramAccount<Realm>;
   governance?: ProgramAccount<Governance>,
   tokenOwnerRecord?: ProgramAccount<TokenOwnerRecord>
   walletVoteRecords: ProgramAccount<VoteRecord>[]
   proposalsByGovernance: ProgramAccount<Proposal>[]
   filteredProposalsByGovernance: ProgramAccount<Proposal>[]
+  pastProposals: ProgramAccount<Proposal>[]
 }
 
 const ProposalContext = React.createContext<ProposalContextState>({
@@ -47,6 +49,7 @@ const ProposalContext = React.createContext<ProposalContextState>({
 
   proposalsByGovernance: [],
   filteredProposalsByGovernance: [],
+  pastProposals: [],
 
   claimsCount: 0,
   unbondingTotal: 0,
@@ -80,9 +83,9 @@ export function ProposalProvider({ children = undefined as any }) {
   const stakeBalance = StakeAccount.useBalance(stakeAccount, stakePool)
 
   // ----- Rewards Airdrops -----
-  const rewardsProgram = RewardsClient.use(provider)
-  const airdrops = Airdrop.useAll(rewardsProgram)
-  const airdropsByWallet = useAirdropsByWallet(airdrops, walletAddress)
+  const rewardsProgram = RewardsClient.use(provider);
+  const airdrops = Airdrop.useAll(rewardsProgram);
+  const airdropsByWallet = useAirdropsByWallet(airdrops, walletAddress);
   const claimsCount = useClaimsCount(airdropsByWallet);
 
   // ----- Wallet -----
@@ -96,7 +99,8 @@ export function ProposalProvider({ children = undefined as any }) {
   const tokenOwnerRecord = useWalletTokenOwnerRecord(JET_REALM, realm?.account.communityMint)
   const walletVoteRecords = useWalletVoteRecords();
   const proposalsByGovernance = useProposalsByGovernance(JET_GOVERNANCE);
-  const filteredProposalsByGovernance = useProposalFilters(proposalsByGovernance);
+  const filteredProposalsByGovernance = useProposalFilters(proposalsByGovernance, proposalFilter);
+  const pastProposals = useProposalFilters(proposalsByGovernance, "inactive");
 
   return (
     <ProposalContext.Provider
@@ -120,11 +124,13 @@ export function ProposalProvider({ children = undefined as any }) {
         jetMint,
         voteMint,
 
+        realm,
         governance,
         tokenOwnerRecord,
         walletVoteRecords,
         proposalsByGovernance,
         filteredProposalsByGovernance,
+        pastProposals
       }}
     >
       {children}

@@ -30,10 +30,10 @@ import { voteRecordCsvDownload } from "../actions/voteRecordCsvDownload";
 import { DownloadOutlined, ArrowLeftOutlined } from "@ant-design/icons";
 import { useConnectWallet } from "../contexts/connectWallet";
 import { getPubkeyIndex } from "../models/PUBKEYS_INDEX";
-import { FooterLinks } from "../components/FooterLinks";
 import { useProposalContext } from "../contexts/proposal";
 import { StakeAccount, StakeBalance, StakePool } from "@jet-lab/jet-engine";
 import { Governance, ProgramAccount, Proposal, ProposalState } from "@solana/spl-governance";
+import { explorerUrl } from "../utils";
 
 export const ProposalView = () => {
   const proposalAddress = useKeyParam();
@@ -137,10 +137,13 @@ const InnerProposalView = ({
   } = useLoadGist(proposal.account.descriptionLink);
 
   return (
-    <div className="view-container proposal column-grid">
+    <div className="view-container proposal column-grid" id="proposal-page">
+      <h2 className="mobile-only">Proposal detail</h2>
       <div
         className={`flex column ${
-          proposal.account.state === ProposalState.Voting ? "proposal-left" : "centered"
+          proposal.account.state === ProposalState.Voting
+            ? "proposal-left"
+            : "centered"
         }`}
       >
         <div className="description neu-container">
@@ -149,7 +152,7 @@ const InnerProposalView = ({
               <ArrowLeftOutlined />
               Active Proposals
             </Link>{" "}
-            / JUMP {getPubkeyIndex(addressStr)}
+            / JUMP-{getPubkeyIndex(addressStr)}
           </span>
           <h1 className="view-header">{proposal.account.name}</h1>
           {
@@ -177,7 +180,15 @@ const InnerProposalView = ({
           }
           <div className="neu-inset" id="details">
             <span>Proposal ID</span>
-            <span>{addressStr}</span>
+            <span>
+              <a
+                href={explorerUrl(addressStr)}
+                target="_blank"
+                rel="noreferrer"
+              >
+                {addressStr}
+              </a>
+            </span>
             <span>Start date</span>
             <span> {startDate ? startDate : "To be determined."}</span>
             <span>End date</span>
@@ -217,7 +228,15 @@ const InnerProposalView = ({
               /> */}
             </div>
 
+            <Divider className="mobile-only" />
+
             <div className="voters">
+              <div className="mobile-only">
+                <p>
+                  See additional voter information and download a full CSV on
+                  the desktop app.
+                </p>
+              </div>
               <div className={`stakeholders`}>
                 <span className="voter title"></span>
                 <span className="address title">Wallet</span>
@@ -261,12 +280,12 @@ const InnerProposalView = ({
           <Button
             type="primary"
             onClick={
-              !connected
-                ? () => setConnecting(true)
-                : () => handleVoteModal()
+              !connected ? () => setConnecting(true) : () => handleVoteModal()
             }
-          size="large"
-          disabled={(connected && !isStaked) || (connected && vote === undefined)}
+            size="large"
+            disabled={
+              (connected && !isStaked) || (connected && vote === undefined)
+            }
           >
             Vote
           </Button>
@@ -280,11 +299,25 @@ const InnerProposalView = ({
             voteRecord={voteRecord}
             stakeBalance={stakeBalance}
           />
-          {!isStaked && connected ? <span className="helper-text">You must have JET staked in order to vote on proposals.</span> : vote === undefined && connected ? <span className="helper-text">Please select an option to submit your vote.</span> : ""}
+          {!isStaked && connected ? (
+            <span className="helper-text">
+              You must have JET staked in order to vote on proposals.
+            </span>
+          ) : vote === undefined && connected ? (
+            <span className="helper-text">
+              Please select an option to submit your vote.
+            </span>
+          ) : (
+            ""
+          )}
         </div>
       </div>
 
-      <Divider className={proposal.account.state === ProposalState.Voting ? "" : "centered"} />
+      <Divider
+        className={
+          proposal.account.state === ProposalState.Voting ? "" : "centered"
+        }
+      />
 
       <div
         className={`other-proposals ${
@@ -303,13 +336,11 @@ const InnerProposalView = ({
               ))
             : "There are no active proposals at this time."}
         </div>
-        <FooterLinks />
       </div>
-
-      {/* mobile vote bar */}
-      <div id="mobile-vote-bar">
-
-      </div>
+      <Link to="/" className="mobile-only">
+        <ArrowLeftOutlined />
+        Active Proposals
+      </Link>
     </div>
   );
 }

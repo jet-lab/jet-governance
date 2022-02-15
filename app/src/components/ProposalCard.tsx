@@ -32,7 +32,7 @@ export const ProposalCard = (
         className={`proposal-card clickable`}
         style={{}}>
         <div>
-          <div className="header">JUMP {getPubkeyIndex(proposalStr)} </div>
+          <div className="header">JUMP-{getPubkeyIndex(proposalStr)} </div>
           <h1>{proposal.account.name}</h1>
         </div>
         <div className="details">

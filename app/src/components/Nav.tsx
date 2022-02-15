@@ -6,78 +6,104 @@ import { Button } from "antd";
 import { useAirdrop } from "../contexts/airdrop";
 import { shortenAddress } from "../utils";
 
-
 export function Nav() {
   const { pathname } = useLocation();
   const { connected, disconnect, publicKey } = useWallet();
   const { setConnecting, resetAuth } = useConnectWallet();
   const [drawerOpened, setDrawerOpened] = useState(false);
-  const { unclaimedAirdrops } = useAirdrop(); 
+  const { unclaimedAirdrops } = useAirdrop();
 
   //const unclaimedBadge = (<div>{}</div>)
 
   const navLinks = [
-    {title: 'Dashboard', route: '/'},
-    {title: `Claims`, class:'shimmer', badge: unclaimedAirdrops(), route: '/claims'},
-    {title: 'Flight Logs', route: '/flight-logs'}
+    { title: "Dashboard", route: "/" },
+    {
+      title: `Claims`,
+      class: "shimmer",
+      badge: unclaimedAirdrops(),
+      route: "/claims",
+    },
+    { title: "Flight Logs", route: "/flight-logs" },
   ];
 
   const disconnectAndResetAuth = () => {
     disconnect();
     resetAuth();
-  }
+  };
 
   return (
     <div className="navbar-container flex-centered column">
       <nav className="flex align-center justify-between">
         <div className="left-container flex-centered">
-          <div className={`left-container-hamburger flex align-center justify-between column
-            ${drawerOpened ? 'close' : ''}`}
-            onClick={() => setDrawerOpened(!drawerOpened)}>
+          <div
+            className={`left-container-hamburger flex align-center justify-between column
+            ${drawerOpened ? "close" : ""}`}
+            onClick={() => setDrawerOpened(!drawerOpened)}
+          >
             <span></span>
             <span></span>
             <span></span>
           </div>
-          <a className="left-container-logo flex-centered" 
-            href="/" rel="noopener noreferrer">
-            <img src="img/jetgovern_white.png" 
+
+          <Link to="/" className="left-container-logo flex-centered">
+            <img
+              src="img/jetgovern_white.png"
               width="100%"
               height="auto"
-              alt="Jet Protocol" 
+              alt="Jet Protocol"
             />
-          </a>
+          </Link>
         </div>
         <div className="right-container flex-centered">
-          {navLinks.map((link) =>
+          {navLinks.map((link) => (
             <Link
               to={link.route}
-              className={`nav-link ${pathname === link.route ? 'active' : ''} ${link.class}`}
+              className={`nav-link ${pathname === link.route ? "active" : ""} ${
+                link.class
+              }`}
               key={link.route}
             >
-                {link.title}{link.badge ? (<span className="badge"><span className="text-gradient">{link.badge}</span></span>) : ""}
+              {link.title}
+              {link.badge ? (
+                <span className="badge">
+                  <span className="text-gradient">{link.badge}</span>
+                </span>
+              ) : (
+                ""
+              )}
             </Link>
-          )}
-          <Button className="secondary-btn flex-centered"
+          ))}
+          <Button
+            className="secondary-btn flex-centered"
             type="ghost"
             title={connected ? "disconnect" : "connect"}
-            onClick={() => connected ? disconnectAndResetAuth() : setConnecting(true)}>
-            {connected 
-              ? `${shortenAddress(publicKey ? publicKey.toString() : '')} CONNECTED` 
-                : "CONNECT WALLET"}
+            onClick={() =>
+              connected ? disconnectAndResetAuth() : setConnecting(true)
+            }
+          >
+            {connected
+              ? `${shortenAddress(
+                  publicKey ? publicKey.toString() : ""
+                )} CONNECTED`
+              : "CONNECT WALLET"}
           </Button>
         </div>
       </nav>
-      <div className={`navbar-container-drawer flex align-end column ${drawerOpened ? 'open' : ''}`}>
-        {navLinks.map((link) =>
+      <div
+        className={`navbar-container-drawer flex align-end column ${
+          drawerOpened ? "open" : ""
+        }`}
+      >
+        {navLinks.map((link) => (
           <Link
             to={link.route}
-            className={`nav-link ${pathname === link.route ? 'active' : ''}`}
+            className={`nav-link ${pathname === link.route ? "active" : ""}`}
             key={link.route}
           >
             {link.title}
           </Link>
-        )}
+        ))}
       </div>
     </div>
   );
-};
+}

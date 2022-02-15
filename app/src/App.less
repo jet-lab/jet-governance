@@ -6,6 +6,7 @@
   --grey: @grey;
   @disabled-opacity: 0.6;
   --gradient: @gradient;
+  @md-font-size: 14px;
 }
 
 /* Styles between these lines should be included at the next version of the jet-antd library */
@@ -414,6 +415,9 @@ p,
   }
   .proposal-left {
     grid-column: 1 / 7;
+    a {
+      margin: 0;
+    }    
   }
   .proposal-right {
     grid-column: 7 / 9;
@@ -443,6 +447,9 @@ p,
       display: grid;
       grid-template-columns: 150px 1fr;
       grid-auto-flow: dense;
+      span {
+        overflow: scroll;
+      }
     }
   }
   .ant-divider-horizontal {
@@ -608,7 +615,7 @@ button,
   }
 }
 
-#mobile-vote-bar {
+.mobile-only {
   display: none;
 }
 
@@ -621,25 +628,43 @@ button,
       grid-column: 2 / 6 !important;
     }
   }
+  .footer-links, #csv {
+    display: none;
+  }
   #show-proposals {
     grid-column: 3 / span 4 !important;
     #proposal-cards {
-      display: inline-grid;
-      grid-gap: 30px;
-      grid-template-columns: 250px 250px;
-      grid-template-rows: 250px;
+      grid-template-columns: 250px 250px !important;
       a {
         margin: 0;
       }
+    }
+  }
+  #proposal-page {
+    .proposal-left {
+      grid-column: 1 / 5;
+    }
+    .proposal-right {
+      grid-column: 5 / 7;
+    }
+    .other-proposals, .ant-divider-horizontal {
+      grid-column: 1 / 7;
     }
   }
 }
 
 /* Extra small devices (840px and down) */
 @media only screen and (max-width: 840px) {
+  .mobile-only {
+    display: inline !important;
+  }
+  p {
+    font-size: 14px !important;
+  }
   .column-grid {
     display: flex !important;
     &#home {
+      flex-direction: column;
       #your-info {
         display: none;
       }
@@ -655,6 +680,62 @@ button,
             max-width: unset;
             width: unset;
           }
+        }
+      }
+      #past-proposals {
+        display: flex !important;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        background-color: @grey;
+        left: -4%;
+        bottom: -50px;
+        position: relative;
+        width: 108%;
+        & > * {
+          width: 92%
+        }
+        & h2 {
+          padding-top: 50px;
+        }
+        .past-proposal-card.ant-card {
+          max-width: unset;
+          width: unset;
+          height: 100px;
+          box-shadow: unset;
+          padding: 0;
+          .ant-card-body div {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            & > * {
+              width: 25%;
+              font-size: 14px !important;
+            }
+            &.details {
+              div {
+              border-radius: 50px;
+              padding: 5px 7px;
+              width: unset;
+              text-transform: uppercase;
+              font-weight: 600;
+              color: @white;
+              font-size: @sm-font-size !important;
+              letter-spacing: 0.1em;
+            }
+          }
+            h1 {
+              width: 50%;
+              font-weight: 400;
+            }
+            .arrow {
+              padding-left: 20px;
+              width: 10%;
+            }
+          }
+        }
+        p {
+          text-align: center;
         }
       }
     }
@@ -676,14 +757,65 @@ button,
       }
       .claim-button {
         width: 100% !important;
-      };
+      }
     }
   }
-  .proposal-right {
-    display: none;
+  #proposal-page {
+    flex-direction: column;
+    .proposal-left {
+      #vote-turnout {
+        flex-direction: column;
+      }
+    }
+    .proposal-right {
+      position: fixed;
+      bottom: 0;
+      width: 85%;
+      left: 7.5%;
+      z-index: 100;
+      &::after {
+        content: '';
+        display: block;
+        background: linear-gradient(180deg, var(--light-shadow) 0%, rgba(229, 235, 244, 0) 100%);
+        transform: rotate(-180deg);
+        height: 30px;
+        width: 150%;
+      }
+      #your-vote {
+        flex-direction: row;
+        justify-content: space-between;
+        height: 60px;
+        padding: @spacing-md @spacing-xl;
+        background: @gradient;
+        .ant-btn.ant-btn-lg {
+          box-shadow: @drop-shadow;
+          height: 60px;
+          width: 60px;
+          margin: 0;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          &.ant-btn-primary {
+            box-shadow: none;
+            border: 1px solid @white;
+            background: transparent;
+          }
+        }
+        .vote-select {
+          background: @white;
+          span {
+            font-size: 8px !important;
+
+          }
+        }
+      }
+    }
+    .ant-divider, .other-proposals {
+      display: none;
+    }
   }
-  .mobile-vote-bar {
-    display: flex;
-    position: sticky;
+  #flight-logs-view {
+    flex-direction: column;
   }
 }

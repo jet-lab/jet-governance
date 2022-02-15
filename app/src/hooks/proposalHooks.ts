@@ -4,7 +4,7 @@ import { PublicKey } from "@solana/web3.js";
 import BN from "bn.js";
 import { useMemo, useState } from "react";
 import { ZERO } from "../constants";
-import { useProposalContext } from "../contexts/proposal";
+import { ProposalFilter, useProposalContext } from "../contexts/proposal";
 import { bnToIntLossy } from "../tools/units";
 import { dateToString } from "../utils";
 import { useGovernanceAccounts } from "./accountHooks";
@@ -24,9 +24,7 @@ export function useBN(number: number | undefined, exponent: number | null | unde
   }, [number, exponent])
 }
 
-export const useProposalFilters = (proposals: ProgramAccount<Proposal>[]) => {
-  const { proposalFilter } = useProposalContext();
-
+export const useProposalFilters = (proposals: ProgramAccount<Proposal>[], proposalFilter: ProposalFilter) => {
   return useMemo(() => {
     if (proposalFilter === "active") {
       return proposals.filter((p) => p.account.state === ProposalState.Voting);
