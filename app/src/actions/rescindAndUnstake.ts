@@ -19,7 +19,7 @@ export const rescindAndUnstake = async (
   amount: BN,
 ) => {
 
-  const voteMint = stakePool.addresses.stakeVoteMint.address;
+  const voteMint = stakePool.addresses.stakeVoteMint;
   const unbondingSeed = UnbondingAccount.randomSeed();
   const unrelinquished = walletVoteRecords.filter(voteRecord => !voteRecord.account.isRelinquished)
   const transactions: Transaction[] = [];

@@ -16,12 +16,22 @@ export const addStake = async (
   let signers: Keypair[] = [];
 
   const provider = stakePool.program.provider;
-  const voteMint = stakePool.addresses.stakeVoteMint.address;
-  const tokenMint = stakePool.stakePool.tokenMint
+  const voteMint = stakePool.addresses.stakeVoteMint;
+  const tokenMint = stakePool.stakePool.tokenMint;
   const tokenAccount = AssociatedToken.derive(tokenMint, owner);
 
-  const voterTokenAccount = await AssociatedToken.withCreate(instructions, provider, owner, voteMint)
-  await StakeAccount.withCreate(instructions, stakePool.program, stakePool.addresses.stakePool.address, owner);
+  const voterTokenAccount = await AssociatedToken.withCreate(
+    instructions,
+    provider,
+    owner,
+    voteMint
+  );
+  await StakeAccount.withCreate(
+    instructions,
+    stakePool.program,
+    stakePool.addresses.stakePool,
+    owner
+  );
   await StakeAccount.withAddStake(instructions, stakePool, owner, tokenAccount, amount)
   await StakeAccount.withMintVotes(instructions, stakePool, owner, voterTokenAccount, amount)
 
