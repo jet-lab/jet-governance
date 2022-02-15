@@ -10,9 +10,6 @@ pub struct DistributionCreateParams {
     /// The seed to create the address for the distribution
     pub seed: String,
 
-    /// Bump seed for the distribution address
-    pub bump_seed: u8,
-
     /// The authority allowed to manage the distribution
     pub authority: Pubkey,
 
@@ -27,9 +24,6 @@ pub struct DistributionCreateParams {
 
     /// Time distribution is completed at
     pub end_at: u64,
-
-    /// Bump seed for the vault account
-    pub vault_bump: u8,
 }
 
 #[derive(Accounts)]
@@ -38,7 +32,7 @@ pub struct DistributionCreate<'info> {
     /// The account to store the distribution info
     #[account(init,
               seeds = [params.seed.as_bytes()],
-              bump = params.bump_seed,
+              bump,
               payer = payer_rent)]
     pub distribution: Account<'info, Distribution>,
 
@@ -48,7 +42,7 @@ pub struct DistributionCreate<'info> {
                   distribution.key().as_ref(),
                   b"vault".as_ref()
               ],
-              bump = params.vault_bump,
+              bump,
               payer = payer_rent,
               token::mint = token_mint,
               token::authority = distribution)]
@@ -95,7 +89,7 @@ pub fn distribution_create_handler(
     distribution.address = distribution.key();
     distribution.seed.as_mut().write(params.seed.as_bytes())?;
     distribution.seed_len = params.seed.len() as u8;
-    distribution.bump_seed[0] = params.bump_seed;
+    distribution.bump_seed[0] = *ctx.bumps.get("distribution").unwrap();
 
     distribution.authority = params.authority;
     distribution.vault = ctx.accounts.vault.key();

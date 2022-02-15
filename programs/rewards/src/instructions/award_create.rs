@@ -8,9 +8,6 @@ pub struct AwardCreateParams {
     /// The seed to create the award address
     pub seed: String,
 
-    /// Bump seed for the address
-    pub bump_seed: u8,
-
     /// The authority allowed to manage the award
     pub authority: Pubkey,
 
@@ -25,9 +22,6 @@ pub struct AwardCreateParams {
 
     /// Time distribution is completed at
     pub end_at: u64,
-
-    /// Bump seed for the vault account
-    pub vault_bump: u8,
 }
 
 #[derive(Accounts)]
@@ -39,7 +33,7 @@ pub struct AwardCreate<'info> {
                   params.stake_account.as_ref(),
                   params.seed.as_bytes(),
               ],
-              bump = params.bump_seed,
+              bump,
               payer = payer_rent
     )]
     pub award: Account<'info, Award>,
@@ -50,7 +44,7 @@ pub struct AwardCreate<'info> {
                   award.key().as_ref(),
                   b"vault".as_ref()
               ],
-              bump = params.vault_bump,
+              bump,
               payer = payer_rent,
               token::mint = token_mint,
               token::authority = award
@@ -94,7 +88,7 @@ pub fn award_create_handler(ctx: Context<AwardCreate>, params: AwardCreateParams
 
     award.authority = params.authority;
     award.seed = params.seed;
-    award.bump_seed[0] = params.bump_seed;
+    award.bump_seed[0] = *ctx.bumps.get("award").unwrap();
 
     award.stake_account = params.stake_account;
     award.vault = ctx.accounts.vault.key();

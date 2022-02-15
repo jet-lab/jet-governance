@@ -7,14 +7,6 @@ use anchor_spl::token::{Mint, Token};
 use crate::state::*;
 
 #[derive(AnchorSerialize, AnchorDeserialize)]
-pub struct InitPoolSeeds {
-    stake_pool: u8,
-    stake_vote_mint: u8,
-    stake_collateral_mint: u8,
-    stake_pool_vault: u8,
-}
-
-#[derive(AnchorSerialize, AnchorDeserialize)]
 pub struct PoolConfig {
     /// The time period for unbonding staked tokens from the pool.
     ///
@@ -23,7 +15,7 @@ pub struct PoolConfig {
 }
 
 #[derive(Accounts)]
-#[instruction(seed: String, bump: InitPoolSeeds)]
+#[instruction(seed: String)]
 pub struct InitPool<'info> {
     /// The address paying to create this pool
     #[account(mut)]
@@ -39,7 +31,7 @@ pub struct InitPool<'info> {
     /// The new pool being created
     #[account(init,
               seeds = [seed.as_bytes()],
-              bump = bump.stake_pool,
+              bump,
               payer = payer)]
     pub stake_pool: Account<'info, StakePool>,
 
@@ -49,7 +41,7 @@ pub struct InitPool<'info> {
                   seed.as_bytes(),
                   b"vote-mint".as_ref()
               ],
-              bump = bump.stake_vote_mint,
+              bump,
               payer = payer,
               mint::decimals = token_mint.decimals,
               mint::authority = stake_pool)]
@@ -61,7 +53,7 @@ pub struct InitPool<'info> {
                   seed.as_bytes(),
                   b"collateral-mint".as_ref()
               ],
-              bump = bump.stake_collateral_mint,
+              bump,
               payer = payer,
               mint::decimals = token_mint.decimals,
               mint::authority = stake_pool)]
@@ -73,7 +65,7 @@ pub struct InitPool<'info> {
                   seed.as_bytes(),
                   b"vault".as_ref()
               ],
-              bump = bump.stake_pool_vault,
+              bump,
               payer = payer,
               token::mint = token_mint,
               token::authority = stake_pool)]
@@ -87,7 +79,6 @@ pub struct InitPool<'info> {
 pub fn init_pool_handler(
     ctx: Context<InitPool>,
     seed: String,
-    bump: InitPoolSeeds,
     config: PoolConfig,
 ) -> ProgramResult {
     let stake_pool = &mut ctx.accounts.stake_pool;
@@ -97,7 +88,7 @@ pub fn init_pool_handler(
     stake_pool.stake_pool_vault = ctx.accounts.stake_pool_vault.key();
     stake_pool.stake_vote_mint = ctx.accounts.stake_vote_mint.key();
 
-    stake_pool.bump_seed[0] = bump.stake_pool;
+    stake_pool.bump_seed[0] = *ctx.bumps.get("stake_pool").unwrap();
     stake_pool.seed.as_mut().write(seed.as_bytes())?;
     stake_pool.seed_len = seed.len() as u8;
 

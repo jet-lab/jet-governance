@@ -4,7 +4,6 @@ use crate::state::*;
 use jet_auth::UserAuthentication;
 
 #[derive(Accounts)]
-#[instruction(bump: u8)]
 pub struct InitStakeAccount<'info> {
     /// The owner for the stake
     pub owner: Signer<'info>,
@@ -24,7 +23,7 @@ pub struct InitStakeAccount<'info> {
                   stake_pool.key().as_ref(),
                   owner.key.as_ref()
               ],
-              bump = bump,
+              bump,
               payer = payer)]
     pub stake_account: Account<'info, StakeAccount>,
 
@@ -35,7 +34,7 @@ pub struct InitStakeAccount<'info> {
     pub system_program: Program<'info, System>,
 }
 
-pub fn init_stake_account_handler(ctx: Context<InitStakeAccount>, _bump: u8) -> ProgramResult {
+pub fn init_stake_account_handler(ctx: Context<InitStakeAccount>) -> ProgramResult {
     let account = &mut ctx.accounts.stake_account;
 
     account.owner = *ctx.accounts.owner.key;

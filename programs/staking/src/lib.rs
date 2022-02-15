@@ -16,26 +16,16 @@ pub mod jet_staking {
     /// # Params
     ///
     /// * `seed` - A string to derive the pool address
-    /// * `bump` - The bump seeds needed to derive the pool address and
-    ///            the supporting accounts.
-    pub fn init_pool(
-        ctx: Context<InitPool>,
-        seed: String,
-        bump: InitPoolSeeds,
-        config: PoolConfig,
-    ) -> ProgramResult {
-        instructions::init_pool_handler(ctx, seed, bump, config)
+    pub fn init_pool(ctx: Context<InitPool>, seed: String, config: PoolConfig) -> ProgramResult {
+        instructions::init_pool_handler(ctx, seed, config)
     }
 
     /// Initialize a new staking account
     ///
     /// The account created is tied to the owner that signed to create it.
     ///
-    /// # Params
-    ///
-    /// * `bump` - The bump seed needed to derive the account address
-    pub fn init_stake_account(ctx: Context<InitStakeAccount>, bump: u8) -> ProgramResult {
-        instructions::init_stake_account_handler(ctx, bump)
+    pub fn init_stake_account(ctx: Context<InitStakeAccount>) -> ProgramResult {
+        instructions::init_stake_account_handler(ctx)
     }
 
     /// Add tokens as stake to an account
@@ -48,13 +38,8 @@ pub mod jet_staking {
     }
 
     /// Unbond stake from an account, allowing it to be withdrawn
-    pub fn unbond_stake(
-        ctx: Context<UnbondStake>,
-        bump: u8,
-        seed: u32,
-        amount: Amount,
-    ) -> ProgramResult {
-        instructions::unbond_stake_handler(ctx, bump, seed, amount)
+    pub fn unbond_stake(ctx: Context<UnbondStake>, seed: u32, amount: Amount) -> ProgramResult {
+        instructions::unbond_stake_handler(ctx, seed, amount)
     }
 
     /// Cancel a previous request to unbond stake

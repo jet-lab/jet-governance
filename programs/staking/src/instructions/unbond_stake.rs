@@ -5,7 +5,7 @@ use crate::state::*;
 use crate::Amount;
 
 #[derive(Accounts)]
-#[instruction(bump: u8, seed: u32)]
+#[instruction(seed: u32)]
 pub struct UnbondStake<'info> {
     /// The owner of the stake account
     pub owner: Signer<'info>,
@@ -33,7 +33,7 @@ pub struct UnbondStake<'info> {
                   stake_account.key().as_ref(),
                   seed.to_le_bytes().as_ref()
               ],
-              bump = bump,
+              bump,
               payer = payer)]
     pub unbonding_account: Account<'info, UnbondingAccount>,
 
@@ -42,7 +42,6 @@ pub struct UnbondStake<'info> {
 
 pub fn unbond_stake_handler(
     ctx: Context<UnbondStake>,
-    _bump: u8,
     _seed: u32,
     amount: Amount,
 ) -> ProgramResult {

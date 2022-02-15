@@ -26,7 +26,6 @@ pub struct UserAuthentication {
 }
 
 #[derive(Accounts)]
-#[instruction(bump: u8)]
 pub struct CreateUserAuthentication<'info> {
     /// The user address to be authenticated
     user: Signer<'info>,
@@ -38,7 +37,7 @@ pub struct CreateUserAuthentication<'info> {
     /// The authentication account to be created
     #[account(init,
               seeds = [user.key().as_ref()],
-              bump = bump,
+              bump,
               payer = payer)]
     auth: Account<'info, UserAuthentication>,
 
@@ -66,7 +65,7 @@ pub mod jet_auth {
 
     /// Create a new account that can be used to identify that a
     /// wallet/address is properly authenticated to perform protected actions.
-    pub fn create_user_auth(ctx: Context<CreateUserAuthentication>, _bump: u8) -> ProgramResult {
+    pub fn create_user_auth(ctx: Context<CreateUserAuthentication>) -> ProgramResult {
         let auth = &mut ctx.accounts.auth;
 
         auth.owner = ctx.accounts.user.key();

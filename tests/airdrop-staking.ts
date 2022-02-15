@@ -82,7 +82,7 @@ describe("airdrop-staking", () => {
   const stakeSeed = "test";
   const staker = Keypair.generate();
   const airdropKey = Keypair.generate();
-  const airdropRecipients = Array.from({ length: 200 })
+  const airdropRecipients = Array.from({ length: 60 })
     .map((_) => Keypair.generate())
     .sort((a, b) => a.publicKey.toBuffer().compare(b.publicKey.toBuffer()));
 
@@ -117,7 +117,7 @@ describe("airdrop-staking", () => {
   it("create pool", async () => {
     const config = { unbondPeriod: new u64(0) };
 
-    await StakingProgram.rpc.initPool(stakeSeed, stakeAcc.bumpSeeds, config, {
+    await StakingProgram.rpc.initPool(stakeSeed, config, {
       accounts: {
         payer: wallet.publicKey,
         authority: wallet.publicKey,
@@ -148,7 +148,7 @@ describe("airdrop-staking", () => {
       AuthProgram.programId
     );
 
-    await AuthProgram.rpc.createUserAuth(bumpSeed, {
+    await AuthProgram.rpc.createUserAuth({
       accounts: {
         user: staker.publicKey,
         payer: wallet.publicKey,
@@ -177,7 +177,7 @@ describe("airdrop-staking", () => {
       StakingProgram.programId
     );
 
-    await StakingProgram.rpc.initStakeAccount(bumpSeed, {
+    await StakingProgram.rpc.initStakeAccount({
       accounts: {
         owner: staker.publicKey,
         auth: stakerAuth,
@@ -202,7 +202,6 @@ describe("airdrop-staking", () => {
       expireAt: new anchor.BN(Date.now() / 1000 + 10),
       stakePool: stakeAcc.stakePool,
       shortDesc: "integ-test-airdrop",
-      vaultBump: bumpSeed,
       flags: new anchor.BN(0),
     };
 
@@ -285,7 +284,6 @@ describe("airdrop-staking", () => {
     );
 
     await StakingProgram.rpc.unbondStake(
-      stakerUnbondBump,
       0,
       { kind: { tokens: {} }, value: new u64(4_200_000_000) },
       {
@@ -318,7 +316,6 @@ describe("airdrop-staking", () => {
 
   it("user unbonds again", async () => {
     await StakingProgram.rpc.unbondStake(
-      stakerUnbondBump,
       0,
       { kind: { tokens: {} }, value: new u64(4_200_000_000) },
       {
@@ -442,10 +439,8 @@ describe("airdrop-staking", () => {
       {
         amount: new u64(5_800_000_000),
         authority: wallet.publicKey,
-        bumpSeed: bumpSeed,
         seed: distSeed,
         targetAccount: stakeAcc.stakePoolVault,
-        vaultBump: vaultBumpSeed,
         beginAt: new u64(0),
         endAt: new u64(0),
       },
@@ -570,7 +565,6 @@ describe("airdrop-staking", () => {
       );
 
       await StakingProgram.rpc.unbondStake(
-        bumpSeed,
         0,
         { kind: { tokens: {} }, value: new u64(4_200_000_000) },
         {
@@ -630,7 +624,7 @@ describe("airdrop-staking", () => {
       airdropVault,
       wallet.payer,
       [],
-      new u64(2_000_000_000)
+      new u64(600_000_000)
     );
 
     const chunkSize = 24;
@@ -676,7 +670,7 @@ describe("airdrop-staking", () => {
               AuthProgram.programId
             );
 
-          await AuthProgram.rpc.createUserAuth(authBumpSeed, {
+          await AuthProgram.rpc.createUserAuth({
             accounts: {
               user: recipient.publicKey,
               payer: wallet.publicKey,
@@ -699,7 +693,7 @@ describe("airdrop-staking", () => {
               StakingProgram.programId
             );
 
-          await StakingProgram.rpc.initStakeAccount(stakeBumpSeed, {
+          await StakingProgram.rpc.initStakeAccount({
             accounts: {
               owner: recipient.publicKey,
               auth: recipientAuth,

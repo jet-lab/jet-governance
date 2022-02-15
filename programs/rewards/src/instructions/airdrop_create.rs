@@ -16,9 +16,6 @@ pub struct AirdropCreateParams {
     /// A description for this airdrop
     pub short_desc: String,
 
-    /// The bump seed needed to generate the airdrop account address
-    pub vault_bump: u8,
-
     /// Airdrop settings
     pub flags: u64,
 }
@@ -40,7 +37,7 @@ pub struct AirdropCreate<'info> {
                   airdrop.key().as_ref(),
                   b"vault".as_ref()
               ],
-              bump = params.vault_bump,
+              bump,
               payer = payer,
               token::mint = token_mint,
               token::authority = reward_vault)]
@@ -67,7 +64,7 @@ pub fn airdrop_create_handler(
     airdrop.address = ctx.accounts.airdrop.key();
     airdrop.authority = ctx.accounts.authority.key();
     airdrop.reward_vault = ctx.accounts.reward_vault.key();
-    airdrop.vault_bump[0] = params.vault_bump;
+    airdrop.vault_bump[0] = *ctx.bumps.get("reward_vault").unwrap();
 
     airdrop.expire_at = params.expire_at;
     airdrop.stake_pool = params.stake_pool;
