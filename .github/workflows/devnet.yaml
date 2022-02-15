@@ -85,6 +85,7 @@ jobs:
 
       - name: Build Programs
         run: |
+          npm install
           solana-keygen new --no-bip39-passphrase
           anchor build
           anchor test
