@@ -78,6 +78,9 @@ p {
 h1 {
   font-size: 25px !important;
 }
+svg {
+  cursor: pointer;
+}
 .secondary-text {
   color: @dark-grey;
   margin: unset;
@@ -660,6 +663,7 @@ button,
   }
   p, ul, li {
     font-size: @base-font-size !important;
+    list-style: none;
   }
   h1 {
     font-size: 20px !important;
@@ -684,7 +688,7 @@ button,
           flex-direction: column;
           .proposal-card.ant-card {
             max-width: unset;
-            width: unset;
+            width: 90%;
             height: 152px;
             h1 {
               font-size: 20px !important;
@@ -705,8 +709,30 @@ button,
         & > * {
           width: 92%
         }
-        & h2 {
+        .title {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
           padding-top: 50px;
+          #filter {
+            position: absolute;
+            right: 0;
+            top: 85px;
+            width: 100px;
+            ul {
+              padding: 0;
+              margin: 0;
+              li {
+                text-align: right;
+                line-height: 35px;
+                background-color: @grey !important;
+                cursor: pointer;
+                &:hover {
+                  background-color: @dark-grey;
+                }
+            }
+          }
+          }
         }
         .past-proposal-card.ant-card {
           max-width: unset;

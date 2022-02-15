@@ -3,7 +3,8 @@ import { ProposalCard } from "../components/ProposalCard";
 import { useConnectionConfig, useMint } from "../contexts";
 import { YourInfo } from "../components/YourInfo";
 import { PastProposalCard } from "../components/MobilePastProposals";
-import { getFirstTwoHundredPubkeys } from "../models/PUBKEYS_INDEX";
+// import { getFirstTwoHundredPubkeys } from "../models/PUBKEYS_INDEX";
+import { ReactComponent as Filter } from '../images/filter.svg'
 
 export const HomeView = () => {
   const { env } = useConnectionConfig()
@@ -38,6 +39,10 @@ export const HomeView = () => {
     }
   })
 
+  const toggleShowFilter = () => {
+    document.getElementById("filter")?.classList.toggle("hidden")
+  }
+
   return (
     <div className="view-container content-body column-grid" id="home">
       <YourInfo />
@@ -69,7 +74,17 @@ export const HomeView = () => {
       </div>
 
       <div className="mobile-only" id="past-proposals">
-        <h2>Past Proposals</h2>
+        <span className="title">
+          <h2>Past Proposals</h2>
+          <Filter onClick={toggleShowFilter} />
+          <div id="filter" className="hidden">
+            <ul>
+              <li onClick={toggleShowFilter} >All</li>
+              <li onClick={toggleShowFilter} >Passed</li>
+              <li onClick={toggleShowFilter} >Rejected</li>
+            </ul>
+          </div>
+        </span>
         {pastProposals.map(
             (proposal) =>
             governance && (
