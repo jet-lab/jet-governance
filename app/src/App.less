@@ -659,7 +659,13 @@ button,
     display: inline !important;
   }
   p {
-    font-size: 14px !important;
+    font-size: @base-font-size !important;
+  }
+  h1 {
+    font-size: 20px !important;
+  }
+  h2 {
+    font-size: @sm-font-size;
   }
   .column-grid {
     display: flex !important;
@@ -679,6 +685,10 @@ button,
           .proposal-card.ant-card {
             max-width: unset;
             width: unset;
+            height: 152px;
+            h1 {
+              font-size: 20px !important;
+            }
           }
         }
       }
@@ -710,7 +720,7 @@ button,
             align-items: center;
             & > * {
               width: 25%;
-              font-size: 14px !important;
+              font-size: @sm-font-size !important;
             }
             &.details {
               div {
@@ -720,17 +730,17 @@ button,
               text-transform: uppercase;
               font-weight: 600;
               color: @white;
-              font-size: @sm-font-size !important;
-              letter-spacing: 0.1em;
+              font-size: @xs-font-size !important;
             }
           }
             h1 {
               width: 50%;
               font-weight: 400;
+              line-height: @lg-font-size;
             }
             .arrow {
-              padding-left: 20px;
               width: 10%;
+              justify-content: flex-end;
             }
           }
         }
@@ -763,6 +773,9 @@ button,
   #proposal-page {
     flex-direction: column;
     .proposal-left {
+      .description #details {
+        grid-template-columns: 80px 1fr;
+      }
       #vote-turnout {
         flex-direction: column;
       }
@@ -805,8 +818,9 @@ button,
         .vote-select {
           background: @white;
           span {
-            font-size: 8px !important;
-
+            font-size: 6px !important;
+            letter-spacing: 0;
+            padding: @spacing-xs 0;
           }
         }
       }

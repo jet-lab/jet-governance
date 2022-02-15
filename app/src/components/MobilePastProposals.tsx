@@ -1,8 +1,7 @@
 import { useMemo } from "react";
 import { Link } from "react-router-dom";
-import { Card, Divider, Progress } from "antd";
+import { Card, Divider } from "antd";
 import { getProposalUrl } from "../tools/routeTools";
-import { getVoteCounts, useCountdown } from "../hooks/proposalHooks";
 import { getPubkeyIndex } from "../models/PUBKEYS_INDEX";
 import {
   Governance,
@@ -10,6 +9,7 @@ import {
   Proposal,
   ProposalState,
 } from "@solana/spl-governance";
+import { ReactComponent as ArrowRight } from '../images/arrow_right.svg'
 
 export const PastProposalCard = ({
   proposal,
@@ -52,7 +52,7 @@ export const PastProposalCard = ({
           </div>
           <h1>{proposal.account.name}</h1>
           <div className="arrow">
-          {'->'}
+          <ArrowRight />
           </div>
         </div>
       </Card>

@@ -15,6 +15,7 @@ import { FooterLinks } from "./FooterLinks";
 import { StakeModal } from "./modals/StakeModal";
 import { UnstakeModal } from "./modals/UnstakeModal";
 import { useWallet } from "@solana/wallet-adapter-react";
+import { useLocation } from "react-router";
 
 export const YourInfo = () => {
   const [stakeModalVisible, setStakeModalVisible] = useState(false);
@@ -116,8 +117,10 @@ export const YourInfo = () => {
     document.getElementById("show-more-apr")?.classList.toggle("hidden")
   }
 
+  const isOwnPage = Boolean(useLocation().pathname.includes("your-info"))
+
   return (
-    <div id="your-info">
+    <div id="your-info" className={isOwnPage ? "view-container" : ""}>
       <h2>Your Info</h2>
 
       <div className="neu-inset">

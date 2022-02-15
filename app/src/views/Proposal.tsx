@@ -34,6 +34,10 @@ import { useProposalContext } from "../contexts/proposal";
 import { StakeAccount, StakeBalance, StakePool } from "@jet-lab/jet-engine";
 import { Governance, ProgramAccount, Proposal, ProposalState } from "@solana/spl-governance";
 import { explorerUrl } from "../utils";
+import { ReactComponent as NoAccess } from '../images/no_access.svg'
+import { ReactComponent as ThumbsUp } from '../images/thumbs_up.svg'
+import { ReactComponent as ThumbsDown } from '../images/thumbs_down.svg'
+
 
 export const ProposalView = () => {
   const proposalAddress = useKeyParam();
@@ -267,6 +271,7 @@ const InnerProposalView = ({
             size="large"
           >
             In favor
+            <ThumbsUp className="mobile-only" />
           </Button>
           <Button
             onClick={() => setVote(VoteOption.No)}
@@ -276,6 +281,7 @@ const InnerProposalView = ({
             size="large"
           >
             Against
+            <ThumbsDown className="mobile-only" />
           </Button>
           <Button
             type="primary"
