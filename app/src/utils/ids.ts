@@ -19,7 +19,7 @@ export let JET_REALM = new PublicKey(
   "ASRAHYwEVhV3mGUarRvaE59ZUpKA8qKbNbLtipqT6J3G"
 );
 export let JET_GOVERNANCE = new PublicKey(
-  "FJBrF515muB9p4zzQYh3CUgf51fKdd813BhRX4oUVryA"
+  "8DWAqDJV53zP2qu7RtzcvU7dzncGe5TZom7p5ZtRbPZn"
 );
 
 export const GOVERNANCE_PROGRAM_ID = new PublicKey(
@@ -27,40 +27,40 @@ export const GOVERNANCE_PROGRAM_ID = new PublicKey(
 );
 
 export let TOKEN_PROGRAM_ID = new PublicKey(
-  'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA',
+  "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
 );
 
 export const LENDING_PROGRAM_ID = new PublicKey(
-  'LendZqTs7gn5CTSJU1jWKhKuVpjJGom45nnwPb2AMTi',
+  "LendZqTs7gn5CTSJU1jWKhKuVpjJGom45nnwPb2AMTi"
 );
 
 export let SPL_ASSOCIATED_TOKEN_ACCOUNT_PROGRAM_ID = new PublicKey(
-  'ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL',
+  "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL"
 );
 export let BPF_UPGRADE_LOADER_ID = new PublicKey(
-  'BPFLoaderUpgradeab1e11111111111111111111111',
+  "BPFLoaderUpgradeab1e11111111111111111111111"
 );
 export let METADATA_PROGRAM_ID = new PublicKey(
-  'metaTA73sFPqA8whreUbBsbn3SLJH2vhrW9fP5dmfdC',
+  "metaTA73sFPqA8whreUbBsbn3SLJH2vhrW9fP5dmfdC"
 );
 
 export const MEMO_ID = new PublicKey(
-  'MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr',
+  "MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr"
 );
 
 export const VAULT_ID = new PublicKey(
-  '94wRaYAQdC2gYF76AUTYSugNJ3rAC4EimjAMPwM7uYry',
+  "94wRaYAQdC2gYF76AUTYSugNJ3rAC4EimjAMPwM7uYry"
 );
 
 export const AUCTION_ID = new PublicKey(
-  'C9nHkL6BfGx9M9MyYrJqAD5hPsGJd1fHpp1uAJA6vTCn',
+  "C9nHkL6BfGx9M9MyYrJqAD5hPsGJd1fHpp1uAJA6vTCn"
 );
 
 export const METAPLEX_ID = new PublicKey(
-  'EPtpKdKW8qciGVd1UFyGjgbBHTbSAyvbY61h9uQGVgeu',
+  "EPtpKdKW8qciGVd1UFyGjgbBHTbSAyvbY61h9uQGVgeu"
 );
 
-export let SYSTEM = new PublicKey('11111111111111111111111111111111');
+export let SYSTEM = new PublicKey("11111111111111111111111111111111");
 
 let WORMHOLE_BRIDGE: {
   pubkey: PublicKey;
@@ -68,9 +68,10 @@ let WORMHOLE_BRIDGE: {
   wrappedMaster: string;
 };
 
-export const LEND_HOST_FEE_ADDRESS = process && process.env.REACT_APP_LEND_HOST_FEE_ADDRESS
-  ? new PublicKey(`${process.env.REACT_APP_LEND_HOST_FEE_ADDRESS}`)
-  : undefined;
+export const LEND_HOST_FEE_ADDRESS =
+  process && process.env.REACT_APP_LEND_HOST_FEE_ADDRESS
+    ? new PublicKey(`${process.env.REACT_APP_LEND_HOST_FEE_ADDRESS}`)
+    : undefined;
 
 console.debug(`Lend host fee address: ${LEND_HOST_FEE_ADDRESS?.toBase58()}`);
 
@@ -79,65 +80,62 @@ export const ENABLE_FEES_INPUT = false;
 // legacy pools are used to show users contributions in those pools to allow for withdrawals of funds
 export const PROGRAM_IDS = [
   {
-    name: 'mainnet-beta',
+    name: "mainnet-beta",
 
     wormhole: () => ({
-      pubkey: new PublicKey('WormT3McKhFJ2RkiGpdw9GKvNCrB2aB54gb2uV9MfQC'),
-      bridge: '0xf92cD566Ea4864356C5491c177A430C222d7e678',
-      wrappedMaster: '9A5e27995309a03f8B583feBdE7eF289FcCdC6Ae',
+      pubkey: new PublicKey("WormT3McKhFJ2RkiGpdw9GKvNCrB2aB54gb2uV9MfQC"),
+      bridge: "0xf92cD566Ea4864356C5491c177A430C222d7e678",
+      wrappedMaster: "9A5e27995309a03f8B583feBdE7eF289FcCdC6Ae",
     }),
   },
   {
-    name: 'testnet',
+    name: "testnet",
 
     wormhole: () => ({
-      pubkey: new PublicKey('5gQf5AUhAgWYgUCt9ouShm9H7dzzXUsLdssYwe5krKhg'),
-      bridge: '0x251bBCD91E84098509beaeAfF0B9951859af66D3',
-      wrappedMaster: 'E39f0b145C0aF079B214c5a8840B2B01eA14794c',
+      pubkey: new PublicKey("5gQf5AUhAgWYgUCt9ouShm9H7dzzXUsLdssYwe5krKhg"),
+      bridge: "0x251bBCD91E84098509beaeAfF0B9951859af66D3",
+      wrappedMaster: "E39f0b145C0aF079B214c5a8840B2B01eA14794c",
     }),
   },
 
   {
-    name: 'devnet',
+    name: "devnet",
 
     wormhole: () => ({
-      pubkey: new PublicKey('WormT3McKhFJ2RkiGpdw9GKvNCrB2aB54gb2uV9MfQC'),
-      bridge: '0xf92cD566Ea4864356C5491c177A430C222d7e678',
-      wrappedMaster: '9A5e27995309a03f8B583feBdE7eF289FcCdC6Ae',
+      pubkey: new PublicKey("WormT3McKhFJ2RkiGpdw9GKvNCrB2aB54gb2uV9MfQC"),
+      bridge: "0xf92cD566Ea4864356C5491c177A430C222d7e678",
+      wrappedMaster: "9A5e27995309a03f8B583feBdE7eF289FcCdC6Ae",
     }),
   },
   {
-    name: 'localnet',
+    name: "localnet",
 
     wormhole: () => ({
-      pubkey: new PublicKey('WormT3McKhFJ2RkiGpdw9GKvNCrB2aB54gb2uV9MfQC'),
-      bridge: '0xf92cD566Ea4864356C5491c177A430C222d7e678',
-      wrappedMaster: '9A5e27995309a03f8B583feBdE7eF289FcCdC6Ae',
+      pubkey: new PublicKey("WormT3McKhFJ2RkiGpdw9GKvNCrB2aB54gb2uV9MfQC"),
+      bridge: "0xf92cD566Ea4864356C5491c177A430C222d7e678",
+      wrappedMaster: "9A5e27995309a03f8B583feBdE7eF289FcCdC6Ae",
     }),
   },
 ];
 
 export const setProgramIds = (envName: string) => {
-  let instance = PROGRAM_IDS.find(env => envName.indexOf(env.name) >= 0);
+  let instance = PROGRAM_IDS.find((env) => envName.indexOf(env.name) >= 0);
   if (!instance) {
     return;
   }
 
   WORMHOLE_BRIDGE = instance.wormhole();
 
-
-  if (envName === 'mainnet-beta') {
+  if (envName === "mainnet-beta") {
     JET_REALM = PublicKey.default; // FIXME!
     JET_GOVERNANCE = PublicKey.default; // FIXME!
     JET_TOKEN_MINT = new PublicKey(
       "JET6zMJWkCN9tpRT2v2jfAmm5VnQFDpUBCyaKojmGtz"
     );
   } else if (envName === "devnet") {
-    JET_REALM = new PublicKey(
-      "ASRAHYwEVhV3mGUarRvaE59ZUpKA8qKbNbLtipqT6J3G"
-    );
+    JET_REALM = new PublicKey("ASRAHYwEVhV3mGUarRvaE59ZUpKA8qKbNbLtipqT6J3G");
     JET_GOVERNANCE = new PublicKey(
-      "FJBrF515muB9p4zzQYh3CUgf51fKdd813BhRX4oUVryA"
+      "8DWAqDJV53zP2qu7RtzcvU7dzncGe5TZom7p5ZtRbPZn"
     );
     JET_TOKEN_MINT = new PublicKey(
       "FRuFWBrp1Kh6LpAi9CRvjk97C6YpCR7AERq62N2CZFUg"
