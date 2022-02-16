@@ -97,7 +97,8 @@ svg {
   display: flex;
   align-items: center;
 }
-button.secondary-btn, .ant-btn.secondary-btn {
+button.secondary-btn,
+.ant-btn.secondary-btn {
   color: @white;
   border: 1px solid @white;
 }
@@ -635,7 +636,7 @@ button,
       grid-column: 2 / 6 !important;
     }
   }
-  .footer-links, #csv {
+  .footer-links {
     display: none;
   }
   #show-proposals {
@@ -648,13 +649,20 @@ button,
     }
   }
   #proposal-page {
+    .stakeholders {
+      justify-content: space-between;
+      span.voter:first-child {
+        display: none;
+      }
+    }
     .proposal-left {
       grid-column: 1 / 5;
     }
     .proposal-right {
       grid-column: 5 / 7;
     }
-    .other-proposals, .ant-divider-horizontal {
+    .other-proposals,
+    .ant-divider-horizontal {
       grid-column: 1 / 7;
     }
   }
@@ -665,7 +673,9 @@ button,
   .mobile-only {
     display: inline !important;
   }
-  p, ul, li {
+  p,
+  ul,
+  li {
     font-size: @base-font-size !important;
     list-style: none;
   }
@@ -674,6 +684,9 @@ button,
   }
   h2 {
     font-size: @sm-font-size;
+  }
+  #csv {
+    display: none;
   }
   .column-grid {
     display: flex !important;
@@ -711,7 +724,7 @@ button,
         position: relative;
         width: 108%;
         & > * {
-          width: 92%
+          width: 92%;
         }
         .title {
           display: flex;
@@ -734,8 +747,8 @@ button,
                 &:hover {
                   background-color: @dark-grey;
                 }
+              }
             }
-          }
           }
         }
         .past-proposal-card.ant-card {
@@ -754,15 +767,15 @@ button,
             }
             &.details {
               div {
-              border-radius: 50px;
-              padding: 5px 7px;
-              width: unset;
-              text-transform: uppercase;
-              font-weight: 600;
-              color: @white;
-              font-size: @xs-font-size !important;
+                border-radius: 50px;
+                padding: 5px 7px;
+                width: unset;
+                text-transform: uppercase;
+                font-weight: 600;
+                color: @white;
+                font-size: @xs-font-size !important;
+              }
             }
-          }
             h1 {
               width: 50%;
               font-weight: 400;
@@ -802,7 +815,8 @@ button,
   }
   #proposal-page {
     flex-direction: column;
-    .proposal-left, .centered {
+    .proposal-left,
+    .centered {
       .description #details {
         grid-template-columns: 80px 1fr;
       }
@@ -817,9 +831,13 @@ button,
       left: 7.5%;
       z-index: 100;
       &::after {
-        content: '';
+        content: "";
         display: block;
-        background: linear-gradient(180deg, var(--light-shadow) 0%, rgba(229, 235, 244, 0) 100%);
+        background: linear-gradient(
+          180deg,
+          var(--light-shadow) 0%,
+          rgba(229, 235, 244, 0) 100%
+        );
         transform: rotate(-180deg);
         height: 30px;
         width: 150%;
@@ -855,7 +873,8 @@ button,
         }
       }
     }
-    .ant-divider, .other-proposals {
+    .ant-divider,
+    .other-proposals {
       display: none;
     }
   }
