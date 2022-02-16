@@ -5,6 +5,7 @@ import { YourInfo } from "../components/YourInfo";
 import { PastProposalCard } from "../components/MobilePastProposals";
 // import { getFirstTwoHundredPubkeys } from "../models/PUBKEYS_INDEX";
 import { ReactComponent as Filter } from '../images/filter.svg'
+import { useEffect } from "react";
 
 export const HomeView = () => {
   const { env } = useConnectionConfig()
@@ -33,11 +34,18 @@ export const HomeView = () => {
   
   // On mobile, only show active proposals
   // in main view
-  window.addEventListener("resize", function() {
-    if (window.matchMedia("(max-width: 840px)").matches) {
-      setProposalFilter("active")
-    }
-  })
+  useEffect(() => {
+    window.addEventListener("resize", function () {
+      if (window.matchMedia("(max-width: 840px)").matches) {
+        setProposalFilter("active");
+      }
+    });
+    return window.removeEventListener("resize", function () {
+      if (window.matchMedia("(max-width: 840px)").matches) {
+        setProposalFilter("active");
+      }
+    });
+  });
 
   const toggleShowFilter = () => {
     document.getElementById("filter")?.classList.toggle("hidden")
