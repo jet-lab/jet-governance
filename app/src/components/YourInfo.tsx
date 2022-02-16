@@ -1,6 +1,6 @@
 import { InfoCircleFilled, PlusOutlined } from "@ant-design/icons";
 import { bnToNumber } from "@jet-lab/jet-engine";
-import { Tooltip, Divider, Button, Switch, Popover, notification } from "antd";
+import { Tooltip, Divider, Button, Switch, notification } from "antd";
 import { Input } from "../components/Input";
 import { useState } from "react";
 import { ReactFitty } from "react-fitty";
@@ -38,9 +38,7 @@ export const YourInfo = () => {
     jetAccount,
     jetMint,
 
-    governance,
     tokenOwnerRecord,
-    walletVoteRecords,
   } = useProposalContext();
 
   const withdrawVotesAbility = useWithdrawVotesAbility(tokenOwnerRecord);

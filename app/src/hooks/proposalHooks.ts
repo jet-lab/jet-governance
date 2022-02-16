@@ -4,7 +4,7 @@ import { PublicKey } from "@solana/web3.js";
 import BN from "bn.js";
 import { useMemo, useState } from "react";
 import { ZERO } from "../constants";
-import { ProposalFilter, useProposalContext } from "../contexts/proposal";
+import { ProposalFilter } from "../contexts/proposal";
 import { bnToIntLossy } from "../tools/units";
 import { dateToString } from "../utils";
 import { useGovernanceAccounts } from "./accountHooks";

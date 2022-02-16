@@ -1,5 +1,4 @@
 import { notify } from "../utils";
-import { JET_FAUCET_DEVNET, JET_TOKEN_MINT } from "../utils/ids";
 import { TokenFaucet } from "@jet-lab/jet-engine";
 import { Provider } from "@project-serum/anchor";
 import { ExplorerLink } from "../components";

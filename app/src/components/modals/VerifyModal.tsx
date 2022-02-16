@@ -41,7 +41,6 @@ export const VerifyModal = ({
   // The verification token received from the SMS recipient.
   const [code, setCode] = useState("");
   const [welcomeConfirmed, setWelcomeConfirmed] = useState(false);
-  const [phoneVerifyLoading, setPhoneVerifyLoading] = useState(false)
   const [confirmCodeLoading, setConfirmCodeLoading] = useState(false)
   const { env } = useConnectionConfig()
 
@@ -87,13 +86,6 @@ export const VerifyModal = ({
       return;
     }
 
-    setPhoneVerifyLoading(true);
-
-    if (!await createAuthAccount()) {
-      setPhoneVerifyLoading(false)
-      return;
-    }
-
     // auth/sms begin a new SMS verification session
     axios
       .put("https://api.jetprotocol.io/v1/auth/sms", {
@@ -106,7 +98,6 @@ export const VerifyModal = ({
       })
       .then((res) => {
         console.log(res.status, res.data);
-        setPhoneVerifyLoading(false)
         if (res.status === 201) {
           // Successfully sent SMS verification code
           setVerificationId(res.data.id)
@@ -119,7 +110,6 @@ export const VerifyModal = ({
       .catch(err => {
         console.error(JSON.stringify(err), err?.response?.body, err?.response?.data)
         console.error("response status", err.response.status)
-        setPhoneVerifyLoading(false)
         if (err.response.status === 400) {
           // Payload validation failed or provided phone number was not a valid mobile number.
           setCurrent(Steps.PhoneInvalid);

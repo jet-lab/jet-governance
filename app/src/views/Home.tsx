@@ -1,6 +1,5 @@
 import { useProposalContext } from "../contexts/proposal";
 import { ProposalCard } from "../components/ProposalCard";
-import { useConnectionConfig, useMint } from "../contexts";
 import { YourInfo } from "../components/YourInfo";
 import { PastProposalCard } from "../components/MobilePastProposals";
 // import { getFirstTwoHundredPubkeys } from "../models/PUBKEYS_INDEX";
@@ -8,7 +7,6 @@ import { ReactComponent as Filter } from '../images/filter.svg'
 import { useEffect } from "react";
 
 export const HomeView = () => {
-  const { env } = useConnectionConfig()
   /* eslint-disable @typescript-eslint/no-unused-vars */
   const {
     proposalFilter,
@@ -17,15 +15,7 @@ export const HomeView = () => {
     filteredProposalsByGovernance,
     pastProposals,
 
-    stakeBalance: {
-      stakedJet,
-      unstakedJet,
-      unlockedVotes,
-    },
-
-    realm,
     governance,
-    tokenOwnerRecord,
   } = useProposalContext();
   /* eslint-enable @typescript-eslint/no-unused-vars */
 

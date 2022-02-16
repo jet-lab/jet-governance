@@ -57,6 +57,11 @@ export const RestakeModal = ({
     onClose();
   };
 
+  const handleCloseAndRefresh = () => {
+    handleClose()
+    window.location.reload();
+  }
+
   const steps: PropsWithChildren<ModalProps>[] = [];
 
   steps[Steps.Confirm] = {
@@ -83,7 +88,7 @@ export const RestakeModal = ({
   steps[Steps.Success] = {
     title: `All set!`,
     okText: "I understand.",
-    onOk: () => handleClose(),
+    onOk: () => handleCloseAndRefresh(),
     onCancel: () => handleClose(),
     closable: true,
     cancelButtonProps: { style: { display: "none " } },
