@@ -252,7 +252,10 @@ export const YourInfo = () => {
             resetInput={() => setInputAmount(undefined)}
             onClose={() => setUnstakeModalVisible(false)}
           />
-          <Button type="dashed">Withdraw</Button>
+          <Button type="dashed"
+            className="full-width"
+            disabled={!connected || !withdrawVotesAbility}
+          >Withdraw</Button>
         </div>
       </div>
 

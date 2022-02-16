@@ -31,8 +31,8 @@ export function Nav() {
   ];
 
   const mobileFooterLinks = [
-    { title: "Terms of Use", url: "" },
-    { title: "Privacy Policy", url: "" },
+    { title: "Terms of Use", route: "/terms" },
+    { title: "Glossary", route: "/glossary" },
   ];
 
   const accountLink = { title: "Account", route: "/your-info" };
@@ -111,6 +111,7 @@ export function Nav() {
               connected ? disconnectAndResetAuth() : setConnecting(true)
             }
           >
+            <Wallet width="15px" style={{paddingRight:"10px"}} />
             {connected
               ? `${shortenAddress(
                   publicKey ? publicKey.toString() : ""
@@ -174,15 +175,14 @@ export function Nav() {
           </div>
           <div className="drawer-bottom flex-centered column">
             {mobileFooterLinks.map((link) => (
-              <a
+              <Link
                 key={link.title}
-                href={link.url}
+                to={link.route}
                 className="footer-link"
-                rel="noopener noreferrer"
-                target="_blank"
+                onClick={() => setDrawerOpened(false)}
               >
                 {link.title}
-              </a>
+              </Link>
             ))}
             <Switch
               className="secondary-switch"

@@ -23,6 +23,8 @@ import { ProposalProvider } from "./contexts/proposal";
 import { ConfigProvider } from "antd-country-phone-input";
 import en from "world_countries_lists/data/en/world.json";
 import { AirdropHistory } from "./views/AirdropHistory";
+import { GlossaryView } from "./views/Glossary";
+import { TermsView } from "./views/TermsConditions";
 
 export function Routes() {
   return (
@@ -66,6 +68,16 @@ export function Routes() {
                                   exact
                                   path="/flight-logs"
                                   children={<FlightLogView />}
+                                />
+                                <Route
+                                  exact
+                                  path="/glossary"
+                                  children={<GlossaryView />}
+                                />
+                                <Route
+                                  exact
+                                  path="/terms"
+                                  children={<TermsView />}
                                 />
                               </ScrollToTop>
                             </Switch>
