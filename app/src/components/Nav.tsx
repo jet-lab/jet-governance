@@ -6,8 +6,8 @@ import { useDarkTheme } from "../contexts/darkTheme";
 import { Button, Switch } from "antd";
 import { useAirdrop } from "../contexts/airdrop";
 import { shortenAddress } from "../utils";
-import User from '../images/user.svg'
-import { ReactComponent as Wallet } from '../images/wallet.svg'
+import User from "../images/user.svg";
+import { ReactComponent as Wallet } from "../images/wallet.svg";
 
 export function Nav() {
   const { pathname } = useLocation();
@@ -24,17 +24,18 @@ export function Nav() {
       title: `Claims`,
       class: "shimmer",
       badge: unclaimedAirdrops(),
-      route: "/claims", mobileOnly: false 
+      route: "/claims",
+      mobileOnly: false,
     },
-    { title: "Flight Logs", route: "/flight-logs", mobileOnly: false  },
+    { title: "Flight Logs", route: "/flight-logs", mobileOnly: false },
   ];
 
   const mobileFooterLinks = [
-    { title: "Terms of Use", url: "/flight-logs" },
+    { title: "Terms of Use", url: "" },
     { title: "Privacy Policy", url: "" },
   ];
 
-  const accountLink = { title: "Account", route: "/account" };
+  const accountLink = { title: "Account", route: "/your-info" };
 
   const disconnectAndResetAuth = () => {
     disconnect();
@@ -81,24 +82,27 @@ export function Nav() {
           />
         </Link>
         <div className="nav-links flex-centered">
-          {navLinks.map((link) => !link.mobileOnly && (
-            <Link
-            to={link.route}
-            className={`nav-link ${pathname === link.route ? "active" : ""} ${
-              link.class
-            }`}
-            key={link.route}
-          >
-            {link.title}
-            {link.badge ? (
-              <span className="badge">
-                <span className="text-gradient">{link.badge}</span>
-              </span>
-            ) : (
-              ""
-            )}
-          </Link>
-          ))}
+          {navLinks.map(
+            (link) =>
+              !link.mobileOnly && (
+                <Link
+                  to={link.route}
+                  className={`nav-link ${
+                    pathname === link.route ? "active" : ""
+                  } ${link.class}`}
+                  key={link.route}
+                >
+                  {link.title}
+                  {link.badge ? (
+                    <span className="badge">
+                      <span className="text-gradient">{link.badge}</span>
+                    </span>
+                  ) : (
+                    ""
+                  )}
+                </Link>
+              )
+          )}
           <Button
             className="secondary-btn flex-centered"
             type="ghost"
@@ -119,13 +123,9 @@ export function Nav() {
       {/* Mobile Nav */}
       <nav className="mobile flex align-center justify-between">
         <Link className="account" to={accountLink.route}>
-          <img
-            width="25px"
-            src={User}
-            alt={accountLink.title}
-          />
+          <img width="25px" src={User} alt={accountLink.title} />
         </Link>
-        
+
         <div
           className={`hamburger flex align-center justify-between column ${
             drawerOpened ? "close" : ""
@@ -164,7 +164,7 @@ export function Nav() {
                 }
               }}
             >
-              <Wallet width="15px"/>
+              <Wallet width="15px" style={{paddingRight:"10px"}} />
               {connected
                 ? `${shortenAddress(
                     publicKey ? publicKey.toString() : ""
