@@ -76,8 +76,7 @@ export function Nav() {
         <Link to="/" className="left-container-logo flex-centered">
           <img
             src="img/jetgovern_white.png"
-            width="100%"
-            height="auto"
+            height="100%"
             alt="Jet Protocol"
           />
         </Link>

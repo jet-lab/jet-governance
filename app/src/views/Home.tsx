@@ -1,4 +1,4 @@
-import { useProposalContext } from "../contexts/proposal";
+import { ProposalFilter, useProposalContext } from "../contexts/proposal";
 import { ProposalCard } from "../components/ProposalCard";
 import { YourInfo } from "../components/YourInfo";
 import { PastProposalCard } from "../components/MobilePastProposals";
@@ -11,9 +11,11 @@ export const HomeView = () => {
   const {
     proposalFilter,
     setProposalFilter,
+    pastProposalFilter,
+    setPastProposalFilter,
 
     filteredProposalsByGovernance,
-    pastProposals,
+    filteredPastProposals,
 
     governance,
   } = useProposalContext();
@@ -39,6 +41,11 @@ export const HomeView = () => {
 
   const toggleShowFilter = () => {
     document.getElementById("filter")?.classList.toggle("hidden")
+  }
+
+  const handleSetPastProposalFilter = (string: ProposalFilter) => {
+    setPastProposalFilter(string)
+    toggleShowFilter();
   }
 
   return (
@@ -77,13 +84,13 @@ export const HomeView = () => {
           <Filter onClick={toggleShowFilter} />
           <div id="filter" className="hidden">
             <ul>
-              <li onClick={toggleShowFilter} >All</li>
-              <li onClick={toggleShowFilter} >Passed</li>
-              <li onClick={toggleShowFilter} >Rejected</li>
+              <li onClick={() => handleSetPastProposalFilter("all")}>All</li>
+              <li onClick={() => handleSetPastProposalFilter("passed")}>Passed</li>
+              <li onClick={() => handleSetPastProposalFilter("rejected")}>Rejected</li>
             </ul>
           </div>
         </span>
-        {pastProposals.map(
+        {filteredPastProposals.map(
             (proposal) =>
             governance && (
                 <PastProposalCard

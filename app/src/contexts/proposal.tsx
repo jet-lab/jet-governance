@@ -17,6 +17,8 @@ export type ProposalFilter = "active" | "inactive" | "passed" | "rejected" | "al
 interface ProposalContextState {
   proposalFilter: ProposalFilter
   setProposalFilter: (showing: ProposalFilter) => void
+  pastProposalFilter: ProposalFilter
+  setPastProposalFilter: (showing: ProposalFilter) => void
 
   stakeProgram?: Program
   stakePool?: StakePool
@@ -40,16 +42,18 @@ interface ProposalContextState {
   walletVoteRecords: ProgramAccount<VoteRecord>[]
   proposalsByGovernance: ProgramAccount<Proposal>[]
   filteredProposalsByGovernance: ProgramAccount<Proposal>[]
-  pastProposals: ProgramAccount<Proposal>[]
+  filteredPastProposals: ProgramAccount<Proposal>[]
 }
 
 const ProposalContext = React.createContext<ProposalContextState>({
   proposalFilter: "active",
   setProposalFilter: () => { },
+  pastProposalFilter: "all",
+  setPastProposalFilter: () => { },
 
   proposalsByGovernance: [],
   filteredProposalsByGovernance: [],
-  pastProposals: [],
+  filteredPastProposals: [],
 
   claimsCount: 0,
   unbondingTotal: 0,
@@ -72,6 +76,7 @@ export function ProposalProvider({ children = undefined as any }) {
   const walletAddress = wallet.publicKey ?? undefined;
   const connection = useConnection()
   const [proposalFilter, setProposalFilter] = useState<ProposalFilter>("active");
+  const [pastProposalFilter, setPastProposalFilter] = useState<ProposalFilter>("all");
 
   // ----- Staking -----
   const provider = useProvider(connection, wallet);
@@ -101,12 +106,15 @@ export function ProposalProvider({ children = undefined as any }) {
   const proposalsByGovernance = useProposalsByGovernance(JET_GOVERNANCE);
   const filteredProposalsByGovernance = useProposalFilters(proposalsByGovernance, proposalFilter);
   const pastProposals = useProposalFilters(proposalsByGovernance, "inactive");
+  const filteredPastProposals = useProposalFilters(pastProposals, pastProposalFilter)
 
   return (
     <ProposalContext.Provider
       value={{
         proposalFilter,
         setProposalFilter,
+        pastProposalFilter,
+        setPastProposalFilter,
 
         stakeProgram,
         stakePool,
@@ -130,7 +138,7 @@ export function ProposalProvider({ children = undefined as any }) {
         walletVoteRecords,
         proposalsByGovernance,
         filteredProposalsByGovernance,
-        pastProposals
+        filteredPastProposals
       }}
     >
       {children}

@@ -4,9 +4,12 @@
 :root {
   @grey: #949494;
   --grey: @grey;
+  @dark-white: #D8DFEC;
+  --dark-white: @dark-white;
   @disabled-opacity: 0.6;
   --gradient: @gradient;
   @md-font-size: 14px;
+
 }
 
 /* Styles between these lines should be included at the next version of the jet-antd library */
@@ -16,6 +19,9 @@
 
 button.inactive {
   filter: blur(2px);
+}
+button.ant-btn.ant-btn-lg {
+  padding: 10px 14px;
 }
 .ant-modal-content {
   a {
@@ -44,7 +50,9 @@ button.inactive {
 
 code {
   font-family: monospace;
-  
+}
+.ant-progress-bg, .ant-progress-success-bg {
+  border-radius: 0 !important;
 }
 /* Styles between these lines should be included at the next version of the jet-antd library */
 
@@ -98,14 +106,32 @@ svg {
 }
 
 /* Navbar and connect wallet */
-.nav-link {
-  display: flex;
-  align-items: center;
-}
-button.secondary-btn,
-.ant-btn.secondary-btn {
-  color: @white;
-  border: 1px solid @white;
+nav {
+  .left-container-logo {
+    height: 80%;
+  }
+  .nav-link {
+    display: flex;
+    align-items: center;
+  }
+  button.secondary-btn,
+  .ant-btn.secondary-btn {
+    color: @white;
+    border: 1px solid @white;
+  }
+  .badge {
+    box-shadow: 800px 0 0 0 rgb(var(--lt-white)) inset;
+    height: 15px;
+    min-width: 15px;
+    padding: 1px 1px 3px 3px;
+    border-radius: 50%;
+    display: inline-block;
+    color: @black;
+    text-align: center;
+    span {
+      margin: 0 -1px 0 -1px !important;
+    }
+  }
 }
 .connect-wallet-modal p {
   margin: unset;
@@ -155,20 +181,6 @@ button.secondary-btn,
   100% {
     background-position: 12.5rem top;
     /*200px*/
-  }
-}
-
-.badge {
-  box-shadow: 800px 0 0 0 rgb(var(--lt-white)) inset;
-  height: 15px;
-  min-width: 15px;
-  padding: 1px 1px 3px 3px;
-  border-radius: 50%;
-  display: inline-block;
-  color: @black;
-  text-align: center;
-  span {
-    margin: 0 -1px 0 -1px !important;
   }
 }
 
@@ -284,6 +296,7 @@ p,
   }
   .ant-progress-bg {
     background: @white !important;
+    border-radius: 0;
   }
   .ant-progress-success-bg {
     background: var(--jet-green) !important;
@@ -419,7 +432,7 @@ p,
 }
 
 /* Proposal page */
-.proposal {
+#proposal-page {
   #csv {
     cursor: pointer;
     margin-left: 20px;
@@ -435,7 +448,7 @@ p,
   .proposal-right {
     grid-column: 7 / 9;
     .helper-text {
-      width: 70%;
+      width: 80%;
       align-self: center;
       color: @black;
       font-size: @xs-font-size !important;
@@ -450,6 +463,9 @@ p,
     flex-direction: column;
     &:first-of-type span {
       margin-left: 0 !important;
+    }
+    h1 {
+      margin-top: 50px;
     }
     p {
       font-size: @base-font-size;
@@ -482,7 +498,7 @@ button,
 .ant-btn {
   &.vote-select {
     box-shadow: @neu-shadow;
-    background: unset;
+    background: var(--dark-white) !important;
     text-transform: uppercase;
     background-clip: content-box, border-box;
     span {
@@ -684,6 +700,14 @@ button,
     font-size: @base-font-size !important;
     list-style: none;
   }
+  ul {
+    border-radius: @border-radius;
+    box-shadow: @neu-shadow-low;
+    li {
+      border-radius: @border-radius;
+      padding-right: @spacing-md
+    }
+  }
   h1 {
     font-size: 20px !important;
   }
@@ -708,10 +732,17 @@ button,
         #proposal-cards {
           display: flex;
           flex-direction: column;
+          a {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+          }
           .proposal-card.ant-card {
             max-width: unset;
             width: 90%;
             height: 152px;
+            margin: 0;
             h1 {
               font-size: 20px !important;
             }
@@ -747,7 +778,7 @@ button,
               li {
                 text-align: right;
                 line-height: 35px;
-                background-color: @grey !important;
+                background-color: @grey;
                 cursor: pointer;
                 &:hover {
                   background-color: @dark-grey;
@@ -794,6 +825,7 @@ button,
         }
         p {
           text-align: center;
+          color: @dark-grey;
         }
       }
     }
@@ -885,5 +917,49 @@ button,
   }
   #flight-logs-view {
     flex-direction: column;
+  }
+}
+
+@media screen and (max-width: 720px) {
+  // Jet Navbar
+  .navbar-container {
+    nav {
+      width: calc(100% - (@spacing-sm * 2));
+      padding: 0 @spacing-sm;
+      &.desktop {
+        display: none;
+      }
+      &.mobile {
+        display: flex;
+        .account img {
+          filter: unset;
+        }
+      }
+
+      .left-container {
+        &-logo {
+          width: 140px;
+        }
+        &-hamburger {
+          display: flex;
+        }
+      }
+
+      .right-container {
+        .nav-link, button {
+          display: none;
+        }
+        &-hamburger {
+          display: flex;
+        }
+      }
+    }
+    &-drawer.open {
+      display: flex;
+
+      .nav-link {
+        margin: @spacing-sm 0;
+      }
+    }
   }
 }

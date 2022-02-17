@@ -32,12 +32,16 @@ import { useConnectWallet } from "../contexts/connectWallet";
 import { getPubkeyIndex } from "../models/PUBKEYS_INDEX";
 import { useProposalContext } from "../contexts/proposal";
 import { StakeAccount, StakeBalance, StakePool } from "@jet-lab/jet-engine";
-import { Governance, ProgramAccount, Proposal, ProposalState } from "@solana/spl-governance";
+import {
+  Governance,
+  ProgramAccount,
+  Proposal,
+  ProposalState,
+} from "@solana/spl-governance";
 import { explorerUrl } from "../utils";
-import { ReactComponent as NoAccess } from '../images/no_access.svg'
-import { ReactComponent as ThumbsUp } from '../images/thumbs_up.svg'
-import { ReactComponent as ThumbsDown } from '../images/thumbs_down.svg'
-
+import { ReactComponent as NoAccess } from "../images/no_access.svg";
+import { ReactComponent as ThumbsUp } from "../images/thumbs_up.svg";
+import { ReactComponent as ThumbsDown } from "../images/thumbs_down.svg";
 
 export const ProposalView = () => {
   const proposalAddress = useKeyParam();
@@ -50,7 +54,7 @@ export const ProposalView = () => {
     stakeAccount,
     stakeBalance,
     governance,
-    proposalsByGovernance
+    proposalsByGovernance,
   } = useProposalContext();
 
   const tokenOwnerRecords = useTokenOwnerRecords(
@@ -115,14 +119,16 @@ const InnerProposalView = ({
   const isStaked = true;
   // const isStaked = stakedJet !== undefined && stakedJet > 0;
 
-  const activeProposals = proposalsByGovernance.filter((p) => p.account.state === ProposalState.Voting);
+  const activeProposals = proposalsByGovernance.filter(
+    (p) => p.account.state === ProposalState.Voting
+  );
 
   const proposalAddress = useKeyParam();
   const { setConnecting } = useConnectWallet();
 
   const [vote, setVote] = useState<VoteOption>(VoteOption.Undecided);
   useEffect(() => {
-    setVote(getVoteType(voteRecord?.account.vote?.voteType))
+    setVote(getVoteType(voteRecord?.account.vote?.voteType));
   }, [voteRecord]);
 
   const addressStr = useMemo(
@@ -140,8 +146,15 @@ const InnerProposalView = ({
     isUrl: isDescriptionUrl,
   } = useLoadGist(proposal.account.descriptionLink);
 
+  let errorMessage = "";
+  if (!connected || (!isStaked && connected)) {
+    errorMessage = "You must have JET staked in order to vote on proposals.";
+  } else if (vote === undefined && connected) {
+    errorMessage = "Please select an option to submit your vote.";
+  }
+
   return (
-    <div className="view-container proposal column-grid" id="proposal-page">
+    <div className="view-container column-grid" id="proposal-page">
       <h2 className="mobile-only">Proposal detail</h2>
       <div
         className={`flex column ${
@@ -156,7 +169,7 @@ const InnerProposalView = ({
               <ArrowLeftOutlined />
               Active Proposals
             </Link>{" "}
-            / JUMP-{getPubkeyIndex(addressStr)}
+            / Jet Upward Momentum Proposal {getPubkeyIndex(addressStr)}
           </span>
           <h1 className="view-header">{proposal.account.name}</h1>
           {
@@ -285,12 +298,11 @@ const InnerProposalView = ({
           </Button>
           <Button
             type="primary"
-            onClick={
-              !connected ? () => setConnecting(true) : () => handleVoteModal()
-            }
-            size="large"
+            onClick={() => handleVoteModal()}
             disabled={
-              (connected && !isStaked) || (connected && vote === undefined)
+              (connected && !isStaked) ||
+              (connected && vote === undefined) ||
+              !connected
             }
           >
             Vote
@@ -305,17 +317,7 @@ const InnerProposalView = ({
             voteRecord={voteRecord}
             stakeBalance={stakeBalance}
           />
-          {!isStaked && connected ? (
-            <span className="helper-text">
-              You must have JET staked in order to vote on proposals.
-            </span>
-          ) : vote === undefined && connected ? (
-            <span className="helper-text">
-              Please select an option to submit your vote.
-            </span>
-          ) : (
-            ""
-          )}
+          <span className="helper-text">{errorMessage}</span>
         </div>
       </div>
 
@@ -349,4 +351,4 @@ const InnerProposalView = ({
       </Link>
     </div>
   );
-}
+};
