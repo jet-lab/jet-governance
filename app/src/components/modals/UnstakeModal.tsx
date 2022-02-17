@@ -8,6 +8,7 @@ import { useRpcContext } from "../../hooks/useRpcContext";
 enum Steps {
   Start = 0,
   Success = 1,
+  Error = 2
 }
 
 export const UnstakeModal = ({
@@ -64,9 +65,8 @@ export const UnstakeModal = ({
       .catch(err => {
         console.log(err)
         setLoading(false)
-        setCurrent(Steps.Start);
+        setCurrent(Steps.Error);
         resetInput()
-        onClose()
       })
   };
 
@@ -120,11 +120,31 @@ export const UnstakeModal = ({
         </p>
       </>,
   }
+  steps[Steps.Error] = {
+    title: "Oops! Something went wrong",
+    okText: "Okay",
+    onOk: () => handleCancel(),
+    onCancel: () => handleCancel(),
+    closable: true,
+    cancelButtonProps: { style: { display: "none" } },
+    content:
+      <p>
+        Well that was embarassing. We've encountered an unknown error, please try again.
+      </p>,
+  }
 
   return (
     <Modal
-      visible={visible}
-      {...steps[current]}
-    />
+    title={steps[current].title}
+    visible={visible}
+    okText={steps[current].okText}
+    onOk={steps[current].onOk}
+    okButtonProps={steps[current].okButtonProps}
+    onCancel={steps[current].onCancel}
+    closable={steps[current].closable}
+    cancelButtonProps={{ style: { display: "none " } }}
+  >
+    {steps[current].content}
+  </Modal>
   );
 };

@@ -22,7 +22,7 @@ export const YourInfo = () => {
   const [unstakeModalVisible, setUnstakeModalVisible] = useState(false);
   const [inputAmount, setInputAmount] = useState<number | undefined>();
   const { vestedAirdrops } = useAirdrop();
-  const connected = useWallet();
+  const { connected } = useWallet();
   const { darkTheme, toggleDarkTheme } = useDarkTheme();
   const { env } = useConnectionConfig()
 
