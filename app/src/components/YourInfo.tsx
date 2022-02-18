@@ -191,7 +191,7 @@ export const YourInfo = () => {
                   onClick={showRewards}
                 />
               ) : (
-                `${rewards.apr}%`
+                `${rewards.apr ?? "-"}%`
               )}
             </span>
           </div>
