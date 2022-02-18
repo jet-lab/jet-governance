@@ -175,7 +175,7 @@ export const YourInfo = () => {
           <div className="flex justify-between" id="current-staking-apr">
             <span>
               {connected
-                ? `${rewards.apr}% Staking APR`
+                ? `${rewards.apr ?? "-"}% Staking APR`
                 : `Current Staking APR `}
               <Tooltip
                 title="The displayed APR depends upon many factors, including the total number of JET staked in the module and the amount of protocol revenue flowing to depositors."
