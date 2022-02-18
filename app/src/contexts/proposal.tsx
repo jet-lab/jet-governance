@@ -1,55 +1,92 @@
-import { Airdrop, AirdropTarget, RewardsClient, StakeAccount, StakeBalance, StakeClient, StakePool, UnbondingAccount } from "@jet-lab/jet-engine";
+import {
+  Airdrop,
+  AirdropTarget,
+  Distribution,
+  RewardsClient,
+  StakeAccount,
+  StakeBalance,
+  StakeClient,
+  StakePool,
+  UnbondingAccount,
+} from "@jet-lab/jet-engine";
 import { Program } from "@project-serum/anchor";
 import React, { useState, useContext } from "react";
-import { MintInfo } from "@solana/spl-token"
-import { useGovernance, useProposalsByGovernance, useWalletTokenOwnerRecord } from "../hooks/apiHooks";
+import { MintInfo } from "@solana/spl-token";
+import {
+  useGovernance,
+  useProposalsByGovernance,
+  useWalletTokenOwnerRecord,
+} from "../hooks/apiHooks";
 import { JET_REALM, JET_GOVERNANCE } from "../utils";
-import { useAirdropsByWallet, useClaimsCount, useProposalFilters, useWalletVoteRecords } from "../hooks/proposalHooks";
+import {
+  useAirdropsByWallet,
+  useClaimsCount,
+  useProposalFilters,
+  useStakingCompatibleWithRealm as useStakePoolCompatibleWithRealm,
+  useWalletVoteRecords,
+} from "../hooks/proposalHooks";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { AssociatedToken } from "@jet-lab/jet-engine/lib/common";
 import { useConnection } from "./connection";
 import { useProvider } from "../hooks/apiHooks";
-import { Governance, ProgramAccount, Proposal, Realm, TokenOwnerRecord, VoteRecord } from "@solana/spl-governance";
+import {
+  Governance,
+  ProgramAccount,
+  Proposal,
+  Realm,
+  TokenOwnerRecord,
+  VoteRecord,
+} from "@solana/spl-governance";
 import { useGovernanceAccountByPubkey } from "../hooks/accountHooks";
+import { DistributionYield } from "@jet-lab/jet-engine/lib/rewards/distribution";
 
-export type ProposalFilter = "active" | "inactive" | "passed" | "rejected" | "all";
+export type ProposalFilter =
+  | "active"
+  | "inactive"
+  | "passed"
+  | "rejected"
+  | "all";
 
 interface ProposalContextState {
-  proposalFilter: ProposalFilter
-  setProposalFilter: (showing: ProposalFilter) => void
-  pastProposalFilter: ProposalFilter
-  setPastProposalFilter: (showing: ProposalFilter) => void
+  proposalFilter: ProposalFilter;
+  setProposalFilter: (showing: ProposalFilter) => void;
+  pastProposalFilter: ProposalFilter;
+  setPastProposalFilter: (showing: ProposalFilter) => void;
 
-  stakeProgram?: Program
-  stakePool?: StakePool
-  stakeAccount?: StakeAccount
-  unbondingAccounts?: UnbondingAccount[]
-  unbondingTotal: number
-  stakeBalance: StakeBalance
+  stakeProgram?: Program;
+  stakePool?: StakePool;
+  stakeAccount?: StakeAccount;
+  unbondingAccounts?: UnbondingAccount[];
+  unbondingTotal: number;
+  stakeBalance: StakeBalance;
 
-  rewardsProgram?: Program,
-  airdrops?: Airdrop[],
-  airdropsByWallet?: AirdropTarget[],
-  claimsCount: number
+  rewardsProgram?: Program;
+  distributions?: Distribution[];
+  activeDistributions?: Distribution[];
+  stakingYield?: DistributionYield;
 
-  jetAccount?: AssociatedToken
-  jetMint?: MintInfo
-  voteMint?: MintInfo
+  airdrops?: Airdrop[];
+  airdropsByWallet?: AirdropTarget[];
+  claimsCount: number;
+
+  jetAccount?: AssociatedToken;
+  jetMint?: MintInfo;
+  voteMint?: MintInfo;
 
   realm?: ProgramAccount<Realm>;
-  governance?: ProgramAccount<Governance>,
-  tokenOwnerRecord?: ProgramAccount<TokenOwnerRecord>
-  walletVoteRecords: ProgramAccount<VoteRecord>[]
-  proposalsByGovernance: ProgramAccount<Proposal>[]
-  filteredProposalsByGovernance: ProgramAccount<Proposal>[]
-  filteredPastProposals: ProgramAccount<Proposal>[]
+  governance?: ProgramAccount<Governance>;
+  tokenOwnerRecord?: ProgramAccount<TokenOwnerRecord>;
+  walletVoteRecords: ProgramAccount<VoteRecord>[];
+  proposalsByGovernance: ProgramAccount<Proposal>[];
+  filteredProposalsByGovernance: ProgramAccount<Proposal>[];
+  filteredPastProposals: ProgramAccount<Proposal>[];
 }
 
 const ProposalContext = React.createContext<ProposalContextState>({
   proposalFilter: "active",
-  setProposalFilter: () => { },
+  setProposalFilter: () => {},
   pastProposalFilter: "all",
-  setPastProposalFilter: () => { },
+  setPastProposalFilter: () => {},
 
   proposalsByGovernance: [],
   filteredProposalsByGovernance: [],
@@ -62,9 +99,9 @@ const ProposalContext = React.createContext<ProposalContextState>({
     unstakedJet: 0,
     unlockedVotes: 0,
     stakedJet: 0,
-    unbondingJet: 0
+    unbondingJet: 0,
   },
-  walletVoteRecords: []
+  walletVoteRecords: [],
 });
 
 export const useProposalContext = () => {
@@ -72,41 +109,77 @@ export const useProposalContext = () => {
 };
 
 export function ProposalProvider({ children = undefined as any }) {
-  const wallet = useWallet()
+  const wallet = useWallet();
   const walletAddress = wallet.publicKey ?? undefined;
-  const connection = useConnection()
-  const [proposalFilter, setProposalFilter] = useState<ProposalFilter>("active");
-  const [pastProposalFilter, setPastProposalFilter] = useState<ProposalFilter>("all");
+  const connection = useConnection();
+  const [proposalFilter, setProposalFilter] =
+    useState<ProposalFilter>("active");
+  const [pastProposalFilter, setPastProposalFilter] =
+    useState<ProposalFilter>("all");
 
   // ----- Staking -----
   const provider = useProvider(connection, wallet);
   const stakeProgram = StakeClient.use(provider);
   const stakePool = StakePool.use(stakeProgram);
-  const stakeAccount = StakeAccount.use(stakeProgram, stakePool, walletAddress)
-  const unbondingAccounts = UnbondingAccount.useByStakeAccount(stakeProgram, stakeAccount)
-  const unbondingTotal = UnbondingAccount.useUnbondingAmountTotal(unbondingAccounts)
-  const stakeBalance = StakeAccount.useBalance(stakeAccount, stakePool)
+  const stakeAccount = StakeAccount.use(stakeProgram, stakePool, walletAddress);
+  const unbondingAccounts = UnbondingAccount.useByStakeAccount(
+    stakeProgram,
+    stakeAccount
+  );
+  const unbondingTotal =
+    UnbondingAccount.useUnbondingAmountTotal(unbondingAccounts);
+  const stakeBalance = StakeAccount.useBalance(stakeAccount, stakePool);
 
-  // ----- Rewards Airdrops -----
+  // ----- Staking Rewards -----
   const rewardsProgram = RewardsClient.use(provider);
+  const distributions = Distribution.useAll(rewardsProgram);
+  const activeDistributions = Distribution.useActive(distributions);
+  const stakingYield = Distribution.useEstimateCombinedYield(
+    activeDistributions,
+    stakePool,
+    stakeAccount
+  );
+
+  // ----- Airdrops -----
   const airdrops = Airdrop.useAll(rewardsProgram);
   const airdropsByWallet = useAirdropsByWallet(airdrops, walletAddress);
   const claimsCount = useClaimsCount(airdropsByWallet);
 
   // ----- Wallet -----
-  const jetAccount = AssociatedToken.use(connection, stakePool?.stakePool.tokenMint, walletAddress)
-  const jetMint = AssociatedToken.useMint(connection, stakePool?.stakePool.tokenMint);
-  const voteMint = AssociatedToken.useMint(connection, stakePool?.stakePool.stakeVoteMint);
+  const jetAccount = AssociatedToken.use(
+    connection,
+    stakePool?.stakePool.tokenMint,
+    walletAddress
+  );
+  const jetMint = AssociatedToken.useMint(
+    connection,
+    stakePool?.stakePool.tokenMint
+  );
+  const voteMint = AssociatedToken.useMint(
+    connection,
+    stakePool?.stakePool.stakeVoteMint
+  );
 
   // ----- Governance -----
-  const realm = useGovernanceAccountByPubkey(Realm, JET_REALM)
+  const realm = useGovernanceAccountByPubkey(Realm, JET_REALM);
   const governance = useGovernance(JET_GOVERNANCE);
-  const tokenOwnerRecord = useWalletTokenOwnerRecord(JET_REALM, realm?.account.communityMint)
+  const tokenOwnerRecord = useWalletTokenOwnerRecord(
+    JET_REALM,
+    realm?.account.communityMint
+  );
   const walletVoteRecords = useWalletVoteRecords();
   const proposalsByGovernance = useProposalsByGovernance(JET_GOVERNANCE);
-  const filteredProposalsByGovernance = useProposalFilters(proposalsByGovernance, proposalFilter);
+  const filteredProposalsByGovernance = useProposalFilters(
+    proposalsByGovernance,
+    proposalFilter
+  );
   const pastProposals = useProposalFilters(proposalsByGovernance, "inactive");
-  const filteredPastProposals = useProposalFilters(pastProposals, pastProposalFilter)
+  const filteredPastProposals = useProposalFilters(
+    pastProposals,
+    pastProposalFilter
+  );
+
+  useStakePoolCompatibleWithRealm(stakePool, realm);
 
   return (
     <ProposalContext.Provider
@@ -117,6 +190,10 @@ export function ProposalProvider({ children = undefined as any }) {
         setPastProposalFilter,
 
         stakeProgram,
+        distributions,
+        activeDistributions,
+        stakingYield,
+
         stakePool,
         stakeAccount,
         unbondingAccounts,
@@ -138,7 +215,7 @@ export function ProposalProvider({ children = undefined as any }) {
         walletVoteRecords,
         proposalsByGovernance,
         filteredProposalsByGovernance,
-        filteredPastProposals
+        filteredPastProposals,
       }}
     >
       {children}

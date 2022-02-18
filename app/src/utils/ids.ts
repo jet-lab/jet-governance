@@ -1,4 +1,4 @@
-import { PublicKey } from '@solana/web3.js';
+import { PublicKey } from "@solana/web3.js";
 
 export const WRAPPED_SOL_MINT = new PublicKey(
   "So11111111111111111111111111111111111111112"
@@ -30,10 +30,6 @@ export let TOKEN_PROGRAM_ID = new PublicKey(
   "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
 );
 
-export const LENDING_PROGRAM_ID = new PublicKey(
-  "LendZqTs7gn5CTSJU1jWKhKuVpjJGom45nnwPb2AMTi"
-);
-
 export let SPL_ASSOCIATED_TOKEN_ACCOUNT_PROGRAM_ID = new PublicKey(
   "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL"
 );
@@ -60,72 +56,7 @@ export const METAPLEX_ID = new PublicKey(
   "EPtpKdKW8qciGVd1UFyGjgbBHTbSAyvbY61h9uQGVgeu"
 );
 
-export let SYSTEM = new PublicKey("11111111111111111111111111111111");
-
-let WORMHOLE_BRIDGE: {
-  pubkey: PublicKey;
-  bridge: string;
-  wrappedMaster: string;
-};
-
-export const LEND_HOST_FEE_ADDRESS =
-  process && process.env.REACT_APP_LEND_HOST_FEE_ADDRESS
-    ? new PublicKey(`${process.env.REACT_APP_LEND_HOST_FEE_ADDRESS}`)
-    : undefined;
-
-console.debug(`Lend host fee address: ${LEND_HOST_FEE_ADDRESS?.toBase58()}`);
-
-export const ENABLE_FEES_INPUT = false;
-
-// legacy pools are used to show users contributions in those pools to allow for withdrawals of funds
-export const PROGRAM_IDS = [
-  {
-    name: "mainnet-beta",
-
-    wormhole: () => ({
-      pubkey: new PublicKey("WormT3McKhFJ2RkiGpdw9GKvNCrB2aB54gb2uV9MfQC"),
-      bridge: "0xf92cD566Ea4864356C5491c177A430C222d7e678",
-      wrappedMaster: "9A5e27995309a03f8B583feBdE7eF289FcCdC6Ae",
-    }),
-  },
-  {
-    name: "testnet",
-
-    wormhole: () => ({
-      pubkey: new PublicKey("5gQf5AUhAgWYgUCt9ouShm9H7dzzXUsLdssYwe5krKhg"),
-      bridge: "0x251bBCD91E84098509beaeAfF0B9951859af66D3",
-      wrappedMaster: "E39f0b145C0aF079B214c5a8840B2B01eA14794c",
-    }),
-  },
-
-  {
-    name: "devnet",
-
-    wormhole: () => ({
-      pubkey: new PublicKey("WormT3McKhFJ2RkiGpdw9GKvNCrB2aB54gb2uV9MfQC"),
-      bridge: "0xf92cD566Ea4864356C5491c177A430C222d7e678",
-      wrappedMaster: "9A5e27995309a03f8B583feBdE7eF289FcCdC6Ae",
-    }),
-  },
-  {
-    name: "localnet",
-
-    wormhole: () => ({
-      pubkey: new PublicKey("WormT3McKhFJ2RkiGpdw9GKvNCrB2aB54gb2uV9MfQC"),
-      bridge: "0xf92cD566Ea4864356C5491c177A430C222d7e678",
-      wrappedMaster: "9A5e27995309a03f8B583feBdE7eF289FcCdC6Ae",
-    }),
-  },
-];
-
 export const setProgramIds = (envName: string) => {
-  let instance = PROGRAM_IDS.find((env) => envName.indexOf(env.name) >= 0);
-  if (!instance) {
-    return;
-  }
-
-  WORMHOLE_BRIDGE = instance.wormhole();
-
   if (envName === "mainnet-beta") {
     JET_REALM = PublicKey.default; // FIXME!
     JET_GOVERNANCE = PublicKey.default; // FIXME!
@@ -145,13 +76,8 @@ export const setProgramIds = (envName: string) => {
 
 export const programIds = () => {
   return {
-    token: TOKEN_PROGRAM_ID,
-    lending: LENDING_PROGRAM_ID,
-    wormhole: WORMHOLE_BRIDGE,
-
     associatedToken: SPL_ASSOCIATED_TOKEN_ACCOUNT_PROGRAM_ID,
     bpf_upgrade_loader: BPF_UPGRADE_LOADER_ID,
-    system: SYSTEM,
     metadata: METADATA_PROGRAM_ID,
     memo: MEMO_ID,
     vault: VAULT_ID,

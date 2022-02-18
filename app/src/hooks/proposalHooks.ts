@@ -1,5 +1,15 @@
-import { Airdrop, AirdropTarget } from "@jet-lab/jet-engine";
-import { Governance, ProgramAccount, Proposal, ProposalState, pubkeyFilter, TokenOwnerRecord, VoteKind, VoteRecord } from "@solana/spl-governance";
+import { Airdrop, AirdropTarget, StakePool } from "@jet-lab/jet-engine";
+import {
+  Governance,
+  ProgramAccount,
+  Proposal,
+  ProposalState,
+  pubkeyFilter,
+  Realm,
+  TokenOwnerRecord,
+  VoteKind,
+  VoteRecord,
+} from "@solana/spl-governance";
 import { PublicKey } from "@solana/web3.js";
 import BN from "bn.js";
 import { useMemo, useState } from "react";
@@ -10,18 +20,21 @@ import { dateToString } from "../utils";
 import { useGovernanceAccounts } from "./accountHooks";
 import { useRpcContext } from "./useRpcContext";
 
-export function useBN(number: number | undefined, exponent: number | null | undefined = null) {
+export function useBN(
+  number: number | undefined,
+  exponent: number | null | undefined = null
+) {
   return useMemo(() => {
     if (number === undefined) {
-      return new BN(0)
+      return new BN(0);
     } else if (exponent === undefined) {
-      return new BN(0)
+      return new BN(0);
     } else if (exponent === null) {
-      return new BN(number.toLocaleString(undefined, {}))
+      return new BN(number.toLocaleString(undefined, {}));
     } else {
-      return new BN(BigInt(number * 10 ** 9).toString())
+      return new BN(BigInt(number * 10 ** 9).toString());
     }
-  }, [number, exponent])
+  }, [number, exponent]);
 }
 
 export const useProposalFilters = (proposals: ProgramAccount<Proposal>[], proposalFilter: ProposalFilter) => {
@@ -33,9 +46,13 @@ export const useProposalFilters = (proposals: ProgramAccount<Proposal>[], propos
         (p) => p.account.isVoteFinalized() || p.account.isPreVotingState()
       );
     } else if (proposalFilter === "passed") {
-      return proposals.filter((p) => p.account.state === ProposalState.Succeeded);
+      return proposals.filter(
+        (p) => p.account.state === ProposalState.Succeeded
+      );
     } else if (proposalFilter === "rejected") {
-      return proposals.filter((p) => p.account.state === ProposalState.Defeated);
+      return proposals.filter(
+        (p) => p.account.state === ProposalState.Defeated
+      );
     } else if (proposalFilter === "all") {
       return proposals;
     } else {
@@ -44,18 +61,20 @@ export const useProposalFilters = (proposals: ProgramAccount<Proposal>[], propos
   }, [proposalFilter, proposals]);
 };
 
-export function useCountdown(proposal: ProgramAccount<Proposal>, governance: ProgramAccount<Governance>) {
+export function useCountdown(
+  proposal: ProgramAccount<Proposal>,
+  governance: ProgramAccount<Governance>
+) {
   const [currentTime, setCurrentTime] = useState(Date.now());
 
   const zeroPad = (num: number, places: number) => {
     return String(num).padStart(places, "0");
-  }
+  };
 
   const countdown = () => {
-
-    return "TEST"
+    return "TEST";
     // return getRemainingTime(currentTime, proposal.getVotingDeadline(governance)?.toNumber())
-  }
+  };
 
   const startDate = useMemo(
     () =>
@@ -74,15 +93,20 @@ export function useCountdown(proposal: ProgramAccount<Proposal>, governance: Pro
   return { startDate, endDate, countdown };
 }
 
-/** 
+/**
  * Returns the time voting ended.
  * Returns the estimated end time if voting is ongoing.
  * Returns undefined if in the Draft state. */
-export function getVotingDeadline(proposal: ProgramAccount<Proposal>, governance: ProgramAccount<Governance>): BN | undefined {
+export function getVotingDeadline(
+  proposal: ProgramAccount<Proposal>,
+  governance: ProgramAccount<Governance>
+): BN | undefined {
   if (proposal.account.votingCompletedAt) {
     return proposal.account.votingCompletedAt;
   }
-  return proposal.account.votingAt?.addn(governance.account.config.maxVotingTime);
+  return proposal.account.votingAt?.addn(
+    governance.account.config.maxVotingTime
+  );
 }
 
 export interface VoterDisplayData {
@@ -98,7 +122,6 @@ export enum VoteOption {
   Abstain = "Abstain",
 }
 
-
 interface VoterData {
   yesVote: Array<VoterDisplayData>;
   noVote: Array<VoterDisplayData>;
@@ -109,29 +132,31 @@ interface VoterData {
 }
 
 export function getVoteType(vote: VoteKind | undefined): VoteOption {
-  if(vote === undefined) {
-    return VoteOption.Undecided
+  if (vote === undefined) {
+    return VoteOption.Undecided;
   } else if (vote === VoteKind.Approve) {
-    return  VoteOption.Yes
+    return VoteOption.Yes;
   } else if (vote === VoteKind.Deny) {
-    return  VoteOption.No
+    return VoteOption.No;
   } else {
-    return VoteOption.Abstain
+    return VoteOption.Abstain;
   }
 }
 
-export function getVoterDisplayData(voteRecord: ProgramAccount<VoteRecord> | undefined): VoterDisplayData | undefined {
-  if(!voteRecord) {
+export function getVoterDisplayData(
+  voteRecord: ProgramAccount<VoteRecord> | undefined
+): VoterDisplayData | undefined {
+  if (!voteRecord) {
     return undefined;
   }
   const yesVoteWeight = voteRecord.account.getYesVoteWeight();
   const noVoteWeight = voteRecord.account.getNoVoteWeight();
-  const voteKind = getVoteType(voteRecord.account.vote?.voteType)
+  const voteKind = getVoteType(voteRecord.account.vote?.voteType);
   return {
     user: voteRecord.account.governingTokenOwner,
     voteKind,
-    voteWeight: yesVoteWeight ?? noVoteWeight ?? new BN(0)
-  }
+    voteWeight: yesVoteWeight ?? noVoteWeight ?? new BN(0),
+  };
 }
 
 export function useVoterDisplayData(
@@ -213,7 +238,7 @@ export function useVoterDisplayData(
       noVote: noVoteData,
       allHasVoted: [...yesVoteData, ...noVoteData],
       undecidedVote: undecidedData,
-      allData: data
+      allData: data,
     };
   }, [voteRecords, tokenOwnerRecords]);
 }
@@ -223,10 +248,14 @@ export function getVoteCounts(proposal: ProgramAccount<Proposal>) {
   const no = proposal.account.getNoVoteCount();
   const abstain = new BN(0); // FIXME: multiple choice votes
 
-  const total = yes.add(no).add(abstain)
-  const yesPercent = total.isZero() ? 0 : bnToIntLossy(yes) / bnToIntLossy(total) * 100
-  const yesAbstainPercent = total.isZero() ? 0 : bnToIntLossy(abstain.add(yes)) / bnToIntLossy(total) * 100
-  return { yes, no, abstain, total, yesPercent: yesPercent, yesAbstainPercent }
+  const total = yes.add(no).add(abstain);
+  const yesPercent = total.isZero()
+    ? 0
+    : (bnToIntLossy(yes) / bnToIntLossy(total)) * 100;
+  const yesAbstainPercent = total.isZero()
+    ? 0
+    : (bnToIntLossy(abstain.add(yes)) / bnToIntLossy(total)) * 100;
+  return { yes, no, abstain, total, yesPercent: yesPercent, yesAbstainPercent };
 }
 
 export const useWalletVoteRecords = () => {
@@ -236,17 +265,21 @@ export const useWalletVoteRecords = () => {
   ]);
 };
 
-export function useAirdropsByWallet(airdrops: Airdrop[] | undefined, wallet: PublicKey | undefined) {
+export function useAirdropsByWallet(
+  airdrops: Airdrop[] | undefined,
+  wallet: PublicKey | undefined
+) {
   return useMemo(() => {
     if (!airdrops || !wallet) {
-      return undefined
+      return undefined;
     }
 
-    return (airdrops
-      .map(airdrop => airdrop.getRecipient(wallet))
-      .filter(recipient => !!recipient) as AirdropTarget[])
-      .sort((a, b) => a?.amount.gt(b?.amount) ? -1 : 1)
-  }, [airdrops, wallet])
+    return (
+      airdrops
+        .map((airdrop) => airdrop.getRecipient(wallet))
+        .filter((recipient) => !!recipient) as AirdropTarget[]
+    ).sort((a, b) => (a?.amount.gt(b?.amount) ? -1 : 1));
+  }, [airdrops, wallet]);
 }
 
 export function useClaimsCount(airdrops: AirdropTarget[] | undefined) {
@@ -262,12 +295,33 @@ export function useClaimsCount(airdrops: AirdropTarget[] | undefined) {
       }
     }
     return claims;
-  }, [airdrops])
+  }, [airdrops]);
 }
 
 /** Returns if the user can unstake.
  * False when a user has voted on proposals.
  * False when a user has created a proposal that is not complete. */
-export function useWithdrawVotesAbility(tokenOwnerRecord: ProgramAccount<TokenOwnerRecord> | undefined) {
+export function useWithdrawVotesAbility(
+  tokenOwnerRecord: ProgramAccount<TokenOwnerRecord> | undefined
+) {
   return tokenOwnerRecord?.account.outstandingProposalCount === 0;
+}
+
+export function useStakingCompatibleWithRealm(
+  stakePool: StakePool | undefined,
+  realm: ProgramAccount<Realm> | undefined
+) {
+  useMemo(() => {
+    if (!stakePool || !realm) {
+      return;
+    }
+
+    if (
+      !stakePool.stakePool.stakeVoteMint.equals(realm.account.communityMint)
+    ) {
+      console.error(
+        `Stake Pool vote mint ${stakePool.stakePool.stakeVoteMint.toBase58()} does not equal realm community mint ${realm.account.communityMint.toBase58()}. Some features will have problems.`
+      );
+    }
+  }, [stakePool, realm]);
 }

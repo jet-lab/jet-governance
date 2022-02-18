@@ -2,15 +2,22 @@ import { InfoCircleFilled, PlusOutlined } from "@ant-design/icons";
 import { bnToNumber } from "@jet-lab/jet-engine";
 import { Tooltip, Divider, Button, Switch, notification } from "antd";
 import { Input } from "../components/Input";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { ReactFitty } from "react-fitty";
 import { jetFaucet } from "../actions/jetFaucet";
-import { useConnectionConfig, useMint } from "../contexts";
+import { useConnectionConfig } from "../contexts";
 import { useAirdrop } from "../contexts/airdrop";
 import { useDarkTheme } from "../contexts/darkTheme";
 import { useProposalContext } from "../contexts/proposal";
 import { useWithdrawVotesAbility } from "../hooks/proposalHooks";
-import { COUNCIL_FAUCET_DEVNET, COUNCIL_TOKEN_MINT, fromLamports, JET_FAUCET_DEVNET, JET_REALM, JET_TOKEN_MINT } from "../utils";
+import {
+  COUNCIL_FAUCET_DEVNET,
+  COUNCIL_TOKEN_MINT,
+  fromLamports,
+  JET_FAUCET_DEVNET,
+  JET_REALM,
+  JET_TOKEN_MINT,
+} from "../utils";
 import { FooterLinks } from "./FooterLinks";
 import { StakeModal } from "./modals/StakeModal";
 import { UnstakeModal } from "./modals/UnstakeModal";
@@ -24,19 +31,17 @@ export const YourInfo = () => {
   const { vestedAirdrops } = useAirdrop();
   const { connected } = useWallet();
   const { darkTheme, toggleDarkTheme } = useDarkTheme();
-  const { env } = useConnectionConfig()
+  const { env } = useConnectionConfig();
 
   const {
     stakeProgram,
     unbondingTotal,
-    stakeBalance: {
-      stakedJet,
-      unstakedJet,
-      unlockedVotes,
-    },
+    stakeBalance: { stakedJet, unstakedJet, unlockedVotes },
 
     jetAccount,
     jetMint,
+
+    stakingYield,
 
     tokenOwnerRecord,
   } = useProposalContext();
@@ -44,50 +49,79 @@ export const YourInfo = () => {
   const withdrawVotesAbility = useWithdrawVotesAbility(tokenOwnerRecord);
   /* eslint-enable @typescript-eslint/no-unused-vars */
 
-  const totalDailyReward = 1000000
-  const totalStake = 1500000
-  const userDailyReward = totalDailyReward * (stakedJet ?? 0) / totalStake
-
-  const mint = useMint(JET_TOKEN_MINT)
+  const rewards = useMemo(() => {
+    return {
+      apr: stakingYield ? (stakingYield.apr * 100).toFixed(0) : undefined,
+      estDailyReward:
+        stakingYield?.perDay !== undefined
+          ? Intl.NumberFormat().format(
+              fromLamports(stakingYield.perDay, jetMint)
+            )
+          : undefined,
+      estMonthlyReward:
+        stakingYield?.perMonth !== undefined
+          ? Intl.NumberFormat().format(
+              fromLamports(stakingYield.perMonth, jetMint)
+            )
+          : undefined,
+      estYearlyReward:
+        stakingYield?.perYear !== undefined
+          ? Intl.NumberFormat().format(
+              fromLamports(stakingYield.perYear, jetMint)
+            )
+          : undefined,
+    };
+  }, [stakingYield, jetMint]);
 
   const handleStake = () => {
     if (!jetMint || !inputAmount || !jetAccount) {
       return;
     }
-    const balance = bnToNumber(jetAccount.info.amount) / 10 ** jetMint.decimals
-    const stakable = Math.min(inputAmount, balance)
+    const balance = bnToNumber(jetAccount.info.amount) / 10 ** jetMint.decimals;
+    const stakable = Math.min(inputAmount, balance);
 
     setInputAmount(stakable);
-    setStakeModalVisible(true)
-  }
+    setStakeModalVisible(true);
+  };
 
   const handleUnstake = () => {
-
     if (!jetMint || inputAmount === undefined || !tokenOwnerRecord) {
       return;
     }
-    const balance = bnToNumber(tokenOwnerRecord.account.governingTokenDepositAmount) / 10 ** jetMint.decimals
-    const stakable = Math.min(inputAmount, balance)
+    const balance =
+      bnToNumber(tokenOwnerRecord.account.governingTokenDepositAmount) /
+      10 ** jetMint.decimals;
+    const stakable = Math.min(inputAmount, balance);
 
     setInputAmount(stakable);
-    setUnstakeModalVisible(true)
-  }
+    setUnstakeModalVisible(true);
+  };
 
   // Devnet only: airdrop JET tokens
   const getJetAirdrop = async () => {
     try {
       if (stakeProgram) {
-        await jetFaucet(stakeProgram?.provider, JET_FAUCET_DEVNET, JET_TOKEN_MINT, "Devnet JET");
+        await jetFaucet(
+          stakeProgram?.provider,
+          JET_FAUCET_DEVNET,
+          JET_TOKEN_MINT,
+          "Devnet JET"
+        );
       }
-    } catch { }
+    } catch {}
   };
   // Devnet only: airdrop Council tokens
   const getCouncilAirdrop = async () => {
     try {
       if (stakeProgram) {
-        await jetFaucet(stakeProgram?.provider, COUNCIL_FAUCET_DEVNET, COUNCIL_TOKEN_MINT, "Devnet Council token");
+        await jetFaucet(
+          stakeProgram?.provider,
+          COUNCIL_FAUCET_DEVNET,
+          COUNCIL_TOKEN_MINT,
+          "Devnet Council token"
+        );
       }
-    } catch { }
+    } catch {}
   };
 
   const openNotification = () => {
@@ -111,11 +145,11 @@ export const YourInfo = () => {
     );
   };
 
-  const showMoreApr = () => {
-    document.getElementById("show-more-apr")?.classList.toggle("hidden")
-  }
+  const showRewards = () => {
+    document.getElementById("show-more-apr")?.classList.toggle("hidden");
+  };
 
-  const isOwnPage = Boolean(useLocation().pathname.includes("your-info"))
+  const isOwnPage = Boolean(useLocation().pathname.includes("your-info"));
 
   return (
     <div id="your-info" className={isOwnPage ? "view-container" : ""}>
@@ -141,9 +175,7 @@ export const YourInfo = () => {
           <div className="flex justify-between" id="current-staking-apr">
             <span>
               {connected
-                ? `${((365 * userDailyReward) / totalStake).toFixed(
-                    0
-                  )}% Staking APR`
+                ? `${rewards.apr}% Staking APR`
                 : `Current Staking APR `}
               <Tooltip
                 title="The displayed APR depends upon many factors, including the total number of JET staked in the module and the amount of protocol revenue flowing to depositors."
@@ -156,21 +188,21 @@ export const YourInfo = () => {
               {connected ? (
                 <PlusOutlined
                   style={{ marginRight: 0 }}
-                  onClick={showMoreApr}
+                  onClick={showRewards}
                 />
               ) : (
-                `${((365 * userDailyReward) / totalStake).toFixed(0)}%`
+                `${rewards.apr}%`
               )}
             </span>
           </div>
           <div className={connected ? "hidden" : undefined} id="show-more-apr">
             <div className="flex justify-between cluster">
               <span>Est. Daily Reward</span>
-              <span>{userDailyReward}</span>
+              <span>{rewards.estDailyReward}</span>
             </div>
             <div className="flex justify-between cluster">
               <span>Est. Monthly Reward</span>
-              <span>{userDailyReward * 30}</span>
+              <span>{rewards.estMonthlyReward}</span>
             </div>
           </div>
         </div>
@@ -182,7 +214,7 @@ export const YourInfo = () => {
               <span>Wallet Balance</span>
               <span>
                 {new Intl.NumberFormat().format(
-                  jetAccount ? fromLamports(jetAccount.info.amount, mint) : 0
+                  jetAccount ? fromLamports(jetAccount.info.amount, jetMint) : 0
                 )}
               </span>
             </div>
@@ -250,10 +282,13 @@ export const YourInfo = () => {
             resetInput={() => setInputAmount(undefined)}
             onClose={() => setUnstakeModalVisible(false)}
           />
-          <Button type="dashed"
+          <Button
+            type="dashed"
             className="full-width"
             disabled={!connected || !withdrawVotesAbility}
-          >Withdraw</Button>
+          >
+            Withdraw
+          </Button>
         </div>
       </div>
 
