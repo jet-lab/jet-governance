@@ -17,7 +17,7 @@ import {
   useProposalsByGovernance,
   useWalletTokenOwnerRecord,
 } from "../hooks/apiHooks";
-import { JET_REALM, JET_GOVERNANCE } from "../utils";
+import { JET_REALM, JET_GOVERNANCE, fromLamports } from "../utils";
 import {
   useAirdropsByWallet,
   useClaimsCount,
@@ -26,7 +26,7 @@ import {
   useWalletVoteRecords,
 } from "../hooks/proposalHooks";
 import { useWallet } from "@solana/wallet-adapter-react";
-import { AssociatedToken } from "@jet-lab/jet-engine/lib/common";
+import { AssociatedToken, bnToNumber } from "@jet-lab/jet-engine/lib/common";
 import { useConnection } from "./connection";
 import { useProvider } from "../hooks/apiHooks";
 import {
@@ -48,23 +48,22 @@ export type ProposalFilter =
   | "all";
 
 interface ProposalContextState {
-  proposalFilter: ProposalFilter;
-  setProposalFilter: (showing: ProposalFilter) => void;
-  pastProposalFilter: ProposalFilter;
-  setPastProposalFilter: (showing: ProposalFilter) => void;
+  proposalFilter: ProposalFilter
+  setProposalFilter: (showing: ProposalFilter) => void
+  pastProposalFilter: ProposalFilter
+  setPastProposalFilter: (showing: ProposalFilter) => void
 
-  stakeProgram?: Program;
-  stakePool?: StakePool;
-  stakeAccount?: StakeAccount;
-  unbondingAccounts?: UnbondingAccount[];
-  unbondingTotal: number;
-  stakeBalance: StakeBalance;
+  stakeProgram?: Program
+  stakePool?: StakePool
+  stakeAccount?: StakeAccount
+  unbondingAccounts?: UnbondingAccount[]
+  unbondingTotal: number
+  stakeBalance: StakeBalance
 
   rewardsProgram?: Program;
   distributions?: Distribution[];
   activeDistributions?: Distribution[];
   stakingYield?: DistributionYield;
-
   airdrops?: Airdrop[];
   airdropsByWallet?: AirdropTarget[];
   claimsCount: number;
@@ -72,6 +71,9 @@ interface ProposalContextState {
   jetAccount?: AssociatedToken;
   jetMint?: MintInfo;
   voteMint?: MintInfo;
+  stakedJet: number
+  jetPerStakedShare: number
+  dailyUserRewardPercentage: number
 
   realm?: ProgramAccount<Realm>;
   governance?: ProgramAccount<Governance>;
@@ -94,6 +96,9 @@ const ProposalContext = React.createContext<ProposalContextState>({
 
   claimsCount: 0,
   unbondingTotal: 0,
+  stakedJet: 0,
+  dailyUserRewardPercentage: 0,
+  jetPerStakedShare: 0,
 
   stakeBalance: {
     unstakedJet: 0,
@@ -160,6 +165,13 @@ export function ProposalProvider({ children = undefined as any }) {
     stakePool?.stakePool.stakeVoteMint
   );
 
+  // TODO: Move this section into jet-engine
+  const jetPerStakedShare = bnToNumber(stakePool?.vault.amount.div(stakePool?.stakePool.sharesBonded))
+  const stakedJet = bnToNumber(stakeAccount?.stakeAccount.shares) * jetPerStakedShare
+  const unstakedJet = bnToNumber(stakeAccount?.stakeAccount.unbonding) * jetPerStakedShare
+  // (total JET supply / total stake pool shares) * user's shares
+  const dailyUserRewardPercentage = stakeBalance.stakedJet / bnToNumber(stakePool?.stakePool.sharesBonded)
+
   // ----- Governance -----
   const realm = useGovernanceAccountByPubkey(Realm, JET_REALM);
   const governance = useGovernance(JET_GOVERNANCE);
@@ -199,6 +211,7 @@ export function ProposalProvider({ children = undefined as any }) {
         unbondingAccounts,
         unbondingTotal,
         stakeBalance,
+        dailyUserRewardPercentage,
 
         rewardsProgram,
         airdrops,
@@ -208,6 +221,8 @@ export function ProposalProvider({ children = undefined as any }) {
         jetAccount,
         jetMint,
         voteMint,
+        stakedJet,
+        jetPerStakedShare,
 
         realm,
         governance,

@@ -5,7 +5,7 @@ import { Input } from "../components/Input";
 import { useMemo, useState } from "react";
 import { ReactFitty } from "react-fitty";
 import { jetFaucet } from "../actions/jetFaucet";
-import { useConnectionConfig } from "../contexts";
+import { useConnectionConfig, useMint } from "../contexts";
 import { useAirdrop } from "../contexts/airdrop";
 import { useDarkTheme } from "../contexts/darkTheme";
 import { useProposalContext } from "../contexts/proposal";
@@ -35,8 +35,13 @@ export const YourInfo = () => {
 
   const {
     stakeProgram,
+    jetPerStakedShare,
     unbondingTotal,
-    stakeBalance: { stakedJet, unstakedJet, unlockedVotes },
+    stakedJet,
+    stakeBalance: {
+      unstakedJet,
+      unlockedVotes,
+    },
 
     jetAccount,
     jetMint,
@@ -48,7 +53,8 @@ export const YourInfo = () => {
 
   const withdrawVotesAbility = useWithdrawVotesAbility(tokenOwnerRecord);
   /* eslint-enable @typescript-eslint/no-unused-vars */
-
+  const mint = useMint(JET_TOKEN_MINT)
+      
   const rewards = useMemo(() => {
     return {
       apr: stakingYield ? (stakingYield.apr * 100).toFixed(0) : undefined,
@@ -167,8 +173,13 @@ export const YourInfo = () => {
           </Tooltip>
         </span>
 
-        <ReactFitty maxSize={100} className="text-gradient staked-balance">
-          {connected ? new Intl.NumberFormat().format(unlockedVotes) : "-"}
+        {/* todo: Rerender react-fitty
+        with mutation observer
+        when child changes */}
+        <ReactFitty
+          maxSize={100}
+          className="text-gradient vote-balance">
+          {connected ? new Intl.NumberFormat().format(fromLamports(stakedJet, mint)) : "-"}
         </ReactFitty>
 
         <div id="wallet-overview" className="flex justify-between column">
@@ -221,7 +232,7 @@ export const YourInfo = () => {
           )}
           <div className="flex justify-between cluster">
             <span>Staked JET</span>
-            <span>{new Intl.NumberFormat().format(stakedJet)}</span>
+            <span>{new Intl.NumberFormat().format(fromLamports(stakedJet, mint))}</span>
           </div>
           {connected && (
             <>
@@ -259,7 +270,7 @@ export const YourInfo = () => {
           <Button
             onClick={() => handleStake()}
             disabled={!connected}
-            className="full-width"
+            className="no-margin-horizontal"
           >
             Stake
           </Button>
@@ -272,7 +283,7 @@ export const YourInfo = () => {
           <Button
             onClick={() => handleUnstake()}
             disabled={!connected || !withdrawVotesAbility}
-            className="full-width"
+            className="no-margin-horizontal"
           >
             Unstake
           </Button>

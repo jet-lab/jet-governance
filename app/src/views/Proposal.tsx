@@ -147,7 +147,9 @@ const InnerProposalView = ({
   } = useLoadGist(proposal.account.descriptionLink);
 
   let errorMessage = "";
-  if (!connected || (!isStaked && connected)) {
+  if (!connected) { 
+    errorMessage = "Connect your Solana wallet to get started.";
+  } else if (!isStaked && connected) {
     errorMessage = "You must have JET staked in order to vote on proposals.";
   } else if (vote === undefined && connected) {
     errorMessage = "Please select an option to submit your vote.";

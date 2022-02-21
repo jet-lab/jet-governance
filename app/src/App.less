@@ -4,12 +4,11 @@
 :root {
   @grey: #949494;
   --grey: @grey;
-  @dark-white: #D8DFEC;
+  @dark-white: #d8dfec;
   --dark-white: @dark-white;
   @disabled-opacity: 0.6;
   --gradient: @gradient;
   @md-font-size: 14px;
-
 }
 
 /* Styles between these lines should be included at the next version of the jet-antd library */
@@ -32,6 +31,7 @@ button.ant-btn.ant-btn-lg {
       // TODO: make sure underline doesn't disappear on hover
       opacity: 1;
       background-image: @gradient;
+      background-clip: text;
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
@@ -51,7 +51,8 @@ button.ant-btn.ant-btn-lg {
 code {
   font-family: monospace;
 }
-.ant-progress-bg, .ant-progress-success-bg {
+.ant-progress-bg,
+.ant-progress-success-bg {
   border-radius: 0 !important;
 }
 /* Styles between these lines should be included at the next version of the jet-antd library */
@@ -104,6 +105,10 @@ svg {
 .wide .ant-modal-content {
   max-width: unset !important;
 }
+.no-margin-horizontal {
+  margin-left: 0;
+  margin-right: 0;
+}
 
 /* Navbar and connect wallet */
 nav {
@@ -116,8 +121,8 @@ nav {
   }
   button.secondary-btn,
   .ant-btn.secondary-btn {
-    color: @white;
-    border: 1px solid @white;
+    color: rgb(var(--lt-white));
+    border: 1px solid rgb(var(--lt-white));
   }
   .badge {
     box-shadow: 800px 0 0 0 rgb(var(--lt-white)) inset;
@@ -366,7 +371,7 @@ p,
   height: 85vh;
   display: grid;
   grid-template-rows: auto auto 1fr auto;
-  .staked-balance {
+  .vote-balance {
     padding-bottom: 10px;
     line-height: 90%;
   }
@@ -394,10 +399,6 @@ p,
   .cluster span {
     margin: 2px 4px;
     font-size: @xs-font-size;
-  }
-  .full-width {
-    margin-left: 0;
-    margin-right: 0;
   }
   #staking-input {
     position: relative;
@@ -657,9 +658,6 @@ button,
       grid-column: 2 / 6 !important;
     }
   }
-  .footer-links {
-    display: none;
-  }
   #show-proposals {
     grid-column: 3 / span 4 !important;
     #proposal-cards {
@@ -672,8 +670,15 @@ button,
   #proposal-page {
     .stakeholders {
       justify-content: space-between;
+      span {
+        width: 33%;
+      }
       span.voter:first-child {
         display: none;
+      }
+      span.address {
+        padding-left: 10px;
+        width: 33%;
       }
     }
     .proposal-left {
@@ -691,6 +696,9 @@ button,
 
 /* Extra small devices (840px and down) */
 @media only screen and (max-width: 840px) {
+  .footer-links {
+    display: none;
+  }
   .mobile-only {
     display: inline !important;
   }
@@ -705,7 +713,7 @@ button,
     box-shadow: @neu-shadow-low;
     li {
       border-radius: @border-radius;
-      padding-right: @spacing-md
+      padding-right: @spacing-md;
     }
   }
   h1 {
@@ -946,7 +954,8 @@ button,
       }
 
       .right-container {
-        .nav-link, button {
+        .nav-link,
+        button {
           display: none;
         }
         &-hamburger {

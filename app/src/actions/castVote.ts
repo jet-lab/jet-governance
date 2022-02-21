@@ -2,6 +2,7 @@ import { PublicKey, Transaction, TransactionInstruction, Keypair } from '@solana
 import { sendAllTransactionsWithNotifications } from '../tools/transactions';
 import { Provider } from '@project-serum/anchor';
 import { ChatMessageBody, GOVERNANCE_CHAT_PROGRAM_ID, ProgramAccount, Proposal, RpcContext, Vote, withCastVote, withPostChatMessage, withRelinquishVote, YesNoVote } from '@solana/spl-governance';
+import { AssociatedToken, bnToNumber, StakeAccount, StakePool } from '@jet-lab/jet-engine';
 
 export const castVote = async (
   { connection, wallet, programId, programVersion, walletPubkey }: RpcContext,
@@ -9,9 +10,12 @@ export const castVote = async (
   proposal: ProgramAccount<Proposal>,
   tokenOwnerRecord: PublicKey,
   yesNoVote: YesNoVote,
+  stakePool?: StakePool,
+  stakeAccount?: StakeAccount,
   message?: ChatMessageBody,
   voteRecord?: PublicKey
 ) => {
+  let mintVoteIx: TransactionInstruction[] = [];
   let relinquishVoteIx: TransactionInstruction[] = [];
   let signers: Keypair[] = [];
   let castVoteIx: TransactionInstruction[] = [];
@@ -19,23 +23,48 @@ export const castVote = async (
 
   let governanceAuthority = walletPubkey;
   let payer = walletPubkey;
+  const provider = new Provider(connection, wallet as any, Provider.defaultOptions())
 
-    // Withdraw existing vote before casting new vote
-    // Then sign both transactions at once
+    // Check for difference between vote tokens
+    //in governance program and staked JET
+    // Mint vote tokens to top-up any difference
+  if (stakeAccount && stakePool) {
+    const voteMint = stakePool.addresses.stakeVoteMint;
 
+    const jetPerStakedShare = stakePool?.vault.amount.div(stakePool?.stakePool.sharesBonded)
+    const mintRemainingVotes = stakeAccount.stakeAccount.shares.mul(jetPerStakedShare).sub(stakeAccount.stakeAccount.mintedVotes)
+
+    const voterTokenAccount = await AssociatedToken.withCreate(
+      mintVoteIx,
+      provider,
+      payer,
+      voteMint
+    );
+
+    await StakeAccount.withMintVotes(mintVoteIx, stakePool, payer, voterTokenAccount, mintRemainingVotes)
+
+    const mintVoteTx = new Transaction().add(...mintVoteIx)
+    allTxs.push({
+      tx: mintVoteTx,
+      signers: []
+    })
+  }
+
+  // Withdraw existing vote before casting new vote
+  // Then sign both transactions at once
   if (tokenOwnerRecord && voteRecord) {
-  await withRelinquishVote(
-    relinquishVoteIx,
-    programId,
-    proposal.account.governance,
-    proposal.pubkey,
-    tokenOwnerRecord,
-    proposal.account.governingTokenMint,
-    voteRecord,
-    governanceAuthority,
-    payer
+    await withRelinquishVote(
+      relinquishVoteIx,
+      programId,
+      proposal.account.governance,
+      proposal.pubkey,
+      tokenOwnerRecord,
+      proposal.account.governingTokenMint,
+      voteRecord,
+      governanceAuthority,
+      payer
     )
-  
+
     const relinquishTx = new Transaction().add(...relinquishVoteIx)
     allTxs.push({
       tx: relinquishTx,
@@ -57,7 +86,7 @@ export const castVote = async (
     Vote.fromYesNoVote(yesNoVote),
     payer,
   );
-  
+
   if (message) {
     await withPostChatMessage(
       castVoteIx,
@@ -81,7 +110,6 @@ export const castVote = async (
     signers: []
   })
 
-  const provider = new Provider(connection, wallet as any, Provider.defaultOptions())
   await sendAllTransactionsWithNotifications(
     provider,
     allTxs,

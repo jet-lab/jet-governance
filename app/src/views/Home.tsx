@@ -33,17 +33,23 @@ export const HomeView = () => {
 
   // On mobile, only show active proposals
   // in main view
-  function onResize() {
+  const onResize = () => {
     if (window.matchMedia("(max-width: 840px)").matches) {
       setProposalFilter("active");
     }
   }
   useEffect(() => {
-    window.addEventListener("resize", onResize);
-    return () => {
-      window.removeEventListener("resize", onResize);
-    };
-  });
+    window.addEventListener("resize", function () {
+      if (window.matchMedia("(max-width: 840px)").matches) {
+        setProposalFilter("active");
+      }
+    });
+    return window.removeEventListener("resize", function () {
+      if (window.matchMedia("(max-width: 840px)").matches) {
+        setProposalFilter("active");
+      }
+    });
+  }, [setProposalFilter]);
 
   const toggleShowFilter = () => {
     document.getElementById("filter")?.classList.toggle("hidden");

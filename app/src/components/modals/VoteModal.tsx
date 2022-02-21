@@ -5,13 +5,14 @@ import {
 } from "../../hooks/apiHooks";
 import { useCountdown, VoteOption } from "../../hooks/proposalHooks";
 import { useRpcContext } from "../../hooks/useRpcContext";
-import { StakeBalance } from "@jet-lab/jet-engine";
+import { StakeAccount, StakeBalance } from "@jet-lab/jet-engine";
 import { getPubkeyIndex } from "../../models/PUBKEYS_INDEX";
 import { getProposalUrl } from "../../tools/routeTools";
 import { Link } from "react-router-dom";
 import { JET_GOVERNANCE } from "../../utils";
 import { Governance, ProgramAccount, Proposal, ProposalState, TokenOwnerRecord, VoteRecord, YesNoVote } from "@solana/spl-governance";
 import { castVote } from "../../actions/castVote";
+import { useProposalContext } from "../../contexts/proposal";
 
 enum Steps {
   ConfirmVote = 0,
@@ -43,6 +44,7 @@ export const VoteModal = ({
 
   const { endDate, countdown } = useCountdown(proposal, governance);
   const rpcContext = useRpcContext();
+  const { stakePool, stakeAccount } = useProposalContext()
 
   let voteText: string = "";
   const stakedJet = stakeBalance.stakedJet;
@@ -79,6 +81,8 @@ export const VoteModal = ({
       proposal,
       tokenOwnerRecord.pubkey,
       yesNoVote,
+      stakePool,
+      stakeAccount,
       undefined,
       voteRecord ? voteRecord!.pubkey : undefined
     )
