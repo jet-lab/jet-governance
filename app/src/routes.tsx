@@ -20,9 +20,9 @@ import {
 } from "./contexts";
 import { ScrollToTop } from "./contexts/scrollToTop";
 import { ProposalProvider } from "./contexts/proposal";
+import { AirdropHistory } from "./views/AirdropHistory";
 import { ConfigProvider } from "antd-country-phone-input";
 import en from "world_countries_lists/data/en/world.json";
-import { AirdropHistory } from "./views/AirdropHistory";
 import { GlossaryView } from "./views/Glossary";
 import { TermsView } from "./views/TermsConditions";
 

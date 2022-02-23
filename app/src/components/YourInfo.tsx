@@ -38,10 +38,6 @@ export const YourInfo = () => {
     jetPerStakedShare,
     unbondingTotal,
     stakedJet,
-    stakeBalance: {
-      unstakedJet,
-      unlockedVotes,
-    },
 
     jetAccount,
     jetMint,
@@ -253,7 +249,7 @@ export const YourInfo = () => {
                   Available for Withdrawal
                 </span>
                 <span className="text-gradient bold">
-                  {new Intl.NumberFormat().format(unstakedJet)}
+                  {-1}
                 </span>
               </div>
             </>
@@ -262,7 +258,6 @@ export const YourInfo = () => {
             type="number"
             token
             value={inputAmount === undefined ? "" : inputAmount}
-            maxInput={unlockedVotes ? unlockedVotes : undefined}
             disabled={!connected}
             onChange={(value: number) => setInputAmount(value)}
             submit={() => handleStake()}

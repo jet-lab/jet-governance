@@ -258,7 +258,7 @@ export function sleep(ms: number): Promise<void> {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-// Get remaining days, hours and minutes for a proposal
+// Get remaining days, hours and minutes 
 export const getRemainingTime = (currentTime: number, endTime: number): string => {
   let difference = Math.abs(endTime - currentTime) / 1000;
 

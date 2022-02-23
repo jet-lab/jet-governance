@@ -1,6 +1,5 @@
 import {
   Airdrop,
-  AirdropTarget,
   Distribution,
   RewardsClient,
   StakeAccount,
@@ -65,7 +64,7 @@ interface ProposalContextState {
   activeDistributions?: Distribution[];
   stakingYield?: DistributionYield;
   airdrops?: Airdrop[];
-  airdropsByWallet?: AirdropTarget[];
+  airdropsByWallet?: Airdrop[];
   claimsCount: number;
 
   jetAccount?: AssociatedToken;
@@ -101,8 +100,6 @@ const ProposalContext = React.createContext<ProposalContextState>({
   jetPerStakedShare: 0,
 
   stakeBalance: {
-    unstakedJet: 0,
-    unlockedVotes: 0,
     stakedJet: 0,
     unbondingJet: 0,
   },
@@ -148,7 +145,7 @@ export function ProposalProvider({ children = undefined as any }) {
   // ----- Airdrops -----
   const airdrops = Airdrop.useAll(rewardsProgram);
   const airdropsByWallet = useAirdropsByWallet(airdrops, walletAddress);
-  const claimsCount = useClaimsCount(airdropsByWallet);
+  const claimsCount = useClaimsCount(airdropsByWallet, walletAddress);
 
   // ----- Wallet -----
   const jetAccount = AssociatedToken.use(

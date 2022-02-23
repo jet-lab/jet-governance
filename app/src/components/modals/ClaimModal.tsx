@@ -1,77 +1,71 @@
-import { Modal, ModalProps, Timeline } from "antd";
-import { ReactNode, useState } from "react";
+import { Modal, ModalProps } from 'antd';
+import { PropsWithChildren, useState } from 'react';
 
 enum Steps {
   AirdropReceived = 0,
-  Error = 1
+  Error = 1,
 }
 
-export const ClaimModal = ({ visible, stakeAmount, setShowModal }: {
+export const ClaimModal = ({
+  visible,
+  stakeAmount,
+  setShowModal,
+}: {
   visible: boolean;
-  stakeAmount: number | null;
+  stakeAmount: number | undefined;
   setShowModal: Function;
 }) => {
   const [current, setCurrent] = useState<Steps>(Steps.AirdropReceived);
 
+  // TODO - question: how to set error state when passing as prop?
+  // how to pass as a catch here?
   const handleOk = () => {
     setShowModal(false);
   };
-
   const handleCancel = () => {
     setShowModal(false);
   };
 
-  const steps: (ModalProps & { content: ReactNode })[] = []
+  const steps: PropsWithChildren<ModalProps>[] = [];
+
   steps[Steps.AirdropReceived] = {
-    title: "You just received an airdrop!",
-    okText: "Okay",
+    title: 'Congratulations and welcome aboard!',
+    okText: 'Okay',
     onOk: () => handleOk(),
     onCancel: () => handleCancel(),
-    content: (
+    closable: false,
+    cancelButtonProps: { style: { display: 'none ' } },
+    children: (
       <>
         <p>
-          You can use your airdrop tokens to vote immediately, but staking
-          rewards will only begin to accrue when your airdrop has vested.
+          You've claimed and staked <b>{stakeAmount} JET</b>.
         </p>
 
         <p>
-          <Timeline>
-            <Timeline.Item>{new Date().toDateString} Claimed</Timeline.Item>
-            <Timeline.Item>Vesting period begins</Timeline.Item>
-            <Timeline.Item>Vesting complete</Timeline.Item>
-          </Timeline>
+          Your tokens have been automatically staked into Jet Govern, rewards
+          will begin accruing, and you can vote on active proposals.
         </p>
-      </>
-    ),
-    closable: false,
-  }
-  steps[Steps.Error] = {
-    title: "Error ",
-    okText: "Okay",
-    onOk: () => handleCancel(),
-    onCancel: () => handleCancel(),
-    content: (
-      <>
         <p>
-          We have encountered an unknown error
+          You may unstake at anytime, but before the tokens can be withdrawn to
+          your wallet, there is a 29.5-day unbonding period. Please read{' '}
+          <a href='https://docs.jetprotocol.io/jet-protocol/protocol/jet-staking'>
+            the docs
+          </a>{' '}
+          for more information.
         </p>
       </>
     ),
-    closable: false,
   };
 
-  return (
-      <Modal
-      title={steps[current].title}
-      visible={visible}
-      okText={steps[current].okText}
-      onOk={steps[current].onOk}
-      okButtonProps={steps[current].okButtonProps}
-      onCancel={steps[current].onCancel}
-      closable={steps[current].closable}
-      cancelButtonProps={{ style: { display: "none " } }}
-    >
-      {steps[current].content}
-    </Modal>
-  );
+  steps[Steps.Error] = {
+    title: 'Error ',
+    okText: 'Okay',
+    onOk: () => handleCancel(),
+    onCancel: () => handleCancel(),
+    closable: true,
+    cancelButtonProps: { style: { display: 'none ' } },
+    children: <p>We have encountered an unknown error</p>,
+  };
+
+  return <Modal visible={visible} {...steps[current]} />;
 };

@@ -1,4 +1,4 @@
-import { Airdrop, AirdropTarget, StakePool } from "@jet-lab/jet-engine";
+import { Airdrop, StakePool } from '@jet-lab/jet-engine';
 import {
   Governance,
   ProgramAccount,
@@ -9,16 +9,16 @@ import {
   TokenOwnerRecord,
   VoteKind,
   VoteRecord,
-} from "@solana/spl-governance";
-import { PublicKey } from "@solana/web3.js";
-import BN from "bn.js";
-import { useMemo, useState } from "react";
-import { ZERO } from "../constants";
-import { ProposalFilter } from "../contexts/proposal";
-import { bnToIntLossy } from "../tools/units";
-import { dateToString } from "../utils";
-import { useGovernanceAccounts } from "./accountHooks";
-import { useRpcContext } from "./useRpcContext";
+} from '@solana/spl-governance';
+import { PublicKey } from '@solana/web3.js';
+import BN from 'bn.js';
+import { useMemo, useState } from 'react';
+import { ZERO } from '../constants';
+import { ProposalFilter } from '../contexts/proposal';
+import { bnToIntLossy } from '../tools/units';
+import { dateToString } from '../utils';
+import { useGovernanceAccounts } from './accountHooks';
+import { useRpcContext } from './useRpcContext';
 
 export function useBN(
   number: number | undefined,
@@ -37,23 +37,26 @@ export function useBN(
   }, [number, exponent]);
 }
 
-export const useProposalFilters = (proposals: ProgramAccount<Proposal>[], proposalFilter: ProposalFilter) => {
+export const useProposalFilters = (
+  proposals: ProgramAccount<Proposal>[],
+  proposalFilter: ProposalFilter
+) => {
   return useMemo(() => {
-    if (proposalFilter === "active") {
+    if (proposalFilter === 'active') {
       return proposals.filter((p) => p.account.state === ProposalState.Voting);
-    } else if (proposalFilter === "inactive") {
+    } else if (proposalFilter === 'inactive') {
       return proposals.filter(
         (p) => p.account.isVoteFinalized() || p.account.isPreVotingState()
       );
-    } else if (proposalFilter === "passed") {
+    } else if (proposalFilter === 'passed') {
       return proposals.filter(
         (p) => p.account.state === ProposalState.Succeeded
       );
-    } else if (proposalFilter === "rejected") {
+    } else if (proposalFilter === 'rejected') {
       return proposals.filter(
         (p) => p.account.state === ProposalState.Defeated
       );
-    } else if (proposalFilter === "all") {
+    } else if (proposalFilter === 'all') {
       return proposals;
     } else {
       return proposals;
@@ -68,11 +71,11 @@ export function useCountdown(
   const [currentTime, setCurrentTime] = useState(Date.now());
 
   const zeroPad = (num: number, places: number) => {
-    return String(num).padStart(places, "0");
+    return String(num).padStart(places, '0');
   };
 
   const countdown = () => {
-    return "TEST";
+    return 'TEST';
     // return getRemainingTime(currentTime, proposal.getVotingDeadline(governance)?.toNumber())
   };
 
@@ -116,10 +119,10 @@ export interface VoterDisplayData {
 }
 
 export enum VoteOption {
-  Undecided = "Undecided",
-  Yes = "Approve",
-  No = "Reject",
-  Abstain = "Abstain",
+  Undecided = 'Undecided',
+  Yes = 'Approve',
+  No = 'Reject',
+  Abstain = 'Abstain',
 }
 
 interface VoterData {
@@ -274,15 +277,19 @@ export function useAirdropsByWallet(
       return undefined;
     }
 
-    return (
-      airdrops
-        .map((airdrop) => airdrop.getRecipient(wallet))
-        .filter((recipient) => !!recipient) as AirdropTarget[]
-    ).sort((a, b) => (a?.amount.gt(b?.amount) ? -1 : 1));
+    return airdrops?.filter((airdrop) => {
+      const found = airdrop.targetInfo.recipients.find(
+        ({ recipient }) => recipient.toString() === wallet?.toString()
+      );
+      return !!found;
+    });
   }, [airdrops, wallet]);
 }
-
-export function useClaimsCount(airdrops: AirdropTarget[] | undefined) {
+// TODO - double check and use in Navbar
+export function useClaimsCount(
+  airdrops: Airdrop[] | undefined,
+  wallet: PublicKey | undefined
+) {
   return useMemo(() => {
     if (!airdrops) {
       return 0;
@@ -290,12 +297,16 @@ export function useClaimsCount(airdrops: AirdropTarget[] | undefined) {
     let claims = 0;
     for (let i = 0; i < airdrops.length; i++) {
       const airdrop = airdrops[i];
-      if (airdrop.amount.gtn(0)) {
+      let found = airdrop.targetInfo.recipients.find(
+        ({ recipient }) => recipient.toString() === wallet?.toString()
+      );
+
+      if (found?.amount.gtn(0)) {
         claims++;
       }
     }
     return claims;
-  }, [airdrops]);
+  }, [airdrops, wallet]);
 }
 
 /** Returns if the user can unstake.

@@ -21,7 +21,7 @@ export const HomeView = () => {
     stakePool,
     stakeAccount,
     unbondingTotal,
-    stakeBalance: { stakedJet, unstakedJet, unlockedVotes },
+    stakeBalance: { stakedJet },
 
     realm,
     governance,

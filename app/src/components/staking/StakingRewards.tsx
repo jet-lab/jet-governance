@@ -16,7 +16,7 @@ export const StakingRewards = () => {
     stakePool,
     stakeAccount,
     unbondingTotal,
-    stakeBalance: { stakedJet, unstakedJet, unlockedVotes },
+    stakeBalance: { stakedJet },
 
     jetAccount,
     jetMint,
