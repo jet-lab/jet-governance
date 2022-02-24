@@ -51,7 +51,16 @@ pub fn run_read_airdrop(client: &anchor_client::Program, address: Pubkey) -> any
     Ok(())
 }
 
-// util function
+pub fn get_unix_time_90_days() -> i64 {
+    let unix_time_90_days = std::time::SystemTime::now()
+        .duration_since(std::time::SystemTime::UNIX_EPOCH)
+        .expect("Time")
+        .as_secs()
+        + 90 * 24 * 60 * 60;
+
+    unix_time_90_days as i64
+}
+
 pub fn run_print_to_file() -> anyhow::Result<()> {
     let mut file = File::create("data.txt").expect("create failed");
     file.write_all("Hello World\n".as_bytes())
@@ -119,7 +128,6 @@ pub fn json_to_recipient_list_structured_data(
 struct ParamData {
     authority: String,  //Pubkey,
     token_mint: String, //Pubkey,
-    expire_at: i64,
     stake_pool: String, //Pubkey,
     short_desc: String,
 }
@@ -146,14 +154,13 @@ pub fn json_to_create_airdrop_param(
     let token_mint = Pubkey::from_str(json_data.token_mint.as_str())?;
     let stake_pool = Pubkey::from_str(json_data.stake_pool.as_str())?;
     // find rewards vault
-    let (vault_pubkey, vault_bump) =
+    let (vault_pubkey, _vault_bump) =
         Pubkey::find_program_address(&[airdrop.as_ref(), b"vault"], &client.id());
 
     let airdrop_create_params = AirdropCreateParams {
-        expire_at: json_data.expire_at,
+        expire_at: get_unix_time_90_days(),
         stake_pool: stake_pool,
         short_desc: json_data.short_desc,
-        vault_bump: vault_bump,
         flags: 0,
     };
 

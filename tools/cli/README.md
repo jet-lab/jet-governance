@@ -10,7 +10,7 @@
 ## Build rewards-cli
 
 ```
-cargo install —path .
+cargo install —-path .
 ```
 
 ## Localnet testing - startup a local validator and test rewards-cli tool
@@ -27,7 +27,6 @@ Run `ctrl-c.` to kill the solana-test-validator process to stop the localnet
 {
     "authority": <PubKey address>,
     "token_mint": <PubKey address>,
-    "expire_at": i64,
     "stake_pool": <PubKey address>,
     "short_desc": String
 }
