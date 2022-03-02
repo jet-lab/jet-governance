@@ -25,7 +25,7 @@ export function useLocalStorageState(key: string, defaultState?: string) {
   });
 
   const setLocalStorageState = useCallback(
-    newState => {
+    (newState) => {
       const changed = state !== newState;
       if (!changed) {
         return;
@@ -37,7 +37,7 @@ export function useLocalStorageState(key: string, defaultState?: string) {
         localStorage.setItem(key, JSON.stringify(newState));
       }
     },
-    [state, key],
+    [state, key]
   );
 
   return [state, setLocalStorageState];
@@ -45,7 +45,7 @@ export function useLocalStorageState(key: string, defaultState?: string) {
 
 /** shorten the checksummed version of the input address to have 4 characters at start and end */
 export function shortenAddress(address: PublicKey | string, chars = 4): string {
-  if(address instanceof PublicKey){
+  if (address instanceof PublicKey) {
     address = address.toBase58();
   }
   return `${address.slice(0, chars)}...${address.slice(-chars)}`;
@@ -54,7 +54,7 @@ export function shortenAddress(address: PublicKey | string, chars = 4): string {
 export function getTokenName(
   map: KnownTokenMap,
   mint?: string | PublicKey,
-  shorten = true,
+  shorten = true
 ): string {
   const mintAddress = typeof mint === 'string' ? mint : mint?.toBase58();
 
@@ -72,7 +72,7 @@ export function getTokenName(
 export function getVerboseTokenName(
   map: KnownTokenMap,
   mint?: string | PublicKey,
-  shorten = true,
+  shorten = true
 ): string {
   const mintAddress = typeof mint === 'string' ? mint : mint?.toBase58();
 
@@ -101,7 +101,7 @@ export function getTokenByName(tokenMap: KnownTokenMap, name: string) {
 
 export function getTokenIcon(
   map?: KnownTokenMap,
-  mintAddress?: string | PublicKey,
+  mintAddress?: string | PublicKey
 ): string | undefined {
   const address =
     typeof mintAddress === 'string' ? mintAddress : mintAddress?.toBase58();
@@ -121,13 +121,13 @@ export const STABLE_COINS = new Set(['USDC', 'wUSDC', 'USDT']);
 export function chunks<T>(array: T[], size: number): T[][] {
   return Array.apply<number, T[], T[][]>(
     0,
-    new Array(Math.ceil(array.length / size)),
+    new Array(Math.ceil(array.length / size))
   ).map((_, index) => array.slice(index * size, (index + 1) * size));
 }
 
 export function toLamports(
   account?: TokenAccount | number,
-  mint?: MintInfo,
+  mint?: MintInfo
 ): number {
   if (!account) {
     return 0;
@@ -143,7 +143,7 @@ export function toLamports(
 export function fromLamports(
   account?: TokenAccount | number | BN,
   mint?: MintInfo,
-  rate: number = 1.0,
+  rate: number = 1.0
 ): number {
   if (!account) {
     return 0;
@@ -154,7 +154,7 @@ export function fromLamports(
       ? account
       : BN.isBN(account)
       ? account.toNumber()
-      : account.info.amount.toNumber(),
+      : account.info.amount.toNumber()
   );
 
   const precision = Math.pow(10, mint?.decimals || 0);
@@ -186,7 +186,7 @@ export const abbreviateNumber = (number: number, precision: number) => {
 export const formatAmount = (
   val: number,
   precision: number = 6,
-  abbr: boolean = true,
+  abbr: boolean = true
 ) => (abbr ? abbreviateNumber(val, precision) : val.toFixed(precision));
 
 export function formatTokenAmount(
@@ -196,7 +196,7 @@ export function formatTokenAmount(
   prefix = '',
   suffix = '',
   precision = 6,
-  abbr = false,
+  abbr = false
 ): string {
   if (!account) {
     return '';
@@ -205,7 +205,7 @@ export function formatTokenAmount(
   return `${[prefix]}${formatAmount(
     fromLamports(account, mint, rate),
     precision,
-    abbr,
+    abbr
   )}${suffix}`;
 }
 
@@ -239,7 +239,7 @@ export const formatPct = new Intl.NumberFormat('en-US', {
 export function convert(
   account?: TokenAccount | number,
   mint?: MintInfo,
-  rate: number = 1.0,
+  rate: number = 1.0
 ): number {
   if (!account) {
     return 0;
@@ -255,11 +255,14 @@ export function convert(
 }
 
 export function sleep(ms: number): Promise<void> {
-  return new Promise(resolve => setTimeout(resolve, ms));
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-// Get remaining days, hours and minutes 
-export const getRemainingTime = (currentTime: number, endTime: number): string => {
+// Get remaining days, hours and minutes
+export const getRemainingTime = (
+  currentTime: number,
+  endTime: number
+): string => {
   let difference = Math.abs(endTime - currentTime) / 1000;
 
   const days = Math.floor(difference / 86400);
@@ -274,48 +277,62 @@ export const getRemainingTime = (currentTime: number, endTime: number): string =
   const seconds = Math.floor(difference % 60);
 
   if (days > 0) {
-    return `${days} ${days === 1 ? "day" : "days"}`
+    return `${days} ${days === 1 ? 'day' : 'days'}`;
   } else {
-    return `${hours.toLocaleString(undefined,{minimumIntegerDigits: 2})}:${minutes.toLocaleString(undefined,{minimumIntegerDigits: 2})}:${seconds.toLocaleString(undefined,{minimumIntegerDigits: 2})}`
+    return `${hours.toLocaleString(undefined, {
+      minimumIntegerDigits: 2,
+    })}:${minutes.toLocaleString(undefined, {
+      minimumIntegerDigits: 2,
+    })}:${seconds.toLocaleString(undefined, { minimumIntegerDigits: 2 })}`;
   }
 };
 
 // Generate solana explorer url from a transaction id
 export function explorerUrl(txid: string) {
-  const clusterParam = process.env.REACT_APP_CLUSTER === 'devnet' ? `?cluster=devnet` : "";
-  return `https://explorer.solana.com/transaction/${txid}${clusterParam}`
-};
+  const clusterParam =
+    process.env.REACT_APP_CLUSTER === 'devnet' ? `?cluster=devnet` : '';
+  return `https://explorer.solana.com/transaction/${txid}${clusterParam}`;
+}
 
 // Manual timeout promise to pause program execution
 export function timeout(ms: number) {
   return new Promise((res) => {
     setTimeout(() => res(true), ms);
   });
-};
+}
 
 // Formatters for historical txns
-export function dateFromUnixTimestamp (time: BN | undefined) {
+export function dateFromUnixTimestamp(time: BN | undefined) {
   const date = new Date(bnToNumber(time));
   const padTo2Digits = (num: number) => {
-    return num.toString().padStart(2, "0");
+    return num.toString().padStart(2, '0');
   };
   return [
     date.getFullYear(),
     padTo2Digits(date.getMonth() + 1),
     padTo2Digits(date.getDate()),
-  ].join("-");
-};
+  ].join('-');
+}
 
 export const dateToString = (date: Date) => {
-  const months = [ "Jan", "Feb", "Mar", "Apr", "May", "Jun",
-    "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" ];
+  const months = [
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'May',
+    'Jun',
+    'Jul',
+    'Aug',
+    'Sep',
+    'Oct',
+    'Nov',
+    'Dec',
+  ];
 
   const day = date.getDate().toString().padStart(2, '0');
   const month = date.getMonth();
   const year = date.getFullYear();
-  const hour = date.getUTCHours().toString().padStart(2, '0');
-  const minute = date.getUTCMinutes().toString().padStart(2, '0');
-  const second = date.getUTCSeconds().toString().padStart(2, '0');
-
-  return `${day} ${months[month]} ${year}, ${hour}:${minute}:${second} UTC +0`
-}
+  const localTime = date.toLocaleTimeString();
+  return `${day} ${months[month]} ${year}, ${localTime}`;
+};

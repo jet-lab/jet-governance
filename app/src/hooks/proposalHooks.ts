@@ -12,7 +12,7 @@ import {
 } from '@solana/spl-governance';
 import { PublicKey } from '@solana/web3.js';
 import BN from 'bn.js';
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { ZERO } from '../constants';
 import { ProposalFilter } from '../contexts/proposal';
 import { bnToIntLossy } from '../tools/units';
@@ -68,16 +68,11 @@ export function useCountdown(
   proposal: ProgramAccount<Proposal>,
   governance: ProgramAccount<Governance>
 ) {
-  const [currentTime, setCurrentTime] = useState(Date.now());
+  const deadline = getVotingDeadline(proposal, governance);
 
-  const zeroPad = (num: number, places: number) => {
-    return String(num).padStart(places, '0');
-  };
-
-  const countdown = () => {
-    return 'TEST';
-    // return getRemainingTime(currentTime, proposal.getVotingDeadline(governance)?.toNumber())
-  };
+  const countdownTime = useMemo(() => {
+    return deadline ? deadline.toNumber() * 1000 : undefined;
+  }, [deadline]);
 
   const startDate = useMemo(
     () =>
@@ -93,7 +88,7 @@ export function useCountdown(
       : undefined;
   }, [proposal, governance]);
 
-  return { startDate, endDate, countdown };
+  return { startDate, endDate, countdownTime };
 }
 
 /**
@@ -107,6 +102,7 @@ export function getVotingDeadline(
   if (proposal.account.votingCompletedAt) {
     return proposal.account.votingCompletedAt;
   }
+
   return proposal.account.votingAt?.addn(
     governance.account.config.maxVotingTime
   );
