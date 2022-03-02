@@ -1,49 +1,86 @@
 import { Modal, ModalProps } from 'antd';
 import { PropsWithChildren, useState } from 'react';
+import { Link } from 'react-router-dom';
+import { Airdrop } from '@jet-lab/jet-engine';
+import { useRpcContext } from '../../hooks/useRpcContext';
+import { useProposalContext } from '../../contexts/proposal';
+import { claimAndStake } from '../../actions/claimAndStake';
 
 enum Steps {
-  AirdropReceived = 0,
-  Error = 1,
+  Confirm = 0,
+  Success = 1,
+  Error = 2,
 }
 
 export const ClaimModal = ({
   visible,
   stakeAmount,
-  setShowModal,
+  airdrop,
+  onClose,
 }: {
   visible: boolean;
   stakeAmount: number | undefined;
-  setShowModal: Function;
+  airdrop: Airdrop | undefined;
+  onClose: () => void;
 }) => {
-  const [current, setCurrent] = useState<Steps>(Steps.AirdropReceived);
+  const rpcContext = useRpcContext();
+  const [current, setCurrent] = useState<Steps>(Steps.Confirm);
+  const [loading, setLoading] = useState(false);
+  const { rewardsProgram, stakePool, stakeAccount } = useProposalContext();
 
-  // TODO - question: how to set error state when passing as prop?
-  // how to pass as a catch here?
   const handleOk = () => {
-    setShowModal(false);
+    if (!stakeAmount || !airdrop) {
+      return;
+    }
+
+    setLoading(true);
+    if (!!rewardsProgram && !!airdrop && !!stakePool && !!stakeAccount) {
+      claimAndStake(
+        rpcContext,
+        rewardsProgram,
+        airdrop,
+        stakePool,
+        stakeAccount
+      )
+        .then(() => {
+          setCurrent(Steps.Success);
+        })
+        .catch(() => {
+          setCurrent(Steps.Error);
+        })
+        .then(() => {
+          setLoading(false);
+        });
+    }
   };
+
   const handleCancel = () => {
-    setShowModal(false);
+    setCurrent(Steps.Confirm);
+    onClose();
+  };
+
+  const handleCloseAndRefresh = () => {
+    handleCancel();
+    window.location.reload();
   };
 
   const steps: PropsWithChildren<ModalProps>[] = [];
 
-  steps[Steps.AirdropReceived] = {
-    title: 'Congratulations and welcome aboard!',
-    okText: 'Okay',
+  steps[Steps.Confirm] = {
+    title: `Confirm you'd like to claim airdrop`,
+    okText: 'Claim and Stake',
     onOk: () => handleOk(),
     onCancel: () => handleCancel(),
-    closable: false,
-    cancelButtonProps: { style: { display: 'none ' } },
+    closable: true,
+    okButtonProps: { loading },
     children: (
       <>
         <p>
-          You've claimed and staked <b>{stakeAmount} JET</b>.
+          You are claiming <b>{stakeAmount} JET</b>.
         </p>
-
         <p>
-          Your tokens have been automatically staked into Jet Govern, rewards
-          will begin accruing, and you can vote on active proposals.
+          Your tokens will be automatically staked into Jet Govern, rewards will
+          begin accruing, and you can vote on active proposals.
         </p>
         <p>
           You may unstake at anytime, but before the tokens can be withdrawn to
@@ -57,6 +94,26 @@ export const ClaimModal = ({
     ),
   };
 
+  steps[Steps.Success] = {
+    title: 'Congratulations and welcome aboard!',
+    okText: 'Okay',
+    onOk: () => handleCloseAndRefresh(),
+    onCancel: () => handleCancel(),
+    closable: false,
+    cancelButtonProps: { style: { display: 'none ' } },
+    children: (
+      <>
+        <p>
+          You've claimed and staked <b>{stakeAmount} JET</b>.
+        </p>
+
+        <p>
+          Head on back to the <Link to='/'>dashboard page</Link> to see your
+          staked balance and vote on active proposals!
+        </p>
+      </>
+    ),
+  };
   steps[Steps.Error] = {
     title: 'Error ',
     okText: 'Okay',

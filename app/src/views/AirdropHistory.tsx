@@ -79,17 +79,6 @@ export const AirdropHistory = () => {
           <Divider />
 
           <h1>Available</h1>
-          {connected &&
-            dummyAirdrops?.map((airdrop) => (
-              <Available
-                name={airdrop.name}
-                description={airdrop.description}
-                amount={airdrop.amount}
-                end={airdrop.end}
-                claimed={airdrop.claimed}
-                announced={airdrop.announced}
-              />
-            ))}
         </div>
       </div>
 
