@@ -1,17 +1,9 @@
-import {
-  PublicKey,
-  Keypair,
-  TransactionInstruction,
-} from '@solana/web3.js'
-import {
-  GOVERNANCE_CHAT_PROGRAM_ID,
-  Proposal,
-  Realm,
-} from '@solana/spl-governance'
-import { ChatMessageBody } from '@solana/spl-governance'
-import { withPostChatMessage } from '@solana/spl-governance'
-import { ProgramAccount } from '@solana/spl-governance'
-import { RpcContext } from '@solana/spl-governance'
+import { PublicKey, Keypair, TransactionInstruction } from '@solana/web3.js';
+import { GOVERNANCE_CHAT_PROGRAM_ID, Proposal, Realm } from '@solana/spl-governance';
+import { ChatMessageBody } from '@solana/spl-governance';
+import { withPostChatMessage } from '@solana/spl-governance';
+import { ProgramAccount } from '@solana/spl-governance';
+import { RpcContext } from '@solana/spl-governance';
 import { sendTransactionWithNotifications } from '../../tools/transactions';
 
 export async function postChatMessage(
@@ -20,13 +12,13 @@ export async function postChatMessage(
   proposal: ProgramAccount<Proposal>,
   tokeOwnerRecord: PublicKey,
   body: ChatMessageBody,
-  replyTo?: PublicKey,
+  replyTo?: PublicKey
 ) {
-  const signers: Keypair[] = []
-  const instructions: TransactionInstruction[] = []
+  const signers: Keypair[] = [];
+  const instructions: TransactionInstruction[] = [];
 
-  const governanceAuthority = walletPubkey
-  const payer = walletPubkey
+  const governanceAuthority = walletPubkey;
+  const payer = walletPubkey;
 
   await withPostChatMessage(
     instructions,
@@ -41,14 +33,14 @@ export async function postChatMessage(
     payer,
     replyTo,
     body
-  )
+  );
 
   await sendTransactionWithNotifications(
     connection,
     wallet,
     instructions,
     signers,
-    "Posting chat message",
-    "Chat message posted"
-  )
+    'Posting chat message',
+    'Chat message posted'
+  );
 }

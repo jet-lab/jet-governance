@@ -1,12 +1,24 @@
 import { Provider } from '@project-serum/anchor';
-import { getRealmConfigAddress, getSignatoryRecordAddress, getTokenOwnerRecordAddress, getVoteRecordAddress, Governance, Proposal, pubkeyFilter, RealmConfigAccount, SignatoryRecord, TokenOwnerRecord, VoteRecord } from '@solana/spl-governance';
+import {
+  getRealmConfigAddress,
+  getSignatoryRecordAddress,
+  getTokenOwnerRecordAddress,
+  getVoteRecordAddress,
+  Governance,
+  Proposal,
+  pubkeyFilter,
+  RealmConfigAccount,
+  SignatoryRecord,
+  TokenOwnerRecord,
+  VoteRecord
+} from '@solana/spl-governance';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { Connection, PublicKey } from '@solana/web3.js';
 import { useMemo } from 'react';
 import {
   useGovernanceAccountByPda,
   useGovernanceAccountByPubkey,
-  useGovernanceAccounts,
+  useGovernanceAccounts
 } from './accountHooks';
 import { useRpcContext } from './useRpcContext';
 
@@ -23,62 +35,49 @@ export function useRealmConfig(realm: PublicKey) {
       }
       return await getRealmConfigAddress(programId, realm);
     },
-    [realm],
+    [realm]
   );
 }
 
 // ----- Governance -----
 
 export function useGovernance(governance: PublicKey | undefined) {
-  return useGovernanceAccountByPubkey<Governance>(
-    Governance,
-    governance,
-  );
+  return useGovernanceAccountByPubkey<Governance>(Governance, governance);
 }
 
 export function useGovernancesByRealm(realm: PublicKey | undefined) {
-  return useGovernanceAccounts<Governance>(Governance, [
-    pubkeyFilter(1, realm),
-  ]);
+  return useGovernanceAccounts<Governance>(Governance, [pubkeyFilter(1, realm)]);
 }
 
 // ----- Proposal -----
 
 export function useProposal(proposal: PublicKey | undefined) {
-  return useGovernanceAccountByPubkey<Proposal>(
-    Proposal,
-    proposal,
-  );
+  return useGovernanceAccountByPubkey<Proposal>(Proposal, proposal);
 }
 
 export function useProposalsByGovernance(governance: PublicKey | undefined) {
-  return useGovernanceAccounts<Proposal>(Proposal, [
-    pubkeyFilter(1, governance),
-  ]);
+  return useGovernanceAccounts<Proposal>(Proposal, [pubkeyFilter(1, governance)]);
 }
 
 // ----- TokenOwnerRecord -----
 
 export function useTokenOwnerRecord(tokenOwnerRecord: PublicKey | undefined) {
-  return useGovernanceAccountByPubkey<TokenOwnerRecord>(
-    TokenOwnerRecord,
-    tokenOwnerRecord,
-  );
+  return useGovernanceAccountByPubkey<TokenOwnerRecord>(TokenOwnerRecord, tokenOwnerRecord);
 }
 
 export function useTokenOwnerRecords(
   realm: PublicKey | undefined,
-  governingTokenMint: PublicKey | undefined,
+  governingTokenMint: PublicKey | undefined
 ) {
   return useGovernanceAccounts<TokenOwnerRecord>(TokenOwnerRecord, [
     pubkeyFilter(1, realm),
-    pubkeyFilter(1 + 32, governingTokenMint),
+    pubkeyFilter(1 + 32, governingTokenMint)
   ]);
 }
 
 export function useWalletTokenOwnerRecord(
   realm: PublicKey | undefined,
-  governingTokenMint: PublicKey | undefined,
+  governingTokenMint: PublicKey | undefined
 ) {
   const { wallet, programId } = useRpcContext();
 
@@ -93,10 +92,10 @@ export function useWalletTokenOwnerRecord(
         programId,
         realm,
         governingTokenMint,
-        wallet.publicKey,
+        wallet.publicKey
       );
     },
-    [wallet?.publicKey, governingTokenMint, realm],
+    [wallet?.publicKey, governingTokenMint, realm]
   );
 }
 
@@ -105,7 +104,7 @@ export function useWalletTokenOwnerRecords() {
   const { publicKey } = useWallet();
 
   return useGovernanceAccounts<TokenOwnerRecord>(TokenOwnerRecord, [
-    pubkeyFilter(1 + 32 + 32, publicKey),
+    pubkeyFilter(1 + 32 + 32, publicKey)
   ]);
 }
 
@@ -115,10 +114,8 @@ export function useProposalAuthority(proposalOwner: PublicKey | undefined) {
 
   return connected &&
     tokenOwnerRecord &&
-    (tokenOwnerRecord.account.governingTokenOwner.toBase58() ===
-      publicKey?.toBase58() ||
-      tokenOwnerRecord.account.governanceDelegate?.toBase58() ===
-        publicKey?.toBase58())
+    (tokenOwnerRecord.account.governingTokenOwner.toBase58() === publicKey?.toBase58() ||
+      tokenOwnerRecord.account.governanceDelegate?.toBase58() === publicKey?.toBase58())
     ? tokenOwnerRecord
     : undefined;
 }
@@ -135,34 +132,25 @@ export function useWalletSignatoryRecord(proposal: PublicKey) {
         return;
       }
 
-      return await getSignatoryRecordAddress(
-        programId,
-        proposal,
-        wallet.publicKey,
-      );
+      return await getSignatoryRecordAddress(programId, proposal, wallet.publicKey);
     },
-    [wallet?.publicKey, proposal],
-  )
+    [wallet?.publicKey, proposal]
+  );
 }
 
 export function useSignatoriesByProposal(proposal: PublicKey | undefined) {
-  return useGovernanceAccounts<SignatoryRecord>(SignatoryRecord, [
-    pubkeyFilter(1, proposal),
-  ]);
+  return useGovernanceAccounts<SignatoryRecord>(SignatoryRecord, [pubkeyFilter(1, proposal)]);
 }
 
 // ----- VoteRecord -----
 
 export const useVoteRecordsByProposal = (proposal: PublicKey | undefined) => {
-  return useGovernanceAccounts<VoteRecord>(VoteRecord, [
-    pubkeyFilter(1, proposal),
-  ]);
+  return useGovernanceAccounts<VoteRecord>(VoteRecord, [pubkeyFilter(1, proposal)]);
 };
-
 
 export const useTokenOwnerVoteRecord = (
   proposal: PublicKey,
-  tokenOwnerRecord: PublicKey | undefined,
+  tokenOwnerRecord: PublicKey | undefined
 ) => {
   const { programId } = useRpcContext();
 
@@ -175,10 +163,13 @@ export const useTokenOwnerVoteRecord = (
 
       return await getVoteRecordAddress(programId, proposal, tokenOwnerRecord);
     },
-    [tokenOwnerRecord, proposal],
+    [tokenOwnerRecord, proposal]
   );
 };
 
 export function useProvider(connection: Connection | undefined, wallet: any) {
-  return useMemo(() => connection && wallet && new Provider(connection, wallet, { skipPreflight: true}), [connection, wallet])
+  return useMemo(
+    () => connection && wallet && new Provider(connection, wallet, { skipPreflight: true }),
+    [connection, wallet]
+  );
 }

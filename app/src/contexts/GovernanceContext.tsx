@@ -11,8 +11,7 @@ export interface GovernanceContextState {
   programVersion: number;
 }
 
-export const GovernanceContext =
-  React.createContext<GovernanceContextState | null>(null);
+export const GovernanceContext = React.createContext<GovernanceContextState | null>(null);
 
 export default function GovernanceProvider({ children = null as any }) {
   const connection = useConnection();
@@ -21,9 +20,7 @@ export default function GovernanceProvider({ children = null as any }) {
 
   const programId = useMemo(() => {
     const params = new URLSearchParams(location.search);
-    return (
-      params.get('programId') ?? 'GovER5Lthms3bLBqWub97yVrMmEogzX7xNjdXpPPCVZw'
-    );
+    return params.get('programId') ?? 'GovER5Lthms3bLBqWub97yVrMmEogzX7xNjdXpPPCVZw';
   }, [location]);
 
   const [realms, setRealms] = useState({});
@@ -42,10 +39,9 @@ export default function GovernanceProvider({ children = null as any }) {
   }, [connection, programId]); //eslint-disable-line
 
   useEffect(() => {
-    getProgramVersion(connection, programId, env)
-      .then(pVersion => {
-        setProgramVersion(pVersion);
-      });
+    getProgramVersion(connection, programId, env).then(pVersion => {
+      setProgramVersion(pVersion);
+    });
   }, [env, connection, programId]);
 
   return (
@@ -53,7 +49,7 @@ export default function GovernanceProvider({ children = null as any }) {
       value={{
         realms,
         programVersion,
-        programId,
+        programId
       }}
     >
       {children}
@@ -70,7 +66,7 @@ export function useProgramInfo() {
   const context = useGovernanceContext();
   return {
     programVersion: context.programVersion,
-    programId: context.programId,
+    programId: context.programId
   };
 }
 

@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Button } from 'antd';
 import { CheckOutlined } from '@ant-design/icons';
 import { ClaimModal } from '../modals/ClaimModal';
-import { getRemainingTime} from '../../utils';
+import { getRemainingTime } from '../../utils';
 import { Airdrop } from '@jet-lab/jet-engine';
 import { PublicKey } from '@solana/web3.js';
 
@@ -27,29 +27,27 @@ export const Available = ({ airdrop }: { airdrop: availAirdropsRender }) => {
     return () => clearInterval(secondInterval);
   });
 
-  const getAirdropAmount=(airdropAmount:number| undefined): number| undefined=> {
-    return airdrop.amount ? airdrop.amount / 1000000000 : 0
-  }
-  const claimed =  getAirdropAmount(airdrop.amount) === 0 ? true : false
+  const getAirdropAmount = (airdropAmount: number | undefined): number | undefined => {
+    return airdrop.amount ? airdrop.amount / 1000000000 : 0;
+  };
+  const claimed = getAirdropAmount(airdrop.amount) === 0 ? true : false;
   const expired = airdrop.expireAt * 1000 < currentTime;
 
   return (
-    <div className='flex justify-between align-center avail-list' key={key}>
-      <span className='avail-info'>
-        <strong>
-          CARE PACKAGE | {getAirdropAmount(airdrop.amount)} JET
-        </strong>
+    <div className="flex justify-between align-center avail-list" key={key}>
+      <span className="avail-info">
+        <strong>CARE PACKAGE | {getAirdropAmount(airdrop.amount)} JET</strong>
         <br />
         {airdrop.shortDesc}{' '}
-        <span className='gray'>
+        <span className="gray">
           Ends in {getRemainingTime(currentTime, airdrop.expireAt * 1000)}
         </span>
       </span>
       <Button
-        type='primary'
-        className='claim-button'
+        type="primary"
+        className="claim-button"
         onClick={() => setShowModal(true)}
-        disabled={claimed || expired ? true: false}
+        disabled={claimed || expired ? true : false}
       >
         {claimed ? <CheckOutlined /> : 'claim'}
       </Button>

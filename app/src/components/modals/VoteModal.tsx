@@ -15,7 +15,7 @@ import {
   ProposalState,
   TokenOwnerRecord,
   VoteRecord,
-  YesNoVote,
+  YesNoVote
 } from '@solana/spl-governance';
 import { castVote } from '../../actions/castVote';
 import { useProposalContext } from '../../contexts/proposal';
@@ -24,7 +24,7 @@ enum Steps {
   ConfirmVote = 0,
   VoteSuccess = 1,
   NoVoteError = 2,
-  UnknownError = 3,
+  UnknownError = 3
 }
 
 export const VoteModal = ({
@@ -35,7 +35,7 @@ export const VoteModal = ({
   proposal,
   tokenOwnerRecord,
   voteRecord,
-  stakeBalance,
+  stakeBalance
 }: {
   vote: VoteOption;
   visible: boolean;
@@ -111,9 +111,7 @@ export const VoteModal = ({
 
   // Handlers for tx success all set modal
   const proposals = useProposalsByGovernance(JET_GOVERNANCE);
-  const activeProposals = proposals.filter(
-    (p) => p.account.state === ProposalState.Voting
-  );
+  const activeProposals = proposals.filter(p => p.account.state === ProposalState.Voting);
 
   const proposalMap = (proposal: ProgramAccount<Proposal>, key: number) => {
     const headlineUrl = getProposalUrl(
@@ -127,8 +125,7 @@ export const VoteModal = ({
           <Link to={headlineUrl}>
             <u>Proposal {getPubkeyIndex(proposal.pubkey.toBase58())}</u>
           </Link>
-          : {proposal.account.name}.{' '}
-          <span className='secondary-text'>Ends in {countdownTime}</span>
+          : {proposal.account.name}. <span className="secondary-text">Ends in {countdownTime}</span>
         </p>
       </div>
     );
@@ -145,15 +142,12 @@ export const VoteModal = ({
     content: (
       <>
         <p>
-          You are about to vote <strong>{voteText}</strong> proposal "
-          {proposal.account.name}".
+          You are about to vote <strong>{voteText}</strong> proposal "{proposal.account.name}".
         </p>
         <p>
-          You have {Intl.NumberFormat().format(stakedJet)} JET staked, and will
-          be able to unstake these funds when voting{' '}
-          {countdownTime &&
-          countdownTime - currentTime <= ONE_DAY &&
-          countdownTime > currentTime
+          You have {Intl.NumberFormat().format(stakedJet)} JET staked, and will be able to unstake
+          these funds when voting{' '}
+          {countdownTime && countdownTime - currentTime <= ONE_DAY && countdownTime > currentTime
             ? `ends in 
                 ${getRemainingTime(currentTime, countdownTime)}`
             : `ends on: ${endDate}`}
@@ -162,7 +156,7 @@ export const VoteModal = ({
       </>
     ),
     closable: true,
-    cancelButtonProps: undefined,
+    cancelButtonProps: undefined
   };
   steps[Steps.VoteSuccess] = {
     title: `All set`,
@@ -175,20 +169,18 @@ export const VoteModal = ({
           You've successfully voted <strong>{voteText}</strong> proposal #
           {getPubkeyIndex(proposal.pubkey.toBase58())}: {proposal.account.name}.
         </p>
-        <h2 className='text-gradient' style={{ marginLeft: 0 }}>
+        <h2 className="text-gradient" style={{ marginLeft: 0 }}>
           Vote on other proposals:
         </h2>
         <p>
           {activeProposals && activeProposals.length > 0
-            ? activeProposals?.map((proposal, key) =>
-                proposalMap(proposal, key)
-              )
+            ? activeProposals?.map((proposal, key) => proposalMap(proposal, key))
             : 'There are no active proposals at this time.'}
         </p>
       </>
     ),
     closable: true,
-    cancelButtonProps: { style: { display: 'none ' } },
+    cancelButtonProps: { style: { display: 'none ' } }
   };
   steps[Steps.NoVoteError] = {
     title: 'Set a vote!',
@@ -197,7 +189,7 @@ export const VoteModal = ({
     onCancel: () => onClose(),
     content: [<p>Please select a vote.</p>],
     closable: true,
-    cancelButtonProps: { style: { display: 'none ' } },
+    cancelButtonProps: { style: { display: 'none ' } }
   };
   steps[Steps.UnknownError] = {
     title: `Uh-oh`,
@@ -207,13 +199,12 @@ export const VoteModal = ({
     content: (
       <>
         <p>
-          We're not really sure what went wrong here, please refresh your
-          browser and try again.
+          We're not really sure what went wrong here, please refresh your browser and try again.
         </p>
       </>
     ),
     closable: true,
-    cancelButtonProps: { style: { display: 'none ' } },
+    cancelButtonProps: { style: { display: 'none ' } }
   };
 
   return (

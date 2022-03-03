@@ -1,15 +1,14 @@
-import { useWallet } from "@solana/wallet-adapter-react";
-import { FooterLinks } from "../components/FooterLinks";
-import { useProposalContext } from "../contexts/proposal";
-import { UnbondingLog } from "../components/unbonding/UnbondingLog";
+import { useWallet } from '@solana/wallet-adapter-react';
+import { FooterLinks } from '../components/FooterLinks';
+import { useProposalContext } from '../contexts/proposal';
+import { UnbondingLog } from '../components/unbonding/UnbondingLog';
 
 export const FlightLogView = () => {
   const { unbondingAccounts } = useProposalContext();
   const { connected } = useWallet();
 
   // Open explorer
-  const explorerUrl = () =>
-    window.open("https://explorer.solana.com", "_blank");
+  const explorerUrl = () => window.open('https://explorer.solana.com', '_blank');
 
   return (
     <div className="view-container column-grid" id="flight-logs-view">
@@ -28,11 +27,8 @@ export const FlightLogView = () => {
 
           {connected && (
             <tbody>
-              {unbondingAccounts?.map((row) => (
-                <UnbondingLog
-                  key={row.address.toBase58()}
-                  unbondingAccount={row}
-                />
+              {unbondingAccounts?.map(row => (
+                <UnbondingLog key={row.address.toBase58()} unbondingAccount={row} />
               ))}
             </tbody>
           )}

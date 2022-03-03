@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { LABELS } from "../constants";
+import { useEffect, useState } from 'react';
+import { LABELS } from '../constants';
 
 export function useIsUrl(url: string) {
   return !!url.match(urlRegex);
@@ -10,9 +10,7 @@ const urlRegex =
 
 export function useLoadGist(gistLink: string) {
   const isUrl = useIsUrl(gistLink);
-  const isGist =
-    !!gistLink.match(/gist/i) &&
-    !!gistLink.match(/github/i);
+  const isGist = !!gistLink.match(/gist/i) && !!gistLink.match(/github/i);
   const [content, setContent] = useState(gistLink);
   const [loading, setLoading] = useState(isUrl);
   const [failed, setFailed] = useState(false);
@@ -37,11 +35,11 @@ export function useLoadGist(gistLink: string) {
                 const nextUrl = jsonContent['files'][nextUrlFileName]['raw_url'];
                 fetch(nextUrl).then(async response => {
                   if (!isCancelled) {
-                    setContent(await response.text())
+                    setContent(await response.text());
                   }
                 });
               } else {
-                setContent(await resp.text())
+                setContent(await resp.text());
               }
             } else {
               if (resp.status === 403 && isGist) {
@@ -59,7 +57,9 @@ export function useLoadGist(gistLink: string) {
           }
         });
     }
-    return () => { isCancelled = true; }
+    return () => {
+      isCancelled = true;
+    };
   }, [gistLink]); //eslint-disable-line
   return {
     loading,
@@ -67,6 +67,6 @@ export function useLoadGist(gistLink: string) {
     msg,
     content,
     isGist,
-    isUrl,
-  }
+    isUrl
+  };
 }

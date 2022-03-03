@@ -1,23 +1,20 @@
-import { InfoCircleFilled } from "@ant-design/icons";
-import {
-  bnToNumber,
-  UnbondingAccount,
-} from "@jet-lab/jet-engine";
-import { MintInfo } from "@solana/spl-token";
-import { Button, Tooltip } from "antd";
-import BN from "bn.js";
-import { useEffect, useState } from "react";
-import { useProposalContext } from "../../contexts/proposal";
-import { dateFromUnixTimestamp, fromLamports } from "../../utils";
-import { RestakeModal } from "../modals/RestakeModal";
-import { WithdrawModal } from "../modals/WithdrawModal";
+import { InfoCircleFilled } from '@ant-design/icons';
+import { bnToNumber, UnbondingAccount } from '@jet-lab/jet-engine';
+import { MintInfo } from '@solana/spl-token';
+import { Button, Tooltip } from 'antd';
+import BN from 'bn.js';
+import { useEffect, useState } from 'react';
+import { useProposalContext } from '../../contexts/proposal';
+import { dateFromUnixTimestamp, fromLamports } from '../../utils';
+import { RestakeModal } from '../modals/RestakeModal';
+import { WithdrawModal } from '../modals/WithdrawModal';
 
 export const UnbondingLog = ({
-  unbondingAccount,
+  unbondingAccount
 }: {
   unbondingAccount: UnbondingAccount | undefined;
 }) => {
-  const { jetMint } = useProposalContext()
+  const { jetMint } = useProposalContext();
 
   const [restakeModalVisible, setRestakeModalVisible] = useState(false);
   const [withdrawModalVisible, setWithdrawModalVisible] = useState(false);
@@ -25,15 +22,14 @@ export const UnbondingLog = ({
 
   const toTokens = (lamports: BN | undefined, mint: MintInfo | undefined) => {
     return fromLamports(lamports, mint).toLocaleString(undefined, {
-      maximumFractionDigits: 0,
+      maximumFractionDigits: 0
     });
   };
 
   useEffect(() => {
     const interval = setInterval(() => {
       const time = new Date().getTime() / 1000;
-      const canWithdraw =
-        time > bnToNumber(unbondingAccount?.unbondingAccount.unbondedAt);
+      const canWithdraw = time > bnToNumber(unbondingAccount?.unbondingAccount.unbondedAt);
       setCanWithdraw(canWithdraw);
     }, 4000);
     return () => {
@@ -47,7 +43,7 @@ export const UnbondingLog = ({
         {dateFromUnixTimestamp(unbondingAccount?.unbondingAccount.unbondedAt)}
       </td>
       <td className="italics">
-        Unbonding{" "}
+        Unbonding{' '}
         <Tooltip
           title="Unstaking transactions require a 29.5-day unbonding period. before withdrawal to your wallet is enabled. Status will show as 'unbonding' until this period completes."
           mouseEnterDelay={0.1}
@@ -57,18 +53,15 @@ export const UnbondingLog = ({
       </td>
       <td className="italics">
         <i className="italics">
-          Unstake complete on{" "}
-          {dateFromUnixTimestamp(unbondingAccount?.unbondingAccount.unbondedAt)}
-        </i>{" "}
+          Unstake complete on {dateFromUnixTimestamp(unbondingAccount?.unbondingAccount.unbondedAt)}
+        </i>{' '}
         <Button
           type="dashed"
           onClick={() =>
-            canWithdraw
-              ? setWithdrawModalVisible(true)
-              : setRestakeModalVisible(true)
+            canWithdraw ? setWithdrawModalVisible(true) : setRestakeModalVisible(true)
           }
         >
-          {canWithdraw ? "Withdraw" : "Restake"}
+          {canWithdraw ? 'Withdraw' : 'Restake'}
         </Button>
         <RestakeModal
           visible={restakeModalVisible}

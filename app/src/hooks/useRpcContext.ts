@@ -13,13 +13,7 @@ export function useRpcContext() {
   const { programId, programVersion } = useProgramInfo();
 
   const [rpcContext, setRpcContext] = useState(
-    new RpcContext(
-      new PublicKey(programId),
-      programVersion,
-      wallet as any,
-      connection,
-      endpoint,
-    ),
+    new RpcContext(new PublicKey(programId), programVersion, wallet as any, connection, endpoint)
   );
 
   useEffect(
@@ -30,12 +24,12 @@ export function useRpcContext() {
           programVersion,
           wallet as any,
           connection,
-          endpoint,
-        ),
+          endpoint
+        )
       );
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [programId, connection, wallet, endpoint, programVersion],
+    [programId, connection, wallet, endpoint, programVersion]
   );
 
   return rpcContext;

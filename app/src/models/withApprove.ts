@@ -1,6 +1,6 @@
-import { Token, TOKEN_PROGRAM_ID, u64 } from "@solana/spl-token";
-import { Keypair, PublicKey, TransactionInstruction } from "@solana/web3.js";
-import BN from "bn.js";
+import { Token, TOKEN_PROGRAM_ID, u64 } from '@solana/spl-token';
+import { Keypair, PublicKey, TransactionInstruction } from '@solana/web3.js';
+import BN from 'bn.js';
 
 export function withApprove(
   instructions: TransactionInstruction[],
@@ -12,7 +12,7 @@ export function withApprove(
 
   // if delegate is not passed ephemeral transfer authority is used
   delegate?: PublicKey,
-  existingTransferAuthority?: Keypair,
+  existingTransferAuthority?: Keypair
 ): Keypair {
   const tokenProgram = TOKEN_PROGRAM_ID;
 
@@ -26,20 +26,11 @@ export function withApprove(
   }
 
   instructions.push(
-    Token.createApproveInstruction(
-      tokenProgram,
-      account,
-      delegateKey,
-      owner,
-      [],
-      amount,
-    ),
+    Token.createApproveInstruction(tokenProgram, account, delegateKey, owner, [], amount)
   );
 
   if (autoRevoke) {
-    cleanupInstructions.push(
-      Token.createRevokeInstruction(tokenProgram, account, owner, []),
-    );
+    cleanupInstructions.push(Token.createRevokeInstruction(tokenProgram, account, owner, []));
   }
 
   return transferAuthority;

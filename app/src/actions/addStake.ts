@@ -1,9 +1,9 @@
-import { Keypair, PublicKey, TransactionInstruction } from "@solana/web3.js";
-import BN from "bn.js";
-import { withApprove } from "../models";
-import { RpcContext, withDepositGoverningTokens } from "@solana/spl-governance";
-import { sendTransactionWithNotifications } from "../tools/transactions";
-import { AssociatedToken, StakeAccount, StakePool } from "@jet-lab/jet-engine"
+import { Keypair, PublicKey, TransactionInstruction } from '@solana/web3.js';
+import BN from 'bn.js';
+import { withApprove } from '../models';
+import { RpcContext, withDepositGoverningTokens } from '@solana/spl-governance';
+import { sendTransactionWithNotifications } from '../tools/transactions';
+import { AssociatedToken, StakeAccount, StakePool } from '@jet-lab/jet-engine';
 
 export const addStake = async (
   { connection, wallet, programId, programVersion, walletPubkey }: RpcContext,
@@ -32,16 +32,10 @@ export const addStake = async (
     stakePool.addresses.stakePool,
     owner
   );
-  await StakeAccount.withAddStake(instructions, stakePool, owner, tokenAccount, amount)
-  await StakeAccount.withMintVotes(instructions, stakePool, owner, voterTokenAccount, amount)
+  await StakeAccount.withAddStake(instructions, stakePool, owner, tokenAccount, amount);
+  await StakeAccount.withMintVotes(instructions, stakePool, owner, voterTokenAccount, amount);
 
-  const transferAuthority = withApprove(
-    instructions,
-    [],
-    voterTokenAccount,
-    walletPubkey,
-    amount,
-  );
+  const transferAuthority = withApprove(instructions, [], voterTokenAccount, walletPubkey, amount);
 
   signers.push(transferAuthority);
 
@@ -55,10 +49,10 @@ export const addStake = async (
     walletPubkey,
     transferAuthority.publicKey,
     walletPubkey,
-    amount,
+    amount
   );
 
-  await AssociatedToken.withClose(instructions, owner, voteMint, owner)
+  await AssociatedToken.withClose(instructions, owner, voteMint, owner);
 
   await sendTransactionWithNotifications(
     connection,
@@ -66,6 +60,6 @@ export const addStake = async (
     instructions,
     signers,
     'Staking governing tokens',
-    'Tokens have been staked',
+    'Tokens have been staked'
   );
 };

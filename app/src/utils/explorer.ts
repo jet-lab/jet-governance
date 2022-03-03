@@ -7,7 +7,7 @@ export function getExplorerUrl(
   viewTypeOrItemAddress: string | PublicKey,
   endpoint: string,
   itemType: string = 'address',
-  connection?: Connection,
+  connection?: Connection
 ) {
   const getClusterUrlParam = () => {
     // If ExplorerLink (or any other component)is used outside of ConnectionContext, ex. in notifications, then useConnectionConfig() won't return the current endpoint
@@ -26,9 +26,7 @@ export function getExplorerUrl(
       cluster = 'testnet';
     } else if (env?.ChainId === ChainId.Devnet) {
       if (env?.name === 'localnet') {
-        cluster = `custom&customUrl=${encodeURIComponent(
-          'http://127.0.0.1:8899',
-        )}`;
+        cluster = `custom&customUrl=${encodeURIComponent('http://127.0.0.1:8899')}`;
       } else {
         cluster = 'devnet';
       }
@@ -44,16 +42,14 @@ export function getExplorerUrl(
 export function getExplorerInspectorUrl(
   endpoint: string,
   transaction: Transaction,
-  connection?: Connection,
+  connection?: Connection
 ) {
   const SIGNATURE_LENGTH = 64;
 
-  const explorerUrl = new URL(
-    getExplorerUrl('inspector', endpoint, 'tx', connection),
-  );
+  const explorerUrl = new URL(getExplorerUrl('inspector', endpoint, 'tx', connection));
 
   const signatures = transaction.signatures.map(s =>
-    base58.encode(s.signature ?? Buffer.alloc(SIGNATURE_LENGTH)),
+    base58.encode(s.signature ?? Buffer.alloc(SIGNATURE_LENGTH))
   );
   explorerUrl.searchParams.append('signatures', JSON.stringify(signatures));
 

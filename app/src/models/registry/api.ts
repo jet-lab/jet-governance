@@ -7,20 +7,13 @@ export const PROGRAM_VERSION_V2 = 2;
 // The most up to date program version
 export const PROGRAM_VERSION = PROGRAM_VERSION_V2;
 
-export async function getProgramVersion(
-  connection: Connection,
-  programId: string,
-  env: string,
-) {
+export async function getProgramVersion(connection: Connection, programId: string, env: string) {
   // For localnet always use the latest version
   if (env === 'localnet') {
     return PROGRAM_VERSION;
   }
 
-  const programData = await getProgramDataAccount(
-    connection,
-    new PublicKey(programId),
-  );
+  const programData = await getProgramDataAccount(connection, new PublicKey(programId));
 
   const slot = getLatestVersionCutOffSlot(env);
 

@@ -14,10 +14,7 @@ export function getTimestampFromDays(days: number) {
 }
 
 /// Formats mint amount (natural units) as a decimal string
-export function formatMintNaturalAmountAsDecimal(
-  mint: MintInfo,
-  naturalAmount: BN,
-) {
+export function formatMintNaturalAmountAsDecimal(mint: MintInfo, naturalAmount: BN) {
   return getMintDecimalAmountFromNatural(mint, naturalAmount).toFormat();
 }
 
@@ -27,10 +24,7 @@ export function formatMintSupplyAsDecimal(mint: MintInfo) {
 }
 
 // Converts mint amount (natural units) to decimals
-export function getMintDecimalAmountFromNatural(
-  mint: MintInfo,
-  naturalAmount: BN,
-) {
+export function getMintDecimalAmountFromNatural(mint: MintInfo, naturalAmount: BN) {
   return new BigNumber(naturalAmount.toString()).shiftedBy(-mint.decimals);
 }
 
@@ -38,7 +32,7 @@ export function getMintDecimalAmountFromNatural(
 // If the input is already a number then converts it to mint natural amount
 export function parseMintNaturalAmountFromDecimal(
   decimalAmount: string | number,
-  mintDecimals: number,
+  mintDecimals: number
 ) {
   if (typeof decimalAmount === 'number') {
     return getMintNaturalAmountFromDecimal(decimalAmount, mintDecimals);
@@ -53,18 +47,12 @@ export function parseMintNaturalAmountFromDecimal(
 }
 
 // Converts amount in decimals to mint amount (natural units)
-export function getMintNaturalAmountFromDecimal(
-  decimalAmount: number,
-  decimals: number,
-) {
+export function getMintNaturalAmountFromDecimal(decimalAmount: number, decimals: number) {
   return new BigNumber(decimalAmount.toString()).shiftedBy(decimals).toNumber();
 }
 
 // Calculates percentage (provided as 0-100) of mint supply as decimal amount
-export function getMintSupplyPercentageAsDecimal(
-  mint: MintInfo,
-  percentage: number,
-) {
+export function getMintSupplyPercentageAsDecimal(mint: MintInfo, percentage: number) {
   return new BigNumber(mint.supply.mul(new BN(percentage)).toString())
     .shiftedBy(-(mint.decimals + 2))
     .toNumber();
@@ -77,15 +65,13 @@ export function getMintMinAmountAsDecimal(mint: MintInfo) {
 
 // Returns mint supply amount as decimal
 export function getMintSupplyAsDecimal(mint: MintInfo) {
-  return new BigNumber(mint.supply.toString())
-    .shiftedBy(-mint.decimals)
-    .toNumber();
+  return new BigNumber(mint.supply.toString()).shiftedBy(-mint.decimals).toNumber();
 }
 
 // Calculates mint supply fraction for the given natural amount as decimal amount
 export function getMintSupplyFractionAsDecimalPercentage(
   mint: MintInfo,
-  naturalAmount: BN | number,
+  naturalAmount: BN | number
 ) {
   return getBigNumberAmount(naturalAmount)
     .multipliedBy(100)
@@ -96,7 +82,7 @@ export function getMintSupplyFractionAsDecimalPercentage(
 // Calculates mint supply fraction for the given natural amount as decimal amount
 export function getAmountFractionAsDecimalPercentage(
   totalNaturalAmount: BN | number,
-  naturalAmount: BN | number,
+  naturalAmount: BN | number
 ) {
   return getBigNumberAmount(naturalAmount)
     .multipliedBy(100)
@@ -106,9 +92,7 @@ export function getAmountFractionAsDecimalPercentage(
 
 // Converts BN or number to BigNumber
 export function getBigNumberAmount(amount: BN | number) {
-  return typeof amount === 'number'
-    ? new BigNumber(amount)
-    : new BigNumber(amount.toString());
+  return typeof amount === 'number' ? new BigNumber(amount) : new BigNumber(amount.toString());
 }
 
 // Formats percentage value showing it in human readable form
@@ -146,30 +130,24 @@ export function formatMintVoteWeight(mint: MintInfo, naturalAmount: BN) {
 
 export function formatMintSupplyFractionAsDecimalPercentage(
   mint: MintInfo,
-  naturalAmount: BN | number,
+  naturalAmount: BN | number
 ) {
-  return formatPercentage(
-    getMintSupplyFractionAsDecimalPercentage(mint, naturalAmount),
-  );
+  return formatPercentage(getMintSupplyFractionAsDecimalPercentage(mint, naturalAmount));
 }
 
 export function formatMintMaxVoteWeight(
   mint: MintInfo,
-  maxVoteWeightSource: MintMaxVoteWeightSource,
+  maxVoteWeightSource: MintMaxVoteWeightSource
 ) {
   const supplyFraction = maxVoteWeightSource.getSupplyFraction();
 
   return new BigNumber(supplyFraction.toString())
     .multipliedBy(mint.supply.toString())
-    .shiftedBy(
-      -(mint.decimals + MintMaxVoteWeightSource.SUPPLY_FRACTION_DECIMALS),
-    )
+    .shiftedBy(-(mint.decimals + MintMaxVoteWeightSource.SUPPLY_FRACTION_DECIMALS))
     .toFormat(mint.decimals);
 }
 
-export function formatMintMaxVotePercentage(
-  maxVoteWeightSource: MintMaxVoteWeightSource,
-) {
+export function formatMintMaxVotePercentage(maxVoteWeightSource: MintMaxVoteWeightSource) {
   const supplyFraction = maxVoteWeightSource.getSupplyFraction();
 
   const percentage = new BigNumber(supplyFraction.toString())
@@ -184,10 +162,7 @@ export function formatMintMaxVotePercentage(
   return rounded === percentage ? `${rounded}%` : `~${rounded}%`;
 }
 
-export function getMintMaxVoteWeight(
-  mint: MintInfo,
-  maxVoteWeightSource: MintMaxVoteWeightSource,
-) {
+export function getMintMaxVoteWeight(mint: MintInfo, maxVoteWeightSource: MintMaxVoteWeightSource) {
   if (maxVoteWeightSource.isFullSupply()) {
     return mint.supply as BN;
   }

@@ -11,7 +11,7 @@ export type KnownTokenMap = Map<string, TokenInfo>;
 export const formatPriceNumber = new Intl.NumberFormat('en-US', {
   style: 'decimal',
   minimumFractionDigits: 2,
-  maximumFractionDigits: 8,
+  maximumFractionDigits: 8
 });
 
 export function useLocalStorageState(key: string, defaultState?: string) {
@@ -25,7 +25,7 @@ export function useLocalStorageState(key: string, defaultState?: string) {
   });
 
   const setLocalStorageState = useCallback(
-    (newState) => {
+    newState => {
       const changed = state !== newState;
       if (!changed) {
         return;
@@ -103,8 +103,7 @@ export function getTokenIcon(
   map?: KnownTokenMap,
   mintAddress?: string | PublicKey
 ): string | undefined {
-  const address =
-    typeof mintAddress === 'string' ? mintAddress : mintAddress?.toBase58();
+  const address = typeof mintAddress === 'string' ? mintAddress : mintAddress?.toBase58();
   if (!address) {
     return;
   }
@@ -119,22 +118,17 @@ export function isKnownMint(map: KnownTokenMap, mintAddress: string) {
 export const STABLE_COINS = new Set(['USDC', 'wUSDC', 'USDT']);
 
 export function chunks<T>(array: T[], size: number): T[][] {
-  return Array.apply<number, T[], T[][]>(
-    0,
-    new Array(Math.ceil(array.length / size))
-  ).map((_, index) => array.slice(index * size, (index + 1) * size));
+  return Array.apply<number, T[], T[][]>(0, new Array(Math.ceil(array.length / size))).map(
+    (_, index) => array.slice(index * size, (index + 1) * size)
+  );
 }
 
-export function toLamports(
-  account?: TokenAccount | number,
-  mint?: MintInfo
-): number {
+export function toLamports(account?: TokenAccount | number, mint?: MintInfo): number {
   if (!account) {
     return 0;
   }
 
-  const amount =
-    typeof account === 'number' ? account : account.info.amount?.toNumber();
+  const amount = typeof account === 'number' ? account : account.info.amount?.toNumber();
 
   const precision = Math.pow(10, mint?.decimals || 0);
   return Math.floor(amount * precision);
@@ -183,11 +177,8 @@ export const abbreviateNumber = (number: number, precision: number) => {
   return scaled.toFixed(precision) + suffix;
 };
 
-export const formatAmount = (
-  val: number,
-  precision: number = 6,
-  abbr: boolean = true
-) => (abbr ? abbreviateNumber(val, precision) : val.toFixed(precision));
+export const formatAmount = (val: number, precision: number = 6, abbr: boolean = true) =>
+  abbr ? abbreviateNumber(val, precision) : val.toFixed(precision);
 
 export function formatTokenAmount(
   account?: TokenAccount,
@@ -202,22 +193,18 @@ export function formatTokenAmount(
     return '';
   }
 
-  return `${[prefix]}${formatAmount(
-    fromLamports(account, mint, rate),
-    precision,
-    abbr
-  )}${suffix}`;
+  return `${[prefix]}${formatAmount(fromLamports(account, mint, rate), precision, abbr)}${suffix}`;
 }
 
 export const formatUSD = new Intl.NumberFormat('en-US', {
   style: 'currency',
-  currency: 'USD',
+  currency: 'USD'
 });
 
 const numberFormater = new Intl.NumberFormat('en-US', {
   style: 'decimal',
   minimumFractionDigits: 2,
-  maximumFractionDigits: 2,
+  maximumFractionDigits: 2
 });
 
 export const formatNumber = {
@@ -227,13 +214,13 @@ export const formatNumber = {
     }
 
     return numberFormater.format(val);
-  },
+  }
 };
 
 export const formatPct = new Intl.NumberFormat('en-US', {
   style: 'percent',
   minimumFractionDigits: 2,
-  maximumFractionDigits: 2,
+  maximumFractionDigits: 2
 });
 
 export function convert(
@@ -245,8 +232,7 @@ export function convert(
     return 0;
   }
 
-  const amount =
-    typeof account === 'number' ? account : account.info.amount?.toNumber();
+  const amount = typeof account === 'number' ? account : account.info.amount?.toNumber();
 
   const precision = 10 ** (mint?.decimals || 0);
   let result = (amount / precision) * rate;
@@ -255,14 +241,11 @@ export function convert(
 }
 
 export function sleep(ms: number): Promise<void> {
-  return new Promise((resolve) => setTimeout(resolve, ms));
+  return new Promise(resolve => setTimeout(resolve, ms));
 }
 
 // Get remaining days, hours and minutes
-export const getRemainingTime = (
-  currentTime: number,
-  endTime: number
-): string => {
+export const getRemainingTime = (currentTime: number, endTime: number): string => {
   let difference = Math.abs(endTime - currentTime) / 1000;
 
   const days = Math.floor(difference / 86400);
@@ -280,23 +263,22 @@ export const getRemainingTime = (
     return `${days} ${days === 1 ? 'day' : 'days'}`;
   } else {
     return `${hours.toLocaleString(undefined, {
-      minimumIntegerDigits: 2,
+      minimumIntegerDigits: 2
     })}:${minutes.toLocaleString(undefined, {
-      minimumIntegerDigits: 2,
+      minimumIntegerDigits: 2
     })}:${seconds.toLocaleString(undefined, { minimumIntegerDigits: 2 })}`;
   }
 };
 
 // Generate solana explorer url from a transaction id
 export function explorerUrl(txid: string) {
-  const clusterParam =
-    process.env.REACT_APP_CLUSTER === 'devnet' ? `?cluster=devnet` : '';
+  const clusterParam = process.env.REACT_APP_CLUSTER === 'devnet' ? `?cluster=devnet` : '';
   return `https://explorer.solana.com/transaction/${txid}${clusterParam}`;
 }
 
 // Manual timeout promise to pause program execution
 export function timeout(ms: number) {
-  return new Promise((res) => {
+  return new Promise(res => {
     setTimeout(() => res(true), ms);
   });
 }
@@ -307,11 +289,9 @@ export function dateFromUnixTimestamp(time: BN | undefined) {
   const padTo2Digits = (num: number) => {
     return num.toString().padStart(2, '0');
   };
-  return [
-    date.getFullYear(),
-    padTo2Digits(date.getMonth() + 1),
-    padTo2Digits(date.getDate()),
-  ].join('-');
+  return [date.getFullYear(), padTo2Digits(date.getMonth() + 1), padTo2Digits(date.getDate())].join(
+    '-'
+  );
 }
 
 export const dateToString = (date: Date) => {
@@ -327,7 +307,7 @@ export const dateToString = (date: Date) => {
     'Sep',
     'Oct',
     'Nov',
-    'Dec',
+    'Dec'
   ];
 
   const day = date.getDate().toString().padStart(2, '0');

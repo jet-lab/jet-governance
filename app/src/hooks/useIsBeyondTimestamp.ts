@@ -4,9 +4,7 @@ import { useConnection } from '../contexts';
 
 export const useIsBeyondTimestamp = (timestamp: number | undefined) => {
   const connection = useConnection();
-  const [isBeyondTimestamp, setIsBeyondTimestamp] = useState<
-    boolean | undefined
-  >();
+  const [isBeyondTimestamp, setIsBeyondTimestamp] = useState<boolean | undefined>();
 
   useEffect(() => {
     if (!timestamp) {

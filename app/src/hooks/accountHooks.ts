@@ -1,12 +1,19 @@
 import { PublicKey } from '@solana/web3.js';
 import { useEffect, useState } from 'react';
 import { useRpcContext } from './useRpcContext';
-import { getGovernanceAccount, getGovernanceAccounts, GovernanceAccount, MemcmpFilter, ProgramAccount } from "@solana/spl-governance"
+import {
+  getGovernanceAccount,
+  getGovernanceAccounts,
+  GovernanceAccount,
+  MemcmpFilter,
+  ProgramAccount
+} from '@solana/spl-governance';
 
 // Fetches Governance program account using the given key and subscribes to updates
-export function useGovernanceAccountByPubkey<
-  TAccount extends GovernanceAccount
->(accountClass: new (args: any) => TAccount, pubkey: PublicKey | undefined) {
+export function useGovernanceAccountByPubkey<TAccount extends GovernanceAccount>(
+  accountClass: new (args: any) => TAccount,
+  pubkey: PublicKey | undefined
+) {
   const [account, setAccount] = useState<ProgramAccount<TAccount>>();
 
   const { connection } = useRpcContext();
@@ -20,13 +27,13 @@ export function useGovernanceAccountByPubkey<
 
     getGovernanceAccount(connection, pubkey, accountClass)
       .then(loadedAccount => {
-        setAccount(loadedAccount)
+        setAccount(loadedAccount);
       })
-      .catch ((ex: Error) => {
+      .catch((ex: Error) => {
         console.error(`Can't load ${pubkey.toBase58()} account`, ex);
         setAccount(undefined);
-      })
-      
+      });
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [getByPubkey, connection]);
 
@@ -37,7 +44,7 @@ export function useGovernanceAccountByPubkey<
 export function useGovernanceAccountByPda<TAccount extends GovernanceAccount>(
   accountClass: new (args: any) => TAccount,
   getPda: () => Promise<PublicKey | undefined>,
-  pdaArgs: any[],
+  pdaArgs: any[]
 ) {
   const [pda, setPda] = useState<PublicKey | undefined>();
 
@@ -53,9 +60,11 @@ export function useGovernanceAccountByPda<TAccount extends GovernanceAccount>(
     });
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    return () => { isCancelled = true; }
+    return () => {
+      isCancelled = true;
+    };
 
-    // Disable eslint warning. Adding getPda causes an infinite loop 
+    // Disable eslint warning. Adding getPda causes an infinite loop
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pdaArgsKey]);
 
@@ -63,9 +72,10 @@ export function useGovernanceAccountByPda<TAccount extends GovernanceAccount>(
 }
 
 // Fetches Governance program accounts using the given filter and subscribes to updates
-export function useGovernanceAccounts<
-  TAccount extends GovernanceAccount
->(accountClass: new (args: any) => TAccount, filters?: (MemcmpFilter | undefined)[]) {
+export function useGovernanceAccounts<TAccount extends GovernanceAccount>(
+  accountClass: new (args: any) => TAccount,
+  filters?: (MemcmpFilter | undefined)[]
+) {
   const [accounts, setAccounts] = useState<ProgramAccount<TAccount>[]>([]);
 
   const { connection, programId } = useRpcContext();
@@ -76,32 +86,25 @@ export function useGovernanceAccounts<
 
   useEffect(() => {
     const queryFilters = filters?.map(f => f!);
-    getGovernanceAccounts(
-      connection,
-      programId,
-      accountClass,
-      queryFilters,
-    )
-      .then((loadedAccounts) => {
-        setAccounts(loadedAccounts)
+    getGovernanceAccounts(connection, programId, accountClass, queryFilters)
+      .then(loadedAccounts => {
+        setAccounts(loadedAccounts);
       })
       .catch((ex: Error) => {
         console.error(`Can't load ${accountClass.name}`, ex);
         setAccounts([]);
       });
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [accountClass, connection, filterKey, programId]);
 
   return Object.values(accounts);
 }
 
-export function useGovernanceAccountByFilter<
-  TAccount extends GovernanceAccount
->(accountClass: new (args: any) => TAccount, filters: (MemcmpFilter | undefined)[]) {
-  const accounts = useGovernanceAccounts<TAccount>(
-    accountClass,
-    filters,
-  );
+export function useGovernanceAccountByFilter<TAccount extends GovernanceAccount>(
+  accountClass: new (args: any) => TAccount,
+  filters: (MemcmpFilter | undefined)[]
+) {
+  const accounts = useGovernanceAccounts<TAccount>(accountClass, filters);
 
   if (accounts.length === 0) {
     return undefined;
@@ -112,6 +115,6 @@ export function useGovernanceAccountByFilter<
   }
 
   throw new Error(
-    `Filters ${filters} returned multiple accounts ${accounts} for ${accountClass.name} while a single result was expected`,
+    `Filters ${filters} returned multiple accounts ${accounts} for ${accountClass.name} while a single result was expected`
   );
 }

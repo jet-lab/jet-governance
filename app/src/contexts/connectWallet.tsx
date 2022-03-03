@@ -1,28 +1,28 @@
-import { Auth } from "@jet-lab/jet-engine";
-import { useProvider } from "@jet-lab/jet-engine/lib/common";
-import { useWallet } from "@solana/wallet-adapter-react";
-import { createContext, useContext, useState } from "react";
-import { createUserAuth } from "../actions/createUserAuth";
-import { VerifyModal } from "../components/modals/VerifyModal"
-import { useRpcContext } from "../hooks";
-import { useConnection } from "./connection";
+import { Auth } from '@jet-lab/jet-engine';
+import { useProvider } from '@jet-lab/jet-engine/lib/common';
+import { useWallet } from '@solana/wallet-adapter-react';
+import { createContext, useContext, useState } from 'react';
+import { createUserAuth } from '../actions/createUserAuth';
+import { VerifyModal } from '../components/modals/VerifyModal';
+import { useRpcContext } from '../hooks';
+import { useConnection } from './connection';
 
 // Connecting wallet context
 interface ConnectWallet {
-  connecting: boolean,
-  setConnecting: (connecting: boolean) => void
-  welcoming: boolean,
-  setWelcoming: (welcoming: boolean) => void
-  setAuthorizationConfirmed: (authorizationConfirmed: boolean) => void
+  connecting: boolean;
+  setConnecting: (connecting: boolean) => void;
+  welcoming: boolean;
+  setWelcoming: (welcoming: boolean) => void;
+  setAuthorizationConfirmed: (authorizationConfirmed: boolean) => void;
   resetAuth: () => void;
-};
+}
 const ConnectWalletContext = createContext<ConnectWallet>({
   connecting: false,
-  setConnecting: () => { },
+  setConnecting: () => {},
   welcoming: false,
-  setWelcoming: () => { },
-  setAuthorizationConfirmed: () => { },
-  resetAuth: () => { },
+  setWelcoming: () => {},
+  setAuthorizationConfirmed: () => {},
+  resetAuth: () => {}
 });
 
 export const ConnectWalletProvider = (props: { children: any }) => {
@@ -35,25 +35,27 @@ export const ConnectWalletProvider = (props: { children: any }) => {
   const [authorizationConfirmed, setAuthorizationConfirmed] = useState(false);
 
   const provider = useProvider(connection, wallet);
-  const authProgram = Auth.useAuthProgram(provider)
-  const { authAccount, loading: authAccountLoading } = Auth.useAuthAccount(authProgram, wallet.publicKey)
+  const authProgram = Auth.useAuthProgram(provider);
+  const { authAccount, loading: authAccountLoading } = Auth.useAuthAccount(
+    authProgram,
+    wallet.publicKey
+  );
 
   const resetAuth = () => {
     setWelcoming(false);
     setAuthorizationConfirmed(false);
-  }
+  };
 
   const connect = (connecting: boolean) => {
     if (connecting) {
       setConnecting(true);
       setWelcoming(true);
       setAuthorizationConfirmed(false);
-    }
-    else {
-      setConnecting(false)
+    } else {
+      setConnecting(false);
       setWelcoming(false);
     }
-  }
+  };
 
   const createAuthAccount = async () => {
     if (authAccountLoading || authAccount || !authProgram || !publicKey) {
@@ -62,15 +64,24 @@ export const ConnectWalletProvider = (props: { children: any }) => {
 
     let success = true;
     try {
-      await createUserAuth(rpcContext, authProgram, publicKey, publicKey)
+      await createUserAuth(rpcContext, authProgram, publicKey, publicKey);
     } catch (ex) {
       success = false;
     }
     return success;
-  }
+  };
 
   return (
-    <ConnectWalletContext.Provider value={{ connecting, setConnecting: connect, welcoming, setWelcoming, setAuthorizationConfirmed, resetAuth }}>
+    <ConnectWalletContext.Provider
+      value={{
+        connecting,
+        setConnecting: connect,
+        welcoming,
+        setWelcoming,
+        setAuthorizationConfirmed,
+        resetAuth
+      }}
+    >
       <VerifyModal
         visible={welcoming || (connected && !authorizationConfirmed)}
         authAccount={authAccount}

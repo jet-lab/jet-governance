@@ -72,7 +72,7 @@ jobs:
 
       - name: Install Anchor CLI
         run: npm i -g @project-serum/anchor-cli@${{ env.ANCHOR_CLI_VERSION }}
-      
+
       - name: Setup Environment
         run: |
           echo "PATH=$HOME/.local/share/solana/install/active_release/bin:$HOME/.cargo/bin:$PATH" >> $GITHUB_ENV \

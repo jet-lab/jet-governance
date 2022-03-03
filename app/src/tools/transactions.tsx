@@ -1,9 +1,4 @@
-import {
-  TransactionInstruction,
-  Connection,
-  Transaction,
-  Keypair
-} from '@solana/web3.js';
+import { TransactionInstruction, Connection, Transaction, Keypair } from '@solana/web3.js';
 import { DEFAULT_TX_TIMEOUT, sendTransaction2 } from './sdk/core/connection';
 import { ExplorerLink } from '../components';
 import { notify, isTransactionTimeoutError, isSendTransactionError } from '../utils';
@@ -17,12 +12,12 @@ export async function sendTransactionWithNotifications(
   instructions: TransactionInstruction[],
   signers: Keypair[],
   pendingMessage: string,
-  successMessage: string,
+  successMessage: string
 ) {
   notify({
     message: `${pendingMessage}...`,
     description: 'Please wait...',
-    type: 'warn',
+    type: 'warn'
   });
 
   try {
@@ -34,7 +29,7 @@ export async function sendTransactionWithNotifications(
         transaction,
         wallet,
         signers,
-        connection,
+        connection
       });
 
       notify({
@@ -43,20 +38,16 @@ export async function sendTransactionWithNotifications(
         description: (
           <>
             {'Transaction: '}
-            <ExplorerLink
-              address={txid}
-              type="transaction"
-              short
-              connection={connection}
-            />
+            <ExplorerLink address={txid} type="transaction" short connection={connection} />
           </>
-        ),
+        )
       });
     } catch (txError) {
       if (isTransactionTimeoutError(txError)) {
         notify({
-          message: `Transaction hasn't been confirmed within ${DEFAULT_TX_TIMEOUT / 1000
-            }s. Please check on Solana Explorer`,
+          message: `Transaction hasn't been confirmed within ${
+            DEFAULT_TX_TIMEOUT / 1000
+          }s. Please check on Solana Explorer`,
           description: (
             <>
               <ExplorerLink
@@ -67,7 +58,7 @@ export async function sendTransactionWithNotifications(
               />
             </>
           ),
-          type: 'warn',
+          type: 'warn'
         });
       } else if (isSendTransactionError(txError)) {
         notify({
@@ -82,7 +73,7 @@ export async function sendTransactionWithNotifications(
               />
             </>
           ),
-          type: 'error',
+          type: 'error'
         });
       }
       throw txError;
@@ -98,40 +89,36 @@ export async function sendAllTransactionsWithNotifications(
   provider: Provider,
   transactions: SendTxRequest[],
   pendingMessage: string,
-  successMessage: string,
+  successMessage: string
 ) {
   notify({
     message: `${pendingMessage}...`,
     description: 'Please wait...',
-    type: 'warn',
+    type: 'warn'
   });
 
   try {
     let txid = await provider.sendAll(transactions);
 
-    const last = txid[txid.length - 1]
+    const last = txid[txid.length - 1];
     notify({
       message: successMessage,
       type: 'success',
       description: (
         <>
           {'Transaction: '}
-          <ExplorerLink
-            address={last}
-            type="transaction"
-            short
-            connection={provider.connection}
-          />
+          <ExplorerLink address={last} type="transaction" short connection={provider.connection} />
         </>
-      ),
-    })
-    console.log("Successful vote cast", last)
+      )
+    });
+    console.log('Successful vote cast', last);
   } catch (txError) {
     console.error(txError);
     if (isTransactionTimeoutError(txError)) {
       notify({
-        message: `Transaction hasn't been confirmed within ${DEFAULT_TX_TIMEOUT / 1000
-          }s. Please check on Solana Explorer`,
+        message: `Transaction hasn't been confirmed within ${
+          DEFAULT_TX_TIMEOUT / 1000
+        }s. Please check on Solana Explorer`,
         description: (
           <>
             <ExplorerLink
@@ -142,7 +129,7 @@ export async function sendAllTransactionsWithNotifications(
             />
           </>
         ),
-        type: 'warn',
+        type: 'warn'
       });
     } else if (isSendTransactionError(txError)) {
       notify({
@@ -157,7 +144,7 @@ export async function sendAllTransactionsWithNotifications(
             />
           </>
         ),
-        type: 'error',
+        type: 'error'
       });
     }
     throw txError;

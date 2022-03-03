@@ -17,19 +17,14 @@ export const ExplorerLink = (props: {
   const { type, code, short } = props;
   let { endpoint } = useConnectionConfig();
 
-  const address =
-    typeof props.address === 'string'
-      ? props.address
-      : props.address?.toBase58();
+  const address = typeof props.address === 'string' ? props.address : props.address?.toBase58();
 
   if (!address) {
     return null;
   }
 
   const displayAddress =
-    short || props.length
-      ? shortenAddress(address, props.length ?? 9)
-      : address;
+    short || props.length ? shortenAddress(address, props.length ?? 9) : address;
 
   return (
     <a

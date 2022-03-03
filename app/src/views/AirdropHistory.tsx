@@ -1,8 +1,8 @@
-import { Divider, Progress, Collapse, Timeline } from "antd";
-import { useWallet } from "@solana/wallet-adapter-react";
-import { Available } from "../components/airdrop/Available";
-import { useProposalContext } from "../contexts/proposal";
-import { useAirdrop } from "../contexts/airdrop";
+import { Divider, Progress, Collapse, Timeline } from 'antd';
+import { useWallet } from '@solana/wallet-adapter-react';
+import { Available } from '../components/airdrop/Available';
+import { useProposalContext } from '../contexts/proposal';
+import { useAirdrop } from '../contexts/airdrop';
 
 interface Airdrop {
   name: string;
@@ -17,18 +17,18 @@ export const AirdropHistory = () => {
   const { connected } = useWallet();
 
   // ----- Dummy Data -----
-  const { airdrops: dummyAirdrops, claimedAirdrops, vestingAirdrops, totalAirdropped } =
-    useAirdrop();
+  const {
+    airdrops: dummyAirdrops,
+    claimedAirdrops,
+    vestingAirdrops,
+    totalAirdropped
+  } = useAirdrop();
 
   const vesting: Airdrop[] = vestingAirdrops();
   const claimed: Airdrop[] = claimedAirdrops();
 
   // ----- Real Data -----
-  const {
-    airdrops,
-    airdropsByWallet,
-    claimsCount
-  } = useProposalContext();
+  const { airdrops, airdropsByWallet, claimsCount } = useProposalContext();
 
   const { Panel } = Collapse;
 
@@ -41,38 +41,36 @@ export const AirdropHistory = () => {
       var result = new Date(date);
       result.setDate(result.getDate() + days);
       return result;
-    }
+    };
 
     const getRemainingPercentage = (start: Date, end: Date) => {
       const difference = Math.abs(new Date().valueOf() - start.valueOf());
-      const range = end.valueOf() - start.valueOf()
-      return (difference / range) * 100
-    }
+      const range = end.valueOf() - start.valueOf();
+      return (difference / range) * 100;
+    };
 
-    let allVestingPercentages = [0]
+    let allVestingPercentages = [0];
 
     for (let i = 0; i < vesting.length; i++) {
-      const vestingEnd = addDays(vesting[i].claimDate, vesting[i].vestingPeriod)
-      allVestingPercentages.push(getRemainingPercentage(vesting[i].claimDate, vestingEnd))
-
+      const vestingEnd = addDays(vesting[i].claimDate, vesting[i].vestingPeriod);
+      allVestingPercentages.push(getRemainingPercentage(vesting[i].claimDate, vestingEnd));
     }
 
     return allVestingPercentages.reduce((x, y) => x + y);
-  }
+  };
 
-  const vestingProgressBar = vestingProgress()
+  const vestingProgressBar = vestingProgress();
 
   return (
     <div className="view-container content-body" id="airdrop">
       <div>
         <h2>Airdrop</h2>
-        <div className="neu-container" style={{ maxWidth: "750px" }}>
+        <div className="neu-container" style={{ maxWidth: '750px' }}>
           <h1>Here's how your airdrop works.</h1>
           <p>
-            Airdrop claims deposit a fixed amount of Jet tokens into your
-            governance account. These tokens are locked for a 29.5-day vesting
-            period, during which time you may vote with your tokens. As tokens
-            are vested, they can remain staked to accrue rewards or you can
+            Airdrop claims deposit a fixed amount of Jet tokens into your governance account. These
+            tokens are locked for a 29.5-day vesting period, during which time you may vote with
+            your tokens. As tokens are vested, they can remain staked to accrue rewards or you can
             choose to unstake them.
           </p>
 
@@ -82,20 +80,15 @@ export const AirdropHistory = () => {
         </div>
       </div>
 
-      <div className="panel" style={{ width: "50%" }}>
+      <div className="panel" style={{ width: '50%' }}>
         <h2>Your info</h2>
         <div className="header">
           <div className="neu-container">
             <h1>Vesting progress</h1>
             {vesting.length === 0
-              ? "All of your rewards are fully vested. Stake away!"
-              : `Currently vesting: ${vesting.map(
-                  (airdrop) => `${airdrop.name}, `
-                )}`}
-            <Progress
-              percent={vestingProgressBar}
-              showInfo={false}
-            />
+              ? 'All of your rewards are fully vested. Stake away!'
+              : `Currently vesting: ${vesting.map(airdrop => `${airdrop.name}, `)}`}
+            <Progress percent={vestingProgressBar} showInfo={false} />
             <Divider />
             <Collapse accordion>
               {claimed.map((airdrop, key) => (
@@ -103,18 +96,14 @@ export const AirdropHistory = () => {
                   <Timeline>
                     <Timeline.Item>Airdrop claimed</Timeline.Item>
                     <Timeline.Item>Vesting begins</Timeline.Item>
-                    <Timeline.Item
-                      className={!airdrop.vested ? "incomplete" : ""}
-                    >
+                    <Timeline.Item className={!airdrop.vested ? 'incomplete' : ''}>
                       Vesting period complete
                     </Timeline.Item>
                   </Timeline>
                 </Panel>
               ))}
             </Collapse>
-            <div id="airdrop-total">
-              Total: {new Intl.NumberFormat().format(totalAirdropped())}
-            </div>
+            <div id="airdrop-total">Total: {new Intl.NumberFormat().format(totalAirdropped())}</div>
           </div>
         </div>
       </div>

@@ -1,33 +1,25 @@
-import {
-  Keypair,
-  PublicKey,
-  Transaction,
-  TransactionInstruction,
-} from '@solana/web3.js'
+import { Keypair, PublicKey, Transaction, TransactionInstruction } from '@solana/web3.js';
 
-import { getGovernanceProgramVersion, Proposal } from '@solana/spl-governance'
+import { getGovernanceProgramVersion, Proposal } from '@solana/spl-governance';
 
-import { withFlagTransactionError } from '@solana/spl-governance'
-import { RpcContext } from '@solana/spl-governance'
-import { ProgramAccount } from '@solana/spl-governance'
-import { sendTransactionWithNotifications } from '../tools/transactions'
+import { withFlagTransactionError } from '@solana/spl-governance';
+import { RpcContext } from '@solana/spl-governance';
+import { ProgramAccount } from '@solana/spl-governance';
+import { sendTransactionWithNotifications } from '../tools/transactions';
 
 export const flagInstructionError = async (
   { connection, wallet, programId, walletPubkey }: RpcContext,
   proposal: ProgramAccount<Proposal>,
   proposalInstruction: PublicKey
 ) => {
-  const governanceAuthority = walletPubkey
+  const governanceAuthority = walletPubkey;
 
-  const signers: Keypair[] = []
-  const instructions: TransactionInstruction[] = []
+  const signers: Keypair[] = [];
+  const instructions: TransactionInstruction[] = [];
 
   // Explicitly request the version before making RPC calls to work around race conditions in resolving
   // the version for RealmInfo
-  const programVersion = await getGovernanceProgramVersion(
-    connection,
-    programId
-  )
+  const programVersion = await getGovernanceProgramVersion(connection, programId);
 
   withFlagTransactionError(
     instructions,
@@ -37,11 +29,11 @@ export const flagInstructionError = async (
     proposal.account.tokenOwnerRecord,
     governanceAuthority,
     proposalInstruction
-  )
+  );
 
-  const transaction = new Transaction({ feePayer: walletPubkey })
+  const transaction = new Transaction({ feePayer: walletPubkey });
 
-  transaction.add(...instructions)
+  transaction.add(...instructions);
 
   await sendTransactionWithNotifications(
     connection,
@@ -49,6 +41,6 @@ export const flagInstructionError = async (
     instructions,
     signers,
     'Flagging instruction as broken',
-    'Instruction flagged as broken',
+    'Instruction flagged as broken'
   );
 };

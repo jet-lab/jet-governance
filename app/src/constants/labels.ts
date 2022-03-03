@@ -31,10 +31,8 @@ export const LABELS = {
   COPY_FAILED_ADDRESSES_TO_CLIPBOARD: 'Copy failed addresses to clipboard',
   FAILED_SIGNERS_COPIED_TO_INPUT: 'Failed signers copied to input!',
   FAILED_SIGNERS_COPIED_TO_CLIPBOARD: 'Failed signers copied to clipboard!',
-  FAILED_HOLDERS_COPIED_TO_INPUT:
-    'Failed governance token holders copied to input!',
-  FAILED_HOLDERS_COPIED_TO_CLIPBOARD:
-    'Failed governance token holders copied to clipboard!',
+  FAILED_HOLDERS_COPIED_TO_INPUT: 'Failed governance token holders copied to input!',
+  FAILED_HOLDERS_COPIED_TO_CLIPBOARD: 'Failed governance token holders copied to clipboard!',
   COMMA_SEPARATED_KEYS: 'Comma separated base58 pubkeys',
   SIGNERS: 'Signers',
   ADD_SIGNERS: 'Add Signers',
@@ -56,8 +54,7 @@ export const LABELS = {
   TRANSACTION: 'Transaction - ',
   CANT_GIVE_ZERO_TOKENS: "Can't give zero tokens to a user!",
   BULK_TOKENS: 'Token Holders',
-  COMMA_SEPARATED_KEYS_AND_VOTES:
-    'base58 pubkey, vote count, base58 pubkey, vote count, ...',
+  COMMA_SEPARATED_KEYS_AND_VOTES: 'base58 pubkey, vote count, base58 pubkey, vote count, ...',
   SINGLE_HOLDER: 'Token Holder',
   AMOUNT: 'Amount',
   SINGLE_KEY: 'base58 pubkey',
@@ -146,8 +143,7 @@ export const LABELS = {
   SELECT_PROPOSAL_TYPE: 'Select the type of proposals this app will generate',
   SELECT_EXECUTION_TYPE: 'Select how transactions will be executed',
 
-  SELECT_VOTING_ENTRY_RULE:
-    'Select the rules for registering to vote in proposals',
+  SELECT_VOTING_ENTRY_RULE: 'Select the rules for registering to vote in proposals',
   MINIMUM_SLOT_WAITING_PERIOD: 'Minimum slots between proposal and vote',
   SELECT_CONFIG: 'Select Governed Program',
   CONFIG: 'Governed Program',
@@ -173,8 +169,7 @@ export const LABELS = {
     `Council Mint ID: '${programId}' is not a valid public key`,
 
   THIS_CONFIG_LACKS_COUNCIL: 'This program does not have a council.',
-  GIT_CONTENT_EXCEEDED:
-    'Gist Github API limit exceeded. Click to view on Github directly.',
+  GIT_CONTENT_EXCEEDED: 'Gist Github API limit exceeded. Click to view on Github directly.',
   ACCOUNT: 'Account',
   VOTE_WEIGHT: 'Vote Weight',
   VOTE_TYPE: 'Vote Type',
@@ -194,5 +189,5 @@ export const LABELS = {
 
   FINALIZE_VOTE: 'Finalize Vote',
 
-  SET_REALM_AUTHORITY: 'Set Realm Authority',
+  SET_REALM_AUTHORITY: 'Set Realm Authority'
 };

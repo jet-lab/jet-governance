@@ -2,34 +2,36 @@ import {
   SignerWalletAdapter,
   WalletAdapterNetwork,
   WalletError,
-  WalletNotConnectedError,
+  WalletNotConnectedError
 } from '@solana/wallet-adapter-base';
-import {
-  useWallet,
-  WalletProvider as BaseWalletProvider
-} from '@solana/wallet-adapter-react';
+import { useWallet, WalletProvider as BaseWalletProvider } from '@solana/wallet-adapter-react';
 import {
   getPhantomWallet,
   getSolflareWallet,
   getSolletWallet,
   getSolongWallet,
-  getMathWallet,
+  getMathWallet
 } from '@solana/wallet-adapter-wallets';
-import { Button, Modal } from "antd";
+import { Button, Modal } from 'antd';
 import { createContext, ReactNode, useCallback, useContext, useMemo, useState } from 'react';
-import { notify } from "../utils";
-import { useConnectionConfig } from "./connection";
+import { notify } from '../utils';
+import { useConnectionConfig } from './connection';
 
 export type { SignerWalletAdapter, WalletNotConnectedError };
 
-export type WalletSigner = Pick<SignerWalletAdapter, 'publicKey' | 'signTransaction' | 'signAllTransactions'>;
+export type WalletSigner = Pick<
+  SignerWalletAdapter,
+  'publicKey' | 'signTransaction' | 'signAllTransactions'
+>;
 
 export interface WalletModalContextState {
   visible: boolean;
   setVisible: (open: boolean) => void;
 }
 
-export const WalletModalContext = createContext<WalletModalContextState>({} as WalletModalContextState);
+export const WalletModalContext = createContext<WalletModalContextState>(
+  {} as WalletModalContextState
+);
 
 export function useWalletModal(): WalletModalContextState {
   return useContext(WalletModalContext);
@@ -49,27 +51,30 @@ export const WalletModal = () => {
       onCancel={close}
       width={400}
     >
-      {wallets.map((wallet) => {
+      {wallets.map(wallet => {
         return (
           <Button
             key={wallet.name}
             size="large"
             type={wallet === selected ? 'primary' : 'ghost'}
-            onClick={() => { select(wallet.name); close(); }}
+            onClick={() => {
+              select(wallet.name);
+              close();
+            }}
             icon={
               <img
                 alt={`${wallet.name}`}
                 width={20}
                 height={20}
                 src={wallet.icon}
-                style={{marginRight: 8}}
+                style={{ marginRight: 8 }}
               />
             }
             style={{
               display: 'block',
               width: '100%',
               textAlign: 'left',
-              marginBottom: 8,
+              marginBottom: 8
             }}
           >
             {wallet.name}
@@ -87,26 +92,26 @@ export const WalletModalProvider = ({ children }: { children: ReactNode }) => {
     <WalletModalContext.Provider
       value={{
         visible,
-        setVisible,
+        setVisible
       }}
     >
       {children}
-      <WalletModal/>
+      <WalletModal />
     </WalletModalContext.Provider>
   );
 };
 
-export const WalletProvider = ({ children }: {children: ReactNode }) => {
+export const WalletProvider = ({ children }: { children: ReactNode }) => {
   const { env } = useConnectionConfig();
 
   const network = useMemo(() => {
     switch (env) {
-      case "mainnet-beta":
+      case 'mainnet-beta':
         return WalletAdapterNetwork.Mainnet;
-      case "testnet":
+      case 'testnet':
         return WalletAdapterNetwork.Testnet;
-      case "devnet":
-      case "localnet":
+      case 'devnet':
+      case 'localnet':
       default:
         return WalletAdapterNetwork.Devnet;
     }
@@ -118,7 +123,7 @@ export const WalletProvider = ({ children }: {children: ReactNode }) => {
       getSolflareWallet(),
       getSolongWallet(),
       getMathWallet(),
-      getSolletWallet({ network }),
+      getSolletWallet({ network })
     ],
     // eslint-disable-next-line react-hooks/exhaustive-deps
     []
@@ -128,19 +133,13 @@ export const WalletProvider = ({ children }: {children: ReactNode }) => {
     console.error(error);
     notify({
       message: 'Wallet error',
-      description: error.message,
+      description: error.message
     });
   }, []);
 
   return (
-    <BaseWalletProvider
-      wallets={wallets}
-      onError={onError}
-      autoConnect
-    >
-      <WalletModalProvider>
-        {children}
-      </WalletModalProvider>
+    <BaseWalletProvider wallets={wallets} onError={onError} autoConnect>
+      <WalletModalProvider>{children}</WalletModalProvider>
     </BaseWalletProvider>
   );
-}
+};

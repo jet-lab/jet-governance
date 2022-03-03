@@ -8,7 +8,7 @@ import {
   Realm,
   TokenOwnerRecord,
   VoteKind,
-  VoteRecord,
+  VoteRecord
 } from '@solana/spl-governance';
 import { PublicKey } from '@solana/web3.js';
 import BN from 'bn.js';
@@ -20,10 +20,7 @@ import { dateToString } from '../utils';
 import { useGovernanceAccounts } from './accountHooks';
 import { useRpcContext } from './useRpcContext';
 
-export function useBN(
-  number: number | undefined,
-  exponent: number | null | undefined = null
-) {
+export function useBN(number: number | undefined, exponent: number | null | undefined = null) {
   return useMemo(() => {
     if (number === undefined) {
       return new BN(0);
@@ -43,19 +40,13 @@ export const useProposalFilters = (
 ) => {
   return useMemo(() => {
     if (proposalFilter === 'active') {
-      return proposals.filter((p) => p.account.state === ProposalState.Voting);
+      return proposals.filter(p => p.account.state === ProposalState.Voting);
     } else if (proposalFilter === 'inactive') {
-      return proposals.filter(
-        (p) => p.account.isVoteFinalized() || p.account.isPreVotingState()
-      );
+      return proposals.filter(p => p.account.isVoteFinalized() || p.account.isPreVotingState());
     } else if (proposalFilter === 'passed') {
-      return proposals.filter(
-        (p) => p.account.state === ProposalState.Succeeded
-      );
+      return proposals.filter(p => p.account.state === ProposalState.Succeeded);
     } else if (proposalFilter === 'rejected') {
-      return proposals.filter(
-        (p) => p.account.state === ProposalState.Defeated
-      );
+      return proposals.filter(p => p.account.state === ProposalState.Defeated);
     } else if (proposalFilter === 'all') {
       return proposals;
     } else {
@@ -83,9 +74,7 @@ export function useCountdown(
   );
   const endDate = useMemo(() => {
     const deadline = getVotingDeadline(proposal, governance);
-    return deadline
-      ? dateToString(new Date(deadline.toNumber() * 1000))
-      : undefined;
+    return deadline ? dateToString(new Date(deadline.toNumber() * 1000)) : undefined;
   }, [proposal, governance]);
 
   return { startDate, endDate, countdownTime };
@@ -103,9 +92,7 @@ export function getVotingDeadline(
     return proposal.account.votingCompletedAt;
   }
 
-  return proposal.account.votingAt?.addn(
-    governance.account.config.maxVotingTime
-  );
+  return proposal.account.votingAt?.addn(governance.account.config.maxVotingTime);
 }
 
 export interface VoterDisplayData {
@@ -118,7 +105,7 @@ export enum VoteOption {
   Undecided = 'Undecided',
   Yes = 'Approve',
   No = 'Reject',
-  Abstain = 'Abstain',
+  Abstain = 'Abstain'
 }
 
 interface VoterData {
@@ -154,7 +141,7 @@ export function getVoterDisplayData(
   return {
     user: voteRecord.account.governingTokenOwner,
     voteKind,
-    voteWeight: yesVoteWeight ?? noVoteWeight ?? new BN(0),
+    voteWeight: yesVoteWeight ?? noVoteWeight ?? new BN(0)
   };
 }
 
@@ -167,20 +154,20 @@ export function useVoterDisplayData(
       user: user,
       voteKind: label,
       voteWeight: amount,
-      key: user.toBase58(),
+      key: user.toBase58()
     });
 
     const undecidedData = tokenOwnerRecords
       .filter(
-        (tor) =>
+        tor =>
           !tor.account.governingTokenDepositAmount.isZero() &&
           !voteRecords.some(
-            (vt) =>
+            vt =>
               vt.account.governingTokenOwner.toBase58() ===
               tor.account.governingTokenOwner.toBase58()
           )
       )
-      .map((tor) =>
+      .map(tor =>
         mapper(
           tor.account.governingTokenOwner,
           tor.account.governingTokenDepositAmount,
@@ -199,23 +186,15 @@ export function useVoterDisplayData(
     //   );
 
     const yesVoteData = voteRecords
-      .filter((vr) => vr.account.getYesVoteWeight()?.gt(ZERO))
-      .map((vr) =>
-        mapper(
-          vr.account.governingTokenOwner,
-          vr.account.getYesVoteWeight()!,
-          VoteOption.Yes
-        )
+      .filter(vr => vr.account.getYesVoteWeight()?.gt(ZERO))
+      .map(vr =>
+        mapper(vr.account.governingTokenOwner, vr.account.getYesVoteWeight()!, VoteOption.Yes)
       );
 
     const noVoteData = voteRecords
-      .filter((vr) => vr.account.getNoVoteWeight()?.gt(ZERO))
-      .map((vr) =>
-        mapper(
-          vr.account.governingTokenOwner,
-          vr.account.getNoVoteWeight()!,
-          VoteOption.No
-        )
+      .filter(vr => vr.account.getNoVoteWeight()?.gt(ZERO))
+      .map(vr =>
+        mapper(vr.account.governingTokenOwner, vr.account.getNoVoteWeight()!, VoteOption.No)
       );
 
     // const abstainVoteData = voteRecords
@@ -228,8 +207,8 @@ export function useVoterDisplayData(
     //     ),
     //   );
 
-    const data = [...undecidedData, ...yesVoteData, ...noVoteData].sort(
-      (a, b) => b.voteWeight.cmp(a.voteWeight)
+    const data = [...undecidedData, ...yesVoteData, ...noVoteData].sort((a, b) =>
+      b.voteWeight.cmp(a.voteWeight)
     );
 
     return {
@@ -237,7 +216,7 @@ export function useVoterDisplayData(
       noVote: noVoteData,
       allHasVoted: [...yesVoteData, ...noVoteData],
       undecidedVote: undecidedData,
-      allData: data,
+      allData: data
     };
   }, [voteRecords, tokenOwnerRecords]);
 }
@@ -248,9 +227,7 @@ export function getVoteCounts(proposal: ProgramAccount<Proposal>) {
   const abstain = new BN(0); // FIXME: multiple choice votes
 
   const total = yes.add(no).add(abstain);
-  const yesPercent = total.isZero()
-    ? 0
-    : (bnToIntLossy(yes) / bnToIntLossy(total)) * 100;
+  const yesPercent = total.isZero() ? 0 : (bnToIntLossy(yes) / bnToIntLossy(total)) * 100;
   const yesAbstainPercent = total.isZero()
     ? 0
     : (bnToIntLossy(abstain.add(yes)) / bnToIntLossy(total)) * 100;
@@ -259,9 +236,7 @@ export function getVoteCounts(proposal: ProgramAccount<Proposal>) {
 
 export const useWalletVoteRecords = () => {
   const { wallet } = useRpcContext();
-  return useGovernanceAccounts<VoteRecord>(VoteRecord, [
-    pubkeyFilter(1 + 32, wallet.publicKey),
-  ]);
+  return useGovernanceAccounts<VoteRecord>(VoteRecord, [pubkeyFilter(1 + 32, wallet.publicKey)]);
 };
 
 export function useAirdropsByWallet(
@@ -273,7 +248,7 @@ export function useAirdropsByWallet(
       return undefined;
     }
 
-    return airdrops?.filter((airdrop) => {
+    return airdrops?.filter(airdrop => {
       const found = airdrop.targetInfo.recipients.find(
         ({ recipient }) => recipient.toString() === wallet?.toString()
       );
@@ -282,10 +257,7 @@ export function useAirdropsByWallet(
   }, [airdrops, wallet]);
 }
 // TODO - double check and use in Navbar
-export function useClaimsCount(
-  airdrops: Airdrop[] | undefined,
-  wallet: PublicKey | undefined
-) {
+export function useClaimsCount(airdrops: Airdrop[] | undefined, wallet: PublicKey | undefined) {
   return useMemo(() => {
     if (!airdrops) {
       return 0;
@@ -323,9 +295,7 @@ export function useStakingCompatibleWithRealm(
       return;
     }
 
-    if (
-      !stakePool.stakePool.stakeVoteMint.equals(realm.account.communityMint)
-    ) {
+    if (!stakePool.stakePool.stakeVoteMint.equals(realm.account.communityMint)) {
       console.error(
         `Stake Pool vote mint ${stakePool.stakePool.stakeVoteMint.toBase58()} does not equal realm community mint ${realm.account.communityMint.toBase58()}. Some features will have problems.`
       );

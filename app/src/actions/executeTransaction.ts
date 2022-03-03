@@ -1,30 +1,23 @@
-import { Keypair, TransactionInstruction } from '@solana/web3.js'
+import { Keypair, TransactionInstruction } from '@solana/web3.js';
 
-import {
-  getGovernanceProgramVersion,
-  Proposal,
-  ProposalTransaction,
-} from '@solana/spl-governance'
+import { getGovernanceProgramVersion, Proposal, ProposalTransaction } from '@solana/spl-governance';
 
-import { withExecuteTransaction } from '@solana/spl-governance'
-import { RpcContext } from '@solana/spl-governance'
-import { ProgramAccount } from '@solana/spl-governance'
-import { sendTransactionWithNotifications } from '../tools/transactions'
+import { withExecuteTransaction } from '@solana/spl-governance';
+import { RpcContext } from '@solana/spl-governance';
+import { ProgramAccount } from '@solana/spl-governance';
+import { sendTransactionWithNotifications } from '../tools/transactions';
 
 export const executeTransaction = async (
   { connection, wallet, programId }: RpcContext,
   proposal: ProgramAccount<Proposal>,
   instruction: ProgramAccount<ProposalTransaction>
 ) => {
-  const signers: Keypair[] = []
-  const instructions: TransactionInstruction[] = []
+  const signers: Keypair[] = [];
+  const instructions: TransactionInstruction[] = [];
 
   // Explicitly request the version before making RPC calls to work around race conditions in resolving
   // the version for RealmInfo
-  const programVersion = await getGovernanceProgramVersion(
-    connection,
-    programId
-  )
+  const programVersion = await getGovernanceProgramVersion(connection, programId);
 
   await withExecuteTransaction(
     instructions,
@@ -34,7 +27,7 @@ export const executeTransaction = async (
     proposal.pubkey,
     instruction.pubkey,
     [instruction.account.getSingleInstruction()]
-  )
+  );
 
   await sendTransactionWithNotifications(
     connection,
@@ -42,6 +35,6 @@ export const executeTransaction = async (
     instructions,
     signers,
     'Executing instruction',
-    'Execution finalized',
-  )
-}
+    'Execution finalized'
+  );
+};

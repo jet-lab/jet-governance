@@ -9,14 +9,14 @@ import { claimAndStake } from '../../actions/claimAndStake';
 enum Steps {
   Confirm = 0,
   Success = 1,
-  Error = 2,
+  Error = 2
 }
 
 export const ClaimModal = ({
   visible,
   stakeAmount,
   airdrop,
-  onClose,
+  onClose
 }: {
   visible: boolean;
   stakeAmount: number | undefined;
@@ -35,13 +35,7 @@ export const ClaimModal = ({
 
     setLoading(true);
     if (!!rewardsProgram && !!airdrop && !!stakePool && !!stakeAccount) {
-      claimAndStake(
-        rpcContext,
-        rewardsProgram,
-        airdrop,
-        stakePool,
-        stakeAccount
-      )
+      claimAndStake(rpcContext, rewardsProgram, airdrop, stakePool, stakeAccount)
         .then(() => {
           setCurrent(Steps.Success);
         })
@@ -79,19 +73,17 @@ export const ClaimModal = ({
           You are claiming <b>{stakeAmount} JET</b>.
         </p>
         <p>
-          Your tokens will be automatically staked into Jet Govern, rewards will
-          begin accruing, and you can vote on active proposals.
+          Your tokens will be automatically staked into Jet Govern, rewards will begin accruing, and
+          you can vote on active proposals.
         </p>
         <p>
-          You may unstake at anytime, but before the tokens can be withdrawn to
-          your wallet, there is a 29.5-day unbonding period. Please read{' '}
-          <a href='https://docs.jetprotocol.io/jet-protocol/protocol/jet-staking'>
-            the docs
-          </a>{' '}
-          for more information.
+          You may unstake at anytime, but before the tokens can be withdrawn to your wallet, there
+          is a 29.5-day unbonding period. Please read{' '}
+          <a href="https://docs.jetprotocol.io/jet-protocol/protocol/jet-staking">the docs</a> for
+          more information.
         </p>
       </>
-    ),
+    )
   };
 
   steps[Steps.Success] = {
@@ -108,11 +100,11 @@ export const ClaimModal = ({
         </p>
 
         <p>
-          Head on back to the <Link to='/'>dashboard page</Link> to see your
-          staked balance and vote on active proposals!
+          Head on back to the <Link to="/">dashboard page</Link> to see your staked balance and vote
+          on active proposals!
         </p>
       </>
-    ),
+    )
   };
   steps[Steps.Error] = {
     title: 'Error ',
@@ -121,7 +113,7 @@ export const ClaimModal = ({
     onCancel: () => handleCancel(),
     closable: true,
     cancelButtonProps: { style: { display: 'none ' } },
-    children: <p>We have encountered an unknown error</p>,
+    children: <p>We have encountered an unknown error</p>
   };
 
   return <Modal visible={visible} {...steps[current]} />;

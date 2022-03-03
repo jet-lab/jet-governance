@@ -11,19 +11,13 @@ export class SendTransactionError extends Error {
   }
 }
 
-export function isSendTransactionError(
-  error: any,
-): error is SendTransactionError {
+export function isSendTransactionError(error: any): error is SendTransactionError {
   return error instanceof SendTransactionError;
 }
 
-export class SignTransactionError extends Error {
+export class SignTransactionError extends Error {}
 
-}
-
-export function isSignTransactionError(
-  error: any,
-): error is SignTransactionError {
+export function isSignTransactionError(error: any): error is SignTransactionError {
   return error instanceof SignTransactionError;
 }
 
@@ -36,8 +30,6 @@ export class TransactionTimeoutError extends Error {
   }
 }
 
-export function isTransactionTimeoutError(
-  error: any,
-): error is TransactionTimeoutError {
+export function isTransactionTimeoutError(error: any): error is TransactionTimeoutError {
   return error instanceof TransactionTimeoutError;
 }

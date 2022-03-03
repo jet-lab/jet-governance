@@ -1,7 +1,7 @@
-import { InfoCircleFilled, PlusOutlined } from "@ant-design/icons";
-import { useWallet } from "@solana/wallet-adapter-react";
-import { Tooltip } from "antd";
-import { useProposalContext } from "../../contexts/proposal";
+import { InfoCircleFilled, PlusOutlined } from '@ant-design/icons';
+import { useWallet } from '@solana/wallet-adapter-react';
+import { Tooltip } from 'antd';
+import { useProposalContext } from '../../contexts/proposal';
 
 export const StakingRewards = () => {
   const { connected } = useWallet();
@@ -23,7 +23,7 @@ export const StakingRewards = () => {
 
     governance,
     tokenOwnerRecord,
-    walletVoteRecords,
+    walletVoteRecords
   } = useProposalContext();
 
   const totalDailyReward = 1000000;
@@ -31,7 +31,7 @@ export const StakingRewards = () => {
   const userDailyReward = (totalDailyReward * (stakedJet ?? 0)) / totalStake;
 
   const showMoreApr = () => {
-    document.getElementById("show-more-apr")?.classList.toggle("hidden");
+    document.getElementById('show-more-apr')?.classList.toggle('hidden');
   };
 
   return (
@@ -39,9 +39,7 @@ export const StakingRewards = () => {
       <div className="flex justify-between" id="current-staking-apr">
         <span>
           {connected
-            ? `${((365 * userDailyReward) / totalStake).toFixed(
-                0
-              )}% Staking APR`
+            ? `${((365 * userDailyReward) / totalStake).toFixed(0)}% Staking APR`
             : `Current Staking APR `}
           <Tooltip
             title="The displayed APR depends upon many factors, including the total number of JET staked in the module and the amount of protocol revenue flowing to depositors."
@@ -58,7 +56,7 @@ export const StakingRewards = () => {
           )}
         </span>
       </div>
-      <div className={connected ? "hidden" : undefined} id="show-more-apr">
+      <div className={connected ? 'hidden' : undefined} id="show-more-apr">
         <div className="flex justify-between cluster">
           <span>Est. Daily Reward</span>
           <span>{userDailyReward}</span>

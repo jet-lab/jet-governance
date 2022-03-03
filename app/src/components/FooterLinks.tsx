@@ -4,8 +4,7 @@ import { TermsConditionsModal } from './modals/TermsConditionsModal';
 
 export const FooterLinks = () => {
   const [showGlossaryModal, setShowGlossaryModal] = useState(false);
-  const [showTermsConditionsModal, setShowTermsConditionsModal] =
-    useState(false);
+  const [showTermsConditionsModal, setShowTermsConditionsModal] = useState(false);
 
   const toggleGlossaryModal = () => {
     setShowGlossaryModal(!showGlossaryModal);
@@ -16,19 +15,14 @@ export const FooterLinks = () => {
   };
 
   return (
-    <div className='footer-links'>
+    <div className="footer-links">
       <span onClick={toggleTermsConditionsModal}>Terms of Use</span>
       <span>
-        <a href='https://docs.jetprotocol.io/jet-protocol/protocol/jet-staking'>
-          Docs
-        </a>
+        <a href="https://docs.jetprotocol.io/jet-protocol/protocol/jet-staking">Docs</a>
       </span>
       <span onClick={toggleGlossaryModal}>Glossary</span>
 
-      <GlossaryModal
-        visible={showGlossaryModal}
-        onClose={() => setShowGlossaryModal(false)}
-      />
+      <GlossaryModal visible={showGlossaryModal} onClose={() => setShowGlossaryModal(false)} />
       <TermsConditionsModal
         visible={showTermsConditionsModal}
         onClose={() => setShowTermsConditionsModal(false)}

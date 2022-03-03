@@ -16,45 +16,42 @@ export const AirdropView = () => {
     setShowGlossaryModal(!showGlossaryModal);
   };
 
-  const availAirdropsRender = airdropsByWallet?.map((airdrop) => ({
+  const availAirdropsRender = airdropsByWallet?.map(airdrop => ({
     airdrop,
     airdropAddress: airdrop.airdropAddress,
     shortDesc: String.fromCharCode(...airdrop.airdrop.shortDesc),
     expireAt: airdrop.airdrop.expireAt.toNumber(),
     amount: airdrop.targetInfo.recipients
       .find(({ recipient }) => recipient.toString() === publicKey?.toString())
-      ?.amount?.toNumber(),
+      ?.amount?.toNumber()
   }));
 
   return (
-    <div className='view-container column-grid'>
-      <div className='neu-container centered' id='airdrop'>
+    <div className="view-container column-grid">
+      <div className="neu-container centered" id="airdrop">
         <h1>Claim your airdrop!</h1>
         <p>
-          Available airdrops for the connected wallet are listed below. All
-          airdrops must be claimed by the receiver within 90 days. After 90
-          days, any unclaimed claims will be redirected to the Jet DAO treasury
-          for future allocation.
+          Available airdrops for the connected wallet are listed below. All airdrops must be claimed
+          by the receiver within 90 days. After 90 days, any unclaimed claims will be redirected to
+          the Jet DAO treasury for future allocation.
         </p>
 
         <p>
-          All airdrops will be autostaked in the governance module immediately
-          after claiming, and will begin earning yield immediately. Staked
-          tokens are subject to a 29.5-day unbonding period.
+          All airdrops will be autostaked in the governance module immediately after claiming, and
+          will begin earning yield immediately. Staked tokens are subject to a 29.5-day unbonding
+          period.
         </p>
 
         <p>
           In addition to the
           <u>
-            <a href='https://medium.com/jetprotocol/jet-staking-and-the-jetdrop-two-more-steps-towards-jet-governance-84d8de26be4a'>
+            <a href="https://medium.com/jetprotocol/jet-staking-and-the-jetdrop-two-more-steps-towards-jet-governance-84d8de26be4a">
               blog announcement
             </a>
           </u>
           on airdrop and staking details, more details can be found in the
           <u>
-            <a href='https://docs.jetprotocol.io/jet-protocol/protocol/jet-staking'>
-              docs
-            </a>
+            <a href="https://docs.jetprotocol.io/jet-protocol/protocol/jet-staking">docs</a>
           </u>
           and
           <span
@@ -71,8 +68,8 @@ export const AirdropView = () => {
         <Divider />
 
         {connected &&
-          availAirdropsRender?.map((airdrop) => (
-            <Available airdrop={airdrop} key={airdrop.airdropAddress.toString()}/>
+          availAirdropsRender?.map(airdrop => (
+            <Available airdrop={airdrop} key={airdrop.airdropAddress.toString()} />
           ))}
       </div>
       {/* todo - styling */}

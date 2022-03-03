@@ -1,6 +1,6 @@
-import { StakeAccount, StakePool, UnbondingAccount } from "@jet-lab/jet-engine";
-import { RpcContext } from "@solana/spl-governance";
-import { sendTransactionWithNotifications } from "../tools/transactions";
+import { StakeAccount, StakePool, UnbondingAccount } from '@jet-lab/jet-engine';
+import { RpcContext } from '@solana/spl-governance';
+import { sendTransactionWithNotifications } from '../tools/transactions';
 
 export const withdrawUnbonded = async (
   { connection, wallet, walletPubkey }: RpcContext,
@@ -20,7 +20,7 @@ export const withdrawUnbonded = async (
     wallet,
     instructions,
     [],
-    "Withdrawing governing tokens",
-    "Tokens have been withdrawn"
+    'Withdrawing governing tokens',
+    'Tokens have been withdrawn'
   );
 };

@@ -1,9 +1,9 @@
-import { ReactNode, useMemo, useState } from "react";
-import { Modal, ModalProps } from "antd";
-import { useProposalContext } from "../../contexts/proposal";
-import { rescindAndUnstake } from "../../actions/rescindAndUnstake";
-import { BN } from "@project-serum/anchor";
-import { useRpcContext } from "../../hooks/useRpcContext";
+import { ReactNode, useMemo, useState } from 'react';
+import { Modal, ModalProps } from 'antd';
+import { useProposalContext } from '../../contexts/proposal';
+import { rescindAndUnstake } from '../../actions/rescindAndUnstake';
+import { BN } from '@project-serum/anchor';
+import { useRpcContext } from '../../hooks/useRpcContext';
 
 enum Steps {
   Start = 0,
@@ -15,12 +15,12 @@ export const UnstakeModal = ({
   visible,
   onClose,
   resetInput,
-  amount,
+  amount
 }: {
-  visible: boolean,
-  onClose: () => void,
-  resetInput: () => void,
-  amount: number | null,
+  visible: boolean;
+  onClose: () => void;
+  resetInput: () => void;
+  amount: number | null;
 }) => {
   const {
     stakeProgram,
@@ -30,7 +30,7 @@ export const UnstakeModal = ({
 
     governance,
     tokenOwnerRecord,
-    walletVoteRecords,
+    walletVoteRecords
   } = useProposalContext();
   const rpcContext = useRpcContext();
 
@@ -39,11 +39,18 @@ export const UnstakeModal = ({
 
   const rescind = useMemo(() => {
     return walletVoteRecords.find(voteRecord => !voteRecord.account.isRelinquished);
-  }, [walletVoteRecords])
-
+  }, [walletVoteRecords]);
 
   const handleSubmitUnstake = () => {
-    if (amount === null || !stakeProgram || !stakePool || !stakeAccount || !governance || !tokenOwnerRecord || !voteMint) {
+    if (
+      amount === null ||
+      !stakeProgram ||
+      !stakePool ||
+      !stakeAccount ||
+      !governance ||
+      !tokenOwnerRecord ||
+      !voteMint
+    ) {
       return;
     }
 
@@ -57,17 +64,18 @@ export const UnstakeModal = ({
       governance,
       tokenOwnerRecord,
       walletVoteRecords,
-      unstakeAmount)
+      unstakeAmount
+    )
       .then(() => {
-        setLoading(false)
+        setLoading(false);
         setCurrent(Steps.Success);
       })
       .catch(err => {
-        console.log(err)
-        setLoading(false)
+        console.log(err);
+        setLoading(false);
         setCurrent(Steps.Error);
-        resetInput()
-      })
+        resetInput();
+      });
   };
 
   const handleCancel = () => {
@@ -75,76 +83,81 @@ export const UnstakeModal = ({
     onClose();
   };
 
-  const steps: (ModalProps & { content: ReactNode })[] = []
+  const steps: (ModalProps & { content: ReactNode })[] = [];
   steps[Steps.Start] = {
-    title: `You're unstaking ${amount && Intl.NumberFormat("us-US").format(amount)} JET from the platform.`,
-    okText: "Confirm unstake",
+    title: `You're unstaking ${
+      amount && Intl.NumberFormat('us-US').format(amount)
+    } JET from the platform.`,
+    okText: 'Confirm unstake',
     okButtonProps: { loading },
     onOk: () => handleSubmitUnstake(),
     onCancel: () => onClose(),
     closable: true,
-    content:
+    content: (
       <>
-        {rescind && <p>
-          You currently have votes cast on active proposals, which will be rescinded upon unbonding. If you wish to keep your votes, wait until the voting period has ended before unstaking.
-        </p>}
-        <p>
-          Unstaked tokens have a 29.5-day unbonding period. During this period, you will not earn any rewards.
+        {rescind && (
+          <p>
+            You currently have votes cast on active proposals, which will be rescinded upon
+            unbonding. If you wish to keep your votes, wait until the voting period has ended before
+            unstaking.
           </p>
+        )}
         <p>
-          Your flight log will reflect a status of unbonding until this period has completed. You can view detailed information about your token availability by visiting the Flight Logs page.
+          Unstaked tokens have a 29.5-day unbonding period. During this period, you will not earn
+          any rewards.
+        </p>
+        <p>
+          Your flight log will reflect a status of unbonding until this period has completed. You
+          can view detailed information about your token availability by visiting the Flight Logs
+          page.
         </p>
         <div className="emphasis">
           <p>
-            To continue voting and earning rewards with these tokens, you may restake on the Flight Logs page at any point during the unbonding period.
+            To continue voting and earning rewards with these tokens, you may restake on the Flight
+            Logs page at any point during the unbonding period.
           </p>
         </div>
-      </>,
-  }
+      </>
+    )
+  };
   steps[Steps.Success] = {
     title: `All set!`,
-    okText: "Okay",
+    okText: 'Okay',
     onOk: () => handleCancel(),
     onCancel: () => handleCancel(),
     closable: true,
-    cancelButtonProps: { style: { display: "none" } },
-    content:
+    cancelButtonProps: { style: { display: 'none' } },
+    content: (
       <>
         <p>
-          You've unstaked {
-            amount && Intl.NumberFormat("us-US").format(amount)
-          } JET from JetGovern.
+          You've unstaked {amount && Intl.NumberFormat('us-US').format(amount)} JET from JetGovern.
         </p>
-        <p>
-          Your 29.5-day unbonding period will complete on {new Date().toString()}.
-        </p>
-      </>,
-  }
+        <p>Your 29.5-day unbonding period will complete on {new Date().toString()}.</p>
+      </>
+    )
+  };
   steps[Steps.Error] = {
-    title: "Oops! Something went wrong",
-    okText: "Okay",
+    title: 'Oops! Something went wrong',
+    okText: 'Okay',
     onOk: () => handleCancel(),
     onCancel: () => handleCancel(),
     closable: true,
-    cancelButtonProps: { style: { display: "none" } },
-    content:
-      <p>
-        Well that was embarassing. We've encountered an unknown error, please try again.
-      </p>,
-  }
+    cancelButtonProps: { style: { display: 'none' } },
+    content: <p>Well that was embarassing. We've encountered an unknown error, please try again.</p>
+  };
 
   return (
     <Modal
-    title={steps[current].title}
-    visible={visible}
-    okText={steps[current].okText}
-    onOk={steps[current].onOk}
-    okButtonProps={steps[current].okButtonProps}
-    onCancel={steps[current].onCancel}
-    closable={steps[current].closable}
-    cancelButtonProps={{ style: { display: "none " } }}
-  >
-    {steps[current].content}
-  </Modal>
+      title={steps[current].title}
+      visible={visible}
+      okText={steps[current].okText}
+      onOk={steps[current].onOk}
+      okButtonProps={steps[current].okButtonProps}
+      onCancel={steps[current].onCancel}
+      closable={steps[current].closable}
+      cancelButtonProps={{ style: { display: 'none ' } }}
+    >
+      {steps[current].content}
+    </Modal>
   );
 };

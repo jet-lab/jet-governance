@@ -1,7 +1,18 @@
 import { PublicKey, Transaction, TransactionInstruction, Keypair } from '@solana/web3.js';
 import { sendAllTransactionsWithNotifications } from '../tools/transactions';
 import { Provider } from '@project-serum/anchor';
-import { ChatMessageBody, GOVERNANCE_CHAT_PROGRAM_ID, ProgramAccount, Proposal, RpcContext, Vote, withCastVote, withPostChatMessage, withRelinquishVote, YesNoVote } from '@solana/spl-governance';
+import {
+  ChatMessageBody,
+  GOVERNANCE_CHAT_PROGRAM_ID,
+  ProgramAccount,
+  Proposal,
+  RpcContext,
+  Vote,
+  withCastVote,
+  withPostChatMessage,
+  withRelinquishVote,
+  YesNoVote
+} from '@solana/spl-governance';
 import { AssociatedToken, bnToNumber, StakeAccount, StakePool } from '@jet-lab/jet-engine';
 
 export const castVote = async (
@@ -23,16 +34,18 @@ export const castVote = async (
 
   let governanceAuthority = walletPubkey;
   let payer = walletPubkey;
-  const provider = new Provider(connection, wallet as any, Provider.defaultOptions())
+  const provider = new Provider(connection, wallet as any, Provider.defaultOptions());
 
-    // Check for difference between vote tokens
-    //in governance program and staked JET
-    // Mint vote tokens to top-up any difference
+  // Check for difference between vote tokens
+  //in governance program and staked JET
+  // Mint vote tokens to top-up any difference
   if (stakeAccount && stakePool) {
     const voteMint = stakePool.addresses.stakeVoteMint;
 
-    const jetPerStakedShare = stakePool?.vault.amount.div(stakePool?.stakePool.sharesBonded)
-    const mintRemainingVotes = stakeAccount.stakeAccount.shares.mul(jetPerStakedShare).sub(stakeAccount.stakeAccount.mintedVotes)
+    const jetPerStakedShare = stakePool?.vault.amount.div(stakePool?.stakePool.sharesBonded);
+    const mintRemainingVotes = stakeAccount.stakeAccount.shares
+      .mul(jetPerStakedShare)
+      .sub(stakeAccount.stakeAccount.mintedVotes);
 
     const voterTokenAccount = await AssociatedToken.withCreate(
       mintVoteIx,
@@ -41,13 +54,19 @@ export const castVote = async (
       voteMint
     );
 
-    await StakeAccount.withMintVotes(mintVoteIx, stakePool, payer, voterTokenAccount, mintRemainingVotes)
+    await StakeAccount.withMintVotes(
+      mintVoteIx,
+      stakePool,
+      payer,
+      voterTokenAccount,
+      mintRemainingVotes
+    );
 
-    const mintVoteTx = new Transaction().add(...mintVoteIx)
+    const mintVoteTx = new Transaction().add(...mintVoteIx);
     allTxs.push({
       tx: mintVoteTx,
       signers: []
-    })
+    });
   }
 
   // Withdraw existing vote before casting new vote
@@ -63,13 +82,13 @@ export const castVote = async (
       voteRecord,
       governanceAuthority,
       payer
-    )
+    );
 
-    const relinquishTx = new Transaction().add(...relinquishVoteIx)
+    const relinquishTx = new Transaction().add(...relinquishVoteIx);
     allTxs.push({
       tx: relinquishTx,
       signers: []
-    })
+    });
   }
 
   await withCastVote(
@@ -84,7 +103,7 @@ export const castVote = async (
     governanceAuthority,
     proposal.account.governingTokenMint,
     Vote.fromYesNoVote(yesNoVote),
-    payer,
+    payer
   );
 
   if (message) {
@@ -101,19 +120,14 @@ export const castVote = async (
       payer,
       undefined,
       message
-    )
+    );
   }
 
-  const castTx = new Transaction().add(...castVoteIx)
+  const castTx = new Transaction().add(...castVoteIx);
   allTxs.push({
     tx: castTx,
     signers: []
-  })
+  });
 
-  await sendAllTransactionsWithNotifications(
-    provider,
-    allTxs,
-    'Voting on proposal',
-    'Vote cast',
-  );
+  await sendAllTransactionsWithNotifications(provider, allTxs, 'Voting on proposal', 'Vote cast');
 };

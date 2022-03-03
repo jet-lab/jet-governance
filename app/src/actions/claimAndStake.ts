@@ -10,12 +10,7 @@ export const claimAndStake = async (
   stakePool: StakePool,
   stakeAccount: StakeAccount
 ) => {
-  const ix = await Airdrop.claim(
-    rewardsProgram,
-    airdrop,
-    stakePool,
-    stakeAccount
-  );
+  const ix = await Airdrop.claim(rewardsProgram, airdrop, stakePool, stakeAccount);
 
   await sendTransactionWithNotifications(
     rpcContext.connection,

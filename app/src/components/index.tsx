@@ -1,2 +1,2 @@
 export { ExplorerLink } from './ExplorerLink/index';
-export { Settings } from "./Settings";
+export { Settings } from './Settings';

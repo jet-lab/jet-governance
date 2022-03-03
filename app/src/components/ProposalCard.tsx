@@ -4,33 +4,21 @@ import { Card, Progress } from 'antd';
 import { getProposalUrl } from '../tools/routeTools';
 import { getVoteCounts, useCountdown } from '../hooks/proposalHooks';
 import { getPubkeyIndex } from '../models/PUBKEYS_INDEX';
-import {
-  Governance,
-  ProgramAccount,
-  Proposal,
-  ProposalState,
-} from '@solana/spl-governance';
+import { Governance, ProgramAccount, Proposal, ProposalState } from '@solana/spl-governance';
 import { getRemainingTime } from '../utils';
 
 export const ProposalCard = ({
   proposal,
-  governance,
+  governance
 }: {
   proposal: ProgramAccount<Proposal>;
   governance: ProgramAccount<Governance>;
 }) => {
   var headlineUrl = useMemo(
-    () =>
-      getProposalUrl(
-        proposal.pubkey,
-        proposal.account.name.substring(0, 15).replace(' ', '-')
-      ),
+    () => getProposalUrl(proposal.pubkey, proposal.account.name.substring(0, 15).replace(' ', '-')),
     [proposal.pubkey, proposal.account.name]
   );
-  const proposalStr = useMemo(
-    () => proposal.pubkey.toString(),
-    [proposal.pubkey]
-  );
+  const proposalStr = useMemo(() => proposal.pubkey.toString(), [proposal.pubkey]);
 
   // Active votes show progress bar
   const { yesPercent, yesAbstainPercent } = getVoteCounts(proposal);
@@ -48,21 +36,19 @@ export const ProposalCard = ({
 
   const ONE_DAY = 24 * 60 * 60 * 1000;
 
-
   return (
     <Link to={headlineUrl}>
       <Card bordered={false} className={`proposal-card clickable`} style={{}}>
         <div>
-          <div className='header'>JUMP-{getPubkeyIndex(proposalStr)} </div>
+          <div className="header">JUMP-{getPubkeyIndex(proposalStr)} </div>
           <h1>{proposal.account.name}</h1>
         </div>
-        <div className='details'>
-          {!proposal.account.isPreVotingState() &&
-          !!countdownTime &&
-          !!endDate ? (
+        <div className="details">
+          {!proposal.account.isPreVotingState() && !!countdownTime && !!endDate ? (
             <>
               {proposal.account.state === ProposalState.Voting &&
-              countdownTime - currentTime <= ONE_DAY && countdownTime > currentTime
+              countdownTime - currentTime <= ONE_DAY &&
+              countdownTime > currentTime
                 ? `Ends in 
                 ${getRemainingTime(currentTime, countdownTime)}`
                 : `Ends on: ${endDate}`}

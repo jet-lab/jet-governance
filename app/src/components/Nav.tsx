@@ -25,14 +25,14 @@ export function Nav() {
       class: 'shimmer',
       badge: claimsCount,
       route: '/claims',
-      mobileOnly: false,
+      mobileOnly: false
     },
-    { title: 'Flight Logs', route: '/flight-logs', mobileOnly: false },
+    { title: 'Flight Logs', route: '/flight-logs', mobileOnly: false }
   ];
 
   const mobileFooterLinks = [
     { title: 'Terms of Use', route: '/terms' },
-    { title: 'Glossary', route: '/glossary' },
+    { title: 'Glossary', route: '/glossary' }
   ];
 
   const accountLink = { title: 'Account', route: '/your-info' };
@@ -45,10 +45,10 @@ export function Nav() {
   // Handle swiping of nav drawer
   const [touchStartX, setTouchStartX] = useState(0);
   const [touchEndX, setTouchEndX] = useState(0);
-  window.addEventListener('touchstart', (e) => {
+  window.addEventListener('touchstart', e => {
     setTouchStartX(e.changedTouches[0].screenX);
   });
-  window.addEventListener('touchend', (e) => {
+  window.addEventListener('touchend', e => {
     setTouchEndX(e.changedTouches[0].screenX);
     handleSwipe();
   });
@@ -66,31 +66,25 @@ export function Nav() {
   };
 
   return (
-    <div
-      className={`navbar-container flex-centered ${
-        drawerOpened ? 'drawer-open' : ''
-      }`}
-    >
+    <div className={`navbar-container flex-centered ${drawerOpened ? 'drawer-open' : ''}`}>
       {/* Desktop Nav */}
-      <nav className='desktop flex align-center justify-between'>
-        <Link to='/' className='left-container-logo flex-centered'>
-          <img src='img/jetgovern_white.png' height='100%' alt='Jet Protocol' />
+      <nav className="desktop flex align-center justify-between">
+        <Link to="/" className="left-container-logo flex-centered">
+          <img src="img/jetgovern_white.png" height="100%" alt="Jet Protocol" />
         </Link>
-        <div className='nav-links flex-centered'>
+        <div className="nav-links flex-centered">
           {navLinks.map(
-            (link) =>
+            link =>
               !link.mobileOnly && (
                 <Link
                   to={link.route}
-                  className={`nav-link ${
-                    pathname === link.route ? 'active' : ''
-                  } ${link.class}`}
+                  className={`nav-link ${pathname === link.route ? 'active' : ''} ${link.class}`}
                   key={link.route}
                 >
                   {link.title}
                   {link.badge ? (
-                    <span className='badge'>
-                      <span className='text-gradient'>{link.badge}</span>
+                    <span className="badge">
+                      <span className="text-gradient">{link.badge}</span>
                     </span>
                   ) : (
                     ''
@@ -99,27 +93,23 @@ export function Nav() {
               )
           )}
           <Button
-            className='secondary-btn flex-centered'
-            type='ghost'
+            className="secondary-btn flex-centered"
+            type="ghost"
             title={connected ? 'disconnect' : 'connect'}
-            onClick={() =>
-              connected ? disconnectAndResetAuth() : setConnecting(true)
-            }
+            onClick={() => (connected ? disconnectAndResetAuth() : setConnecting(true))}
           >
-            <Wallet width='15px' style={{ paddingRight: '10px' }} />
+            <Wallet width="15px" style={{ paddingRight: '10px' }} />
             {connected
-              ? `${shortenAddress(
-                  publicKey ? publicKey.toString() : ''
-                )} CONNECTED`
+              ? `${shortenAddress(publicKey ? publicKey.toString() : '')} CONNECTED`
               : 'CONNECT WALLET'}
           </Button>
         </div>
       </nav>
 
       {/* Mobile Nav */}
-      <nav className='mobile flex align-center justify-between'>
-        <Link className='account' to={accountLink.route}>
-          <img width='25px' src={User} alt={accountLink.title} />
+      <nav className="mobile flex align-center justify-between">
+        <Link className="account" to={accountLink.route}>
+          <img width="25px" src={User} alt={accountLink.title} />
         </Link>
 
         <div
@@ -132,15 +122,13 @@ export function Nav() {
           <span></span>
           <span></span>
         </div>
-        <div className='drawer flex align-center justify-between column'>
-          <div className='drawer-top flex-centered column'>
-            {navLinks.map((link) => (
+        <div className="drawer flex align-center justify-between column">
+          <div className="drawer-top flex-centered column">
+            {navLinks.map(link => (
               <Link
                 key={link.title}
                 to={link.route}
-                className={`nav-link ${
-                  pathname === link.route ? 'active' : ''
-                }`}
+                className={`nav-link ${pathname === link.route ? 'active' : ''}`}
                 onClick={() => setDrawerOpened(false)}
               >
                 {link.title}
@@ -148,7 +136,7 @@ export function Nav() {
             ))}
             <Button
               ghost
-              className='flex-centered small-btn'
+              className="flex-centered small-btn"
               style={{ textTransform: 'unset' }}
               title={connected ? 'Disconnect' : 'Connect'}
               onClick={() => {
@@ -160,31 +148,29 @@ export function Nav() {
                 }
               }}
             >
-              <Wallet width='15px' style={{ paddingRight: '10px' }} />
+              <Wallet width="15px" style={{ paddingRight: '10px' }} />
               {connected
-                ? `${shortenAddress(
-                    publicKey ? publicKey.toString() : ''
-                  )} CONNECTED`
+                ? `${shortenAddress(publicKey ? publicKey.toString() : '')} CONNECTED`
                 : 'CONNECT'}
             </Button>
           </div>
-          <div className='drawer-bottom flex-centered column'>
-            {mobileFooterLinks.map((link) => (
+          <div className="drawer-bottom flex-centered column">
+            {mobileFooterLinks.map(link => (
               <Link
                 key={link.title}
                 to={link.route}
-                className='footer-link'
+                className="footer-link"
                 onClick={() => setDrawerOpened(false)}
               >
                 {link.title}
               </Link>
             ))}
             <Switch
-              className='secondary-switch'
+              className="secondary-switch"
               onClick={() => toggleDarkTheme()}
               checked={darkTheme}
-              checkedChildren='Dark'
-              unCheckedChildren='Light'
+              checkedChildren="Dark"
+              unCheckedChildren="Light"
             />
           </div>
         </div>
