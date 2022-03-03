@@ -9,7 +9,8 @@ pub struct MintVotes<'info> {
     pub owner: Signer<'info>,
 
     /// The stake pool to mint votes from
-    #[account(has_one = stake_vote_mint)]
+    #[account(has_one = stake_vote_mint,
+              has_one = stake_pool_vault)]
     pub stake_pool: Account<'info, StakePool>,
 
     /// The stake pool token vault
