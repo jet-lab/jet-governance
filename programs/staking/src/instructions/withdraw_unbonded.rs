@@ -70,7 +70,7 @@ pub fn withdraw_unbonded_handler(ctx: Context<WithdrawUnbonded>) -> ProgramResul
     unbonding_account.stake_account = Pubkey::default();
 
     let stake_pool = &ctx.accounts.stake_pool;
-    let token_amount = unbonding_account.amount.tokens;
+    let token_amount = unbonding_account.amount.token_amount;
 
     token::transfer(
         ctx.accounts

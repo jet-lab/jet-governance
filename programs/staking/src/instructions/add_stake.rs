@@ -52,7 +52,7 @@ pub fn add_stake_handler(ctx: Context<AddStake>, amount: Amount) -> ProgramResul
     stake_pool.deposit(&full_amount);
     stake_account.deposit(&full_amount);
 
-    token::transfer(ctx.accounts.transfer_context(), full_amount.tokens)?;
+    token::transfer(ctx.accounts.transfer_context(), full_amount.token_amount)?;
 
     Ok(())
 }

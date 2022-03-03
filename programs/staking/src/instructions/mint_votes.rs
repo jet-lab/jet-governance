@@ -58,7 +58,7 @@ pub fn mint_votes_handler(ctx: Context<MintVotes>, amount: Amount) -> ProgramRes
         ctx.accounts
             .mint_context()
             .with_signer(&[&stake_pool.signer_seeds()]),
-        full_amount.tokens,
+        full_amount.token_amount,
     )?;
 
     Ok(())

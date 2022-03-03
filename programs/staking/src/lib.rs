@@ -107,6 +107,7 @@ mod error {
     use super::*;
 
     #[error]
+    #[derive(Eq, PartialEq)]
     pub enum ErrorCode {
         InsufficientStake,
         VotesLocked,
