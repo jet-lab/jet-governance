@@ -60,13 +60,11 @@ impl Airdrop {
             target.reward_total = target.reward_total.checked_add(amount).unwrap();
         }
 
-        if start_idx == 0 {
-            // skip ordering check, since its the first entry
-            return Ok(());
-        }
-
         // Make sure the list of recipients is SORTED
-        let range = &target.recipients[start_idx as usize - 1..target.recipients_total as usize];
+        let range = match start_idx {
+            0 => &target.recipients[..target.recipients_total as usize],
+            i => &target.recipients[i as usize - 1..target.recipients_total as usize],
+        };
         let is_sorted = range.windows(2).all(|i| i[0].recipient <= i[1].recipient);
 
         if !is_sorted {
@@ -93,6 +91,12 @@ impl Airdrop {
 
     pub fn claim(&mut self, recipient: &Pubkey) -> Result<u64, ErrorCode> {
         let target = self.target_info_mut();
+
+        if target.finalized != 1 {
+            msg!("cannot claim from an unfinalized airdrop");
+            return Err(ErrorCode::AirdropNotFinal);
+        }
+
         let entry = target.get_recipient_mut(recipient)?;
         let amount = entry.amount;
 

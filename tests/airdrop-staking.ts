@@ -231,6 +231,29 @@ describe('airdrop-staking', () => {
     });
   });
 
+  it('user cannot claim from non-final airdrop', async () => {
+    try {
+      await RewardsProgram.rpc.airdropClaim({
+        accounts: {
+          airdrop: airdropKey.publicKey,
+          rewardVault: airdropVault,
+          recipient: staker.publicKey,
+          receiver: wallet.publicKey,
+          stakePool: stakeAcc.stakePool,
+          stakePoolVault: stakeAcc.stakePoolVault,
+          stakeAccount: stakerAccount,
+          stakingProgram: StakingProgram.programId,
+          tokenProgram: TOKEN_PROGRAM_ID
+        },
+        signers: [staker]
+      });
+
+      assert.ok(false);
+    } catch (e) {
+      assert.equal(e.code, 6005);
+    }
+  });
+
   it('finalize airdrop', async () => {
     await RewardsProgram.rpc.airdropFinalize({
       accounts: {
@@ -476,7 +499,7 @@ describe('airdrop-staking', () => {
         }
       }
     );
-  })
+  });
 
   it('distribute award', async () => {
     await RewardsProgram.rpc.awardRelease({
@@ -543,7 +566,7 @@ describe('airdrop-staking', () => {
         }
       }
     );
-  })
+  });
 
   it('revoke award', async () => {
     const fundingAta = await testToken.getOrCreateAssociatedAccountInfo(wallet.publicKey);
