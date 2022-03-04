@@ -9,7 +9,10 @@ pub struct Award {
     pub authority: Pubkey,
 
     /// The seed for the address
-    pub seed: String,
+    pub seed: [u8; 30],
+
+    /// The length of the seed
+    pub seed_len: u8,
 
     /// The bump seed for the address
     pub bump_seed: [u8; 1],
@@ -28,7 +31,7 @@ impl Award {
     pub fn signer_seeds(&self) -> [&[u8]; 3] {
         [
             self.stake_account.as_ref(),
-            self.seed.as_bytes(),
+            &self.seed[..self.seed_len as usize],
             self.bump_seed.as_ref(),
         ]
     }

@@ -1,3 +1,5 @@
+use std::io::Write;
+
 use anchor_lang::prelude::*;
 use anchor_spl::token::{self, Token, TokenAccount, Transfer};
 
@@ -87,7 +89,8 @@ pub fn award_create_handler(ctx: Context<AwardCreate>, params: AwardCreateParams
     let award = &mut ctx.accounts.award;
 
     award.authority = params.authority;
-    award.seed = params.seed;
+    award.seed.as_mut().write(params.seed.as_bytes())?;
+    award.seed_len = params.seed.len() as u8;
     award.bump_seed[0] = *ctx.bumps.get("award").unwrap();
 
     award.stake_account = params.stake_account;
