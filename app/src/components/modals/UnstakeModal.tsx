@@ -1,9 +1,9 @@
-import { ReactNode, useMemo, useState } from 'react';
-import { Modal, ModalProps } from 'antd';
-import { useProposalContext } from '../../contexts/proposal';
-import { rescindAndUnstake } from '../../actions/rescindAndUnstake';
-import { BN } from '@project-serum/anchor';
-import { useRpcContext } from '../../hooks/useRpcContext';
+import { ReactNode, useMemo, useState } from "react";
+import { Modal, ModalProps } from "antd";
+import { useProposalContext } from "../../contexts/proposal";
+import { rescindAndUnstake } from "../../actions/rescindAndUnstake";
+import { BN } from "@project-serum/anchor";
+import { useRpcContext } from "../../hooks/useRpcContext";
 
 enum Steps {
   Start = 0,
@@ -86,9 +86,9 @@ export const UnstakeModal = ({
   const steps: (ModalProps & { content: ReactNode })[] = [];
   steps[Steps.Start] = {
     title: `You're unstaking ${
-      amount && Intl.NumberFormat('us-US').format(amount)
+      amount && Intl.NumberFormat("us-US").format(amount)
     } JET from the platform.`,
-    okText: 'Confirm unstake',
+    okText: "Confirm unstake",
     okButtonProps: { loading },
     onOk: () => handleSubmitUnstake(),
     onCancel: () => onClose(),
@@ -122,27 +122,27 @@ export const UnstakeModal = ({
   };
   steps[Steps.Success] = {
     title: `All set!`,
-    okText: 'Okay',
+    okText: "Okay",
     onOk: () => handleCancel(),
     onCancel: () => handleCancel(),
     closable: true,
-    cancelButtonProps: { style: { display: 'none' } },
+    cancelButtonProps: { style: { display: "none" } },
     content: (
       <>
         <p>
-          You've unstaked {amount && Intl.NumberFormat('us-US').format(amount)} JET from JetGovern.
+          You've unstaked {amount && Intl.NumberFormat("us-US").format(amount)} JET from JetGovern.
         </p>
         <p>Your 29.5-day unbonding period will complete on {new Date().toString()}.</p>
       </>
     )
   };
   steps[Steps.Error] = {
-    title: 'Oops! Something went wrong',
-    okText: 'Okay',
+    title: "Oops! Something went wrong",
+    okText: "Okay",
     onOk: () => handleCancel(),
     onCancel: () => handleCancel(),
     closable: true,
-    cancelButtonProps: { style: { display: 'none' } },
+    cancelButtonProps: { style: { display: "none" } },
     content: <p>Well that was embarassing. We've encountered an unknown error, please try again.</p>
   };
 
@@ -155,7 +155,7 @@ export const UnstakeModal = ({
       okButtonProps={steps[current].okButtonProps}
       onCancel={steps[current].onCancel}
       closable={steps[current].closable}
-      cancelButtonProps={{ style: { display: 'none ' } }}
+      cancelButtonProps={{ style: { display: "none " } }}
     >
       {steps[current].content}
     </Modal>

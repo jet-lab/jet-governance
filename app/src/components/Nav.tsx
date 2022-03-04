@@ -1,13 +1,13 @@
-import React, { useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { useWallet } from '@solana/wallet-adapter-react';
-import { useConnectWallet } from '../contexts/connectWallet';
-import { useDarkTheme } from '../contexts/darkTheme';
-import { Button, Switch } from 'antd';
-import { useProposalContext } from '../contexts/proposal';
-import { shortenAddress } from '../utils';
-import User from '../images/user.svg';
-import { ReactComponent as Wallet } from '../images/wallet.svg';
+import React, { useState } from "react";
+import { Link, useLocation } from "react-router-dom";
+import { useWallet } from "@solana/wallet-adapter-react";
+import { useConnectWallet } from "../contexts/connectWallet";
+import { useDarkTheme } from "../contexts/darkTheme";
+import { Button, Switch } from "antd";
+import { useProposalContext } from "../contexts/proposal";
+import { shortenAddress } from "../utils";
+import User from "../images/user.svg";
+import { ReactComponent as Wallet } from "../images/wallet.svg";
 
 export function Nav() {
   const { pathname } = useLocation();
@@ -18,24 +18,24 @@ export function Nav() {
   const { darkTheme, toggleDarkTheme } = useDarkTheme();
 
   const navLinks = [
-    { title: 'Your Info', route: '/your-info', mobileOnly: true },
-    { title: 'Dashboard', route: '/', mobileOnly: false },
+    { title: "Your Info", route: "/your-info", mobileOnly: true },
+    { title: "Dashboard", route: "/", mobileOnly: false },
     {
       title: `Claims`,
-      class: 'shimmer',
+      class: "shimmer",
       badge: claimsCount,
-      route: '/claims',
+      route: "/claims",
       mobileOnly: false
     },
-    { title: 'Flight Logs', route: '/flight-logs', mobileOnly: false }
+    { title: "Flight Logs", route: "/flight-logs", mobileOnly: false }
   ];
 
   const mobileFooterLinks = [
-    { title: 'Terms of Use', route: '/terms' },
-    { title: 'Glossary', route: '/glossary' }
+    { title: "Terms of Use", route: "/terms" },
+    { title: "Glossary", route: "/glossary" }
   ];
 
-  const accountLink = { title: 'Account', route: '/your-info' };
+  const accountLink = { title: "Account", route: "/your-info" };
 
   const disconnectAndResetAuth = () => {
     disconnect();
@@ -45,10 +45,10 @@ export function Nav() {
   // Handle swiping of nav drawer
   const [touchStartX, setTouchStartX] = useState(0);
   const [touchEndX, setTouchEndX] = useState(0);
-  window.addEventListener('touchstart', e => {
+  window.addEventListener("touchstart", e => {
     setTouchStartX(e.changedTouches[0].screenX);
   });
-  window.addEventListener('touchend', e => {
+  window.addEventListener("touchend", e => {
     setTouchEndX(e.changedTouches[0].screenX);
     handleSwipe();
   });
@@ -66,7 +66,7 @@ export function Nav() {
   };
 
   return (
-    <div className={`navbar-container flex-centered ${drawerOpened ? 'drawer-open' : ''}`}>
+    <div className={`navbar-container flex-centered ${drawerOpened ? "drawer-open" : ""}`}>
       {/* Desktop Nav */}
       <nav className="desktop flex align-center justify-between">
         <Link to="/" className="left-container-logo flex-centered">
@@ -78,7 +78,7 @@ export function Nav() {
               !link.mobileOnly && (
                 <Link
                   to={link.route}
-                  className={`nav-link ${pathname === link.route ? 'active' : ''} ${link.class}`}
+                  className={`nav-link ${pathname === link.route ? "active" : ""} ${link.class}`}
                   key={link.route}
                 >
                   {link.title}
@@ -87,7 +87,7 @@ export function Nav() {
                       <span className="text-gradient">{link.badge}</span>
                     </span>
                   ) : (
-                    ''
+                    ""
                   )}
                 </Link>
               )
@@ -95,13 +95,13 @@ export function Nav() {
           <Button
             className="secondary-btn flex-centered"
             type="ghost"
-            title={connected ? 'disconnect' : 'connect'}
+            title={connected ? "disconnect" : "connect"}
             onClick={() => (connected ? disconnectAndResetAuth() : setConnecting(true))}
           >
-            <Wallet width="15px" style={{ paddingRight: '10px' }} />
+            <Wallet width="15px" style={{ paddingRight: "10px" }} />
             {connected
-              ? `${shortenAddress(publicKey ? publicKey.toString() : '')} CONNECTED`
-              : 'CONNECT WALLET'}
+              ? `${shortenAddress(publicKey ? publicKey.toString() : "")} CONNECTED`
+              : "CONNECT WALLET"}
           </Button>
         </div>
       </nav>
@@ -114,7 +114,7 @@ export function Nav() {
 
         <div
           className={`hamburger flex align-center justify-between column ${
-            drawerOpened ? 'close' : ''
+            drawerOpened ? "close" : ""
           }`}
           onClick={() => setDrawerOpened(!drawerOpened)}
         >
@@ -128,7 +128,7 @@ export function Nav() {
               <Link
                 key={link.title}
                 to={link.route}
-                className={`nav-link ${pathname === link.route ? 'active' : ''}`}
+                className={`nav-link ${pathname === link.route ? "active" : ""}`}
                 onClick={() => setDrawerOpened(false)}
               >
                 {link.title}
@@ -137,8 +137,8 @@ export function Nav() {
             <Button
               ghost
               className="flex-centered small-btn"
-              style={{ textTransform: 'unset' }}
-              title={connected ? 'Disconnect' : 'Connect'}
+              style={{ textTransform: "unset" }}
+              title={connected ? "Disconnect" : "Connect"}
               onClick={() => {
                 if (connected) {
                   disconnect();
@@ -148,10 +148,10 @@ export function Nav() {
                 }
               }}
             >
-              <Wallet width="15px" style={{ paddingRight: '10px' }} />
+              <Wallet width="15px" style={{ paddingRight: "10px" }} />
               {connected
-                ? `${shortenAddress(publicKey ? publicKey.toString() : '')} CONNECTED`
-                : 'CONNECT'}
+                ? `${shortenAddress(publicKey ? publicKey.toString() : "")} CONNECTED`
+                : "CONNECT"}
             </Button>
           </div>
           <div className="drawer-bottom flex-centered column">

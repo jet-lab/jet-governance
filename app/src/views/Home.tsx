@@ -1,10 +1,10 @@
-import { ProposalFilter, useProposalContext } from '../contexts/proposal';
-import { ProposalCard } from '../components/ProposalCard';
-import { YourInfo } from '../components/YourInfo';
-import { PastProposalCard } from '../components/MobilePastProposals';
+import { ProposalFilter, useProposalContext } from "../contexts/proposal";
+import { ProposalCard } from "../components/ProposalCard";
+import { YourInfo } from "../components/YourInfo";
+import { PastProposalCard } from "../components/MobilePastProposals";
 // import { getFirstTwoHundredPubkeys } from "../models/PUBKEYS_INDEX";
-import { ReactComponent as Filter } from '../images/filter.svg';
-import { useEffect } from 'react';
+import { ReactComponent as Filter } from "../images/filter.svg";
+import { useEffect } from "react";
 
 export const HomeView = () => {
   /* eslint-disable @typescript-eslint/no-unused-vars */
@@ -34,25 +34,25 @@ export const HomeView = () => {
   // On mobile, only show active proposals
   // in main view
   const onResize = () => {
-    if (window.matchMedia('(max-width: 840px)').matches) {
-      setProposalFilter('active');
+    if (window.matchMedia("(max-width: 840px)").matches) {
+      setProposalFilter("active");
     }
   };
   useEffect(() => {
-    window.addEventListener('resize', function () {
-      if (window.matchMedia('(max-width: 840px)').matches) {
-        setProposalFilter('active');
+    window.addEventListener("resize", function () {
+      if (window.matchMedia("(max-width: 840px)").matches) {
+        setProposalFilter("active");
       }
     });
-    return window.removeEventListener('resize', function () {
-      if (window.matchMedia('(max-width: 840px)').matches) {
-        setProposalFilter('active');
+    return window.removeEventListener("resize", function () {
+      if (window.matchMedia("(max-width: 840px)").matches) {
+        setProposalFilter("active");
       }
     });
   }, [setProposalFilter]);
 
   const toggleShowFilter = () => {
-    document.getElementById('filter')?.classList.toggle('hidden');
+    document.getElementById("filter")?.classList.toggle("hidden");
   };
 
   const handleSetPastProposalFilter = (string: ProposalFilter) => {
@@ -69,32 +69,32 @@ export const HomeView = () => {
           <h2>Proposals</h2>
           <div className="filter-status">
             <span
-              onClick={() => setProposalFilter('active')}
-              className={proposalFilter === 'active' ? 'active' : undefined}
+              onClick={() => setProposalFilter("active")}
+              className={proposalFilter === "active" ? "active" : undefined}
             >
               Active
             </span>
             <span
-              onClick={() => setProposalFilter('inactive')}
-              className={proposalFilter === 'inactive' ? 'active' : undefined}
+              onClick={() => setProposalFilter("inactive")}
+              className={proposalFilter === "inactive" ? "active" : undefined}
             >
               Inactive
             </span>
             <span
-              onClick={() => setProposalFilter('passed')}
-              className={proposalFilter === 'passed' ? 'active' : undefined}
+              onClick={() => setProposalFilter("passed")}
+              className={proposalFilter === "passed" ? "active" : undefined}
             >
               Passed
             </span>
             <span
-              onClick={() => setProposalFilter('rejected')}
-              className={proposalFilter === 'rejected' ? 'active' : undefined}
+              onClick={() => setProposalFilter("rejected")}
+              className={proposalFilter === "rejected" ? "active" : undefined}
             >
               Rejected
             </span>
             <span
-              onClick={() => setProposalFilter('all')}
-              className={proposalFilter === 'all' ? 'active' : undefined}
+              onClick={() => setProposalFilter("all")}
+              className={proposalFilter === "all" ? "active" : undefined}
             >
               All
             </span>
@@ -121,9 +121,9 @@ export const HomeView = () => {
           <Filter onClick={toggleShowFilter} />
           <div id="filter" className="hidden">
             <ul>
-              <li onClick={() => handleSetPastProposalFilter('all')}>All</li>
-              <li onClick={() => handleSetPastProposalFilter('passed')}>Passed</li>
-              <li onClick={() => handleSetPastProposalFilter('rejected')}>Rejected</li>
+              <li onClick={() => handleSetPastProposalFilter("all")}>All</li>
+              <li onClick={() => handleSetPastProposalFilter("passed")}>Passed</li>
+              <li onClick={() => handleSetPastProposalFilter("rejected")}>Rejected</li>
             </ul>
           </div>
         </span>

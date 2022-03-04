@@ -1,6 +1,6 @@
-import moment from 'moment';
-import { useEffect, useState } from 'react';
-import { useConnection } from '../contexts';
+import moment from "moment";
+import { useEffect, useState } from "react";
+import { useConnection } from "../contexts";
 
 export const useIsBeyondTimestamp = (timestamp: number | undefined) => {
   const connection = useConnection();

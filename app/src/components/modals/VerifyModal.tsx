@@ -1,11 +1,11 @@
-import { useWallet } from '@solana/wallet-adapter-react';
-import { Modal, Input, ModalProps } from 'antd';
-import { ReactNode, useEffect, useState } from 'react';
-import { useConnectWallet } from '../../contexts/connectWallet';
-import axios from 'axios';
-import { useConnectionConfig } from '../../contexts';
-import { Auth } from '@jet-lab/jet-engine/lib/auth/auth';
-import CountryPhoneInput, { CountryPhoneInputValue } from 'antd-country-phone-input';
+import { useWallet } from "@solana/wallet-adapter-react";
+import { Modal, Input, ModalProps } from "antd";
+import { ReactNode, useEffect, useState } from "react";
+import { useConnectWallet } from "../../contexts/connectWallet";
+import axios from "axios";
+import { useConnectionConfig } from "../../contexts";
+import { Auth } from "@jet-lab/jet-engine/lib/auth/auth";
+import CountryPhoneInput, { CountryPhoneInputValue } from "antd-country-phone-input";
 
 enum Steps {
   Welcome = 0,
@@ -19,7 +19,7 @@ enum Steps {
   VpnBlocked = 8,
   InvalidToken = 9
 }
-const API_KEY = '4c10a126-1f09-4a11-bf43-b81f7f583b52';
+const API_KEY = "4c10a126-1f09-4a11-bf43-b81f7f583b52";
 
 export const VerifyModal = ({
   visible,
@@ -35,11 +35,11 @@ export const VerifyModal = ({
   const [current, setCurrent] = useState<Steps>(Steps.Welcome);
   const { connected, disconnect } = useWallet();
   const { setConnecting, setWelcoming, setAuthorizationConfirmed, resetAuth } = useConnectWallet();
-  const [phoneNumber, setPhoneNumber] = useState<CountryPhoneInputValue>({ short: 'US' });
+  const [phoneNumber, setPhoneNumber] = useState<CountryPhoneInputValue>({ short: "US" });
   // The ID of the SMS verification session with MessageBird.
   const [verificationId, setVerificationId] = useState<string>();
   // The verification token received from the SMS recipient.
-  const [code, setCode] = useState('');
+  const [code, setCode] = useState("");
   const [welcomeConfirmed, setWelcomeConfirmed] = useState(false);
   const [confirmCodeLoading, setConfirmCodeLoading] = useState(false);
   const { env } = useConnectionConfig();
@@ -82,7 +82,7 @@ export const VerifyModal = ({
     setPhoneNumber(e);
   };
   const enterKeyPhoneVerify = (e: any) => {
-    if (e.code === 'Enter') {
+    if (e.code === "Enter") {
       handlePhoneVerify();
     }
   };
@@ -94,9 +94,9 @@ export const VerifyModal = ({
     // auth/sms begin a new SMS verification session
     axios
       .put(
-        'https://api.jetprotocol.io/v1/auth/sms',
+        "https://api.jetprotocol.io/v1/auth/sms",
         {
-          originator: 'Governance',
+          originator: "Governance",
           phoneNumber: `+${phoneNumber.code}${phoneNumber.phone}`
         },
         {
@@ -112,13 +112,13 @@ export const VerifyModal = ({
           setVerificationId(res.data.id);
           setCurrent(Steps.EnterSMSCode);
         } else {
-          console.log('error', res);
+          console.log("error", res);
           setCurrent(Steps.UnknownError);
         }
       })
       .catch(err => {
         console.error(JSON.stringify(err), err?.response?.body, err?.response?.data);
-        console.error('response status', err.response.status);
+        console.error("response status", err.response.status);
         if (err.response.status === 400) {
           // Payload validation failed or provided phone number was not a valid mobile number.
           setCurrent(Steps.PhoneInvalid);
@@ -126,12 +126,12 @@ export const VerifyModal = ({
           // The provided mobile number originates from a geo-banned region.
           if (
             err?.response?.data.error[0] ===
-            'the ip of the requester has been detected as a threat or anonymized.'
+            "the ip of the requester has been detected as a threat or anonymized."
           ) {
-            console.error('VPN blocked');
+            console.error("VPN blocked");
             setCurrent(Steps.VpnBlocked);
           } else {
-            console.error('Phone number geo-banned');
+            console.error("Phone number geo-banned");
             setCurrent(Steps.AccessDenied);
           }
         } else if (err.response.status === 500) {
@@ -147,7 +147,7 @@ export const VerifyModal = ({
     setCode(e);
   };
   const enterKeyInputCode = (e: any) => {
-    if (e.code === 'Enter') {
+    if (e.code === "Enter") {
       handleConfirmCode();
     }
   };
@@ -156,7 +156,7 @@ export const VerifyModal = ({
     setConfirmCodeLoading(true);
     axios
       .post(
-        'https://api.jetprotocol.io/v1/auth/sms/verify',
+        "https://api.jetprotocol.io/v1/auth/sms/verify",
         {
           network: env,
           publicKey: authAccount?.address.toBase58(),
@@ -177,7 +177,7 @@ export const VerifyModal = ({
           setCurrent(Steps.AccessGranted1);
         } else if (res.status === 400) {
           // Payload validation failed.
-          console.log('Payload validation failed');
+          console.log("Payload validation failed");
           setCurrent(Steps.AccessDenied);
         } else if (res.status === 500) {
           // Unknown or MessageBird API error.
@@ -194,21 +194,21 @@ export const VerifyModal = ({
           // The provided mobile number originates from a geo-banned region.
           if (
             err?.response?.data.error[0] ===
-            'the ip of the requester has been detected as a threat or anonymized.'
+            "the ip of the requester has been detected as a threat or anonymized."
           ) {
-            console.error('VPN blocked');
+            console.error("VPN blocked");
             setCurrent(Steps.VpnBlocked);
           } else {
-            console.error('Phone number geo-banned');
+            console.error("Phone number geo-banned");
             setCurrent(Steps.AccessDenied);
           }
         } else if (err.response.status === 500) {
           if (
             err?.response?.data.error[0] ===
-            'api error(s): The token is invalid. (code: 10, parameter: token)'
+            "api error(s): The token is invalid. (code: 10, parameter: token)"
           ) {
             // Token is invalid
-            console.error('Invalid token');
+            console.error("Invalid token");
             setCurrent(Steps.InvalidToken);
           } else {
             // Unknown or MessageBird API error.
@@ -254,8 +254,8 @@ export const VerifyModal = ({
 
   const steps: (ModalProps & { content: ReactNode })[] = [];
   steps[Steps.Welcome] = {
-    title: 'Stake your JET to earn rewards and start voting today!',
-    okText: 'Okay',
+    title: "Stake your JET to earn rewards and start voting today!",
+    okText: "Okay",
     okButtonProps: { loading: welcomeConfirmed },
     onOk: () => handleAuthenticate(),
     onCancel: () => handleAuthenticate(),
@@ -272,8 +272,8 @@ export const VerifyModal = ({
     closable: false
   };
   steps[Steps.ConfirmLocation] = {
-    title: 'Confirm location',
-    okText: 'Okay',
+    title: "Confirm location",
+    okText: "Okay",
     okButtonProps: {
       disabled: authAccountLoading || phoneNumber.phone === undefined
     },
@@ -296,7 +296,7 @@ export const VerifyModal = ({
           transaction.
         </p>
         <CountryPhoneInput
-          placeholder={'Phone number'}
+          placeholder={"Phone number"}
           value={phoneNumber}
           onChange={(e: CountryPhoneInputValue) => handleInputPhoneNumber(e)}
           onKeyPress={(e: any) => enterKeyPhoneVerify(e)}
@@ -306,8 +306,8 @@ export const VerifyModal = ({
     closable: false
   };
   steps[Steps.EnterSMSCode] = {
-    title: 'Enter your secure access code',
-    okText: 'Okay',
+    title: "Enter your secure access code",
+    okText: "Okay",
     okButtonProps: { loading: confirmCodeLoading },
     onOk: () => handleConfirmCode(),
     onCancel: () => null,
@@ -324,8 +324,8 @@ export const VerifyModal = ({
     closable: false
   };
   steps[Steps.AccessDenied] = {
-    title: 'Access Denied',
-    okText: 'Okay',
+    title: "Access Denied",
+    okText: "Okay",
     onOk: () => handleAccessDenied(),
     onCancel: () => handleAccessDenied(),
     content: (
@@ -337,8 +337,8 @@ export const VerifyModal = ({
     closable: true
   };
   steps[Steps.AccessGranted1] = {
-    title: 'Stake JET to earn and vote!',
-    okText: 'Okay',
+    title: "Stake JET to earn and vote!",
+    okText: "Okay",
     onOk: () => setCurrent(Steps.AccessGranted2),
     onCancel: () => setCurrent(Steps.AccessGranted2),
     content: (
@@ -356,8 +356,8 @@ export const VerifyModal = ({
     closable: true
   };
   steps[Steps.AccessGranted2] = {
-    title: 'Unstaking from the module',
-    okText: 'Okay',
+    title: "Unstaking from the module",
+    okText: "Okay",
     onOk: () => handleAccessGranted(),
     onCancel: () => handleAccessGranted(),
     content: (
@@ -377,8 +377,8 @@ export const VerifyModal = ({
     closable: true
   };
   steps[Steps.UnknownError] = {
-    title: 'Please try again',
-    okText: 'Okay',
+    title: "Please try again",
+    okText: "Okay",
     okButtonProps: undefined,
     onOk: () => handleAccessDenied(),
     onCancel: () => handleAccessDenied(),
@@ -386,8 +386,8 @@ export const VerifyModal = ({
     closable: true
   };
   steps[Steps.PhoneInvalid] = {
-    title: 'Phone number invalid',
-    okText: 'Okay',
+    title: "Phone number invalid",
+    okText: "Okay",
     okButtonProps: undefined,
     onOk: () => setCurrent(Steps.ConfirmLocation),
     onCancel: () => setCurrent(Steps.ConfirmLocation),
@@ -395,8 +395,8 @@ export const VerifyModal = ({
     closable: true
   };
   steps[Steps.VpnBlocked] = {
-    title: 'VPN detected',
-    okText: 'Okay',
+    title: "VPN detected",
+    okText: "Okay",
     okButtonProps: undefined,
     onOk: () => setCurrent(Steps.ConfirmLocation),
     onCancel: () => setCurrent(Steps.ConfirmLocation),
@@ -409,8 +409,8 @@ export const VerifyModal = ({
     closable: true
   };
   steps[Steps.InvalidToken] = {
-    title: 'Invalid Token',
-    okText: 'Okay',
+    title: "Invalid Token",
+    okText: "Okay",
     okButtonProps: undefined,
     onOk: () => setCurrent(Steps.ConfirmLocation),
     onCancel: () => setCurrent(Steps.ConfirmLocation),
@@ -427,7 +427,7 @@ export const VerifyModal = ({
       okButtonProps={steps[current].okButtonProps}
       onCancel={steps[current].onCancel}
       closable={steps[current].closable}
-      cancelButtonProps={{ style: { display: 'none ' } }}
+      cancelButtonProps={{ style: { display: "none " } }}
     >
       {steps[current].content}
     </Modal>

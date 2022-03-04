@@ -1,6 +1,6 @@
-import { AssociatedToken, StakeAccount, StakePool, UnbondingAccount } from '@jet-lab/jet-engine';
-import { BN, Program } from '@project-serum/anchor';
-import { SendTxRequest } from '@project-serum/anchor/dist/cjs/provider';
+import { AssociatedToken, StakeAccount, StakePool, UnbondingAccount } from "@jet-lab/jet-engine";
+import { BN, Program } from "@project-serum/anchor";
+import { SendTxRequest } from "@project-serum/anchor/dist/cjs/provider";
 import {
   Governance,
   ProgramAccount,
@@ -9,12 +9,12 @@ import {
   withDepositGoverningTokens,
   withRelinquishVote,
   withWithdrawGoverningTokens
-} from '@solana/spl-governance';
-import { Transaction, TransactionInstruction } from '@solana/web3.js';
-import { RpcContext } from '@solana/spl-governance';
-import { sendAllTransactionsWithNotifications } from '../tools/transactions';
-import { GOVERNANCE_PROGRAM_ID } from '../utils';
-import { withApprove } from '../models';
+} from "@solana/spl-governance";
+import { Transaction, TransactionInstruction } from "@solana/web3.js";
+import { RpcContext } from "@solana/spl-governance";
+import { sendAllTransactionsWithNotifications } from "../tools/transactions";
+import { GOVERNANCE_PROGRAM_ID } from "../utils";
+import { withApprove } from "../models/withApprove";
 
 export const rescindAndUnstake = async (
   { programVersion, walletPubkey }: RpcContext,
@@ -122,7 +122,7 @@ export const rescindAndUnstake = async (
   return await sendAllTransactionsWithNotifications(
     stakeProgram.provider,
     reqs,
-    'Unstaking tokens',
-    'Tokens have begun unbonding'
+    "Unstaking tokens",
+    "Tokens have begun unbonding"
   );
 };

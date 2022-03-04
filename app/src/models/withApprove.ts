@@ -1,6 +1,6 @@
-import { Token, TOKEN_PROGRAM_ID, u64 } from '@solana/spl-token';
-import { Keypair, PublicKey, TransactionInstruction } from '@solana/web3.js';
-import BN from 'bn.js';
+import { Token, TOKEN_PROGRAM_ID, u64 } from "@solana/spl-token";
+import { Keypair, PublicKey, TransactionInstruction } from "@solana/web3.js";
+import BN from "bn.js";
 
 export function withApprove(
   instructions: TransactionInstruction[],
@@ -21,7 +21,7 @@ export function withApprove(
 
   // Coerce amount to u64 in case it's deserialized as BN which differs by buffer conversion functions only
   // Without the coercion createApproveInstruction would fail because it won't be able to serialize it
-  if (typeof amount !== 'number') {
+  if (typeof amount !== "number") {
     amount = new u64(amount.toArray());
   }
 

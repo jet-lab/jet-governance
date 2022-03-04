@@ -1,14 +1,12 @@
-import { Connection, PublicKey } from '@solana/web3.js';
-import { create } from 'superstruct';
-import { programIds } from '../../../utils';
-import { ProgramDataAccountInfo } from '../../../validators/accounts/upgradeable-program';
+import { BPF_UPGRADE_LOADER_ID } from "@solana/spl-governance";
+import { Connection, PublicKey } from "@solana/web3.js";
+import { create } from "superstruct";
+import { ProgramDataAccountInfo } from "../../../validators/accounts/upgradeable-program";
 
 export async function getProgramDataAddress(programId: PublicKey) {
-  const { bpf_upgrade_loader: bpfUpgradableLoaderId } = programIds();
-
   const [programDataAddress] = await PublicKey.findProgramAddress(
     [programId.toBuffer()],
-    bpfUpgradableLoaderId
+    BPF_UPGRADE_LOADER_ID
   );
 
   return programDataAddress;
@@ -26,7 +24,7 @@ export async function getProgramDataAccount(connection: Connection, programId: P
 
   const accountInfo = account.value;
 
-  if (!('parsed' in accountInfo.data && accountInfo.data.program === 'bpf-upgradeable-loader')) {
+  if (!("parsed" in accountInfo.data && accountInfo.data.program === "bpf-upgradeable-loader")) {
     throw new Error(
       `Invalid program data account ${programDataAddress.toBase58()} for program ${programId.toBase58()}`
     );

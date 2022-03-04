@@ -1,8 +1,8 @@
 // Copied from Explorer code https://github.com/solana-labs/solana/blob/master/explorer/src/validators/accounts/upgradeable-program.ts
 
-import { PublicKey } from '@solana/web3.js';
+import { PublicKey } from "@solana/web3.js";
 
-import { type, number, nullable, Infer, coerce, instance, string } from 'superstruct';
+import { type, number, nullable, Infer, coerce, instance, string } from "superstruct";
 
 const PublicKeyFromString = coerce(instance(PublicKey), string(), value => new PublicKey(value));
 

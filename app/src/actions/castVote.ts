@@ -1,6 +1,6 @@
-import { PublicKey, Transaction, TransactionInstruction, Keypair } from '@solana/web3.js';
-import { sendAllTransactionsWithNotifications } from '../tools/transactions';
-import { Provider } from '@project-serum/anchor';
+import { PublicKey, Transaction, TransactionInstruction, Keypair } from "@solana/web3.js";
+import { sendAllTransactionsWithNotifications } from "../tools/transactions";
+import { Provider } from "@project-serum/anchor";
 import {
   ChatMessageBody,
   GOVERNANCE_CHAT_PROGRAM_ID,
@@ -12,8 +12,8 @@ import {
   withPostChatMessage,
   withRelinquishVote,
   YesNoVote
-} from '@solana/spl-governance';
-import { AssociatedToken, bnToNumber, StakeAccount, StakePool } from '@jet-lab/jet-engine';
+} from "@solana/spl-governance";
+import { AssociatedToken, bnToNumber, StakeAccount, StakePool } from "@jet-lab/jet-engine";
 
 export const castVote = async (
   { connection, wallet, programId, programVersion, walletPubkey }: RpcContext,
@@ -129,5 +129,5 @@ export const castVote = async (
     signers: []
   });
 
-  await sendAllTransactionsWithNotifications(provider, allTxs, 'Voting on proposal', 'Vote cast');
+  await sendAllTransactionsWithNotifications(provider, allTxs, "Voting on proposal", "Vote cast");
 };

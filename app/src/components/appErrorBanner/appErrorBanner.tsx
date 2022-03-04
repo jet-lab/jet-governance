@@ -1,5 +1,5 @@
-import { Alert, Button, Space, Typography, Collapse } from 'antd';
-import { FallbackProps } from 'react-error-boundary';
+import { Alert, Button, Space, Typography, Collapse } from "antd";
+import { FallbackProps } from "react-error-boundary";
 
 const { Text } = Typography;
 const { Panel } = Collapse;

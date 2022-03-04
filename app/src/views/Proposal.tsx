@@ -1,18 +1,18 @@
-import { useEffect, useMemo, useState } from 'react';
-import { Link } from 'react-router-dom';
-import { ResultProgressBar } from '../components/proposal/ResultProgressBar';
-import { Divider, Spin, Button } from 'antd';
-import { ProposalCard } from '../components/ProposalCard';
-import { VoterList } from '../components/proposal/VoterList';
-import { useWallet } from '@solana/wallet-adapter-react';
-import { VoteModal } from '../components/modals/VoteModal';
+import { useEffect, useMemo, useState } from "react";
+import { Link } from "react-router-dom";
+import { ResultProgressBar } from "../components/proposal/ResultProgressBar";
+import { Divider, Spin, Button } from "antd";
+import { ProposalCard } from "../components/ProposalCard";
+import { VoterList } from "../components/proposal/VoterList";
+import { useWallet } from "@solana/wallet-adapter-react";
+import { VoteModal } from "../components/modals/VoteModal";
 import {
   useProposal,
   useTokenOwnerRecords,
   useVoteRecordsByProposal,
   useWalletTokenOwnerRecord,
   useTokenOwnerVoteRecord
-} from '../hooks/apiHooks';
+} from "../hooks/apiHooks";
 import {
   getVoteCounts,
   getVoteType,
@@ -20,23 +20,23 @@ import {
   useVoterDisplayData,
   VoterDisplayData,
   VoteOption
-} from '../hooks/proposalHooks';
-import { useKeyParam } from '../hooks/useKeyParam';
-import { useLoadGist } from '../hooks/useLoadGist';
-import { bnToIntLossy } from '../tools/units';
-import { LABELS } from '../constants';
-import ReactMarkdown from 'react-markdown';
-import { voteRecordCsvDownload } from '../actions/voteRecordCsvDownload';
-import { DownloadOutlined, ArrowLeftOutlined } from '@ant-design/icons';
-import { useConnectWallet } from '../contexts/connectWallet';
-import { getPubkeyIndex } from '../models/PUBKEYS_INDEX';
-import { useProposalContext } from '../contexts/proposal';
-import { StakeAccount, StakeBalance, StakePool } from '@jet-lab/jet-engine';
-import { Governance, ProgramAccount, Proposal, ProposalState } from '@solana/spl-governance';
-import { explorerUrl } from '../utils';
-import { ReactComponent as NoAccess } from '../images/no_access.svg';
-import { ReactComponent as ThumbsUp } from '../images/thumbs_up.svg';
-import { ReactComponent as ThumbsDown } from '../images/thumbs_down.svg';
+} from "../hooks/proposalHooks";
+import { useKeyParam } from "../hooks/useKeyParam";
+import { useLoadGist } from "../hooks/useLoadGist";
+import { bnToIntLossy } from "../tools/units";
+import { LABELS } from "../constants";
+import ReactMarkdown from "react-markdown";
+import { voteRecordCsvDownload } from "../actions/voteRecordCsvDownload";
+import { DownloadOutlined, ArrowLeftOutlined } from "@ant-design/icons";
+import { useConnectWallet } from "../contexts/connectWallet";
+import { getPubkeyIndex } from "../models/PUBKEYS_INDEX";
+import { useProposalContext } from "../contexts/proposal";
+import { StakeAccount, StakeBalance, StakePool } from "@jet-lab/jet-engine";
+import { Governance, ProgramAccount, Proposal, ProposalState } from "@solana/spl-governance";
+import { explorerUrl } from "../utils";
+import { ReactComponent as NoAccess } from "../images/no_access.svg";
+import { ReactComponent as ThumbsUp } from "../images/thumbs_up.svg";
+import { ReactComponent as ThumbsDown } from "../images/thumbs_down.svg";
 
 export const ProposalView = () => {
   const proposalAddress = useKeyParam();
@@ -130,13 +130,13 @@ const InnerProposalView = ({
     isUrl: isDescriptionUrl
   } = useLoadGist(proposal.account.descriptionLink);
 
-  let errorMessage = '';
+  let errorMessage = "";
   if (!connected) {
-    errorMessage = 'Connect your Solana wallet to get started.';
+    errorMessage = "Connect your Solana wallet to get started.";
   } else if (!isStaked && connected) {
-    errorMessage = 'You must have JET staked in order to vote on proposals.';
+    errorMessage = "You must have JET staked in order to vote on proposals.";
   } else if (vote === undefined && connected) {
-    errorMessage = 'Please select an option to submit your vote.';
+    errorMessage = "Please select an option to submit your vote.";
   }
 
   return (
@@ -144,7 +144,7 @@ const InnerProposalView = ({
       <h2 className="mobile-only">Proposal detail</h2>
       <div
         className={`flex column ${
-          proposal.account.state === ProposalState.Voting ? 'proposal-left' : 'centered'
+          proposal.account.state === ProposalState.Voting ? "proposal-left" : "centered"
         }`}
       >
         <div className="description neu-container">
@@ -152,7 +152,7 @@ const InnerProposalView = ({
             <Link to="/">
               <ArrowLeftOutlined />
               Active Proposals
-            </Link>{' '}
+            </Link>{" "}
             / Jet Upward Momentum Proposal {getPubkeyIndex(addressStr)}
           </span>
           <h1 className="view-header">{proposal.account.name}</h1>
@@ -163,7 +163,7 @@ const InnerProposalView = ({
             ) : isDescriptionUrl ? (
               failed ? (
                 <p>
-                  {LABELS.DESCRIPTION}:{' '}
+                  {LABELS.DESCRIPTION}:{" "}
                   <a
                     href={proposal.account.descriptionLink}
                     target="_blank"
@@ -187,9 +187,9 @@ const InnerProposalView = ({
               </a>
             </span>
             <span>Start date</span>
-            <span> {startDate ? startDate : 'To be determined.'}</span>
+            <span> {startDate ? startDate : "To be determined."}</span>
             <span>End date</span>
-            <span>{endDate ? endDate : 'To be determined'}</span>
+            <span>{endDate ? endDate : "To be determined"}</span>
           </div>
         </div>
 
@@ -241,13 +241,13 @@ const InnerProposalView = ({
       <div className="flex column proposal-right">
         <div
           className={`neu-container flex column ${
-            proposal.account.state !== ProposalState.Voting && 'hidden'
+            proposal.account.state !== ProposalState.Voting && "hidden"
           }`}
           id="your-vote"
         >
           <Button
             onClick={() => setVote(VoteOption.Yes)}
-            className={`vote-select ${vote === VoteOption.Yes ? 'selected' : ''}`}
+            className={`vote-select ${vote === VoteOption.Yes ? "selected" : ""}`}
             size="large"
           >
             In favor
@@ -255,7 +255,7 @@ const InnerProposalView = ({
           </Button>
           <Button
             onClick={() => setVote(VoteOption.No)}
-            className={`vote-select ${vote === VoteOption.No ? 'selected' : ''}`}
+            className={`vote-select ${vote === VoteOption.No ? "selected" : ""}`}
             size="large"
           >
             Against
@@ -282,11 +282,11 @@ const InnerProposalView = ({
         </div>
       </div>
 
-      <Divider className={proposal.account.state === ProposalState.Voting ? '' : 'centered'} />
+      <Divider className={proposal.account.state === ProposalState.Voting ? "" : "centered"} />
 
       <div
         className={`other-proposals ${
-          proposal.account.state === ProposalState.Voting ? '' : 'centered'
+          proposal.account.state === ProposalState.Voting ? "" : "centered"
         }`}
       >
         <h3>Other active proposals</h3>
@@ -299,7 +299,7 @@ const InnerProposalView = ({
                   key={proposal.pubkey.toBase58()}
                 />
               ))
-            : 'There are no active proposals at this time.'}
+            : "There are no active proposals at this time."}
         </div>
       </div>
       <Link to="/" className="mobile-only">

@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect } from "react";
 
 // Dark theme context
 interface DarkTheme {
@@ -12,14 +12,14 @@ const DarkThemeContext = createContext<DarkTheme>({
 
 // Dark theme context provider
 export function DarkThemeProvider(props: { children: any }) {
-  const [darkTheme, setDarkTheme] = useState(localStorage.getItem('jetDarkTheme') === 'true');
+  const [darkTheme, setDarkTheme] = useState(localStorage.getItem("jetDarkTheme") === "true");
   useEffect(() => {
-    localStorage.setItem('jetDarkTheme', JSON.stringify(darkTheme));
-    ['black', 'dark-grey', 'grey', 'light-grey', 'white', 'light-shadow', 'dark-shadow'].forEach(
+    localStorage.setItem("jetDarkTheme", JSON.stringify(darkTheme));
+    ["black", "dark-grey", "grey", "light-grey", "white", "light-shadow", "dark-shadow"].forEach(
       color => {
         document.documentElement.style.setProperty(
           `--${color}`,
-          `var(--${darkTheme ? 'dt' : 'lt'}-${color})`
+          `var(--${darkTheme ? "dt" : "lt"}-${color})`
         );
       }
     );

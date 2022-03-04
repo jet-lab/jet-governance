@@ -1,10 +1,10 @@
-import { PublicKey, Keypair, TransactionInstruction } from '@solana/web3.js';
-import { GOVERNANCE_CHAT_PROGRAM_ID, Proposal, Realm } from '@solana/spl-governance';
-import { ChatMessageBody } from '@solana/spl-governance';
-import { withPostChatMessage } from '@solana/spl-governance';
-import { ProgramAccount } from '@solana/spl-governance';
-import { RpcContext } from '@solana/spl-governance';
-import { sendTransactionWithNotifications } from '../../tools/transactions';
+import { PublicKey, Keypair, TransactionInstruction } from "@solana/web3.js";
+import { GOVERNANCE_CHAT_PROGRAM_ID, Proposal, Realm } from "@solana/spl-governance";
+import { ChatMessageBody } from "@solana/spl-governance";
+import { withPostChatMessage } from "@solana/spl-governance";
+import { ProgramAccount } from "@solana/spl-governance";
+import { RpcContext } from "@solana/spl-governance";
+import { sendTransactionWithNotifications } from "../../tools/transactions";
 
 export async function postChatMessage(
   { connection, wallet, programId, walletPubkey }: RpcContext,
@@ -40,7 +40,7 @@ export async function postChatMessage(
     wallet,
     instructions,
     signers,
-    'Posting chat message',
-    'Chat message posted'
+    "Posting chat message",
+    "Chat message posted"
   );
 }

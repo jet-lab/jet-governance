@@ -1,6 +1,6 @@
-const CracoLessPlugin = require('craco-less');
-const path = require('path');
-const fs = require('fs');
+const CracoLessPlugin = require("craco-less");
+const path = require("path");
+const fs = require("fs");
 
 // Handle relative paths to sibling packages
 const appDirectory = fs.realpathSync(process.cwd());
@@ -14,11 +14,11 @@ module.exports = {
         lessLoaderOptions: {
           lessOptions: {
             modifyVars: {
-              '@primary-color': '#2abdd2',
+              "@primary-color": "#2abdd2",
               // Global vars
-              'border-radius-base': '2px',
+              "border-radius-base": "2px",
               // List item
-              'list-item-meta-margin-bottom': '0'
+              "list-item-meta-margin-bottom": "0"
             },
             javascriptEnabled: true
           }

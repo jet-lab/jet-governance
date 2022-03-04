@@ -1,7 +1,7 @@
-import React from 'react';
-import { useWallet } from '@solana/wallet-adapter-react';
-import { useConnectWallet } from '../../contexts/connectWallet';
-import { Modal } from 'antd';
+import React from "react";
+import { useWallet } from "@solana/wallet-adapter-react";
+import { useConnectWallet } from "../../contexts/connectWallet";
+import { Modal } from "antd";
 
 export function ConnectWalletModal() {
   const { wallets, select, connected, wallet } = useWallet();
@@ -16,7 +16,7 @@ export function ConnectWalletModal() {
     >
       <div className="connect-wallet-modal flex-centered column">
         <span>
-          <strong>Vote</strong>, <strong>earn rewards</strong>, and{' '}
+          <strong>Vote</strong>, <strong>earn rewards</strong>, and{" "}
           <strong>check for airdrops</strong> by connecting your wallet.
         </span>
         <div className="divider"></div>
@@ -25,7 +25,7 @@ export function ConnectWalletModal() {
             <div
               key={w.name}
               className={`wallet flex align-center justify-between 
-                ${wallet?.name === w.name ? 'active' : ''}`}
+                ${wallet?.name === w.name ? "active" : ""}`}
               onClick={() => {
                 select(w.name);
               }}

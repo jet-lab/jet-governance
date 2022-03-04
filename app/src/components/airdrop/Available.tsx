@@ -1,10 +1,10 @@
-import { useState, useEffect } from 'react';
-import { Button } from 'antd';
-import { CheckOutlined } from '@ant-design/icons';
-import { ClaimModal } from '../modals/ClaimModal';
-import { getRemainingTime } from '../../utils';
-import { Airdrop } from '@jet-lab/jet-engine';
-import { PublicKey } from '@solana/web3.js';
+import { useState, useEffect } from "react";
+import { Button } from "antd";
+import { CheckOutlined } from "@ant-design/icons";
+import { ClaimModal } from "../modals/ClaimModal";
+import { getRemainingTime } from "../../utils";
+import { Airdrop } from "@jet-lab/jet-engine";
+import { PublicKey } from "@solana/web3.js";
 
 interface availAirdropsRender {
   airdrop: Airdrop;
@@ -38,7 +38,7 @@ export const Available = ({ airdrop }: { airdrop: availAirdropsRender }) => {
       <span className="avail-info">
         <strong>CARE PACKAGE | {getAirdropAmount(airdrop.amount)} JET</strong>
         <br />
-        {airdrop.shortDesc}{' '}
+        {airdrop.shortDesc}{" "}
         <span className="gray">
           Ends in {getRemainingTime(currentTime, airdrop.expireAt * 1000)}
         </span>
@@ -49,7 +49,7 @@ export const Available = ({ airdrop }: { airdrop: availAirdropsRender }) => {
         onClick={() => setShowModal(true)}
         disabled={claimed || expired ? true : false}
       >
-        {claimed ? <CheckOutlined /> : 'claim'}
+        {claimed ? <CheckOutlined /> : "claim"}
       </Button>
       <ClaimModal
         visible={showModal}

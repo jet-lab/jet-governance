@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
-import { LABELS } from '../constants';
+import { useEffect, useState } from "react";
+import { LABELS } from "../constants";
 
 export function useIsUrl(url: string) {
   return !!url.match(urlRegex);
@@ -14,7 +14,7 @@ export function useLoadGist(gistLink: string) {
   const [content, setContent] = useState(gistLink);
   const [loading, setLoading] = useState(isUrl);
   const [failed, setFailed] = useState(false);
-  const [msg, setMsg] = useState('');
+  const [msg, setMsg] = useState("");
 
   useEffect(() => {
     let isCancelled = false;
@@ -22,8 +22,8 @@ export function useLoadGist(gistLink: string) {
       let toFetch = gistLink;
       const pieces = toFetch.match(urlRegex);
       if (isGist && pieces) {
-        const justIdWithoutUser = pieces[1].split('/')[2];
-        toFetch = 'https://api.github.com/gists/' + justIdWithoutUser;
+        const justIdWithoutUser = pieces[1].split("/")[2];
+        toFetch = "https://api.github.com/gists/" + justIdWithoutUser;
       }
       fetch(toFetch)
         .then(async resp => {
@@ -31,8 +31,8 @@ export function useLoadGist(gistLink: string) {
             if (resp.status === 200) {
               if (isGist) {
                 const jsonContent = await resp.json();
-                const nextUrlFileName = Object.keys(jsonContent['files'])[0];
-                const nextUrl = jsonContent['files'][nextUrlFileName]['raw_url'];
+                const nextUrlFileName = Object.keys(jsonContent["files"])[0];
+                const nextUrl = jsonContent["files"][nextUrlFileName]["raw_url"];
                 fetch(nextUrl).then(async response => {
                   if (!isCancelled) {
                     setContent(await response.text());

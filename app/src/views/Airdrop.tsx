@@ -1,10 +1,10 @@
-import { Divider } from 'antd';
-import { useWallet } from '@solana/wallet-adapter-react';
-import { useProposalContext } from '../contexts/proposal';
-import { useState } from 'react';
-import { FooterLinks } from '../components/FooterLinks';
-import { GlossaryModal } from '../components/modals/GlossaryModal';
-import { Available } from '../components/airdrop/Available';
+import { Divider } from "antd";
+import { useWallet } from "@solana/wallet-adapter-react";
+import { useProposalContext } from "../contexts/proposal";
+import { useState } from "react";
+import { FooterLinks } from "../components/FooterLinks";
+import { GlossaryModal } from "../components/modals/GlossaryModal";
+import { Available } from "../components/airdrop/Available";
 
 export const AirdropView = () => {
   const { connected, publicKey } = useWallet();
@@ -56,7 +56,7 @@ export const AirdropView = () => {
           and
           <span
             onClick={toggleGlossaryModal}
-            style={{ textDecoration: 'underline', cursor: 'pointer' }}
+            style={{ textDecoration: "underline", cursor: "pointer" }}
           >
             glossary
             <GlossaryModal

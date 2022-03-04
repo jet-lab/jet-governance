@@ -1,6 +1,6 @@
-import React from 'react';
-import { useEffect } from 'react';
-import { useLocation } from 'react-router';
+import React from "react";
+import { useEffect } from "react";
+import { useLocation } from "react-router";
 
 export const ScrollToTop = (props: any) => {
   const location = useLocation();

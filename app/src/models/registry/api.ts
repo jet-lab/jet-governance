@@ -1,5 +1,5 @@
-import { Connection, PublicKey } from '@solana/web3.js';
-import { getProgramDataAccount } from '../../tools/sdk/bpfUpgradeableLoader/accounts';
+import { Connection, PublicKey } from "@solana/web3.js";
+import { getProgramDataAccount } from "../../tools/sdk/bpfUpgradeableLoader/accounts";
 
 export const PROGRAM_VERSION_V1 = 1;
 export const PROGRAM_VERSION_V2 = 2;
@@ -9,7 +9,7 @@ export const PROGRAM_VERSION = PROGRAM_VERSION_V2;
 
 export async function getProgramVersion(connection: Connection, programId: string, env: string) {
   // For localnet always use the latest version
-  if (env === 'localnet') {
+  if (env === "localnet") {
     return PROGRAM_VERSION;
   }
 
@@ -23,7 +23,7 @@ export async function getProgramVersion(connection: Connection, programId: strin
 // Returns the min deployment slot from which onwards the program should be on the latest version
 function getLatestVersionCutOffSlot(env: string) {
   switch (env) {
-    case 'devnet':
+    case "devnet":
       return 87097690;
     default:
       // Default to mainnet slot

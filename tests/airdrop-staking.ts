@@ -1,12 +1,12 @@
-import * as anchor from '@project-serum/anchor';
-import { Program } from '@project-serum/anchor';
-import { Keypair, PublicKey, SystemProgram, SYSVAR_RENT_PUBKEY } from '@solana/web3.js';
-import { Token, TOKEN_PROGRAM_ID, u64 } from '@solana/spl-token';
-import { JetRewards } from '../target/types/jet_rewards';
-import { JetStaking } from '../target/types/jet_staking';
-import { JetAuth } from '../target/types/jet_auth';
-import { assert } from 'chai';
-import { string } from 'yargs';
+import * as anchor from "@project-serum/anchor";
+import { Program } from "@project-serum/anchor";
+import { Keypair, PublicKey, SystemProgram, SYSVAR_RENT_PUBKEY } from "@solana/web3.js";
+import { Token, TOKEN_PROGRAM_ID, u64 } from "@solana/spl-token";
+import { JetRewards } from "../target/types/jet_rewards";
+import { JetStaking } from "../target/types/jet_staking";
+import { JetAuth } from "../target/types/jet_auth";
+import { assert } from "chai";
+import { string } from "yargs";
 
 const RewardsProgram = anchor.workspace.JetRewards as Program<JetRewards>;
 const StakingProgram = anchor.workspace.JetStaking as Program<JetStaking>;
@@ -34,15 +34,15 @@ async function deriveStakePoolAccounts(seed: string): Promise<StakePoolAccounts>
     StakingProgram.programId
   );
   let [stakePoolVault, stakePoolVaultBump] = await PublicKey.findProgramAddress(
-    [Buffer.from(seed), Buffer.from('vault')],
+    [Buffer.from(seed), Buffer.from("vault")],
     StakingProgram.programId
   );
   let [stakeVoteMint, stakeVoteMintBump] = await PublicKey.findProgramAddress(
-    [Buffer.from(seed), Buffer.from('vote-mint')],
+    [Buffer.from(seed), Buffer.from("vote-mint")],
     StakingProgram.programId
   );
   let [stakeCollateralMint, stakeCollateralMintBump] = await PublicKey.findProgramAddress(
-    [Buffer.from(seed), Buffer.from('collateral-mint')],
+    [Buffer.from(seed), Buffer.from("collateral-mint")],
     StakingProgram.programId
   );
 
@@ -61,13 +61,13 @@ async function deriveStakePoolAccounts(seed: string): Promise<StakePoolAccounts>
   };
 }
 
-describe('airdrop-staking', () => {
+describe("airdrop-staking", () => {
   // Configure the client to use the local cluster.
   const provider = anchor.Provider.env();
   const wallet = provider.wallet as NodeWallet;
   anchor.setProvider(provider);
 
-  const stakeSeed = 'test';
+  const stakeSeed = "test";
   const staker = Keypair.generate();
   const airdropKey = Keypair.generate();
   const airdropRecipients = Array.from({ length: 60 })
@@ -104,7 +104,7 @@ describe('airdrop-staking', () => {
     stakeAcc = await deriveStakePoolAccounts(stakeSeed);
   });
 
-  it('create pool', async () => {
+  it("create pool", async () => {
     const config = { unbondPeriod: new u64(0) };
 
     await StakingProgram.rpc.initPool(stakeSeed, config, {
@@ -130,7 +130,7 @@ describe('airdrop-staking', () => {
     );
   });
 
-  it('create staker auth', async () => {
+  it("create staker auth", async () => {
     let bumpSeed: number;
 
     [stakerAuth, bumpSeed] = await PublicKey.findProgramAddress(
@@ -149,7 +149,7 @@ describe('airdrop-staking', () => {
     });
   });
 
-  it('authenticate staker', async () => {
+  it("authenticate staker", async () => {
     await AuthProgram.rpc.authenticate({
       accounts: {
         // FIXME: ?? authority signer should be .. something
@@ -159,7 +159,7 @@ describe('airdrop-staking', () => {
     });
   });
 
-  it('create staker account', async () => {
+  it("create staker account", async () => {
     let bumpSeed: number;
 
     [stakerAccount, bumpSeed] = await PublicKey.findProgramAddress(
@@ -180,18 +180,18 @@ describe('airdrop-staking', () => {
     });
   });
 
-  it('create airdrop', async () => {
+  it("create airdrop", async () => {
     let bumpSeed: number;
 
     [airdropVault, bumpSeed] = await PublicKey.findProgramAddress(
-      [airdropKey.publicKey.toBuffer(), Buffer.from('vault')],
+      [airdropKey.publicKey.toBuffer(), Buffer.from("vault")],
       RewardsProgram.programId
     );
 
     const params = {
       expireAt: new anchor.BN(Date.now() / 1000 + 10),
       stakePool: stakeAcc.stakePool,
-      shortDesc: 'integ-test-airdrop',
+      shortDesc: "integ-test-airdrop",
       flags: new anchor.BN(0)
     };
 
@@ -213,7 +213,7 @@ describe('airdrop-staking', () => {
     await testToken.mintTo(airdropVault, wallet.publicKey, [], new u64(5_000_000_000));
   });
 
-  it('add airdrop recipient', async () => {
+  it("add airdrop recipient", async () => {
     const params = {
       startIndex: new anchor.BN(0),
       recipients: [
@@ -231,7 +231,7 @@ describe('airdrop-staking', () => {
     });
   });
 
-  it('user cannot claim from non-final airdrop', async () => {
+  it("user cannot claim from non-final airdrop", async () => {
     try {
       await RewardsProgram.rpc.airdropClaim({
         accounts: {
@@ -254,7 +254,7 @@ describe('airdrop-staking', () => {
     }
   });
 
-  it('finalize airdrop', async () => {
+  it("finalize airdrop", async () => {
     await RewardsProgram.rpc.airdropFinalize({
       accounts: {
         airdrop: airdropKey.publicKey,
@@ -264,7 +264,7 @@ describe('airdrop-staking', () => {
     });
   });
 
-  it('user claims airdrop', async () => {
+  it("user claims airdrop", async () => {
     await RewardsProgram.rpc.airdropClaim({
       accounts: {
         airdrop: airdropKey.publicKey,
@@ -281,7 +281,7 @@ describe('airdrop-staking', () => {
     });
   });
 
-  it('user unbonds stake', async () => {
+  it("user unbonds stake", async () => {
     let unbondSeed = Buffer.alloc(4);
 
     [stakerUnbond, stakerUnbondBump] = await PublicKey.findProgramAddress(
@@ -307,7 +307,7 @@ describe('airdrop-staking', () => {
     );
   });
 
-  it('user cancels unbonding', async () => {
+  it("user cancels unbonding", async () => {
     await StakingProgram.rpc.cancelUnbond({
       accounts: {
         owner: staker.publicKey,
@@ -320,7 +320,7 @@ describe('airdrop-staking', () => {
     });
   });
 
-  it('user unbonds again', async () => {
+  it("user unbonds again", async () => {
     await StakingProgram.rpc.unbondStake(
       0,
       { kind: { tokens: {} }, value: new u64(4_200_000_000) },
@@ -339,7 +339,7 @@ describe('airdrop-staking', () => {
     );
   });
 
-  it('user withdraws unbonded stake', async () => {
+  it("user withdraws unbonded stake", async () => {
     const testAta = await testToken.getOrCreateAssociatedAccountInfo(staker.publicKey);
 
     await StakingProgram.rpc.withdrawUnbonded({
@@ -361,7 +361,7 @@ describe('airdrop-staking', () => {
     assert.equal(updatedAta.amount.toNumber(), 4_200_000_000);
   });
 
-  it('close airdrop', async () => {
+  it("close airdrop", async () => {
     await new Promise(resolve => setTimeout(resolve, 8_000));
     const walletAta = await testToken.getOrCreateAssociatedAccountInfo(wallet.publicKey);
 
@@ -381,7 +381,7 @@ describe('airdrop-staking', () => {
     assert.equal(updatedAta.amount.toNumber(), 800_000_000);
   });
 
-  it('user restakes', async () => {
+  it("user restakes", async () => {
     const testAta = await testToken.getOrCreateAssociatedAccountInfo(staker.publicKey);
 
     await StakingProgram.rpc.addStake(
@@ -404,10 +404,10 @@ describe('airdrop-staking', () => {
     assert.equal(updatedAta.amount.toNumber(), 0);
   });
 
-  it('create reward distribution', async () => {
+  it("create reward distribution", async () => {
     let bumpSeed: number;
     let vaultBumpSeed: number;
-    let distSeed = 'foo';
+    let distSeed = "foo";
 
     [distAccount, bumpSeed] = await PublicKey.findProgramAddress(
       [Buffer.from(distSeed)],
@@ -415,7 +415,7 @@ describe('airdrop-staking', () => {
     );
 
     [distVault, vaultBumpSeed] = await PublicKey.findProgramAddress(
-      [distAccount.toBuffer(), Buffer.from('vault')],
+      [distAccount.toBuffer(), Buffer.from("vault")],
       RewardsProgram.programId
     );
 
@@ -447,7 +447,7 @@ describe('airdrop-staking', () => {
     );
   });
 
-  it('distribute reward', async () => {
+  it("distribute reward", async () => {
     await RewardsProgram.rpc.distributionRelease({
       accounts: {
         distribution: distAccount,
@@ -458,10 +458,10 @@ describe('airdrop-staking', () => {
     });
   });
 
-  it('create award', async () => {
+  it("create award", async () => {
     let bumpSeed: number;
     let vaultBumpSeed: number;
-    let distSeed = 'foo-award';
+    let distSeed = "foo-award";
 
     [awardAccount, bumpSeed] = await PublicKey.findProgramAddress(
       [stakerAccount.toBuffer(), Buffer.from(distSeed)],
@@ -469,7 +469,7 @@ describe('airdrop-staking', () => {
     );
 
     [awardVault, vaultBumpSeed] = await PublicKey.findProgramAddress(
-      [awardAccount.toBuffer(), Buffer.from('vault')],
+      [awardAccount.toBuffer(), Buffer.from("vault")],
       RewardsProgram.programId
     );
 
@@ -501,7 +501,7 @@ describe('airdrop-staking', () => {
     );
   });
 
-  it('distribute award', async () => {
+  it("distribute award", async () => {
     await RewardsProgram.rpc.awardRelease({
       accounts: {
         award: awardAccount,
@@ -525,10 +525,10 @@ describe('airdrop-staking', () => {
     });
   });
 
-  it('create award to revoke', async () => {
+  it("create award to revoke", async () => {
     let bumpSeed: number;
     let vaultBumpSeed: number;
-    let distSeed = 'revoke-award';
+    let distSeed = "revoke-award";
 
     [awardAccount, bumpSeed] = await PublicKey.findProgramAddress(
       [stakerAccount.toBuffer(), Buffer.from(distSeed)],
@@ -536,7 +536,7 @@ describe('airdrop-staking', () => {
     );
 
     [awardVault, vaultBumpSeed] = await PublicKey.findProgramAddress(
-      [awardAccount.toBuffer(), Buffer.from('vault')],
+      [awardAccount.toBuffer(), Buffer.from("vault")],
       RewardsProgram.programId
     );
 
@@ -568,7 +568,7 @@ describe('airdrop-staking', () => {
     );
   });
 
-  it('revoke award', async () => {
+  it("revoke award", async () => {
     const fundingAta = await testToken.getOrCreateAssociatedAccountInfo(wallet.publicKey);
 
     await RewardsProgram.rpc.awardRevoke({
@@ -587,7 +587,7 @@ describe('airdrop-staking', () => {
     assert.equal(updatedAta.amount.toNumber(), 800_000_000);
   });
 
-  it('mint zero votes', async () => {
+  it("mint zero votes", async () => {
     try {
       const voteAta = await voteToken.getOrCreateAssociatedAccountInfo(wallet.publicKey);
 
@@ -613,7 +613,7 @@ describe('airdrop-staking', () => {
     }
   });
 
-  it('mint max votes', async () => {
+  it("mint max votes", async () => {
     const voteAta = await voteToken.getOrCreateAssociatedAccountInfo(wallet.publicKey);
 
     await StakingProgram.rpc.mintVotes(
@@ -637,7 +637,7 @@ describe('airdrop-staking', () => {
     assert.equal(updatedAta.amount.toNumber(), 10_000_000_000);
   });
 
-  it('user cannot mint extra votes', async () => {
+  it("user cannot mint extra votes", async () => {
     try {
       const voteAta = await voteToken.getOrCreateAssociatedAccountInfo(wallet.publicKey);
 
@@ -662,7 +662,7 @@ describe('airdrop-staking', () => {
     }
   });
 
-  it('user cannot unbond with outstanding votes', async () => {
+  it("user cannot unbond with outstanding votes", async () => {
     try {
       let bumpSeed: number;
       let unbondSeed = Buffer.alloc(4);
@@ -695,18 +695,18 @@ describe('airdrop-staking', () => {
     }
   });
 
-  it('create mass airdrop', async () => {
+  it("create mass airdrop", async () => {
     let bumpSeed: number;
 
     [airdropVault, bumpSeed] = await PublicKey.findProgramAddress(
-      [airdropKey.publicKey.toBuffer(), Buffer.from('vault')],
+      [airdropKey.publicKey.toBuffer(), Buffer.from("vault")],
       RewardsProgram.programId
     );
 
     const params = {
       expireAt: new anchor.BN(Date.now() / 1000 + 1000),
       stakePool: stakeAcc.stakePool,
-      shortDesc: 'integ-test-airdrop',
+      shortDesc: "integ-test-airdrop",
       vaultBump: bumpSeed,
       flags: new anchor.BN(0)
     };
@@ -761,7 +761,7 @@ describe('airdrop-staking', () => {
     });
   });
 
-  it('recipients claim from mass airdrop', async () => {
+  it("recipients claim from mass airdrop", async () => {
     await Promise.all(
       airdropRecipients.map(recipient =>
         (async () => {

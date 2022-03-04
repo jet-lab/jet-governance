@@ -1,11 +1,11 @@
-import { Keypair, PublicKey, Transaction, TransactionInstruction } from '@solana/web3.js';
+import { Keypair, PublicKey, Transaction, TransactionInstruction } from "@solana/web3.js";
 
-import { getGovernanceProgramVersion, Proposal } from '@solana/spl-governance';
+import { getGovernanceProgramVersion, Proposal } from "@solana/spl-governance";
 
-import { withFlagTransactionError } from '@solana/spl-governance';
-import { RpcContext } from '@solana/spl-governance';
-import { ProgramAccount } from '@solana/spl-governance';
-import { sendTransactionWithNotifications } from '../tools/transactions';
+import { withFlagTransactionError } from "@solana/spl-governance";
+import { RpcContext } from "@solana/spl-governance";
+import { ProgramAccount } from "@solana/spl-governance";
+import { sendTransactionWithNotifications } from "../tools/transactions";
 
 export const flagInstructionError = async (
   { connection, wallet, programId, walletPubkey }: RpcContext,
@@ -40,7 +40,7 @@ export const flagInstructionError = async (
     wallet,
     instructions,
     signers,
-    'Flagging instruction as broken',
-    'Instruction flagged as broken'
+    "Flagging instruction as broken",
+    "Instruction flagged as broken"
   );
 };

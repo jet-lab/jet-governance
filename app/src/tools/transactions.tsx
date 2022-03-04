@@ -1,10 +1,10 @@
-import { TransactionInstruction, Connection, Transaction, Keypair } from '@solana/web3.js';
-import { DEFAULT_TX_TIMEOUT, sendTransaction2 } from './sdk/core/connection';
-import { ExplorerLink } from '../components';
-import { notify, isTransactionTimeoutError, isSendTransactionError } from '../utils';
-import { Provider } from '@project-serum/anchor';
-import { SendTxRequest } from '@project-serum/anchor/dist/cjs/provider';
-import { WalletSigner } from '@solana/spl-governance';
+import { TransactionInstruction, Connection, Transaction, Keypair } from "@solana/web3.js";
+import { DEFAULT_TX_TIMEOUT, sendTransaction2 } from "./sdk/core/connection";
+import { ExplorerLink } from "../components";
+import { notify, isTransactionTimeoutError, isSendTransactionError } from "../utils";
+import { Provider } from "@project-serum/anchor";
+import { SendTxRequest } from "@project-serum/anchor/dist/cjs/provider";
+import { WalletSigner } from "@solana/spl-governance";
 
 export async function sendTransactionWithNotifications(
   connection: Connection,
@@ -16,8 +16,8 @@ export async function sendTransactionWithNotifications(
 ) {
   notify({
     message: `${pendingMessage}...`,
-    description: 'Please wait...',
-    type: 'warn'
+    description: "Please wait...",
+    type: "warn"
   });
 
   try {
@@ -34,10 +34,10 @@ export async function sendTransactionWithNotifications(
 
       notify({
         message: successMessage,
-        type: 'success',
+        type: "success",
         description: (
           <>
-            {'Transaction: '}
+            {"Transaction: "}
             <ExplorerLink address={txid} type="transaction" short connection={connection} />
           </>
         )
@@ -58,11 +58,11 @@ export async function sendTransactionWithNotifications(
               />
             </>
           ),
-          type: 'warn'
+          type: "warn"
         });
       } else if (isSendTransactionError(txError)) {
         notify({
-          message: 'Transaction error',
+          message: "Transaction error",
           description: (
             <>
               <ExplorerLink
@@ -73,7 +73,7 @@ export async function sendTransactionWithNotifications(
               />
             </>
           ),
-          type: 'error'
+          type: "error"
         });
       }
       throw txError;
@@ -93,8 +93,8 @@ export async function sendAllTransactionsWithNotifications(
 ) {
   notify({
     message: `${pendingMessage}...`,
-    description: 'Please wait...',
-    type: 'warn'
+    description: "Please wait...",
+    type: "warn"
   });
 
   try {
@@ -103,15 +103,15 @@ export async function sendAllTransactionsWithNotifications(
     const last = txid[txid.length - 1];
     notify({
       message: successMessage,
-      type: 'success',
+      type: "success",
       description: (
         <>
-          {'Transaction: '}
+          {"Transaction: "}
           <ExplorerLink address={last} type="transaction" short connection={provider.connection} />
         </>
       )
     });
-    console.log('Successful vote cast', last);
+    console.log("Successful vote cast", last);
   } catch (txError) {
     console.error(txError);
     if (isTransactionTimeoutError(txError)) {
@@ -129,11 +129,11 @@ export async function sendAllTransactionsWithNotifications(
             />
           </>
         ),
-        type: 'warn'
+        type: "warn"
       });
     } else if (isSendTransactionError(txError)) {
       notify({
-        message: 'Transaction error',
+        message: "Transaction error",
         description: (
           <>
             <ExplorerLink
@@ -144,7 +144,7 @@ export async function sendAllTransactionsWithNotifications(
             />
           </>
         ),
-        type: 'error'
+        type: "error"
       });
     }
     throw txError;

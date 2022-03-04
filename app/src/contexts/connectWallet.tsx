@@ -1,11 +1,11 @@
-import { Auth } from '@jet-lab/jet-engine';
-import { useProvider } from '@jet-lab/jet-engine/lib/common';
-import { useWallet } from '@solana/wallet-adapter-react';
-import { createContext, useContext, useState } from 'react';
-import { createUserAuth } from '../actions/createUserAuth';
-import { VerifyModal } from '../components/modals/VerifyModal';
-import { useRpcContext } from '../hooks';
-import { useConnection } from './connection';
+import { Auth } from "@jet-lab/jet-engine";
+import { useProvider } from "@jet-lab/jet-engine/lib/common";
+import { useWallet } from "@solana/wallet-adapter-react";
+import { createContext, useContext, useState } from "react";
+import { createUserAuth } from "../actions/createUserAuth";
+import { VerifyModal } from "../components/modals/VerifyModal";
+import { useRpcContext } from "../hooks";
+import { useConnection } from "./connection";
 
 // Connecting wallet context
 interface ConnectWallet {

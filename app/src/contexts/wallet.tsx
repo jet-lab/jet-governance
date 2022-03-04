@@ -3,25 +3,25 @@ import {
   WalletAdapterNetwork,
   WalletError,
   WalletNotConnectedError
-} from '@solana/wallet-adapter-base';
-import { useWallet, WalletProvider as BaseWalletProvider } from '@solana/wallet-adapter-react';
+} from "@solana/wallet-adapter-base";
+import { useWallet, WalletProvider as BaseWalletProvider } from "@solana/wallet-adapter-react";
 import {
   getPhantomWallet,
   getSolflareWallet,
   getSolletWallet,
   getSolongWallet,
   getMathWallet
-} from '@solana/wallet-adapter-wallets';
-import { Button, Modal } from 'antd';
-import { createContext, ReactNode, useCallback, useContext, useMemo, useState } from 'react';
-import { notify } from '../utils';
-import { useConnectionConfig } from './connection';
+} from "@solana/wallet-adapter-wallets";
+import { Button, Modal } from "antd";
+import { createContext, ReactNode, useCallback, useContext, useMemo, useState } from "react";
+import { notify } from "../utils";
+import { useConnectionConfig } from "./connection";
 
 export type { SignerWalletAdapter, WalletNotConnectedError };
 
 export type WalletSigner = Pick<
   SignerWalletAdapter,
-  'publicKey' | 'signTransaction' | 'signAllTransactions'
+  "publicKey" | "signTransaction" | "signAllTransactions"
 >;
 
 export interface WalletModalContextState {
@@ -56,7 +56,7 @@ export const WalletModal = () => {
           <Button
             key={wallet.name}
             size="large"
-            type={wallet === selected ? 'primary' : 'ghost'}
+            type={wallet === selected ? "primary" : "ghost"}
             onClick={() => {
               select(wallet.name);
               close();
@@ -71,9 +71,9 @@ export const WalletModal = () => {
               />
             }
             style={{
-              display: 'block',
-              width: '100%',
-              textAlign: 'left',
+              display: "block",
+              width: "100%",
+              textAlign: "left",
               marginBottom: 8
             }}
           >
@@ -106,12 +106,12 @@ export const WalletProvider = ({ children }: { children: ReactNode }) => {
 
   const network = useMemo(() => {
     switch (env) {
-      case 'mainnet-beta':
+      case "mainnet-beta":
         return WalletAdapterNetwork.Mainnet;
-      case 'testnet':
+      case "testnet":
         return WalletAdapterNetwork.Testnet;
-      case 'devnet':
-      case 'localnet':
+      case "devnet":
+      case "localnet":
       default:
         return WalletAdapterNetwork.Devnet;
     }
@@ -132,7 +132,7 @@ export const WalletProvider = ({ children }: { children: ReactNode }) => {
   const onError = useCallback((error: WalletError) => {
     console.error(error);
     notify({
-      message: 'Wallet error',
+      message: "Wallet error",
       description: error.message
     });
   }, []);

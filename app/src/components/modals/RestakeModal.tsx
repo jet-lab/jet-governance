@@ -1,10 +1,10 @@
-import { PropsWithChildren, useState } from 'react';
-import { Modal, ModalProps } from 'antd';
-import { restake } from '../../actions/restake';
-import { useRpcContext } from '../../hooks/useRpcContext';
-import { UnbondingAccount } from '@jet-lab/jet-engine';
-import { fromLamports } from '../../utils';
-import { useProposalContext } from '../../contexts/proposal';
+import { PropsWithChildren, useState } from "react";
+import { Modal, ModalProps } from "antd";
+import { restake } from "../../actions/restake";
+import { useRpcContext } from "../../hooks/useRpcContext";
+import { UnbondingAccount } from "@jet-lab/jet-engine";
+import { fromLamports } from "../../utils";
+import { useProposalContext } from "../../contexts/proposal";
 
 enum Steps {
   Confirm = 0,
@@ -60,7 +60,7 @@ export const RestakeModal = ({
 
   steps[Steps.Confirm] = {
     title: `Confirm you'd like to restake?`,
-    okText: 'I understand.',
+    okText: "I understand.",
     onOk: () => handleOk(),
     onCancel: () => handleClose(),
     closable: true,
@@ -78,15 +78,15 @@ export const RestakeModal = ({
   };
   steps[Steps.Success] = {
     title: `All set!`,
-    okText: 'I understand.',
+    okText: "I understand.",
     onOk: () => handleCloseAndRefresh(),
     onCancel: () => handleClose(),
     closable: true,
-    cancelButtonProps: { style: { display: 'none ' } },
+    cancelButtonProps: { style: { display: "none " } },
     children: (
       <>
         <p>
-          You've restaked {Intl.NumberFormat('us-US').format(stakeAmount)} JET into JetGovern and
+          You've restaked {Intl.NumberFormat("us-US").format(stakeAmount)} JET into JetGovern and
           can begin voting on active proposals immediately.
         </p>
         <p>Please refresh your page to see your update balance.</p>
@@ -94,12 +94,12 @@ export const RestakeModal = ({
     )
   };
   steps[Steps.Error] = {
-    title: 'Error',
-    okText: 'I understand.',
+    title: "Error",
+    okText: "I understand.",
     onOk: () => setCurrent(Steps.Confirm),
     onCancel: () => handleClose(),
     closable: true,
-    cancelButtonProps: { style: { display: 'none ' } },
+    cancelButtonProps: { style: { display: "none " } },
     children: <p>We have encountered an unknown error, please try again.</p>
   };
 

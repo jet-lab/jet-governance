@@ -1,5 +1,5 @@
-import { Governance, ProgramAccount, Proposal } from '@solana/spl-governance';
-import { useIsBeyondTimestamp } from './useIsBeyondTimestamp';
+import { Governance, ProgramAccount, Proposal } from "@solana/spl-governance";
+import { useIsBeyondTimestamp } from "./useIsBeyondTimestamp";
 
 export const useHasVoteTimeExpired = (
   governance: ProgramAccount<Governance> | undefined,

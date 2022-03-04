@@ -1,13 +1,13 @@
-import { InfoCircleFilled } from '@ant-design/icons';
-import { bnToNumber, UnbondingAccount } from '@jet-lab/jet-engine';
-import { MintInfo } from '@solana/spl-token';
-import { Button, Tooltip } from 'antd';
-import BN from 'bn.js';
-import { useEffect, useState } from 'react';
-import { useProposalContext } from '../../contexts/proposal';
-import { dateFromUnixTimestamp, fromLamports } from '../../utils';
-import { RestakeModal } from '../modals/RestakeModal';
-import { WithdrawModal } from '../modals/WithdrawModal';
+import { InfoCircleFilled } from "@ant-design/icons";
+import { bnToNumber, UnbondingAccount } from "@jet-lab/jet-engine";
+import { MintInfo } from "@solana/spl-token";
+import { Button, Tooltip } from "antd";
+import BN from "bn.js";
+import { useEffect, useState } from "react";
+import { useProposalContext } from "../../contexts/proposal";
+import { dateFromUnixTimestamp, fromLamports } from "../../utils";
+import { RestakeModal } from "../modals/RestakeModal";
+import { WithdrawModal } from "../modals/WithdrawModal";
 
 export const UnbondingLog = ({
   unbondingAccount
@@ -43,7 +43,7 @@ export const UnbondingLog = ({
         {dateFromUnixTimestamp(unbondingAccount?.unbondingAccount.unbondedAt)}
       </td>
       <td className="italics">
-        Unbonding{' '}
+        Unbonding{" "}
         <Tooltip
           title="Unstaking transactions require a 29.5-day unbonding period. before withdrawal to your wallet is enabled. Status will show as 'unbonding' until this period completes."
           mouseEnterDelay={0.1}
@@ -54,14 +54,14 @@ export const UnbondingLog = ({
       <td className="italics">
         <i className="italics">
           Unstake complete on {dateFromUnixTimestamp(unbondingAccount?.unbondingAccount.unbondedAt)}
-        </i>{' '}
+        </i>{" "}
         <Button
           type="dashed"
           onClick={() =>
             canWithdraw ? setWithdrawModalVisible(true) : setRestakeModalVisible(true)
           }
         >
-          {canWithdraw ? 'Withdraw' : 'Restake'}
+          {canWithdraw ? "Withdraw" : "Restake"}
         </Button>
         <RestakeModal
           visible={restakeModalVisible}

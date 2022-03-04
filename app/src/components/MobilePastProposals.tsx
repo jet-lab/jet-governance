@@ -1,10 +1,10 @@
-import { useMemo } from 'react';
-import { Link } from 'react-router-dom';
-import { Card, Divider } from 'antd';
-import { getProposalUrl } from '../tools/routeTools';
-import { getPubkeyIndex } from '../models/PUBKEYS_INDEX';
-import { Governance, ProgramAccount, Proposal, ProposalState } from '@solana/spl-governance';
-import { ReactComponent as ArrowRight } from '../images/arrow_right.svg';
+import { useMemo } from "react";
+import { Link } from "react-router-dom";
+import { Card, Divider } from "antd";
+import { getProposalUrl } from "../tools/routeTools";
+import { getPubkeyIndex } from "../models/PUBKEYS_INDEX";
+import { Governance, ProgramAccount, Proposal, ProposalState } from "@solana/spl-governance";
+import { ReactComponent as ArrowRight } from "../images/arrow_right.svg";
 
 export const PastProposalCard = ({
   proposal,
@@ -14,16 +14,16 @@ export const PastProposalCard = ({
   governance: ProgramAccount<Governance>;
 }) => {
   var headlineUrl = useMemo(
-    () => getProposalUrl(proposal.pubkey, proposal.account.name.substring(0, 15).replace(' ', '-')),
+    () => getProposalUrl(proposal.pubkey, proposal.account.name.substring(0, 15).replace(" ", "-")),
     [proposal.pubkey, proposal.account.name]
   );
   const proposalStr = useMemo(() => proposal.pubkey.toString(), [proposal.pubkey]);
 
-  let statusColor = '#949494';
-  if (ProposalState[proposal.account.state] === 'Draft') {
-    statusColor = '#3d9e83';
-  } else if (ProposalState[proposal.account.state] === 'Defeated') {
-    statusColor = '#ec6a69';
+  let statusColor = "#949494";
+  if (ProposalState[proposal.account.state] === "Draft") {
+    statusColor = "#3d9e83";
+  } else if (ProposalState[proposal.account.state] === "Defeated") {
+    statusColor = "#ec6a69";
   }
 
   return (

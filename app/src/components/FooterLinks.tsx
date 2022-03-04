@@ -1,6 +1,6 @@
-import { useState } from 'react';
-import { GlossaryModal } from './modals/GlossaryModal';
-import { TermsConditionsModal } from './modals/TermsConditionsModal';
+import { useState } from "react";
+import { GlossaryModal } from "./modals/GlossaryModal";
+import { TermsConditionsModal } from "./modals/TermsConditionsModal";
 
 export const FooterLinks = () => {
   const [showGlossaryModal, setShowGlossaryModal] = useState(false);

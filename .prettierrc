@@ -7,6 +7,6 @@
   "printWidth": 100,
   "quoteProps": "as-needed",
   "semi": true,
-  "singleQuote": true,
+  "singleQuote": false,
   "trailingComma": "none"
 }

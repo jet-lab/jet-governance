@@ -1,10 +1,10 @@
-import { PropsWithChildren, useState } from 'react';
-import { Modal, ModalProps } from 'antd';
-import { useRpcContext } from '../../hooks/useRpcContext';
-import { UnbondingAccount } from '@jet-lab/jet-engine';
-import { fromLamports } from '../../utils';
-import { withdrawUnbonded } from '../../actions/withdrawUnbonded';
-import { useProposalContext } from '../../contexts/proposal';
+import { PropsWithChildren, useState } from "react";
+import { Modal, ModalProps } from "antd";
+import { useRpcContext } from "../../hooks/useRpcContext";
+import { UnbondingAccount } from "@jet-lab/jet-engine";
+import { fromLamports } from "../../utils";
+import { withdrawUnbonded } from "../../actions/withdrawUnbonded";
+import { useProposalContext } from "../../contexts/proposal";
 
 enum Steps {
   Confirm = 0,
@@ -55,7 +55,7 @@ export const WithdrawModal = ({
 
   steps[Steps.Confirm] = {
     title: `Confirm you'd like to withdraw?`,
-    okText: 'I understand.',
+    okText: "I understand.",
     onOk: () => handleOk(),
     onCancel: () => handleClose(),
     closable: true,
@@ -70,25 +70,25 @@ export const WithdrawModal = ({
   };
   steps[Steps.Success] = {
     title: `All set!`,
-    okText: 'I understand.',
+    okText: "I understand.",
     onOk: () => handleClose(),
     onCancel: () => handleClose(),
     closable: true,
-    cancelButtonProps: { style: { display: 'none ' } },
+    cancelButtonProps: { style: { display: "none " } },
     children: (
       <>
-        <p>You've withdrawn {Intl.NumberFormat('us-US').format(stakeAmount)} JET from JetGovern.</p>
+        <p>You've withdrawn {Intl.NumberFormat("us-US").format(stakeAmount)} JET from JetGovern.</p>
         <p>Please refresh your page to see your update balance.</p>
       </>
     )
   };
   steps[Steps.Error] = {
-    title: 'Error',
-    okText: 'I understand.',
+    title: "Error",
+    okText: "I understand.",
     onOk: () => setCurrent(Steps.Confirm),
     onCancel: () => handleClose(),
     closable: true,
-    cancelButtonProps: { style: { display: 'none ' } },
+    cancelButtonProps: { style: { display: "none " } },
     children: <p>We have encountered an unknown error, please try again.</p>
   };
 

@@ -1,7 +1,7 @@
-import { BN } from '@project-serum/anchor';
-import { MintMaxVoteWeightSource } from '@solana/spl-governance';
-import { MintInfo } from '@solana/spl-token';
-import { BigNumber } from 'bignumber.js';
+import { BN } from "@project-serum/anchor";
+import { MintMaxVoteWeightSource } from "@solana/spl-governance";
+import { MintInfo } from "@solana/spl-token";
+import { BigNumber } from "bignumber.js";
 
 const SECONDS_PER_DAY = 86400;
 
@@ -34,7 +34,7 @@ export function parseMintNaturalAmountFromDecimal(
   decimalAmount: string | number,
   mintDecimals: number
 ) {
-  if (typeof decimalAmount === 'number') {
+  if (typeof decimalAmount === "number") {
     return getMintNaturalAmountFromDecimal(decimalAmount, mintDecimals);
   }
 
@@ -92,17 +92,17 @@ export function getAmountFractionAsDecimalPercentage(
 
 // Converts BN or number to BigNumber
 export function getBigNumberAmount(amount: BN | number) {
-  return typeof amount === 'number' ? new BigNumber(amount) : new BigNumber(amount.toString());
+  return typeof amount === "number" ? new BigNumber(amount) : new BigNumber(amount.toString());
 }
 
 // Formats percentage value showing it in human readable form
 export function formatPercentage(percentage: number) {
   if (percentage === 0 || percentage === Infinity) {
-    return '0%';
+    return "0%";
   }
 
   if (percentage < 0.01) {
-    return '<0.01%';
+    return "<0.01%";
   }
 
   return `${+percentage.toFixed(2)}%`;
@@ -155,7 +155,7 @@ export function formatMintMaxVotePercentage(maxVoteWeightSource: MintMaxVoteWeig
     .toNumber();
 
   if (percentage < 0.01) {
-    return '<0.01%';
+    return "<0.01%";
   }
 
   const rounded = +percentage.toFixed(2);

@@ -1,8 +1,8 @@
-import { notify } from '../utils';
-import { TokenFaucet } from '@jet-lab/jet-engine';
-import { Provider } from '@project-serum/anchor';
-import { ExplorerLink } from '../components';
-import { PublicKey } from '@solana/web3.js';
+import { notify } from "../utils";
+import { TokenFaucet } from "@jet-lab/jet-engine";
+import { Provider } from "@project-serum/anchor";
+import { ExplorerLink } from "../components";
+import { PublicKey } from "@solana/web3.js";
 
 export const jetFaucet = async (
   provider: Provider,
@@ -12,25 +12,25 @@ export const jetFaucet = async (
 ) => {
   if (!provider.wallet.publicKey) {
     notify({
-      message: 'Connect your wallet',
+      message: "Connect your wallet",
       description: `Please connect your wallet to receive an airdrop.`,
-      type: 'info',
-      placement: 'bottomRight'
+      type: "info",
+      placement: "bottomRight"
     });
     return;
   }
   notify({
     message: `Requesting ${tokenDesc} airdrop...`,
-    description: 'Please wait...',
-    type: 'warn'
+    description: "Please wait...",
+    type: "warn"
   });
   let txid = await TokenFaucet.airdropToken(provider, faucet, provider.wallet.publicKey, mint);
   notify({
     message: `${tokenDesc} airdrop received. Please refresh your page to update your wallet balance.`,
-    type: 'success',
+    type: "success",
     description: (
       <>
-        {'Transaction: '}
+        {"Transaction: "}
         <ExplorerLink address={txid} type="transaction" short connection={provider.connection} />
       </>
     )

@@ -1,9 +1,9 @@
-import React from 'react';
-import { Typography } from 'antd';
-import { shortenAddress } from '../../utils/utils';
-import { Connection, PublicKey } from '@solana/web3.js';
-import { useConnectionConfig } from '../../contexts';
-import { getExplorerUrl } from '../../utils/explorer';
+import React from "react";
+import { Typography } from "antd";
+import { shortenAddress } from "../../utils/utils";
+import { Connection, PublicKey } from "@solana/web3.js";
+import { useConnectionConfig } from "../../contexts";
+import { getExplorerUrl } from "../../utils/explorer";
 
 export const ExplorerLink = (props: {
   address: string | PublicKey;
@@ -17,7 +17,7 @@ export const ExplorerLink = (props: {
   const { type, code, short } = props;
   let { endpoint } = useConnectionConfig();
 
-  const address = typeof props.address === 'string' ? props.address : props.address?.toBase58();
+  const address = typeof props.address === "string" ? props.address : props.address?.toBase58();
 
   if (!address) {
     return null;

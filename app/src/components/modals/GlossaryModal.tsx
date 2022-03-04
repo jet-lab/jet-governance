@@ -1,4 +1,4 @@
-import { Modal } from 'antd';
+import { Modal } from "antd";
 
 export const GlossaryModal = ({ visible, onClose }: { visible: boolean; onClose: () => void }) => {
   return (
@@ -7,9 +7,9 @@ export const GlossaryModal = ({ visible, onClose }: { visible: boolean; onClose:
       visible={visible}
       okText="Okay"
       onOk={onClose}
-      okButtonProps={{ style: { display: 'none ' } }}
+      okButtonProps={{ style: { display: "none " } }}
       onCancel={onClose}
-      cancelButtonProps={{ style: { display: 'none ' } }}
+      cancelButtonProps={{ style: { display: "none " } }}
       className="wide"
     >
       <h2>Stake</h2>

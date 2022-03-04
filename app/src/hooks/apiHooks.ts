@@ -1,4 +1,4 @@
-import { Provider } from '@project-serum/anchor';
+import { Provider } from "@project-serum/anchor";
 import {
   getRealmConfigAddress,
   getSignatoryRecordAddress,
@@ -11,16 +11,16 @@ import {
   SignatoryRecord,
   TokenOwnerRecord,
   VoteRecord
-} from '@solana/spl-governance';
-import { useWallet } from '@solana/wallet-adapter-react';
-import { Connection, PublicKey } from '@solana/web3.js';
-import { useMemo } from 'react';
+} from "@solana/spl-governance";
+import { useWallet } from "@solana/wallet-adapter-react";
+import { Connection, PublicKey } from "@solana/web3.js";
+import { useMemo } from "react";
 import {
   useGovernanceAccountByPda,
   useGovernanceAccountByPubkey,
   useGovernanceAccounts
-} from './accountHooks';
-import { useRpcContext } from './useRpcContext';
+} from "./accountHooks";
+import { useRpcContext } from "./useRpcContext";
 
 // ----- Realm Config ---------
 

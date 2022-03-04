@@ -4,8 +4,8 @@ on:
   push:
     branches: [master]
     paths:
-      - 'programs/**/*.rs'
-      - 'programs/**/*.toml'
+      - "programs/**/*.rs"
+      - "programs/**/*.toml"
   workflow_dispatch: {}
 
 env:

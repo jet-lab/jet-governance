@@ -1,11 +1,11 @@
-import { useMemo, useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { Card, Progress } from 'antd';
-import { getProposalUrl } from '../tools/routeTools';
-import { getVoteCounts, useCountdown } from '../hooks/proposalHooks';
-import { getPubkeyIndex } from '../models/PUBKEYS_INDEX';
-import { Governance, ProgramAccount, Proposal, ProposalState } from '@solana/spl-governance';
-import { getRemainingTime } from '../utils';
+import { useMemo, useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import { Card, Progress } from "antd";
+import { getProposalUrl } from "../tools/routeTools";
+import { getVoteCounts, useCountdown } from "../hooks/proposalHooks";
+import { getPubkeyIndex } from "../models/PUBKEYS_INDEX";
+import { Governance, ProgramAccount, Proposal, ProposalState } from "@solana/spl-governance";
+import { getRemainingTime } from "../utils";
 
 export const ProposalCard = ({
   proposal,
@@ -15,7 +15,7 @@ export const ProposalCard = ({
   governance: ProgramAccount<Governance>;
 }) => {
   var headlineUrl = useMemo(
-    () => getProposalUrl(proposal.pubkey, proposal.account.name.substring(0, 15).replace(' ', '-')),
+    () => getProposalUrl(proposal.pubkey, proposal.account.name.substring(0, 15).replace(" ", "-")),
     [proposal.pubkey, proposal.account.name]
   );
   const proposalStr = useMemo(() => proposal.pubkey.toString(), [proposal.pubkey]);

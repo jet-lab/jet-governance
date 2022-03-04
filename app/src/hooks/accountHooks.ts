@@ -1,13 +1,13 @@
-import { PublicKey } from '@solana/web3.js';
-import { useEffect, useState } from 'react';
-import { useRpcContext } from './useRpcContext';
+import { PublicKey } from "@solana/web3.js";
+import { useEffect, useState } from "react";
+import { useRpcContext } from "./useRpcContext";
 import {
   getGovernanceAccount,
   getGovernanceAccounts,
   GovernanceAccount,
   MemcmpFilter,
   ProgramAccount
-} from '@solana/spl-governance';
+} from "@solana/spl-governance";
 
 // Fetches Governance program account using the given key and subscribes to updates
 export function useGovernanceAccountByPubkey<TAccount extends GovernanceAccount>(
@@ -52,8 +52,9 @@ export function useGovernanceAccountByPda<TAccount extends GovernanceAccount>(
 
   useEffect(() => {
     let isCancelled = false;
-
+    console.log("running 2");
     getPda().then(resolvedPda => {
+      console.log("running 3");
       if (!isCancelled) {
         setPda(resolvedPda);
       }

@@ -1,10 +1,10 @@
-import { RpcContext } from '@solana/spl-governance';
-import { useWallet } from '@solana/wallet-adapter-react';
-import { PublicKey } from '@solana/web3.js';
-import { useEffect, useState } from 'react';
-import { useConnection, useConnectionConfig } from '../contexts';
+import { RpcContext } from "@solana/spl-governance";
+import { useWallet } from "@solana/wallet-adapter-react";
+import { PublicKey } from "@solana/web3.js";
+import { useEffect, useState } from "react";
+import { useConnection, useConnectionConfig } from "../contexts";
 
-import { useProgramInfo } from '../contexts/GovernanceContext';
+import { useProgramInfo } from "../contexts/GovernanceContext";
 
 export function useRpcContext() {
   const { endpoint } = useConnectionConfig();

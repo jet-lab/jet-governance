@@ -1,15 +1,15 @@
-import { InfoCircleFilled, PlusOutlined } from '@ant-design/icons';
-import { bnToNumber } from '@jet-lab/jet-engine';
-import { Tooltip, Divider, Button, Switch, notification } from 'antd';
-import { Input } from '../components/Input';
-import { useMemo, useState } from 'react';
-import { ReactFitty } from 'react-fitty';
-import { jetFaucet } from '../actions/jetFaucet';
-import { useConnectionConfig, useMint } from '../contexts';
-import { useAirdrop } from '../contexts/airdrop';
-import { useDarkTheme } from '../contexts/darkTheme';
-import { useProposalContext } from '../contexts/proposal';
-import { useWithdrawVotesAbility } from '../hooks/proposalHooks';
+import { InfoCircleFilled, PlusOutlined } from "@ant-design/icons";
+import { bnToNumber } from "@jet-lab/jet-engine";
+import { Tooltip, Divider, Button, Switch, notification } from "antd";
+import { Input } from "../components/Input";
+import { useMemo, useState } from "react";
+import { ReactFitty } from "react-fitty";
+import { jetFaucet } from "../actions/jetFaucet";
+import { useConnectionConfig } from "../contexts";
+import { useAirdrop } from "../contexts/airdrop";
+import { useDarkTheme } from "../contexts/darkTheme";
+import { useProposalContext } from "../contexts/proposal";
+import { useWithdrawVotesAbility } from "../hooks/proposalHooks";
 import {
   COUNCIL_FAUCET_DEVNET,
   COUNCIL_TOKEN_MINT,
@@ -17,12 +17,12 @@ import {
   JET_FAUCET_DEVNET,
   JET_REALM,
   JET_TOKEN_MINT
-} from '../utils';
-import { FooterLinks } from './FooterLinks';
-import { StakeModal } from './modals/StakeModal';
-import { UnstakeModal } from './modals/UnstakeModal';
-import { useWallet } from '@solana/wallet-adapter-react';
-import { useLocation } from 'react-router';
+} from "../utils";
+import { FooterLinks } from "./FooterLinks";
+import { StakeModal } from "./modals/StakeModal";
+import { UnstakeModal } from "./modals/UnstakeModal";
+import { useWallet } from "@solana/wallet-adapter-react";
+import { useLocation } from "react-router";
 
 export const YourInfo = () => {
   const [stakeModalVisible, setStakeModalVisible] = useState(false);
@@ -49,7 +49,6 @@ export const YourInfo = () => {
 
   const withdrawVotesAbility = useWithdrawVotesAbility(tokenOwnerRecord);
   /* eslint-enable @typescript-eslint/no-unused-vars */
-  const mint = useMint(JET_TOKEN_MINT);
 
   const rewards = useMemo(() => {
     return {
@@ -96,7 +95,7 @@ export const YourInfo = () => {
   const getJetAirdrop = async () => {
     try {
       if (stakeProgram) {
-        await jetFaucet(stakeProgram?.provider, JET_FAUCET_DEVNET, JET_TOKEN_MINT, 'Devnet JET');
+        await jetFaucet(stakeProgram?.provider, JET_FAUCET_DEVNET, JET_TOKEN_MINT, "Devnet JET");
       }
     } catch {}
   };
@@ -108,7 +107,7 @@ export const YourInfo = () => {
           stakeProgram?.provider,
           COUNCIL_FAUCET_DEVNET,
           COUNCIL_TOKEN_MINT,
-          'Devnet Council token'
+          "Devnet Council token"
         );
       }
     } catch {}
@@ -119,29 +118,29 @@ export const YourInfo = () => {
     vestedAirdropNotifications.map(
       (airdrop: { name: string; amount: number; end: Date; claimed: boolean; vested: boolean }) =>
         notification.open({
-          message: 'Fully vested',
+          message: "Fully vested",
           description: `${airdrop.name} has fully vested and may now be unstaked! Click for info.`,
           onClick: () => {
-            console.log('Go to Airdrop page');
+            console.log("Go to Airdrop page");
           },
-          placement: 'bottomRight'
+          placement: "bottomRight"
         })
     );
   };
 
   const showRewards = () => {
-    document.getElementById('show-more-apr')?.classList.toggle('hidden');
+    document.getElementById("show-more-apr")?.classList.toggle("hidden");
   };
 
-  const isOwnPage = Boolean(useLocation().pathname.includes('your-info'));
+  const isOwnPage = Boolean(useLocation().pathname.includes("your-info"));
 
   return (
-    <div id="your-info" className={isOwnPage ? 'view-container' : ''}>
+    <div id="your-info" className={isOwnPage ? "view-container" : ""}>
       <h2>Your Info</h2>
 
       <div className="neu-inset">
         <span>
-          Votes{' '}
+          Votes{" "}
           <Tooltip
             title="For each JET token staked, you may cast 1 vote in JetGovern."
             placement="topLeft"
@@ -155,13 +154,13 @@ export const YourInfo = () => {
         with mutation observer
         when child changes */}
         <ReactFitty maxSize={100} className="text-gradient vote-balance">
-          {connected ? new Intl.NumberFormat().format(fromLamports(stakedJet, mint)) : '-'}
+          {connected ? new Intl.NumberFormat().format(fromLamports(stakedJet, jetMint)) : "-"}
         </ReactFitty>
 
         <div id="wallet-overview" className="flex justify-between column">
           <div className="flex justify-between" id="current-staking-apr">
             <span>
-              {connected ? `${rewards.apr ?? '-'}% Staking APR` : `Current Staking APR `}
+              {connected ? `${rewards.apr ?? "-"}% Staking APR` : `Current Staking APR `}
               <Tooltip
                 title="The displayed APR depends upon many factors, including the total number of JET staked in the module and the amount of protocol revenue flowing to depositors."
                 overlayClassName="no-arrow"
@@ -173,11 +172,11 @@ export const YourInfo = () => {
               {connected ? (
                 <PlusOutlined style={{ marginRight: 0 }} onClick={showRewards} />
               ) : (
-                `${rewards.apr ?? '-'}%`
+                `${rewards.apr ?? "-"}%`
               )}
             </span>
           </div>
-          <div className={connected ? 'hidden' : undefined} id="show-more-apr">
+          <div className={connected ? "hidden" : undefined} id="show-more-apr">
             <div className="flex justify-between cluster">
               <span>Est. Daily Reward</span>
               <span>{rewards.estDailyReward}</span>
@@ -203,13 +202,13 @@ export const YourInfo = () => {
           )}
           <div className="flex justify-between cluster">
             <span>Staked JET</span>
-            <span>{new Intl.NumberFormat().format(fromLamports(stakedJet, mint))}</span>
+            <span>{new Intl.NumberFormat().format(fromLamports(stakedJet, jetMint))}</span>
           </div>
           {connected && (
             <>
               <div className="flex justify-between cluster">
                 <span>
-                  Unbonding queue{' '}
+                  Unbonding queue{" "}
                   <Tooltip
                     title="This is the amount of tokens you've unstaked that are currently in an unbonding period. For detailed information about the availability of your tokens, visit the Flight Logs page."
                     overlayClassName="no-arrow"
@@ -217,7 +216,11 @@ export const YourInfo = () => {
                     <InfoCircleFilled />
                   </Tooltip>
                 </span>
-                <span>{new Intl.NumberFormat().format(unbondingTotal)}</span>
+                <span>
+                  {new Intl.NumberFormat().format(
+                    fromLamports(unbondingTotal.unbondingQueue, jetMint)
+                  )}
+                </span>
               </div>
               <div className="flex justify-between cluster">
                 <span className="text-gradient bold">Available for Withdrawal</span>
@@ -228,7 +231,7 @@ export const YourInfo = () => {
           <Input
             type="number"
             token
-            value={inputAmount === undefined ? '' : inputAmount}
+            value={inputAmount === undefined ? "" : inputAmount}
             disabled={!connected}
             onChange={(value: number) => setInputAmount(value)}
             submit={() => handleStake()}
@@ -277,12 +280,12 @@ export const YourInfo = () => {
           unCheckedChildren="light"
         />
         <br />
-        <Button onClick={getJetAirdrop} style={{ display: env === 'mainnet-beta' ? 'none' : '' }}>
+        <Button onClick={getJetAirdrop} style={{ display: env === "mainnet-beta" ? "none" : "" }}>
           GET JET
         </Button>
         <Button
           onClick={getCouncilAirdrop}
-          style={{ display: env === 'mainnet-beta' ? 'none' : '' }}
+          style={{ display: env === "mainnet-beta" ? "none" : "" }}
         >
           GET COUNCIL TOKEN
         </Button>

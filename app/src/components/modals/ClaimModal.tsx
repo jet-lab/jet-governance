@@ -1,10 +1,10 @@
-import { Modal, ModalProps } from 'antd';
-import { PropsWithChildren, useState } from 'react';
-import { Link } from 'react-router-dom';
-import { Airdrop } from '@jet-lab/jet-engine';
-import { useRpcContext } from '../../hooks/useRpcContext';
-import { useProposalContext } from '../../contexts/proposal';
-import { claimAndStake } from '../../actions/claimAndStake';
+import { Modal, ModalProps } from "antd";
+import { PropsWithChildren, useState } from "react";
+import { Link } from "react-router-dom";
+import { Airdrop } from "@jet-lab/jet-engine";
+import { useRpcContext } from "../../hooks/useRpcContext";
+import { useProposalContext } from "../../contexts/proposal";
+import { claimAndStake } from "../../actions/claimAndStake";
 
 enum Steps {
   Confirm = 0,
@@ -62,7 +62,7 @@ export const ClaimModal = ({
 
   steps[Steps.Confirm] = {
     title: `Confirm you'd like to claim airdrop`,
-    okText: 'Claim and Stake',
+    okText: "Claim and Stake",
     onOk: () => handleOk(),
     onCancel: () => handleCancel(),
     closable: true,
@@ -78,7 +78,7 @@ export const ClaimModal = ({
         </p>
         <p>
           You may unstake at anytime, but before the tokens can be withdrawn to your wallet, there
-          is a 29.5-day unbonding period. Please read{' '}
+          is a 29.5-day unbonding period. Please read{" "}
           <a href="https://docs.jetprotocol.io/jet-protocol/protocol/jet-staking">the docs</a> for
           more information.
         </p>
@@ -87,12 +87,12 @@ export const ClaimModal = ({
   };
 
   steps[Steps.Success] = {
-    title: 'Congratulations and welcome aboard!',
-    okText: 'Okay',
+    title: "Congratulations and welcome aboard!",
+    okText: "Okay",
     onOk: () => handleCloseAndRefresh(),
     onCancel: () => handleCancel(),
     closable: false,
-    cancelButtonProps: { style: { display: 'none ' } },
+    cancelButtonProps: { style: { display: "none " } },
     children: (
       <>
         <p>
@@ -107,12 +107,12 @@ export const ClaimModal = ({
     )
   };
   steps[Steps.Error] = {
-    title: 'Error ',
-    okText: 'Okay',
+    title: "Error ",
+    okText: "Okay",
     onOk: () => handleCancel(),
     onCancel: () => handleCancel(),
     closable: true,
-    cancelButtonProps: { style: { display: 'none ' } },
+    cancelButtonProps: { style: { display: "none " } },
     children: <p>We have encountered an unknown error</p>
   };
 

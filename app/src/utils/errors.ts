@@ -1,4 +1,4 @@
-import { TransactionError } from '@solana/web3.js';
+import { TransactionError } from "@solana/web3.js";
 
 export class SendTransactionError extends Error {
   txError: TransactionError | undefined;

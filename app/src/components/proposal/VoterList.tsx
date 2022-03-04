@@ -1,9 +1,9 @@
-import { useState, useMemo } from 'react';
-import { List, Button, Skeleton } from 'antd';
-import { Stakeholders } from './Stakeholders';
-import { bnToIntLossy } from '../../tools/units';
-import { ProgramAccount, VoteRecord } from '@solana/spl-governance';
-import { getVoterDisplayData, VoterDisplayData } from '../../hooks';
+import { useState, useMemo } from "react";
+import { List, Button, Skeleton } from "antd";
+import { Stakeholders } from "./Stakeholders";
+import { bnToIntLossy } from "../../tools/units";
+import { ProgramAccount, VoteRecord } from "@solana/spl-governance";
+import { getVoterDisplayData, VoterDisplayData } from "../../hooks";
 
 export const VoterList = (props: {
   voteRecords: VoterDisplayData[];
@@ -30,11 +30,11 @@ export const VoterList = (props: {
   const loadMore = (
     <div
       style={{
-        textAlign: 'center',
+        textAlign: "center",
         marginTop: 12,
         height: 32,
-        lineHeight: '32px',
-        visibility: count * page < list.length ? 'visible' : 'collapse'
+        lineHeight: "32px",
+        visibility: count * page < list.length ? "visible" : "collapse"
       }}
     >
       <Button onClick={onLoadMore}>Load more</Button>

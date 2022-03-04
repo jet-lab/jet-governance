@@ -1,7 +1,7 @@
-import { Airdrop, StakeAccount, StakePool } from '@jet-lab/jet-engine';
-import { Program } from '@project-serum/anchor';
-import { RpcContext } from '@solana/spl-governance';
-import { sendTransactionWithNotifications } from '../tools/transactions';
+import { Airdrop, StakeAccount, StakePool } from "@jet-lab/jet-engine";
+import { Program } from "@project-serum/anchor";
+import { RpcContext } from "@solana/spl-governance";
+import { sendTransactionWithNotifications } from "../tools/transactions";
 
 export const claimAndStake = async (
   rpcContext: RpcContext,
@@ -17,7 +17,7 @@ export const claimAndStake = async (
     rpcContext.wallet,
     ix,
     [],
-    'Claiming and staking tokens',
-    'Tokens claimed and staked'
+    "Claiming and staking tokens",
+    "Tokens claimed and staked"
   );
 };

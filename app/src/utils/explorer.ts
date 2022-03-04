@@ -1,12 +1,11 @@
-import { Connection, PublicKey, Transaction } from '@solana/web3.js';
-import { ENDPOINTS } from '../contexts';
-import { ENV as ChainId } from '@solana/spl-token-registry';
-import base58 from 'bs58';
+import { Connection, PublicKey, Transaction } from "@solana/web3.js";
+import base58 from "bs58";
+import { ENDPOINTS, ENV } from "../contexts/connection";
 
 export function getExplorerUrl(
   viewTypeOrItemAddress: string | PublicKey,
   endpoint: string,
-  itemType: string = 'address',
+  itemType: string = "address",
   connection?: Connection
 ) {
   const getClusterUrlParam = () => {
@@ -22,17 +21,15 @@ export function getExplorerUrl(
 
     let cluster;
 
-    if (env?.ChainId === ChainId.Testnet) {
-      cluster = 'testnet';
-    } else if (env?.ChainId === ChainId.Devnet) {
-      if (env?.name === 'localnet') {
-        cluster = `custom&customUrl=${encodeURIComponent('http://127.0.0.1:8899')}`;
-      } else {
-        cluster = 'devnet';
-      }
+    if (env?.ChainId === ENV.Testnet) {
+      cluster = "testnet";
+    } else if (env?.ChainId === ENV.Devnet) {
+      cluster = "devnet";
+    } else if (env?.ChainId === ENV.localnet || env?.name === "localnet") {
+      cluster = `custom&customUrl=${encodeURIComponent("http://127.0.0.1:8899")}`;
     }
 
-    return cluster ? `?cluster=${cluster}` : '';
+    return cluster ? `?cluster=${cluster}` : "";
   };
 
   return `https://explorer.solana.com/${itemType}/${viewTypeOrItemAddress}${getClusterUrlParam()}`;
@@ -46,15 +43,15 @@ export function getExplorerInspectorUrl(
 ) {
   const SIGNATURE_LENGTH = 64;
 
-  const explorerUrl = new URL(getExplorerUrl('inspector', endpoint, 'tx', connection));
+  const explorerUrl = new URL(getExplorerUrl("inspector", endpoint, "tx", connection));
 
   const signatures = transaction.signatures.map(s =>
     base58.encode(s.signature ?? Buffer.alloc(SIGNATURE_LENGTH))
   );
-  explorerUrl.searchParams.append('signatures', JSON.stringify(signatures));
+  explorerUrl.searchParams.append("signatures", JSON.stringify(signatures));
 
   const message = transaction.serializeMessage();
-  explorerUrl.searchParams.append('message', message.toString('base64'));
+  explorerUrl.searchParams.append("message", message.toString("base64"));
 
   return explorerUrl.toString();
 }

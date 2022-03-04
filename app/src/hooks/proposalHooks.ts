@@ -1,4 +1,4 @@
-import { Airdrop, StakePool } from '@jet-lab/jet-engine';
+import { Airdrop, StakePool } from "@jet-lab/jet-engine";
 import {
   Governance,
   ProgramAccount,
@@ -9,16 +9,16 @@ import {
   TokenOwnerRecord,
   VoteKind,
   VoteRecord
-} from '@solana/spl-governance';
-import { PublicKey } from '@solana/web3.js';
-import BN from 'bn.js';
-import { useMemo } from 'react';
-import { ZERO } from '../constants';
-import { ProposalFilter } from '../contexts/proposal';
-import { bnToIntLossy } from '../tools/units';
-import { dateToString } from '../utils';
-import { useGovernanceAccounts } from './accountHooks';
-import { useRpcContext } from './useRpcContext';
+} from "@solana/spl-governance";
+import { PublicKey } from "@solana/web3.js";
+import BN from "bn.js";
+import { useMemo } from "react";
+import { ZERO } from "../constants";
+import { ProposalFilter } from "../contexts/proposal";
+import { bnToIntLossy } from "../tools/units";
+import { dateToString } from "../utils";
+import { useGovernanceAccounts } from "./accountHooks";
+import { useRpcContext } from "./useRpcContext";
 
 export function useBN(number: number | undefined, exponent: number | null | undefined = null) {
   return useMemo(() => {
@@ -39,15 +39,15 @@ export const useProposalFilters = (
   proposalFilter: ProposalFilter
 ) => {
   return useMemo(() => {
-    if (proposalFilter === 'active') {
+    if (proposalFilter === "active") {
       return proposals.filter(p => p.account.state === ProposalState.Voting);
-    } else if (proposalFilter === 'inactive') {
+    } else if (proposalFilter === "inactive") {
       return proposals.filter(p => p.account.isVoteFinalized() || p.account.isPreVotingState());
-    } else if (proposalFilter === 'passed') {
+    } else if (proposalFilter === "passed") {
       return proposals.filter(p => p.account.state === ProposalState.Succeeded);
-    } else if (proposalFilter === 'rejected') {
+    } else if (proposalFilter === "rejected") {
       return proposals.filter(p => p.account.state === ProposalState.Defeated);
-    } else if (proposalFilter === 'all') {
+    } else if (proposalFilter === "all") {
       return proposals;
     } else {
       return proposals;
@@ -102,10 +102,10 @@ export interface VoterDisplayData {
 }
 
 export enum VoteOption {
-  Undecided = 'Undecided',
-  Yes = 'Approve',
-  No = 'Reject',
-  Abstain = 'Abstain'
+  Undecided = "Undecided",
+  Yes = "Approve",
+  No = "Reject",
+  Abstain = "Abstain"
 }
 
 interface VoterData {

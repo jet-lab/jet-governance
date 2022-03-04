@@ -1,8 +1,8 @@
-import { Divider, Progress, Collapse, Timeline } from 'antd';
-import { useWallet } from '@solana/wallet-adapter-react';
-import { Available } from '../components/airdrop/Available';
-import { useProposalContext } from '../contexts/proposal';
-import { useAirdrop } from '../contexts/airdrop';
+import { Divider, Progress, Collapse, Timeline } from "antd";
+import { useWallet } from "@solana/wallet-adapter-react";
+import { Available } from "../components/airdrop/Available";
+import { useProposalContext } from "../contexts/proposal";
+import { useAirdrop } from "../contexts/airdrop";
 
 interface Airdrop {
   name: string;
@@ -65,7 +65,7 @@ export const AirdropHistory = () => {
     <div className="view-container content-body" id="airdrop">
       <div>
         <h2>Airdrop</h2>
-        <div className="neu-container" style={{ maxWidth: '750px' }}>
+        <div className="neu-container" style={{ maxWidth: "750px" }}>
           <h1>Here's how your airdrop works.</h1>
           <p>
             Airdrop claims deposit a fixed amount of Jet tokens into your governance account. These
@@ -80,13 +80,13 @@ export const AirdropHistory = () => {
         </div>
       </div>
 
-      <div className="panel" style={{ width: '50%' }}>
+      <div className="panel" style={{ width: "50%" }}>
         <h2>Your info</h2>
         <div className="header">
           <div className="neu-container">
             <h1>Vesting progress</h1>
             {vesting.length === 0
-              ? 'All of your rewards are fully vested. Stake away!'
+              ? "All of your rewards are fully vested. Stake away!"
               : `Currently vesting: ${vesting.map(airdrop => `${airdrop.name}, `)}`}
             <Progress percent={vestingProgressBar} showInfo={false} />
             <Divider />
@@ -96,7 +96,7 @@ export const AirdropHistory = () => {
                   <Timeline>
                     <Timeline.Item>Airdrop claimed</Timeline.Item>
                     <Timeline.Item>Vesting begins</Timeline.Item>
-                    <Timeline.Item className={!airdrop.vested ? 'incomplete' : ''}>
+                    <Timeline.Item className={!airdrop.vested ? "incomplete" : ""}>
                       Vesting period complete
                     </Timeline.Item>
                   </Timeline>

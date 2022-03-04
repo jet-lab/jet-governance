@@ -1,9 +1,9 @@
-import { Keypair, PublicKey, TransactionInstruction } from '@solana/web3.js';
-import BN from 'bn.js';
-import { withApprove } from '../models';
-import { RpcContext, withDepositGoverningTokens } from '@solana/spl-governance';
-import { sendTransactionWithNotifications } from '../tools/transactions';
-import { AssociatedToken, StakeAccount, StakePool } from '@jet-lab/jet-engine';
+import { Keypair, PublicKey, TransactionInstruction } from "@solana/web3.js";
+import BN from "bn.js";
+import { withApprove } from "../models/withApprove";
+import { RpcContext, withDepositGoverningTokens } from "@solana/spl-governance";
+import { sendTransactionWithNotifications } from "../tools/transactions";
+import { AssociatedToken, StakeAccount, StakePool } from "@jet-lab/jet-engine";
 
 export const addStake = async (
   { connection, wallet, programId, programVersion, walletPubkey }: RpcContext,
@@ -59,7 +59,7 @@ export const addStake = async (
     wallet,
     instructions,
     signers,
-    'Staking governing tokens',
-    'Tokens have been staked'
+    "Staking governing tokens",
+    "Tokens have been staked"
   );
 };

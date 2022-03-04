@@ -1,11 +1,11 @@
-import { Keypair, TransactionInstruction } from '@solana/web3.js';
+import { Keypair, TransactionInstruction } from "@solana/web3.js";
 
-import { getGovernanceProgramVersion, Proposal, ProposalTransaction } from '@solana/spl-governance';
+import { getGovernanceProgramVersion, Proposal, ProposalTransaction } from "@solana/spl-governance";
 
-import { withExecuteTransaction } from '@solana/spl-governance';
-import { RpcContext } from '@solana/spl-governance';
-import { ProgramAccount } from '@solana/spl-governance';
-import { sendTransactionWithNotifications } from '../tools/transactions';
+import { withExecuteTransaction } from "@solana/spl-governance";
+import { RpcContext } from "@solana/spl-governance";
+import { ProgramAccount } from "@solana/spl-governance";
+import { sendTransactionWithNotifications } from "../tools/transactions";
 
 export const executeTransaction = async (
   { connection, wallet, programId }: RpcContext,
@@ -34,7 +34,7 @@ export const executeTransaction = async (
     wallet,
     instructions,
     signers,
-    'Executing instruction',
-    'Execution finalized'
+    "Executing instruction",
+    "Execution finalized"
   );
 };
