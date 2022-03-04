@@ -55,8 +55,8 @@ enum RunCommand {
 
     /// Utility command to print to file
     PrintFile {
-        #[structopt(short, long)]
-        print: bool,
+        //#[structopt(short, long)]
+    //print: bool,
     },
 }
 
@@ -137,7 +137,7 @@ fn run_create_airdrop_account_and_add_recipients(
             .send()?;
         println!("confirmed: {:?}", sig);
 
-        start_index += 25 as u64;
+        start_index += 25;
     }
 
     Ok(())
@@ -220,7 +220,7 @@ fn main() -> anyhow::Result<()> {
             token_receiver,
         } => run_close_airdrop(&client, airdrop, authority, token_receiver)?,
         RunCommand::ReadAirdrop { airdrop } => run_read_airdrop(&client, airdrop)?,
-        RunCommand::PrintFile { print: _ } => run_print_to_file()?,
+        RunCommand::PrintFile {} => run_print_to_file()?,
     }
 
     Ok(())

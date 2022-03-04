@@ -87,7 +87,10 @@ pub fn distribution_create_handler(
     let distribution = &mut ctx.accounts.distribution;
 
     distribution.address = distribution.key();
-    distribution.seed.as_mut().write(params.seed.as_bytes())?;
+    distribution
+        .seed
+        .as_mut()
+        .write_all(params.seed.as_bytes())?;
     distribution.seed_len = params.seed.len() as u8;
     distribution.bump_seed[0] = *ctx.bumps.get("distribution").unwrap();
 

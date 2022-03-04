@@ -85,9 +85,7 @@ impl TokenDistribution {
         let distributed = self.distributed;
         self.distributed = self.distributed_amount(timestamp);
 
-        let to_distribute = self.distributed.checked_sub(distributed).unwrap();
-
-        to_distribute
+        self.distributed.checked_sub(distributed).unwrap()
     }
 
     pub fn distributed_amount(&self, timestamp: u64) -> u64 {

@@ -89,7 +89,7 @@ pub fn award_create_handler(ctx: Context<AwardCreate>, params: AwardCreateParams
     let award = &mut ctx.accounts.award;
 
     award.authority = params.authority;
-    award.seed.as_mut().write(params.seed.as_bytes())?;
+    award.seed.as_mut().write_all(params.seed.as_bytes())?;
     award.seed_len = params.seed.len() as u8;
     award.bump_seed[0] = *ctx.bumps.get("award").unwrap();
 

@@ -35,7 +35,7 @@ pub fn generate_keypair() -> anyhow::Result<Keypair> {
     let keypair = Keypair::new();
     let keypair_bytes = keypair.to_bytes().to_vec();
     let keypair_data = serde_json::to_string(&keypair_bytes)?;
-    let file_name = format!("airdrop-{}.json", &keypair.pubkey()).to_string();
+    let file_name = format!("airdrop-{}.json", &keypair.pubkey());
 
     std::fs::write(file_name, keypair_data).expect("Unable to write file");
 
@@ -159,7 +159,7 @@ pub fn json_to_create_airdrop_param(
 
     let airdrop_create_params = AirdropCreateParams {
         expire_at: get_unix_time_90_days(),
-        stake_pool: stake_pool,
+        stake_pool,
         short_desc: json_data.short_desc,
         flags: 0,
     };

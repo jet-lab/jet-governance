@@ -74,7 +74,7 @@ pub fn airdrop_create_handler(
     airdrop
         .short_desc
         .as_mut()
-        .write(params.short_desc.as_bytes())?;
+        .write_all(params.short_desc.as_bytes())?;
 
     Ok(())
 }

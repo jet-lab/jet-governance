@@ -89,7 +89,7 @@ pub fn init_pool_handler(
     stake_pool.stake_vote_mint = ctx.accounts.stake_vote_mint.key();
 
     stake_pool.bump_seed[0] = *ctx.bumps.get("stake_pool").unwrap();
-    stake_pool.seed.as_mut().write(seed.as_bytes())?;
+    stake_pool.seed.as_mut().write_all(seed.as_bytes())?;
     stake_pool.seed_len = seed.len() as u8;
 
     stake_pool.unbond_period = config.unbond_period as i64;
