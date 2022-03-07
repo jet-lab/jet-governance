@@ -1,4 +1,5 @@
 use anchor_lang::prelude::*;
+use anchor_spl::token;
 
 use crate::state::*;
 
@@ -17,8 +18,11 @@ pub struct CancelUnbond<'info> {
     pub stake_account: Account<'info, StakeAccount>,
 
     /// The stake pool to be rebonded to
-    #[account(mut)]
+    #[account(mut, has_one = stake_pool_vault)]
     pub stake_pool: Account<'info, StakePool>,
+
+    /// The stake pool token vault
+    pub stake_pool_vault: AccountInfo<'info>,
 
     /// The account to record this unbonding request
     #[account(mut,
@@ -32,8 +36,11 @@ pub fn cancel_unbond_handler(ctx: Context<CancelUnbond>) -> ProgramResult {
     let stake_account = &mut ctx.accounts.stake_account;
     let unbonding_account = &mut ctx.accounts.unbonding_account;
 
-    stake_pool.rebond(&unbonding_account.amount);
-    stake_account.rebond(&unbonding_account.amount);
+    let vault_amount = token::accessor::amount(&ctx.accounts.stake_pool_vault)?;
+    let amount = stake_pool.convert_withdraw_amount(vault_amount, &unbonding_account.amount)?;
+
+    stake_pool.rebond(&amount);
+    stake_account.rebond(&amount);
 
     Ok(())
 }

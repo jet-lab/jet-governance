@@ -313,6 +313,7 @@ describe("airdrop-staking", () => {
         owner: staker.publicKey,
         stakeAccount: stakerAccount,
         stakePool: stakeAcc.stakePool,
+        stakePoolVault: stakeAcc.stakePoolVault,
         unbondingAccount: stakerUnbond,
         receiver: wallet.publicKey
       },
