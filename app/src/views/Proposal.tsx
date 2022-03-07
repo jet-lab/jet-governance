@@ -37,6 +37,7 @@ import { explorerUrl } from "../utils";
 import { ReactComponent as NoAccess } from "../images/no_access.svg";
 import { ReactComponent as ThumbsUp } from "../images/thumbs_up.svg";
 import { ReactComponent as ThumbsDown } from "../images/thumbs_down.svg";
+import { Loader } from "../components/Loader";
 
 export const ProposalView = () => {
   const proposalAddress = useKeyParam();
@@ -67,7 +68,7 @@ export const ProposalView = () => {
       proposalsByGovernance={proposalsByGovernance}
     />
   ) : (
-    <Spin />
+    <Loader />
   );
 };
 
@@ -159,7 +160,7 @@ const InnerProposalView = ({
           {
             /* Description; Github Gist or text */
             loading ? (
-              <Spin />
+              <Loader />
             ) : isDescriptionUrl ? (
               failed ? (
                 <p>

@@ -692,6 +692,55 @@ button,
   }
 }
 
+// Spinning Loader
+.loader {
+  left: 0;
+  top: 0;
+
+  &.fullview {
+    position: absolute;
+    width: 100%;
+    height: calc(100vh - @nav-height);
+  }
+  &.button {
+    .outer-circle {
+      width: 35px;
+      height: 35px;
+      margin: unset;
+    }
+    .inner-circle {
+      box-shadow: unset;
+    }
+  }
+
+  .outer-circle {
+    position: relative;
+    margin: 10px auto;
+    width: 100px;
+    height: 100px;
+    border-radius: 100%;
+    box-shadow: inset -2px -2px 6px 0px @light-shadow, inset 2px 2px 6px 0px @dark-shadow;
+  }
+  .inner-circle {
+    z-index: 2;
+    position: absolute;
+    top: calc(50% - 40%);
+    left: calc(50% - 40%);
+    width: 80%;
+    height: 80%;
+    border-radius: 100%;
+    background: @white;
+    box-shadow: -2px -2px 6px 0px @light-shadow, 2px 2px 6px 0px @dark-shadow,
+      inset 0px 0px 0px 0px @light-shadow, inset 0px 0px 0px 0px @dark-shadow;
+
+    img {
+      width: 100%;
+      height: auto;
+      animation: rotate 1.15s ease-in-out infinite;
+    }
+  }
+}
+
 /* Extra small devices (840px and down) */
 @media only screen and (max-width: 840px) {
   .footer-links {
@@ -919,6 +968,9 @@ button,
   }
   #flight-logs-view {
     flex-direction: column;
+    .asset {
+      text-transform: capitalize;
+    }
   }
 }
 

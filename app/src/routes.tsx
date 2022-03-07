@@ -12,16 +12,16 @@ import { YourInfo } from "./components/YourInfo";
 import { DarkThemeProvider } from "./contexts/darkTheme";
 import { ConnectWalletProvider } from "./contexts/connectWallet";
 import { AirdropProvider } from "./contexts/airdrop";
+import { TransactionsProvider } from "./contexts/transactionLogs";
 import { AppLayout } from "./components/Layout";
+import { ConnectionProvider, WalletProvider } from "./contexts";
 import { ScrollToTop } from "./contexts/scrollToTop";
 import { ProposalProvider } from "./contexts/proposal";
+import { AirdropHistory } from "./views/AirdropHistory";
 import { ConfigProvider } from "antd-country-phone-input";
 import en from "world_countries_lists/data/en/world.json";
-import { AirdropHistory } from "./views/AirdropHistory";
 import { GlossaryView } from "./views/Glossary";
 import { TermsView } from "./views/TermsConditions";
-import { ConnectionProvider } from "./contexts/connection";
-import { WalletProvider } from "./contexts/wallet";
 
 export function Routes() {
   return (
@@ -38,20 +38,26 @@ export function Routes() {
                   <ConnectWalletProvider>
                     <AirdropProvider>
                       <ProposalProvider>
-                        <AppLayout>
-                          <Switch>
-                            <ScrollToTop>
-                              <Route exact path="/" children={<HomeView />} />
-                              <Route exact path="/your-info" children={<YourInfo />} />
-                              <Route path={"/proposal/:key"} children={<ProposalView />} />
-                              <Route exact path="/claims" children={<AirdropView />} />
-                              <Route exact path="/airdrop/history" children={<AirdropHistory />} />
-                              <Route exact path="/flight-logs" children={<FlightLogView />} />
-                              <Route exact path="/glossary" children={<GlossaryView />} />
-                              <Route exact path="/terms" children={<TermsView />} />
-                            </ScrollToTop>
-                          </Switch>
-                        </AppLayout>
+                        <TransactionsProvider>
+                          <AppLayout>
+                            <Switch>
+                              <ScrollToTop>
+                                <Route exact path="/" children={<HomeView />} />
+                                <Route exact path="/your-info" children={<YourInfo />} />
+                                <Route path={"/proposal/:key"} children={<ProposalView />} />
+                                <Route exact path="/claims" children={<AirdropView />} />
+                                <Route
+                                  exact
+                                  path="/airdrop/history"
+                                  children={<AirdropHistory />}
+                                />
+                                <Route exact path="/flight-logs" children={<FlightLogView />} />
+                                <Route exact path="/glossary" children={<GlossaryView />} />
+                                <Route exact path="/terms" children={<TermsView />} />
+                              </ScrollToTop>
+                            </Switch>
+                          </AppLayout>
+                        </TransactionsProvider>
                       </ProposalProvider>
                     </AirdropProvider>
                   </ConnectWalletProvider>

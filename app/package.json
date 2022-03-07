@@ -3,11 +3,12 @@
   "version": "0.0.1",
   "dependencies": {
     "@ant-design/icons": "^4.4.0",
-    "@jet-lab/jet-antd": "^0.3.8",
+    "@jet-lab/jet-antd": "^0.4.4",
     "@jet-lab/jet-engine": "^0.2.22",
     "@project-serum/anchor": "^0.20.1",
     "@solana/spl-governance": "^0.0.27",
     "@solana/spl-token": "^0.1.8",
+    "@solana/spl-token-registry": "^0.2.819",
     "@solana/wallet-adapter-base": "^0.6.0",
     "@solana/wallet-adapter-react": "^0.12.6",
     "@solana/wallet-adapter-wallets": "^0.10.1",
@@ -64,6 +65,7 @@
   "homepage": ".",
   "devDependencies": {
     "@craco/craco": "^6.4.3",
+    "@types/async": "^3.2.12",
     "@types/bn.js": "^4.11.6",
     "@types/bs58": "^4.0.1",
     "@types/d3": "6.3.0",
