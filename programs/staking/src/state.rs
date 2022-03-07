@@ -31,9 +31,9 @@ pub struct StakePool {
     /// The total amount of virtual stake tokens that can receive rewards
     pub shares_bonded: u64,
 
-    /// The total amount of virtual stake tokens that are ineligible for rewards
-    /// because they are being unbonded for future withdrawal.
-    pub shares_unbonded: u64,
+    /// The total amount of tokens that are being unbonded, and can be withdrawn
+    /// in the future.
+    pub tokens_unbonding: u64,
 }
 
 impl StakePool {
@@ -46,17 +46,17 @@ impl StakePool {
     }
 
     pub fn withdraw(&mut self, amount: &FullAmount) {
-        self.shares_unbonded = self
-            .shares_unbonded
-            .checked_sub(amount.share_amount)
+        self.shares_bonded = self.shares_bonded.checked_sub(amount.share_amount).unwrap();
+        self.tokens_unbonding = self
+            .tokens_unbonding
+            .checked_sub(amount.token_amount)
             .unwrap();
     }
 
     pub fn unbond(&mut self, amount: &FullAmount) {
-        self.shares_bonded = self.shares_bonded.checked_sub(amount.share_amount).unwrap();
-        self.shares_unbonded = self
-            .shares_unbonded
-            .checked_add(amount.share_amount)
+        self.tokens_unbonding = self
+            .tokens_unbonding
+            .checked_add(amount.token_amount)
             .unwrap();
     }
 
@@ -76,7 +76,7 @@ impl StakePool {
         }
 
         let tokens = std::cmp::max(vault_amount, 1);
-        let shares = std::cmp::max(self.shares_bonded + self.shares_unbonded, 1);
+        let shares = std::cmp::max(self.shares_bonded, 1);
         let full_amount = FullAmount {
             token_amount: 0,
             share_amount: 0,
@@ -88,6 +88,21 @@ impl StakePool {
             AmountKind::Tokens => full_amount.with_tokens(amount.value),
             AmountKind::Shares => full_amount.with_shares(amount.value),
         })
+    }
+
+    pub fn convert_withdraw_amount(
+        &self,
+        vault_amount: u64,
+        full_amount: &FullAmount,
+    ) -> Result<FullAmount, ErrorCode> {
+        let cur_amount =
+            self.convert_amount(vault_amount, Amount::shares(full_amount.share_amount))?;
+
+        if cur_amount.token_amount < full_amount.token_amount {
+            Ok(cur_amount)
+        } else {
+            Ok(*full_amount)
+        }
     }
 }
 
@@ -267,6 +282,8 @@ mod tests {
         vault: &mut u64,
         full_amount: &FullAmount,
     ) {
+        let full_amount = pool.convert_withdraw_amount(*vault, full_amount).unwrap();
+
         pool.withdraw(&full_amount);
         user.withdraw_unbonded(&full_amount);
         *vault -= full_amount.token_amount;
@@ -311,7 +328,7 @@ mod tests {
 
         assert_eq!(1_501, vault);
         assert_eq!(1_000, pool.shares_bonded);
-        assert_eq!(0, pool.shares_unbonded);
+        assert_eq!(0, pool.tokens_unbonding);
 
         // user B deposits 173_231 units, with 1.5:1 ratio
         deposit(&mut pool, &mut user_b, &mut vault, Amount::tokens(173_231));
@@ -325,7 +342,7 @@ mod tests {
 
         assert_eq!(1_502, vault);
         assert_eq!(1_000, pool.shares_bonded);
-        assert_eq!(0, pool.shares_unbonded);
+        assert_eq!(0, pool.tokens_unbonding);
     }
 
     #[test]
@@ -366,13 +383,28 @@ mod tests {
         assert_eq!(196_428, user_b.unbonding);
         assert_eq!(553_572, user_b.shares);
 
+        // increased share value shouldn't matter
+        vault += 2_400_000;
+
         // withdraw all unbonded tokens
         withdraw(&mut pool, &mut user_b, &mut vault, &unbonded_0);
         withdraw(&mut pool, &mut user_b, &mut vault, &unbonded_1);
 
         assert_eq!(0, user_b.unbonding);
         assert_eq!(553_572, user_b.shares);
-        assert_eq!(5_200_000, vault);
+        assert_eq!(7_600_000, vault);
+
+        // start unbonding again, then reduce share values
+        let unbonded_2 = unbond(&mut pool, &mut user_b, &mut vault, Amount::shares(53_572));
+
+        vault -= 5_600_000;
+
+        // withdraw should provide less than what was unbonded, since token per share was reduced
+        withdraw(&mut pool, &mut user_b, &mut vault, &unbonded_2);
+
+        assert_eq!(0, user_b.unbonding);
+        assert_eq!(500_000, user_b.shares);
+        assert_eq!(1_940_594, vault);
     }
 
     #[test]

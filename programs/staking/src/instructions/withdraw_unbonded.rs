@@ -65,12 +65,15 @@ pub fn withdraw_unbonded_handler(ctx: Context<WithdrawUnbonded>) -> ProgramResul
         return Err(ErrorCode::NotYetUnbonded.into());
     }
 
-    stake_pool.withdraw(&unbonding_account.amount);
-    stake_account.withdraw_unbonded(&unbonding_account.amount);
+    let vault_amount = token::accessor::amount(&ctx.accounts.stake_pool_vault)?;
+    let amount = stake_pool.convert_withdraw_amount(vault_amount, &unbonding_account.amount)?;
+
+    stake_pool.withdraw(&amount);
+    stake_account.withdraw_unbonded(&amount);
     unbonding_account.stake_account = Pubkey::default();
 
     let stake_pool = &ctx.accounts.stake_pool;
-    let token_amount = unbonding_account.amount.token_amount;
+    let token_amount = amount.token_amount;
 
     token::transfer(
         ctx.accounts
