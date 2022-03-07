@@ -1,9 +1,9 @@
-import { ReactNode, useMemo, useState } from "react";
+import { ReactNode, useState } from "react";
 import { Modal, ModalProps } from "antd";
 import { useProposalContext } from "../../contexts/proposal";
 import { rescindAndUnstake } from "../../actions/rescindAndUnstake";
-import { BN } from "@project-serum/anchor";
 import { useRpcContext } from "../../hooks/useRpcContext";
+import { u64 } from "@solana/spl-token";
 
 enum Steps {
   Start = 0,
@@ -37,9 +37,9 @@ export const UnstakeModal = ({
   const [current, setCurrent] = useState(Steps.Start);
   const [loading, setLoading] = useState(false);
 
-  const rescind = useMemo(() => {
-    return walletVoteRecords.find(voteRecord => !voteRecord.account.isRelinquished);
-  }, [walletVoteRecords]);
+  const unrelinquishedVoteRecords = walletVoteRecords.filter(
+    voteRecord => !voteRecord.account.isRelinquished
+  );
 
   const handleSubmitUnstake = () => {
     if (
@@ -54,7 +54,7 @@ export const UnstakeModal = ({
       return;
     }
 
-    const unstakeAmount = new BN(amount * 10 ** voteMint.decimals);
+    const unstakeAmount = new u64(amount * 10 ** voteMint.decimals);
     setLoading(true);
     rescindAndUnstake(
       rpcContext,
@@ -63,7 +63,6 @@ export const UnstakeModal = ({
       stakeAccount,
       governance,
       tokenOwnerRecord,
-      walletVoteRecords,
       unstakeAmount
     )
       .then(() => {
@@ -95,7 +94,7 @@ export const UnstakeModal = ({
     closable: true,
     content: (
       <>
-        {rescind && (
+        {unrelinquishedVoteRecords.length !== 0 && (
           <p>
             You currently have votes cast on active proposals, which will be rescinded upon
             unbonding. If you wish to keep your votes, wait until the voting period has ended before

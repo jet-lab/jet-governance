@@ -9,11 +9,19 @@ import {
   RpcContext,
   Vote,
   withCastVote,
+  withDepositGoverningTokens,
   withPostChatMessage,
   withRelinquishVote,
   YesNoVote
 } from "@solana/spl-governance";
-import { AssociatedToken, bnToNumber, StakeAccount, StakePool } from "@jet-lab/jet-engine";
+import {
+  AssociatedToken,
+  bnToNumber,
+  StakeAccount,
+  StakeBalance,
+  StakePool
+} from "@jet-lab/jet-engine";
+import { withApprove } from "../models/withApprove";
 
 export const castVote = async (
   { connection, wallet, programId, programVersion, walletPubkey }: RpcContext,
@@ -24,9 +32,9 @@ export const castVote = async (
   stakePool?: StakePool,
   stakeAccount?: StakeAccount,
   message?: ChatMessageBody,
-  voteRecord?: PublicKey
+  voteRecord?: PublicKey,
+  stakeBalance?: StakeBalance
 ) => {
-  let mintVoteIx: TransactionInstruction[] = [];
   let relinquishVoteIx: TransactionInstruction[] = [];
   let signers: Keypair[] = [];
   let castVoteIx: TransactionInstruction[] = [];
@@ -35,39 +43,6 @@ export const castVote = async (
   let governanceAuthority = walletPubkey;
   let payer = walletPubkey;
   const provider = new Provider(connection, wallet as any, Provider.defaultOptions());
-
-  // Check for difference between vote tokens
-  //in governance program and staked JET
-  // Mint vote tokens to top-up any difference
-  if (stakeAccount && stakePool) {
-    const voteMint = stakePool.addresses.stakeVoteMint;
-
-    const jetPerStakedShare = stakePool?.vault.amount.div(stakePool?.stakePool.sharesBonded);
-    const mintRemainingVotes = stakeAccount.stakeAccount.shares
-      .mul(jetPerStakedShare)
-      .sub(stakeAccount.stakeAccount.mintedVotes);
-
-    const voterTokenAccount = await AssociatedToken.withCreate(
-      mintVoteIx,
-      provider,
-      payer,
-      voteMint
-    );
-
-    await StakeAccount.withMintVotes(
-      mintVoteIx,
-      stakePool,
-      payer,
-      voterTokenAccount,
-      mintRemainingVotes
-    );
-
-    const mintVoteTx = new Transaction().add(...mintVoteIx);
-    allTxs.push({
-      tx: mintVoteTx,
-      signers: []
-    });
-  }
 
   // Withdraw existing vote before casting new vote
   // Then sign both transactions at once
@@ -89,6 +64,62 @@ export const castVote = async (
       tx: relinquishTx,
       signers: []
     });
+  }
+
+  // Check for difference between vote tokens
+  //in governance program and staked JET
+  // Mint vote tokens to top-up any difference
+  if (stakeAccount && stakePool && stakeBalance?.stakedJet && wallet.publicKey) {
+    const provider = stakePool.program.provider;
+    const voteMint = stakePool.addresses.stakeVoteMint;
+    const mintRemainingVotes = stakeBalance?.stakedJet.sub(stakeAccount.stakeAccount.mintedVotes);
+
+    if (mintRemainingVotes > stakePool.jetVotesPerShare) {
+      const voterTokenAccount = await AssociatedToken.withCreate(
+        castVoteIx,
+        provider,
+        wallet.publicKey,
+        voteMint
+      );
+      await StakeAccount.withCreate(
+        castVoteIx,
+        stakePool.program,
+        stakePool.addresses.stakePool,
+        wallet.publicKey
+      );
+      await StakeAccount.withMintVotes(
+        castVoteIx,
+        stakePool,
+        wallet.publicKey,
+        voterTokenAccount,
+        mintRemainingVotes
+      );
+
+      const transferAuthority = withApprove(
+        castVoteIx,
+        [],
+        voterTokenAccount,
+        walletPubkey,
+        mintRemainingVotes
+      );
+
+      signers.push(transferAuthority);
+
+      await withDepositGoverningTokens(
+        castVoteIx,
+        programId,
+        programVersion,
+        realm,
+        voterTokenAccount,
+        voteMint,
+        walletPubkey,
+        transferAuthority.publicKey,
+        walletPubkey,
+        mintRemainingVotes
+      );
+
+      await AssociatedToken.withClose(castVoteIx, wallet.publicKey, voteMint, wallet.publicKey);
+    }
   }
 
   await withCastVote(
@@ -126,7 +157,7 @@ export const castVote = async (
   const castTx = new Transaction().add(...castVoteIx);
   allTxs.push({
     tx: castTx,
-    signers: []
+    signers
   });
 
   await sendAllTransactionsWithNotifications(provider, allTxs, "Voting on proposal", "Vote cast");

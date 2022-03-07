@@ -23,6 +23,8 @@ import { StakeModal } from "./modals/StakeModal";
 import { UnstakeModal } from "./modals/UnstakeModal";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { useLocation } from "react-router";
+import { withdrawAllUnbonded } from "../actions/withdrawUnbonded";
+import { useRpcContext } from "../hooks";
 
 export const YourInfo = () => {
   const [stakeModalVisible, setStakeModalVisible] = useState(false);
@@ -35,17 +37,20 @@ export const YourInfo = () => {
 
   const {
     stakeProgram,
-    jetPerStakedShare,
-    unbondingTotal,
-    stakedJet,
+    unbondingTotal: { unbondingQueue, unbondingComplete },
+
+    stakeAccount,
+    stakePool,
+    unbondingAccounts,
+    stakeBalance: { stakedJet, unbondingJet },
 
     jetAccount,
     jetMint,
-
     stakingYield,
 
     tokenOwnerRecord
   } = useProposalContext();
+  const rpcContext = useRpcContext();
 
   const withdrawVotesAbility = useWithdrawVotesAbility(tokenOwnerRecord);
   /* eslint-enable @typescript-eslint/no-unused-vars */
@@ -89,6 +94,13 @@ export const YourInfo = () => {
 
     setInputAmount(stakable);
     setUnstakeModalVisible(true);
+  };
+
+  const handleWithdrawUnstaked = () => {
+    if (!unbondingAccounts || !stakeAccount || !stakePool) {
+      return;
+    }
+    withdrawAllUnbonded(rpcContext, unbondingAccounts, stakeAccount, stakePool);
   };
 
   // Devnet only: airdrop JET tokens
@@ -217,14 +229,16 @@ export const YourInfo = () => {
                   </Tooltip>
                 </span>
                 <span>
-                  {new Intl.NumberFormat().format(
-                    fromLamports(unbondingTotal.unbondingQueue, jetMint)
-                  )}
+                  {new Intl.NumberFormat().format(fromLamports(unbondingQueue.toNumber(), jetMint))}
                 </span>
               </div>
               <div className="flex justify-between cluster">
                 <span className="text-gradient bold">Available for Withdrawal</span>
-                <span className="text-gradient bold">{-1}</span>
+                <span className="text-gradient bold">
+                  {new Intl.NumberFormat().format(
+                    fromLamports(unbondingComplete.toNumber(), jetMint)
+                  )}
+                </span>
               </div>
             </>
           )}
@@ -232,6 +246,7 @@ export const YourInfo = () => {
             type="number"
             token
             value={inputAmount === undefined ? "" : inputAmount}
+            maxInput={undefined}
             disabled={!connected}
             onChange={(value: number) => setInputAmount(value)}
             submit={() => handleStake()}
@@ -255,6 +270,14 @@ export const YourInfo = () => {
             className="no-margin-horizontal"
           >
             Unstake
+            {withdrawVotesAbility ? null : (
+              <Tooltip
+                title="You cannot unstake JET until you have finalised all proposals that you created."
+                overlayClassName="no-arrow"
+              >
+                <InfoCircleFilled style={{ marginLeft: "5px" }} />
+              </Tooltip>
+            )}
           </Button>
           <UnstakeModal
             visible={unstakeModalVisible}
@@ -265,7 +288,8 @@ export const YourInfo = () => {
           <Button
             type="dashed"
             className="full-width"
-            disabled={!connected || !withdrawVotesAbility}
+            onClick={() => handleWithdrawUnstaked()}
+            disabled={!connected}
           >
             Withdraw
           </Button>

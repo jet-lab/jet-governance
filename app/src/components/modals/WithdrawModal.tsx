@@ -78,7 +78,7 @@ export const WithdrawModal = ({
     children: (
       <>
         <p>You've withdrawn {Intl.NumberFormat("us-US").format(stakeAmount)} JET from JetGovern.</p>
-        <p>Please refresh your page to see your update balance.</p>
+        <p>Please refresh your page to see your updated balance.</p>
       </>
     )
   };

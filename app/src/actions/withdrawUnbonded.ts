@@ -1,5 +1,6 @@
 import { StakeAccount, StakePool, UnbondingAccount } from "@jet-lab/jet-engine";
 import { RpcContext } from "@solana/spl-governance";
+import { TransactionInstruction } from "@solana/web3.js";
 import { sendTransactionWithNotifications } from "../tools/transactions";
 
 export const withdrawUnbonded = async (
@@ -19,6 +20,33 @@ export const withdrawUnbonded = async (
     connection,
     wallet,
     instructions,
+    [],
+    "Withdrawing governing tokens",
+    "Tokens have been withdrawn"
+  );
+};
+
+export const withdrawAllUnbonded = async (
+  { connection, wallet, walletPubkey }: RpcContext,
+  unbondingAccounts: UnbondingAccount[],
+  stakeAccount: StakeAccount,
+  stakePool: StakePool
+) => {
+  let ix: TransactionInstruction[] = [];
+
+  for (let i = 0; i < unbondingAccounts.length; i++) {
+    await UnbondingAccount.withdrawUnbonded(
+      unbondingAccounts[i],
+      stakeAccount,
+      stakePool,
+      walletPubkey
+    );
+  }
+
+  await sendTransactionWithNotifications(
+    connection,
+    wallet,
+    ix,
     [],
     "Withdrawing governing tokens",
     "Tokens have been withdrawn"

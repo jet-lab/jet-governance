@@ -3,11 +3,11 @@ import { ReactNode, useEffect, useState } from "react";
 import { useProposalsByGovernance } from "../../hooks/apiHooks";
 import { useCountdown, VoteOption } from "../../hooks/proposalHooks";
 import { useRpcContext } from "../../hooks/useRpcContext";
-import { StakeBalance } from "@jet-lab/jet-engine";
+import { bnToNumber, StakeBalance } from "@jet-lab/jet-engine";
 import { getPubkeyIndex } from "../../models/PUBKEYS_INDEX";
 import { getProposalUrl } from "../../tools/routeTools";
 import { Link } from "react-router-dom";
-import { fromLamports, getRemainingTime, JET_GOVERNANCE } from "../../utils";
+import { fromLamports, JET_GOVERNANCE } from "../../utils";
 import {
   Governance,
   ProgramAccount,
@@ -19,6 +19,7 @@ import {
 } from "@solana/spl-governance";
 import { castVote } from "../../actions/castVote";
 import { useProposalContext } from "../../contexts/proposal";
+import { useWallet } from "@solana/wallet-adapter-react";
 
 enum Steps {
   ConfirmVote = 0,
@@ -34,8 +35,7 @@ export const VoteModal = ({
   governance,
   proposal,
   tokenOwnerRecord,
-  voteRecord,
-  stakeBalance
+  voteRecord
 }: {
   vote: VoteOption;
   visible: boolean;
@@ -50,22 +50,9 @@ export const VoteModal = ({
 
   const { endDate, countdownTime } = useCountdown(proposal, governance);
   const rpcContext = useRpcContext();
-  const { stakePool, stakeAccount, jetMint } = useProposalContext();
+  const { stakePool, stakeAccount, stakeBalance, jetMint } = useProposalContext();
 
   let voteText: string = "";
-  const stakedJet = stakeBalance.stakedJet;
-
-  const [currentTime, setCurrentTime] = useState(Date.now());
-
-  // Update current time every second
-  useEffect(() => {
-    const secondInterval = setInterval(() => {
-      setCurrentTime(Date.now());
-    }, 1000);
-    return () => clearInterval(secondInterval);
-  });
-
-  const ONE_DAY = 24 * 60 * 60 * 1000;
 
   useEffect(() => {
     if (vote === undefined) {
@@ -81,6 +68,8 @@ export const VoteModal = ({
     voteText = "against";
   }
 
+  const { publicKey } = useWallet();
+
   // Handlers for vote modal
   const confirmVote = async (vote: VoteOption) => {
     let yesNoVote: YesNoVote;
@@ -90,6 +79,10 @@ export const VoteModal = ({
       yesNoVote = YesNoVote.No;
     } else {
       throw new Error("Not a yes or no vote.");
+    }
+
+    if (!publicKey) {
+      return;
     }
 
     if (tokenOwnerRecord) {
@@ -102,7 +95,8 @@ export const VoteModal = ({
         stakePool,
         stakeAccount,
         undefined,
-        voteRecord ? voteRecord!.pubkey : undefined
+        voteRecord ? voteRecord!.pubkey : undefined,
+        stakeBalance
       )
         .then(() => setCurrent(Steps.VoteSuccess))
         .catch(() => setCurrent(Steps.UnknownError));
@@ -145,13 +139,9 @@ export const VoteModal = ({
           You are about to vote <strong>{voteText}</strong> proposal "{proposal.account.name}".
         </p>
         <p>
-          You have {Intl.NumberFormat().format(fromLamports(stakedJet, jetMint))} JET staked, and
-          will be able to unstake these funds when voting{" "}
-          {countdownTime && countdownTime - currentTime <= ONE_DAY && countdownTime > currentTime
-            ? `ends in 
-                ${getRemainingTime(currentTime, countdownTime)}`
-            : `ends on: ${endDate}`}
-          .
+          You have{" "}
+          {Intl.NumberFormat().format(fromLamports(bnToNumber(stakeBalance.stakedJet), jetMint))}{" "}
+          JET staked, and will be able to unstake these funds when voting ends on {endDate}.
         </p>
       </>
     ),

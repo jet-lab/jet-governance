@@ -25,7 +25,7 @@ import {
   useWalletVoteRecords
 } from "../hooks/proposalHooks";
 import { useWallet } from "@solana/wallet-adapter-react";
-import { AssociatedToken, bnToNumber } from "@jet-lab/jet-engine/lib/common";
+import { AssociatedToken } from "@jet-lab/jet-engine/lib/common";
 import { useConnection } from "./connection";
 import { useProvider } from "../hooks/apiHooks";
 import {
@@ -66,8 +66,6 @@ interface ProposalContextState {
   jetAccount?: AssociatedToken;
   jetMint?: MintInfo;
   voteMint?: MintInfo;
-  stakedJet: number;
-  jetPerStakedShare: number;
 
   realm?: ProgramAccount<Realm>;
   governance?: ProgramAccount<Governance>;
@@ -89,9 +87,10 @@ const ProposalContext = React.createContext<ProposalContextState>({
   filteredPastProposals: [],
 
   claimsCount: 0,
-  unbondingTotal: { unbondingQueue: new BN(0), unbondingComplete: new BN(0) },
-  stakedJet: 0,
-  jetPerStakedShare: 0,
+  unbondingTotal: {
+    unbondingQueue: new BN(0),
+    unbondingComplete: new BN(0)
+  },
 
   stakeBalance: {
     stakedJet: undefined,
@@ -140,13 +139,6 @@ export function ProposalProvider({ children = undefined as any }) {
   const jetMint = AssociatedToken.useMint(connection, stakePool?.stakePool.tokenMint);
   const voteMint = AssociatedToken.useMint(connection, stakePool?.stakePool.stakeVoteMint);
 
-  // TODO: Move this section into jet-engine
-  const jetPerStakedShare = bnToNumber(
-    stakePool?.vault.amount.div(stakePool?.stakePool.sharesBonded)
-  );
-  const stakedJet = bnToNumber(stakeAccount?.stakeAccount.shares) * jetPerStakedShare;
-  const unstakedJet = bnToNumber(stakeAccount?.stakeAccount.unbonding) * jetPerStakedShare;
-
   // ----- Governance -----
   const realm = useGovernanceAccountByPubkey(Realm, JET_REALM);
   const governance = useGovernance(JET_GOVERNANCE);
@@ -186,8 +178,6 @@ export function ProposalProvider({ children = undefined as any }) {
         jetAccount,
         jetMint,
         voteMint,
-        stakedJet,
-        jetPerStakedShare,
 
         realm,
         governance,

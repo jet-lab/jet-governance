@@ -1,13 +1,60 @@
-import { PublicKey } from "@solana/web3.js";
+import { Connection, PublicKey } from "@solana/web3.js";
 import { useEffect, useState } from "react";
 import { useRpcContext } from "./useRpcContext";
 import {
+  booleanFilter,
   getGovernanceAccount,
   getGovernanceAccounts,
   GovernanceAccount,
   MemcmpFilter,
-  ProgramAccount
+  VoteRecord,
+  ProgramAccount,
+  pubkeyFilter,
+  Proposal,
+  Governance
 } from "@solana/spl-governance";
+
+export async function getUnrelinquishedVoteRecords(
+  connection: Connection,
+  programId: PublicKey,
+  tokenOwnerRecordPk: PublicKey
+) {
+  return getGovernanceAccounts(connection, programId, VoteRecord, [
+    pubkeyFilter(1 + 32, tokenOwnerRecordPk)!,
+    booleanFilter(1 + 32 + 32, false)
+  ]);
+}
+
+// Gets all proposals within a given governance
+// and returns an object
+export async function getParsedProposalsByGovernance(
+  connection: Connection,
+  programId: PublicKey,
+  governance: ProgramAccount<Governance>
+): Promise<{ [proposal: string]: ProgramAccount<Proposal> }> {
+  const [governances] = await Promise.all([
+    getGovernanceAccounts(connection, programId, Governance, [
+      pubkeyFilter(1, governance.account.realm)!
+    ])
+  ]);
+
+  const [proposalsByGovernance] = await Promise.all(
+    governances.map(g =>
+      getGovernanceAccounts(connection, programId, Proposal, [pubkeyFilter(1, g.pubkey)!])
+    )
+  );
+
+  const proposals: {
+    [proposal: string]: ProgramAccount<Proposal>;
+  } = Object.assign(
+    {},
+    ...proposalsByGovernance.map(key => ({
+      [key.pubkey.toString()]: key
+    }))
+  );
+
+  return proposals;
+}
 
 // Fetches Governance program account using the given key and subscribes to updates
 export function useGovernanceAccountByPubkey<TAccount extends GovernanceAccount>(
@@ -52,9 +99,8 @@ export function useGovernanceAccountByPda<TAccount extends GovernanceAccount>(
 
   useEffect(() => {
     let isCancelled = false;
-    console.log("running 2");
+
     getPda().then(resolvedPda => {
-      console.log("running 3");
       if (!isCancelled) {
         setPda(resolvedPda);
       }

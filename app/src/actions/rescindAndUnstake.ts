@@ -1,80 +1,107 @@
 import { AssociatedToken, StakeAccount, StakePool, UnbondingAccount } from "@jet-lab/jet-engine";
 import { BN, Program } from "@project-serum/anchor";
-import { SendTxRequest } from "@project-serum/anchor/dist/cjs/provider";
 import {
   Governance,
   ProgramAccount,
   TokenOwnerRecord,
-  VoteRecord,
   withDepositGoverningTokens,
   withRelinquishVote,
   withWithdrawGoverningTokens
 } from "@solana/spl-governance";
-import { Transaction, TransactionInstruction } from "@solana/web3.js";
+import { Keypair, TransactionInstruction } from "@solana/web3.js";
 import { RpcContext } from "@solana/spl-governance";
-import { sendAllTransactionsWithNotifications } from "../tools/transactions";
+import { sendTransactionWithNotifications } from "../tools/transactions";
 import { GOVERNANCE_PROGRAM_ID } from "../utils";
 import { withApprove } from "../models/withApprove";
+import {
+  getParsedProposalsByGovernance,
+  getUnrelinquishedVoteRecords
+} from "../hooks/accountHooks";
 
 export const rescindAndUnstake = async (
-  { programVersion, walletPubkey }: RpcContext,
+  { programId, programVersion, wallet, walletPubkey, connection }: RpcContext,
   stakeProgram: Program,
   stakePool: StakePool,
   stakeAccount: StakeAccount,
   governance: ProgramAccount<Governance>,
   tokenOwnerRecord: ProgramAccount<TokenOwnerRecord>,
-  walletVoteRecords: ProgramAccount<VoteRecord>[],
   amount: BN
 ) => {
   const voteMint = stakePool.addresses.stakeVoteMint;
   const unbondingSeed = UnbondingAccount.randomSeed();
-  const unrelinquished = walletVoteRecords.filter(voteRecord => !voteRecord.account.isRelinquished);
-  const transactions: Transaction[] = [];
+  let signers: Keypair[] = [];
+  const ix: TransactionInstruction[] = [];
   const remainingStake = tokenOwnerRecord.account.governingTokenDepositAmount.sub(amount);
 
-  // Rescind vote records
-  for (let i = 0; i < unrelinquished.length; i++) {
-    const voteRecord = unrelinquished[i];
-    const ix: TransactionInstruction[] = [];
-    const governanceAuthority = walletPubkey;
-    const beneficiary = walletPubkey;
+  // Get unrescinded proposals and relinquish votes before unstaking
+  const proposals = await getParsedProposalsByGovernance(connection, programId, governance);
 
-    await withRelinquishVote(
-      ix,
-      GOVERNANCE_PROGRAM_ID,
-      governance.pubkey,
-      voteRecord.account.proposal,
-      tokenOwnerRecord.pubkey,
-      voteMint,
-      voteRecord.pubkey,
-      governanceAuthority,
-      beneficiary
+  // FIXME: Handle error if there are unfinalised proposals
+  if (tokenOwnerRecord.account.unrelinquishedVotesCount > 0) {
+    console.log("All Proposals Must Be Finalised To Withdraw Governing Tokens");
+    console.log(
+      "unrelinquishedVotesCount",
+      tokenOwnerRecord.account.unrelinquishedVotesCount,
+      "outstandingProposalCount",
+      tokenOwnerRecord.account.outstandingProposalCount
     );
-    transactions.push(new Transaction().add(...ix));
-  }
 
-  const instructions: TransactionInstruction[] = [];
+    const voteRecords = await getUnrelinquishedVoteRecords(
+      connection,
+      programId,
+      tokenOwnerRecord!.account!.governingTokenOwner
+    );
+
+    for (const voteRecord of Object.values(voteRecords)) {
+      let proposal = proposals[voteRecord.account.proposal.toString()];
+      console.log("Relinquishing proposal", proposal.pubkey.toString(), proposal);
+
+      if (!proposal) {
+        continue;
+      }
+
+      // Note: We might hit single transaction limits here (accounts and size)
+      // if user has too many unrelinquished votes
+      withRelinquishVote(
+        ix,
+        programId,
+        proposal.account.governance,
+        proposal.pubkey,
+        tokenOwnerRecord!.pubkey,
+        proposal.account.governingTokenMint,
+        voteRecord.pubkey,
+        tokenOwnerRecord!.account.governingTokenOwner,
+        walletPubkey
+      );
+    }
+  }
 
   // Create vote token account
   const voterTokenAccount = await AssociatedToken.withCreate(
-    instructions,
+    ix,
     stakeProgram.provider,
     walletPubkey,
     voteMint
   );
   // Unstake Votes
   await withWithdrawGoverningTokens(
-    instructions,
+    ix,
     GOVERNANCE_PROGRAM_ID,
     governance.account.realm,
     voterTokenAccount,
     voteMint,
     walletPubkey
   );
-  const transferAuthority = withApprove(instructions, [], voterTokenAccount, walletPubkey, amount);
+  const transferAuthority = withApprove(ix, [], voterTokenAccount, walletPubkey, amount);
+  signers.push(transferAuthority);
+
+  // FIXME: This bit returns an error because you are trying to
+  // redeposit more vote tokens into the governance program
+  // than are in the vote token account
+
   // Restake Remaining Votes
   await withDepositGoverningTokens(
-    instructions,
+    ix,
     GOVERNANCE_PROGRAM_ID,
     programVersion,
     governance.account.realm,
@@ -87,7 +114,7 @@ export const rescindAndUnstake = async (
   );
   // Burn votes
   await StakeAccount.withBurnVotes(
-    instructions,
+    ix,
     stakePool,
     stakeAccount,
     walletPubkey,
@@ -95,33 +122,15 @@ export const rescindAndUnstake = async (
     amount
   );
   // Unstake Jet
-  await UnbondingAccount.withUnbondStake(
-    instructions,
-    stakePool,
-    stakeAccount,
-    unbondingSeed,
-    amount
-  );
+  await UnbondingAccount.withUnbondStake(ix, stakePool, stakeAccount, unbondingSeed, amount);
   // Close vote token account
-  await AssociatedToken.withClose(instructions, walletPubkey, voteMint, walletPubkey);
+  await AssociatedToken.withClose(ix, walletPubkey, voteMint, walletPubkey);
 
-  const reqs: SendTxRequest[] = [
-    ...transactions.map(tx => {
-      return {
-        tx,
-        signers: []
-      };
-    }),
-    {
-      tx: new Transaction().add(...instructions),
-      signers: [transferAuthority]
-    }
-  ];
-
-  // FIXME! Send all with notifications
-  return await sendAllTransactionsWithNotifications(
-    stakeProgram.provider,
-    reqs,
+  return await sendTransactionWithNotifications(
+    connection,
+    wallet,
+    ix,
+    signers,
     "Unstaking tokens",
     "Tokens have begun unbonding"
   );
