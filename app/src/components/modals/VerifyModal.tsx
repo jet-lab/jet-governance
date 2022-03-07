@@ -19,7 +19,7 @@ enum Steps {
   VpnBlocked = 8,
   InvalidToken = 9
 }
-const API_KEY = "4c10a126-1f09-4a11-bf43-b81f7f583b52";
+const API_KEY: string = process.env.REACT_APP_SMS_AUTH_API_KEY!;
 
 export const VerifyModal = ({
   visible,
@@ -33,7 +33,7 @@ export const VerifyModal = ({
   createAuthAccount: () => Promise<boolean>;
 }) => {
   const [current, setCurrent] = useState<Steps>(Steps.Welcome);
-  const { connected, disconnect } = useWallet();
+  const { connected, disconnect, publicKey } = useWallet();
   const { setConnecting, setWelcoming, setAuthorizationConfirmed, resetAuth } = useConnectWallet();
   const [phoneNumber, setPhoneNumber] = useState<CountryPhoneInputValue>({ short: "US" });
   // The ID of the SMS verification session with MessageBird.
@@ -88,6 +88,10 @@ export const VerifyModal = ({
   };
   const handlePhoneVerify = async () => {
     if (authAccountLoading) {
+      return;
+    }
+
+    if (!(await createAuthAccount())) {
       return;
     }
 
@@ -152,6 +156,10 @@ export const VerifyModal = ({
     }
   };
   const handleConfirmCode = () => {
+    if (!publicKey) {
+      setCurrent(Steps.UnknownError);
+      return;
+    }
     // auth/sms/verify verify SMS token
     setConfirmCodeLoading(true);
     axios
@@ -159,7 +167,7 @@ export const VerifyModal = ({
         "https://api.jetprotocol.io/v1/auth/sms/verify",
         {
           network: env,
-          publicKey: authAccount?.address.toBase58(),
+          publicKey: Auth.deriveUserAuthentication(publicKey),
           token: code,
           verificationId: verificationId
         },
