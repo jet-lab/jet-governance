@@ -1,6 +1,6 @@
 import { useWallet } from "@solana/wallet-adapter-react";
 import { Modal, Input, ModalProps } from "antd";
-import { ReactNode, useEffect, useState } from "react";
+import { PropsWithChildren, useEffect, useState } from "react";
 import { useConnectWallet } from "../../contexts/connectWallet";
 import axios from "axios";
 import { useConnectionConfig } from "../../contexts";
@@ -9,83 +9,83 @@ import CountryPhoneInput, { CountryPhoneInputValue } from "antd-country-phone-in
 
 enum Steps {
   Welcome = 0,
-  ConfirmLocation = 1,
-  EnterSMSCode = 2,
-  AccessDenied = 3,
-  AccessGranted1 = 4,
-  AccessGranted2 = 5,
-  UnknownError = 6,
-  PhoneInvalid = 7,
-  VpnBlocked = 8,
-  InvalidToken = 9
+  ConnectWallet = 1,
+  ConfirmLocation = 2,
+  EnterSMSCode = 3,
+  AccessDenied = 4,
+  AccessGranted1 = 5,
+  AccessGranted2 = 6,
+  UnknownError = 7,
+  PhoneInvalid = 8,
+  VpnBlocked = 9,
+  InvalidToken = 10
 }
 const API_KEY: string = process.env.REACT_APP_SMS_AUTH_API_KEY!;
 
 export const VerifyModal = ({
-  visible,
   authAccount,
   authAccountLoading,
   createAuthAccount
 }: {
-  visible: boolean;
   authAccount: Auth | undefined;
   authAccountLoading: boolean;
   createAuthAccount: () => Promise<boolean>;
 }) => {
   const [current, setCurrent] = useState<Steps>(Steps.Welcome);
-  const { connected, disconnect, publicKey } = useWallet();
-  const { setConnecting, setWelcoming, setAuthorizationConfirmed, resetAuth } = useConnectWallet();
+  const { wallets, select, connected, disconnect, disconnecting, wallet, publicKey } = useWallet();
+  const { connecting, setConnecting } = useConnectWallet();
+  const [authorizationConfirmed, setAuthorizationConfirmed] = useState(false);
   const [phoneNumber, setPhoneNumber] = useState<CountryPhoneInputValue>({ short: "US" });
   // The ID of the SMS verification session with MessageBird.
   const [verificationId, setVerificationId] = useState<string>();
   // The verification token received from the SMS recipient.
   const [code, setCode] = useState("");
-  const [welcomeConfirmed, setWelcomeConfirmed] = useState(false);
   const [confirmCodeLoading, setConfirmCodeLoading] = useState(false);
   const { env } = useConnectionConfig();
 
   useEffect(() => {
-    if (current === Steps.Welcome && welcomeConfirmed && !authAccountLoading) {
+    function onStepOrClosed(step: Steps) {
+      return current === step || !connecting;
+    }
+    if (onStepOrClosed(Steps.ConnectWallet) && connected && !disconnecting && !authAccountLoading) {
       if (!authAccount || !authAccount.userAuthentication.complete) {
-        setWelcoming(false);
         setCurrent(Steps.ConfirmLocation);
-      } else if (authAccount.userAuthentication.allowed) {
+        setConnecting(true);
+      } else if (authAccount.userAuthentication.allowed && !authorizationConfirmed) {
         setCurrent(Steps.AccessGranted1);
-      } else {
+        setConnecting(true);
+      } else if (!authAccount.userAuthentication.allowed) {
         setCurrent(Steps.AccessDenied);
-      }
-    } else if (authAccount && authAccount.userAuthentication.complete) {
-      if (authAccount.userAuthentication.allowed) {
-        setAuthorizationConfirmed(true);
-        setWelcomeConfirmed(false);
-        setCurrent(Steps.Welcome);
-      } else {
-        setCurrent(Steps.AccessDenied);
+        setConnecting(true);
       }
     }
   }, [
     authAccount,
     authAccountLoading,
+    authorizationConfirmed,
+    connected,
+    connecting,
     current,
-    setWelcoming,
-    welcomeConfirmed,
-    setAuthorizationConfirmed
+    disconnecting,
+    setConnecting
   ]);
 
   useEffect(() => {
-    // Reset to welcome modal on change of connection or visibility
-    // when users disconnect partway through the modal flow
-    setCurrent(Steps.Welcome);
-  }, [connected, visible]);
+    if (!connected) {
+      setAuthorizationConfirmed(false);
+    }
+  }, [connected]);
 
   const handleInputPhoneNumber = (e: CountryPhoneInputValue) => {
     setPhoneNumber(e);
   };
+
   const enterKeyPhoneVerify = (e: any) => {
     if (e.code === "Enter") {
       handlePhoneVerify();
     }
   };
+
   const handlePhoneVerify = async () => {
     if (authAccountLoading) {
       return;
@@ -197,7 +197,7 @@ export const VerifyModal = ({
         setConfirmCodeLoading(false);
         if (err.response.status === 400) {
           // Payload validation failed or provided phone number was not a valid mobile number.
-          setCurrent(Steps.PhoneInvalid);
+          setCurrent(Steps.InvalidToken);
         } else if (err.response.status === 403) {
           // The provided mobile number originates from a geo-banned region.
           if (
@@ -228,46 +228,27 @@ export const VerifyModal = ({
       });
   };
 
-  const handleAccessDenied = () => {
+  const handleDisconnect = () => {
     // Disconnect user and close all modals.
     disconnect();
     setConnecting(false);
-    resetAuth();
     setCurrent(Steps.Welcome);
   };
 
   const handleAccessGranted = () => {
     setAuthorizationConfirmed(true);
-    setWelcomeConfirmed(false);
+    setConnecting(false);
     setCurrent(Steps.Welcome);
   };
 
-  const handleAuthenticate = () => {
-    if (connected) {
-      if (authAccount && authAccount.userAuthentication.complete) {
-        if (authAccount.userAuthentication.allowed) {
-          setCurrent(Steps.AccessGranted1);
-        } else {
-          setCurrent(Steps.AccessDenied);
-        }
-      } else {
-        setWelcomeConfirmed(true);
-      }
-    } else {
-      setConnecting(true);
-      setWelcoming(false);
-      setWelcomeConfirmed(true);
-    }
-  };
-
-  const steps: (ModalProps & { content: ReactNode })[] = [];
+  const steps: PropsWithChildren<ModalProps>[] = [];
   steps[Steps.Welcome] = {
     title: "Stake your JET to earn rewards and start voting today!",
     okText: "Okay",
-    okButtonProps: { loading: welcomeConfirmed },
-    onOk: () => handleAuthenticate(),
-    onCancel: () => handleAuthenticate(),
-    content: (
+    okButtonProps: {},
+    onOk: () => setCurrent(Steps.ConnectWallet),
+    onCancel: () => handleDisconnect(),
+    children: (
       <>
         <p>
           Welcome to Jet Govern—the governance app for Jet Protocol. Here, you earn rewards and help
@@ -279,6 +260,43 @@ export const VerifyModal = ({
     ),
     closable: false
   };
+  steps[Steps.ConnectWallet] = {
+    footer: null,
+    title: "Connect wallet",
+    onCancel: () => handleDisconnect(),
+    children: (
+      <div className="connect-wallet-modal flex-centered column">
+        <span>
+          <strong>Vote</strong>, <strong>earn rewards</strong>, and{" "}
+          <strong>check for airdrops</strong> by connecting your wallet.
+        </span>
+        <div className="divider"></div>
+        <div className="wallets flex-centered column">
+          {wallets.map(w => (
+            <div
+              key={w.name}
+              className={`wallet flex align-center justify-between 
+                ${wallet?.name === w.name ? "active" : ""}`}
+              onClick={() => {
+                select(w.name);
+              }}
+            >
+              <div className="flex-centered">
+                <img
+                  src={`img/wallets/${w.name.toLowerCase()}.png`}
+                  width="30px"
+                  height="auto"
+                  alt={`${w.name} Logo`}
+                />
+                <p className="center-text">{w.name}</p>
+              </div>
+              <i className="text-gradient fas fa-arrow-right"></i>
+            </div>
+          ))}
+        </div>
+      </div>
+    )
+  };
   steps[Steps.ConfirmLocation] = {
     title: "Confirm location",
     okText: "Okay",
@@ -286,8 +304,8 @@ export const VerifyModal = ({
       disabled: authAccountLoading || phoneNumber.phone === undefined
     },
     onOk: () => handlePhoneVerify(),
-    onCancel: () => null,
-    content: (
+    onCancel: () => handleDisconnect(),
+    children: (
       <>
         <p>
           Due to regulatory restrictions, only users in authorized regions are able to access
@@ -308,6 +326,7 @@ export const VerifyModal = ({
           value={phoneNumber}
           onChange={(e: CountryPhoneInputValue) => handleInputPhoneNumber(e)}
           onKeyPress={(e: any) => enterKeyPhoneVerify(e)}
+          type={"number"}
         />
       </>
     ),
@@ -318,14 +337,15 @@ export const VerifyModal = ({
     okText: "Okay",
     okButtonProps: { loading: confirmCodeLoading },
     onOk: () => handleConfirmCode(),
-    onCancel: () => null,
-    content: (
+    onCancel: () => handleDisconnect(),
+    children: (
       <>
         <p>You will receive a secure access code via SMS. Enter the code here to proceed.</p>
         <Input
           onChange={e => handleInputCode(e.target.value)}
           onKeyPress={e => enterKeyInputCode(e)}
           maxLength={6}
+          type={"number"}
         />
       </>
     ),
@@ -334,9 +354,9 @@ export const VerifyModal = ({
   steps[Steps.AccessDenied] = {
     title: "Access Denied",
     okText: "Okay",
-    onOk: () => handleAccessDenied(),
-    onCancel: () => handleAccessDenied(),
-    content: (
+    onOk: () => handleDisconnect(),
+    onCancel: () => handleDisconnect(),
+    children: (
       <p>
         JetGovern is not available in your area. You will now be disconnected, but can continue to
         browse while disconnected.
@@ -348,8 +368,8 @@ export const VerifyModal = ({
     title: "Stake JET to earn and vote!",
     okText: "Okay",
     onOk: () => setCurrent(Steps.AccessGranted2),
-    onCancel: () => setCurrent(Steps.AccessGranted2),
-    content: (
+    onCancel: () => handleAccessGranted(),
+    children: (
       <>
         <p>
           Your wallet has been verified and you now have full access to the JetGovern module. You
@@ -368,7 +388,7 @@ export const VerifyModal = ({
     okText: "Okay",
     onOk: () => handleAccessGranted(),
     onCancel: () => handleAccessGranted(),
-    content: (
+    children: (
       <>
         <p>When unstaking from JetGovern, your tokens enter a 29.5-day unbonding period.</p>
         <p>During the unbonding period, you will not earn any rewards.</p>
@@ -388,9 +408,9 @@ export const VerifyModal = ({
     title: "Please try again",
     okText: "Okay",
     okButtonProps: undefined,
-    onOk: () => handleAccessDenied(),
-    onCancel: () => handleAccessDenied(),
-    content: <p>We have encountered an unknown error, please try again.</p>,
+    onOk: () => handleDisconnect(),
+    onCancel: () => handleDisconnect(),
+    children: <p>We have encountered an unknown error, please try again.</p>,
     closable: true
   };
   steps[Steps.PhoneInvalid] = {
@@ -398,8 +418,8 @@ export const VerifyModal = ({
     okText: "Okay",
     okButtonProps: undefined,
     onOk: () => setCurrent(Steps.ConfirmLocation),
-    onCancel: () => setCurrent(Steps.ConfirmLocation),
-    content: <p>Please enter a valid phone number.</p>,
+    onCancel: () => handleDisconnect(),
+    children: <p>Please check the area code and try entering your phone number again.</p>,
     closable: true
   };
   steps[Steps.VpnBlocked] = {
@@ -407,8 +427,8 @@ export const VerifyModal = ({
     okText: "Okay",
     okButtonProps: undefined,
     onOk: () => setCurrent(Steps.ConfirmLocation),
-    onCancel: () => setCurrent(Steps.ConfirmLocation),
-    content: (
+    onCancel: () => handleDisconnect(),
+    children: (
       <p>
         We have detected that you are using a VPN. Please turn off your VPN and try again to verify
         your wallet.
@@ -417,27 +437,20 @@ export const VerifyModal = ({
     closable: true
   };
   steps[Steps.InvalidToken] = {
-    title: "Invalid Token",
+    title: "Invalid secure access code",
     okText: "Okay",
     okButtonProps: undefined,
     onOk: () => setCurrent(Steps.ConfirmLocation),
-    onCancel: () => setCurrent(Steps.ConfirmLocation),
-    content: <p>You have entered an invalid token. Please try again.</p>,
+    onCancel: () => handleDisconnect(),
+    children: <p>You have entered an invalid secure access code. Please try again.</p>,
     closable: true
   };
 
   return (
     <Modal
-      title={steps[current].title}
-      visible={visible}
-      okText={steps[current].okText}
-      onOk={steps[current].onOk}
-      okButtonProps={steps[current].okButtonProps}
-      onCancel={steps[current].onCancel}
-      closable={steps[current].closable}
-      cancelButtonProps={{ style: { display: "none " } }}
-    >
-      {steps[current].content}
-    </Modal>
+      visible={connecting}
+      cancelButtonProps={{ style: { display: "none" } }}
+      {...steps[current]}
+    />
   );
 };

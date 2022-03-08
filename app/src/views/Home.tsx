@@ -33,22 +33,15 @@ export const HomeView = () => {
 
   // On mobile, only show active proposals
   // in main view
-  const onResize = () => {
-    if (window.matchMedia("(max-width: 840px)").matches) {
-      setProposalFilter("active");
-    }
-  };
+
   useEffect(() => {
-    window.addEventListener("resize", function () {
+    const onResize = () => {
       if (window.matchMedia("(max-width: 840px)").matches) {
         setProposalFilter("active");
       }
-    });
-    return window.removeEventListener("resize", function () {
-      if (window.matchMedia("(max-width: 840px)").matches) {
-        setProposalFilter("active");
-      }
-    });
+    };
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
   }, [setProposalFilter]);
 
   const toggleShowFilter = () => {

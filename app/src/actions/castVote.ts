@@ -14,13 +14,7 @@ import {
   withRelinquishVote,
   YesNoVote
 } from "@solana/spl-governance";
-import {
-  AssociatedToken,
-  bnToNumber,
-  StakeAccount,
-  StakeBalance,
-  StakePool
-} from "@jet-lab/jet-engine";
+import { AssociatedToken, StakeAccount, StakeBalance, StakePool } from "@jet-lab/jet-engine";
 import { withApprove } from "../models/withApprove";
 
 export const castVote = async (

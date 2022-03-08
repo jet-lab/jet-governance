@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { ResultProgressBar } from "../components/proposal/ResultProgressBar";
-import { Divider, Spin, Button } from "antd";
+import { Divider, Button } from "antd";
 import { ProposalCard } from "../components/ProposalCard";
 import { VoterList } from "../components/proposal/VoterList";
 import { useWallet } from "@solana/wallet-adapter-react";
@@ -28,13 +28,11 @@ import { LABELS } from "../constants";
 import ReactMarkdown from "react-markdown";
 import { voteRecordCsvDownload } from "../actions/voteRecordCsvDownload";
 import { DownloadOutlined, ArrowLeftOutlined } from "@ant-design/icons";
-import { useConnectWallet } from "../contexts/connectWallet";
 import { getPubkeyIndex } from "../models/PUBKEYS_INDEX";
 import { useProposalContext } from "../contexts/proposal";
 import { StakeAccount, StakeBalance, StakePool } from "@jet-lab/jet-engine";
 import { Governance, ProgramAccount, Proposal, ProposalState } from "@solana/spl-governance";
 import { explorerUrl } from "../utils";
-import { ReactComponent as NoAccess } from "../images/no_access.svg";
 import { ReactComponent as ThumbsUp } from "../images/thumbs_up.svg";
 import { ReactComponent as ThumbsDown } from "../images/thumbs_down.svg";
 import { Loader } from "../components/Loader";
@@ -112,7 +110,6 @@ const InnerProposalView = ({
   );
 
   const proposalAddress = useKeyParam();
-  const { setConnecting } = useConnectWallet();
 
   const [vote, setVote] = useState<VoteOption>(VoteOption.Undecided);
   useEffect(() => {

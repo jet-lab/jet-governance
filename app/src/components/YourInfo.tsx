@@ -42,7 +42,7 @@ export const YourInfo = () => {
     stakeAccount,
     stakePool,
     unbondingAccounts,
-    stakeBalance: { stakedJet, unbondingJet },
+    stakeBalance: { stakedJet },
 
     jetAccount,
     jetMint,

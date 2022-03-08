@@ -11,28 +11,18 @@ import { useConnection } from "./connection";
 interface ConnectWallet {
   connecting: boolean;
   setConnecting: (connecting: boolean) => void;
-  welcoming: boolean;
-  setWelcoming: (welcoming: boolean) => void;
-  setAuthorizationConfirmed: (authorizationConfirmed: boolean) => void;
-  resetAuth: () => void;
 }
 const ConnectWalletContext = createContext<ConnectWallet>({
   connecting: false,
-  setConnecting: () => {},
-  welcoming: false,
-  setWelcoming: () => {},
-  setAuthorizationConfirmed: () => {},
-  resetAuth: () => {}
+  setConnecting: () => {}
 });
 
 export const ConnectWalletProvider = (props: { children: any }) => {
   const wallet = useWallet();
   const connection = useConnection();
   const rpcContext = useRpcContext();
-  const { publicKey, connected } = wallet;
+  const { publicKey } = useWallet();
   const [connecting, setConnecting] = useState(false);
-  const [welcoming, setWelcoming] = useState(false);
-  const [authorizationConfirmed, setAuthorizationConfirmed] = useState(false);
 
   const provider = useProvider(connection, wallet);
   const authProgram = Auth.useAuthProgram(provider);
@@ -41,20 +31,8 @@ export const ConnectWalletProvider = (props: { children: any }) => {
     wallet.publicKey
   );
 
-  const resetAuth = () => {
-    setWelcoming(false);
-    setAuthorizationConfirmed(false);
-  };
-
   const connect = (connecting: boolean) => {
-    if (connecting) {
-      setConnecting(true);
-      setWelcoming(true);
-      setAuthorizationConfirmed(false);
-    } else {
-      setConnecting(false);
-      setWelcoming(false);
-    }
+    setConnecting(connecting);
   };
 
   const createAuthAccount = async () => {
@@ -75,15 +53,10 @@ export const ConnectWalletProvider = (props: { children: any }) => {
     <ConnectWalletContext.Provider
       value={{
         connecting,
-        setConnecting: connect,
-        welcoming,
-        setWelcoming,
-        setAuthorizationConfirmed,
-        resetAuth
+        setConnecting: connect
       }}
     >
       <VerifyModal
-        visible={welcoming || (connected && !authorizationConfirmed)}
         authAccount={authAccount}
         authAccountLoading={authAccountLoading}
         createAuthAccount={createAuthAccount}
@@ -94,7 +67,5 @@ export const ConnectWalletProvider = (props: { children: any }) => {
 };
 
 export const useConnectWallet = () => {
-  const context = useContext(ConnectWalletContext);
-
-  return context;
+  return useContext(ConnectWalletContext);
 };

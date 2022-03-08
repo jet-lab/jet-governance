@@ -12,7 +12,7 @@ import { ReactComponent as Wallet } from "../images/wallet.svg";
 export function Nav() {
   const { pathname } = useLocation();
   const { connected, disconnect, publicKey } = useWallet();
-  const { setConnecting, resetAuth } = useConnectWallet();
+  const { setConnecting } = useConnectWallet();
   const [drawerOpened, setDrawerOpened] = useState(false);
   const { claimsCount } = useProposalContext();
   const { darkTheme, toggleDarkTheme } = useDarkTheme();
@@ -36,11 +36,6 @@ export function Nav() {
   ];
 
   const accountLink = { title: "Account", route: "/your-info" };
-
-  const disconnectAndResetAuth = () => {
-    disconnect();
-    resetAuth();
-  };
 
   // Handle swiping of nav drawer
   const [touchStartX, setTouchStartX] = useState(0);
@@ -96,7 +91,7 @@ export function Nav() {
             className="secondary-btn flex-centered"
             type="ghost"
             title={connected ? "disconnect" : "connect"}
-            onClick={() => (connected ? disconnectAndResetAuth() : setConnecting(true))}
+            onClick={() => (connected ? disconnect() : setConnecting(true))}
           >
             <Wallet width="15px" style={{ paddingRight: "10px" }} />
             {connected

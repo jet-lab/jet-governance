@@ -4,11 +4,10 @@ import { useProposalContext } from "../contexts/proposal";
 import { UnbondingLog } from "../components/unbonding/UnbondingLog";
 import { useTransactionLogs } from "../contexts/transactionLogs";
 import { Divider } from "antd";
-import { fromLamports } from "../utils";
 import { Loader } from "../components/Loader";
 
 export const FlightLogView = () => {
-  const { unbondingAccounts, jetMint } = useProposalContext();
+  const { unbondingAccounts } = useProposalContext();
   const { loadingLogs, logs } = useTransactionLogs();
   const { connected } = useWallet();
 

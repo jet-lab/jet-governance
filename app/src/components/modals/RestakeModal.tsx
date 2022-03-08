@@ -24,17 +24,17 @@ export const RestakeModal = ({
   const rpcContext = useRpcContext();
   const [current, setCurrent] = useState<Steps>(Steps.Confirm);
   const [loading, setLoading] = useState(false);
-  const { stakeAccount, jetMint } = useProposalContext();
+  const { stakePool, stakeAccount, jetMint } = useProposalContext();
 
   const stakeAmount = fromLamports(unbondingAccount?.unbondingAccount.amount.tokens, jetMint);
 
   const handleOk = () => {
-    if (!unbondingAccount || !stakeAccount) {
+    if (!unbondingAccount || !stakePool || !stakeAccount) {
       return;
     }
 
     setLoading(true);
-    restake(rpcContext, unbondingAccount, stakeAccount)
+    restake(rpcContext, unbondingAccount, stakeAccount, stakePool)
       .then(() => {
         setCurrent(Steps.Success);
       })

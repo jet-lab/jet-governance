@@ -1,4 +1,4 @@
-import { StakeAccount } from "@jet-lab/jet-engine";
+import { StakeAccount, StakePool } from "@jet-lab/jet-engine";
 import { UnbondingAccount } from "@jet-lab/jet-engine";
 import { RpcContext } from "@solana/spl-governance";
 import { sendTransactionWithNotifications } from "../tools/transactions";
@@ -6,11 +6,13 @@ import { sendTransactionWithNotifications } from "../tools/transactions";
 export const restake = async (
   rpcContext: RpcContext,
   unbondingAccount: UnbondingAccount,
-  stakeAccount: StakeAccount
+  stakeAccount: StakeAccount,
+  stakePool: StakePool
 ) => {
   const ix = await UnbondingAccount.cancelUnbond(
     unbondingAccount,
     stakeAccount,
+    stakePool,
     rpcContext.walletPubkey
   );
 
