@@ -24,7 +24,7 @@ export const StakeModal = (props: {
   const [current, setCurrent] = useState<Steps>(Steps.Start);
   const [loading, setLoading] = useState(false);
   const { publicKey } = useWallet();
-  const { stakePool, jetAccount } = useProposalContext();
+  const { stakePool, jetAccount, refresh } = useProposalContext();
   const rpcContext = useRpcContext();
   const stakeLamports = useBN(amount, stakePool?.collateralMint.decimals);
   // Handlers for staking info modal
@@ -44,8 +44,22 @@ export const StakeModal = (props: {
         console.error(err);
         setLoading(false);
         setCurrent(Steps.Error);
+      })
+      .finally(() => {
+        refresh();
       });
   };
+
+  const handleClose = () => {
+    setCurrent(Steps.Start);
+    onClose();
+  };
+
+  console.log(
+    stakePool?.program?.provider?.wallet?.publicKey?.toBase58(),
+    stakePool?.program?.provider?.wallet,
+    stakePool?.program?.provider
+  );
 
   const steps: (ModalProps & { content: ReactNode })[] = [];
   steps[Steps.Start] = {
@@ -54,7 +68,7 @@ export const StakeModal = (props: {
     } JET into the platform.`,
     okText: "I understand.",
     onOk: () => handleSubmitTx(),
-    onCancel: () => onClose(),
+    onCancel: () => handleClose(),
     okButtonProps: { loading: loading },
     closable: true,
     content: (
@@ -73,8 +87,8 @@ export const StakeModal = (props: {
   steps[Steps.Success] = {
     title: `All set!`,
     okText: "Okay",
-    onOk: () => onClose(),
-    onCancel: () => onClose(),
+    onOk: () => handleClose(),
+    onCancel: () => handleClose(),
     closable: true,
     cancelButtonProps: { style: { display: "none" } },
     content: (
@@ -90,8 +104,8 @@ export const StakeModal = (props: {
   steps[Steps.Error] = {
     title: `Error.`,
     okText: "I understand.",
-    onOk: () => onClose(),
-    onCancel: () => onClose(),
+    onOk: () => handleClose(),
+    onCancel: () => handleClose(),
     content: <p>We have encountered an unknown error.</p>,
     closable: true
   };

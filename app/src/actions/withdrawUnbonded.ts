@@ -1,3 +1,4 @@
+import { Provider } from "@project-serum/anchor";
 import { StakeAccount, StakePool, UnbondingAccount } from "@jet-lab/jet-engine";
 import { RpcContext } from "@solana/spl-governance";
 import { TransactionInstruction } from "@solana/web3.js";
@@ -13,7 +14,7 @@ export const withdrawUnbonded = async (
     unbondingAccount,
     stakeAccount,
     stakePool,
-    walletPubkey
+    new Provider(connection, wallet as any, Provider.defaultOptions())
   );
 
   await sendTransactionWithNotifications(
@@ -39,7 +40,7 @@ export const withdrawAllUnbonded = async (
       unbondingAccounts[i],
       stakeAccount,
       stakePool,
-      walletPubkey
+      new Provider(connection, wallet as any, Provider.defaultOptions())
     );
   }
 

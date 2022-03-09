@@ -24,7 +24,7 @@ export const RestakeModal = ({
   const rpcContext = useRpcContext();
   const [current, setCurrent] = useState<Steps>(Steps.Confirm);
   const [loading, setLoading] = useState(false);
-  const { stakePool, stakeAccount, jetMint } = useProposalContext();
+  const { stakePool, stakeAccount, jetMint, refresh } = useProposalContext();
 
   const stakeAmount = fromLamports(unbondingAccount?.unbondingAccount.amount.tokens, jetMint);
 
@@ -41,8 +41,9 @@ export const RestakeModal = ({
       .catch(() => {
         setCurrent(Steps.Error);
       })
-      .then(() => {
+      .finally(() => {
         setLoading(false);
+        refresh();
       });
   };
 

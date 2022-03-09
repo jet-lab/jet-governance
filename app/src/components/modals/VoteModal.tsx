@@ -50,7 +50,8 @@ export const VoteModal = ({
 
   const { endDate, countdownTime } = useCountdown(proposal, governance);
   const rpcContext = useRpcContext();
-  const { stakePool, stakeAccount, stakeBalance, jetMint } = useProposalContext();
+  const { stakePool, stakeAccount, stakeBalance, jetMint, programs, refresh } =
+    useProposalContext();
 
   let voteText: string = "";
 
@@ -85,21 +86,27 @@ export const VoteModal = ({
       return;
     }
 
-    if (tokenOwnerRecord) {
+    if (tokenOwnerRecord && programs) {
       castVote(
         rpcContext,
         governance.account.realm,
         proposal,
         tokenOwnerRecord.pubkey,
         yesNoVote,
+        programs.stake,
         stakePool,
         stakeAccount,
         undefined,
         voteRecord ? voteRecord!.pubkey : undefined,
         stakeBalance
       )
-        .then(() => setCurrent(Steps.VoteSuccess))
-        .catch(() => setCurrent(Steps.UnknownError));
+        .then(() => {
+          setCurrent(Steps.VoteSuccess);
+        })
+        .catch(() => setCurrent(Steps.UnknownError))
+        .finally(() => {
+          refresh();
+        });
     }
   };
 

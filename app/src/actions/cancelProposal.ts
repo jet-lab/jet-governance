@@ -1,4 +1,4 @@
-import { Keypair, PublicKey, Transaction, TransactionInstruction } from "@solana/web3.js";
+import { Keypair, PublicKey, TransactionInstruction } from "@solana/web3.js";
 
 import { getGovernanceProgramVersion, RpcContext } from "@solana/spl-governance";
 import { Proposal } from "@solana/spl-governance";

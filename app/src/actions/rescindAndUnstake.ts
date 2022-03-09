@@ -122,7 +122,14 @@ export const rescindAndUnstake = async (
     amount
   );
   // Unstake Jet
-  await UnbondingAccount.withUnbondStake(ix, stakePool, stakeAccount, unbondingSeed, amount);
+  await UnbondingAccount.withUnbondStake(
+    ix,
+    stakePool,
+    stakeAccount,
+    wallet.publicKey!,
+    unbondingSeed,
+    amount
+  );
   // Close vote token account
   await AssociatedToken.withClose(ix, walletPubkey, voteMint, walletPubkey);
 

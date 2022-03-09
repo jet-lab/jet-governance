@@ -17,7 +17,6 @@ export const HomeView = () => {
     filteredProposalsByGovernance,
     filteredPastProposals,
 
-    stakeProgram,
     stakePool,
     stakeAccount,
     unbondingTotal,

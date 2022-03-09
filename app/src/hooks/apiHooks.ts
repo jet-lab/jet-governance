@@ -168,8 +168,8 @@ export const useTokenOwnerVoteRecord = (
 };
 
 export function useProvider(connection: Connection | undefined, wallet: any) {
-  return useMemo(
-    () => connection && wallet && new Provider(connection, wallet, { skipPreflight: true }),
-    [connection, wallet]
-  );
+  return useMemo(() => {
+    return new Provider(connection as Connection, wallet, { skipPreflight: true });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [connection, wallet?.publicKey?.toBase58()]);
 }

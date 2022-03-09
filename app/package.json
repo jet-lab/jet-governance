@@ -4,7 +4,7 @@
   "dependencies": {
     "@ant-design/icons": "^4.4.0",
     "@jet-lab/jet-antd": "^0.4.4",
-    "@jet-lab/jet-engine": "^0.2.23",
+    "@jet-lab/jet-engine": "^0.2.24",
     "@project-serum/anchor": "^0.20.1",
     "@solana/spl-governance": "^0.0.27",
     "@solana/spl-token": "^0.1.8",
@@ -27,6 +27,7 @@
     "react-github-btn": "^1.2.0",
     "react-intl": "^5.10.2",
     "react-markdown": "5.0.3",
+    "react-query": "^3.34.16",
     "react-router": "5.2.0",
     "react-router-dom": "5.2.0",
     "superstruct": "^0.15.2",

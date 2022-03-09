@@ -23,28 +23,31 @@ export const UnstakeModal = ({
   amount: number | null;
 }) => {
   const {
-    stakeProgram,
+    refresh,
+
     stakePool,
     stakeAccount,
     voteMint,
 
     governance,
     tokenOwnerRecord,
-    walletVoteRecords
+    walletVoteRecords,
+
+    programs
   } = useProposalContext();
   const rpcContext = useRpcContext();
 
   const [current, setCurrent] = useState(Steps.Start);
   const [loading, setLoading] = useState(false);
 
-  const unrelinquishedVoteRecords = walletVoteRecords.filter(
+  const unrelinquishedVoteRecords = walletVoteRecords?.filter(
     voteRecord => !voteRecord.account.isRelinquished
   );
 
   const handleSubmitUnstake = () => {
     if (
       amount === null ||
-      !stakeProgram ||
+      !programs ||
       !stakePool ||
       !stakeAccount ||
       !governance ||
@@ -58,7 +61,7 @@ export const UnstakeModal = ({
     setLoading(true);
     rescindAndUnstake(
       rpcContext,
-      stakeProgram,
+      programs.stake,
       stakePool,
       stakeAccount,
       governance,
@@ -74,6 +77,9 @@ export const UnstakeModal = ({
         setLoading(false);
         setCurrent(Steps.Error);
         resetInput();
+      })
+      .finally(() => {
+        refresh();
       });
   };
 
@@ -94,7 +100,7 @@ export const UnstakeModal = ({
     closable: true,
     content: (
       <>
-        {unrelinquishedVoteRecords.length !== 0 && (
+        {unrelinquishedVoteRecords && unrelinquishedVoteRecords.length !== 0 && (
           <p>
             You currently have votes cast on active proposals, which will be rescinded upon
             unbonding. If you wish to keep your votes, wait until the voting period has ended before

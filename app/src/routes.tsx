@@ -22,6 +22,9 @@ import { ConfigProvider } from "antd-country-phone-input";
 import en from "world_countries_lists/data/en/world.json";
 import { GlossaryView } from "./views/Glossary";
 import { TermsView } from "./views/TermsConditions";
+import { QueryClient, QueryClientProvider } from "react-query";
+
+const queryClient = new QueryClient();
 
 export function Routes() {
   return (
@@ -30,42 +33,44 @@ export function Routes() {
       for crashes However we should make it nicer and hide the technical
       details from users by default */}
       <ErrorBoundary FallbackComponent={AppErrorBanner}>
-        <DarkThemeProvider>
-          <ConnectionProvider>
-            <GovernanceProvider>
-              <WalletProvider>
-                <ConfigProvider locale={en}>
-                  <ConnectWalletProvider>
-                    <AirdropProvider>
-                      <ProposalProvider>
-                        <TransactionsProvider>
-                          <AppLayout>
-                            <Switch>
-                              <ScrollToTop>
-                                <Route exact path="/" children={<HomeView />} />
-                                <Route exact path="/your-info" children={<YourInfo />} />
-                                <Route path={"/proposal/:key"} children={<ProposalView />} />
-                                <Route exact path="/claims" children={<AirdropView />} />
-                                <Route
-                                  exact
-                                  path="/airdrop/history"
-                                  children={<AirdropHistory />}
-                                />
-                                <Route exact path="/flight-logs" children={<FlightLogView />} />
-                                <Route exact path="/glossary" children={<GlossaryView />} />
-                                <Route exact path="/terms" children={<TermsView />} />
-                              </ScrollToTop>
-                            </Switch>
-                          </AppLayout>
-                        </TransactionsProvider>
-                      </ProposalProvider>
-                    </AirdropProvider>
-                  </ConnectWalletProvider>
-                </ConfigProvider>
-              </WalletProvider>
-            </GovernanceProvider>
-          </ConnectionProvider>
-        </DarkThemeProvider>
+        <QueryClientProvider client={queryClient}>
+          <DarkThemeProvider>
+            <ConnectionProvider>
+              <GovernanceProvider>
+                <WalletProvider>
+                  <ConfigProvider locale={en}>
+                    <ConnectWalletProvider>
+                      <AirdropProvider>
+                        <ProposalProvider>
+                          <TransactionsProvider>
+                            <AppLayout>
+                              <Switch>
+                                <ScrollToTop>
+                                  <Route exact path="/" children={<HomeView />} />
+                                  <Route exact path="/your-info" children={<YourInfo />} />
+                                  <Route path={"/proposal/:key"} children={<ProposalView />} />
+                                  <Route exact path="/claims" children={<AirdropView />} />
+                                  <Route
+                                    exact
+                                    path="/airdrop/history"
+                                    children={<AirdropHistory />}
+                                  />
+                                  <Route exact path="/flight-logs" children={<FlightLogView />} />
+                                  <Route exact path="/glossary" children={<GlossaryView />} />
+                                  <Route exact path="/terms" children={<TermsView />} />
+                                </ScrollToTop>
+                              </Switch>
+                            </AppLayout>
+                          </TransactionsProvider>
+                        </ProposalProvider>
+                      </AirdropProvider>
+                    </ConnectWalletProvider>
+                  </ConfigProvider>
+                </WalletProvider>
+              </GovernanceProvider>
+            </ConnectionProvider>
+          </DarkThemeProvider>
+        </QueryClientProvider>
       </ErrorBoundary>
     </HashRouter>
   );

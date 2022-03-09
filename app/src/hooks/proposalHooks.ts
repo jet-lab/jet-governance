@@ -34,24 +34,34 @@ export function useBN(number: number | undefined, exponent: number | null | unde
   }, [number, exponent]);
 }
 
-export const useProposalFilters = (
+export const getProposalFilters = (
   proposals: ProgramAccount<Proposal>[],
   proposalFilter: ProposalFilter
 ) => {
+  if (proposalFilter === "active") {
+    return proposals.filter(p => p.account.state === ProposalState.Voting);
+  } else if (proposalFilter === "inactive") {
+    return proposals.filter(p => p.account.isVoteFinalized() || p.account.isPreVotingState());
+  } else if (proposalFilter === "passed") {
+    return proposals.filter(p => p.account.state === ProposalState.Succeeded);
+  } else if (proposalFilter === "rejected") {
+    return proposals.filter(p => p.account.state === ProposalState.Defeated);
+  } else if (proposalFilter === "all") {
+    return proposals;
+  } else {
+    return proposals;
+  }
+};
+
+export const useProposalFilters = (
+  proposals: ProgramAccount<Proposal>[] | undefined,
+  proposalFilter: ProposalFilter
+) => {
   return useMemo(() => {
-    if (proposalFilter === "active") {
-      return proposals.filter(p => p.account.state === ProposalState.Voting);
-    } else if (proposalFilter === "inactive") {
-      return proposals.filter(p => p.account.isVoteFinalized() || p.account.isPreVotingState());
-    } else if (proposalFilter === "passed") {
-      return proposals.filter(p => p.account.state === ProposalState.Succeeded);
-    } else if (proposalFilter === "rejected") {
-      return proposals.filter(p => p.account.state === ProposalState.Defeated);
-    } else if (proposalFilter === "all") {
-      return proposals;
-    } else {
-      return proposals;
+    if (!proposals) {
+      return [];
     }
+    return getProposalFilters(proposals, proposalFilter);
   }, [proposalFilter, proposals]);
 };
 

@@ -1,6 +1,6 @@
 import { PublicKey, Transaction, TransactionInstruction, Keypair } from "@solana/web3.js";
 import { sendAllTransactionsWithNotifications } from "../tools/transactions";
-import { Provider } from "@project-serum/anchor";
+import { Program, Provider } from "@project-serum/anchor";
 import {
   ChatMessageBody,
   GOVERNANCE_CHAT_PROGRAM_ID,
@@ -23,6 +23,7 @@ export const castVote = async (
   proposal: ProgramAccount<Proposal>,
   tokenOwnerRecord: PublicKey,
   yesNoVote: YesNoVote,
+  stakeProgram: Program,
   stakePool?: StakePool,
   stakeAccount?: StakeAccount,
   message?: ChatMessageBody,
@@ -64,7 +65,7 @@ export const castVote = async (
   //in governance program and staked JET
   // Mint vote tokens to top-up any difference
   if (stakeAccount && stakePool && stakeBalance?.stakedJet && wallet.publicKey) {
-    const provider = stakePool.program.provider;
+    const provider = stakeProgram.provider;
     const voteMint = stakePool.addresses.stakeVoteMint;
     const mintRemainingVotes = stakeBalance?.stakedJet.sub(stakeAccount.stakeAccount.mintedVotes);
 
@@ -77,8 +78,9 @@ export const castVote = async (
       );
       await StakeAccount.withCreate(
         castVoteIx,
-        stakePool.program,
+        stakeProgram,
         stakePool.addresses.stakePool,
+        wallet.publicKey,
         wallet.publicKey
       );
       await StakeAccount.withMintVotes(

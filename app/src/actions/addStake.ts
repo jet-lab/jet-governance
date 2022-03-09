@@ -14,6 +14,7 @@ export const addStake = async (
 ) => {
   let instructions: TransactionInstruction[] = [];
   let signers: Keypair[] = [];
+  console.log(stakePool.program.provider.wallet.publicKey.toBase58());
 
   const provider = stakePool.program.provider;
   const voteMint = stakePool.addresses.stakeVoteMint;
@@ -30,9 +31,10 @@ export const addStake = async (
     instructions,
     stakePool.program,
     stakePool.addresses.stakePool,
+    owner,
     owner
   );
-  await StakeAccount.withAddStake(instructions, stakePool, owner, tokenAccount, amount);
+  await StakeAccount.withAddStake(instructions, stakePool, owner, owner, tokenAccount, amount);
   await StakeAccount.withMintVotes(instructions, stakePool, owner, voterTokenAccount, amount);
 
   const transferAuthority = withApprove(instructions, [], voterTokenAccount, walletPubkey, amount);

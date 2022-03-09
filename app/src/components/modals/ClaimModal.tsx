@@ -26,7 +26,7 @@ export const ClaimModal = ({
   const rpcContext = useRpcContext();
   const [current, setCurrent] = useState<Steps>(Steps.Confirm);
   const [loading, setLoading] = useState(false);
-  const { rewardsProgram, stakePool, stakeAccount } = useProposalContext();
+  const { programs, stakePool, stakeAccount, refresh } = useProposalContext();
 
   const handleOk = () => {
     if (!stakeAmount || !airdrop) {
@@ -34,16 +34,17 @@ export const ClaimModal = ({
     }
 
     setLoading(true);
-    if (!!rewardsProgram && !!airdrop && !!stakePool && !!stakeAccount) {
-      claimAndStake(rpcContext, rewardsProgram, airdrop, stakePool, stakeAccount)
+    if (!!programs && !!airdrop && !!stakePool && !!stakeAccount) {
+      claimAndStake(rpcContext, programs.rewards, airdrop, stakePool, stakeAccount)
         .then(() => {
           setCurrent(Steps.Success);
         })
         .catch(() => {
           setCurrent(Steps.Error);
         })
-        .then(() => {
+        .finally(() => {
           setLoading(false);
+          refresh();
         });
     }
   };
