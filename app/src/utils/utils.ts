@@ -121,7 +121,7 @@ export function explorerUrl(txid: string) {
 
 // Formatters for historical txns
 export function dateFromUnixTimestamp(time: BN | undefined) {
-  const date = new Date(bnToNumber(time));
+  const date = new Date(bnToNumber(time) * 1000);
   const padTo2Digits = (num: number) => {
     return num.toString().padStart(2, "0");
   };

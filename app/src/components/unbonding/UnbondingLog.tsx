@@ -75,7 +75,7 @@ export const UnbondingLog = ({
         />
       </td>
       <td className="italics">
-        {toTokens(unbondingAccount?.unbondingAccount.amount.tokens, jetMint)}
+        -{toTokens(unbondingAccount?.unbondingAccount.amount.tokenAmount, jetMint)}
       </td>
     </tr>
   );

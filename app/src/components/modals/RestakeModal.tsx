@@ -26,7 +26,7 @@ export const RestakeModal = ({
   const [loading, setLoading] = useState(false);
   const { stakePool, stakeAccount, jetMint, refresh } = useProposalContext();
 
-  const stakeAmount = fromLamports(unbondingAccount?.unbondingAccount.amount.tokens, jetMint);
+  const stakeAmount = fromLamports(unbondingAccount?.unbondingAccount.amount.tokenAmount, jetMint);
 
   const handleOk = () => {
     if (!unbondingAccount || !stakePool || !stakeAccount) {

@@ -26,7 +26,7 @@ export const WithdrawModal = ({
   const [loading, setLoading] = useState(false);
   const { stakeAccount, jetMint, stakePool, refresh } = useProposalContext();
 
-  const stakeAmount = fromLamports(unbondingAccount?.unbondingAccount.amount.tokens, jetMint);
+  const stakeAmount = fromLamports(unbondingAccount?.unbondingAccount.amount.tokenAmount, jetMint);
 
   const handleOk = () => {
     if (!unbondingAccount || !stakeAccount || !stakePool) {

@@ -1,10 +1,11 @@
-import { createContext, useContext, useEffect, useState } from "react";
-import { StakeClient } from "@jet-lab/jet-engine";
+import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
+import { RewardsClient, StakeClient } from "@jet-lab/jet-engine";
 import { ConfirmedSignatureInfo, TransactionResponse } from "@solana/web3.js";
 import { useWallet } from "@solana/wallet-adapter-react";
 import bs58 from "bs58";
-import { JET_TOKEN_MINT } from "../utils";
+import { dateFromUnixTimestamp, JET_TOKEN_MINT, shortenAddress } from "../utils";
 import { useRpcContext } from "../hooks";
+import { BN } from "@project-serum/anchor";
 
 // Transaction logs context
 export interface TransactionLog {
@@ -30,16 +31,42 @@ const TransactionsContext = createContext<TransactionLogs>({
 // Transaction logs context provider
 export function TransactionsProvider(props: { children: any }) {
   const { connection } = useRpcContext();
-  const { connected, publicKey } = useWallet();
+  const { publicKey } = useWallet();
   const [signatures, setSignatures] = useState<ConfirmedSignatureInfo[]>([]);
   const [loadingLogs, setLoadingLogs] = useState(false);
   const [logs, setLogs] = useState<TransactionLog[]>([]);
   const [noMoreSignatures, setNoMoreSignatures] = useState(false);
-  const programIds = [StakeClient.PROGRAM_ID.toString()];
+  const programIds = useMemo(
+    () => [StakeClient.PROGRAM_ID.toString(), RewardsClient.PROGRAM_ID.toString()],
+    []
+  );
+
+  // Returns the correct action type string
+  // For staking from airdrop or wallet
+  const getActionType = (action: string): string => {
+    let actionType;
+    switch (action) {
+      case "stake":
+        actionType = `Staked from wallet ${shortenAddress(publicKey ? publicKey.toString() : "")}`;
+        break;
+      case "unStake":
+        actionType = "Unstaked";
+        break;
+      case "withdraw":
+        actionType = "Withdrawn";
+        break;
+      case "claim":
+        actionType = "Staked from Care Package";
+        break;
+      default:
+        actionType = "Staked";
+    }
+    return actionType;
+  };
 
   // Get transaction details from a signature
-  async function getLogDetail(log: TransactionResponse, signature: string) {
-    if (!(log.meta?.logMessages && log.blockTime)) {
+  const getLogDetail = (log: TransactionResponse, signature: string) => {
+    if (!log.meta?.logMessages || !log.blockTime) {
       return;
     }
 
@@ -48,7 +75,10 @@ export function TransactionsProvider(props: { children: any }) {
       // Stake program
       stake: "[58,135,189,105,160,120,165,224]",
       unStake: "[205,137,113,189,236,71,83,169]",
-      withdraw: "[237,172,52,157,194,124,79,168]"
+      withdraw: "[237,172,52,157,194,124,79,168]",
+
+      // Airdrop program
+      claim: "[193, 51, 206, 17, 20, 120, 124, 24]"
     };
 
     // Convert log accounts to strings
@@ -60,45 +90,41 @@ export function TransactionsProvider(props: { children: any }) {
     // Search for our program Id's in transaction's accounts
     for (let program of programIds) {
       if (logAccounts.includes(program)) {
-        console.log("Found relevant transaction");
         // Get first 8 bytes from instruction data, stringify for comparison
-        let txInstBytes: any = [];
         for (let inst of log.transaction.message.instructions) {
+          // Get first 8 bytes from data
+          const txInstBytes = [];
           for (let i = 0; i < 8; i++) {
             txInstBytes.push(bs58.decode(inst.data)[i]);
           }
-        }
-        txInstBytes = JSON.stringify(txInstBytes);
-        console.log(txInstBytes);
+          for (let progInst in instructionBytes) {
+            // If those bytes match any of our instructions label trade action
+            if (instructionBytes[progInst] === JSON.stringify(txInstBytes)) {
+              // Determine amount if JET
+              // Ensure that no log is created if token balance is undefined
+              for (let pre of log.meta.preTokenBalances!) {
+                for (let post of log.meta.postTokenBalances!) {
+                  if (
+                    pre.mint === post.mint &&
+                    pre.uiTokenAmount.amount !== post.uiTokenAmount.amount
+                  ) {
+                    if (pre.mint === JET_TOKEN_MINT.toString()) {
+                      const detailedLog: TransactionLog = {
+                        log,
+                        blockDate: dateFromUnixTimestamp(new BN(log.blockTime)),
+                        signature,
+                        action: getActionType(progInst),
+                        amount: pre.uiTokenAmount.uiAmount! - post.uiTokenAmount.uiAmount!
+                      };
 
-        // If those bytes match any of our instructions, label trade action
-        for (let progInst in instructionBytes) {
-          if (instructionBytes[progInst] === txInstBytes) {
-            console.log("Found Matching Instruction");
-            const detailedLog: TransactionLog = {
-              log,
-              blockDate: new Date(log.blockTime * 1000).toDateString(),
-              signature,
-              action: progInst
-            };
-
-            // Determine amount of JET (if applicable)
-            for (let pre of log.meta.preTokenBalances!) {
-              for (let post of log.meta.postTokenBalances!) {
-                if (
-                  pre.mint === post.mint &&
-                  pre.uiTokenAmount.amount !== post.uiTokenAmount.amount
-                ) {
-                  if (pre.mint === JET_TOKEN_MINT.toString()) {
-                    detailedLog.amount = post.uiTokenAmount.uiAmount! - pre.uiTokenAmount.uiAmount!;
+                      // If we found mint match, add tx to logs
+                      if (detailedLog.action !== undefined) {
+                        return detailedLog;
+                      }
+                    }
                   }
                 }
               }
-            }
-
-            // If we found instruction match, return the log and to logs array
-            if (detailedLog.action) {
-              return detailedLog;
             }
           }
         }
@@ -106,10 +132,10 @@ export function TransactionsProvider(props: { children: any }) {
         return;
       }
     }
-  }
+  };
 
   // Get transaction details for multiple signatures
-  async function getDetailedLogs(sigs: ConfirmedSignatureInfo[]) {
+  const getDetailedLogs = useCallback(async (sigs: ConfirmedSignatureInfo[]) => {
     // Begin loading transaction logs
     setLoadingLogs(true);
 
@@ -124,11 +150,9 @@ export function TransactionsProvider(props: { children: any }) {
       }
 
       // Get confirmed transaction for signature
-      console.log("Checking signature " + currentSignature);
       const log = await connection.getTransaction(currentSignature, { commitment: "confirmed" });
-      const detailedLog = log ? await getLogDetail(log, currentSignature) : null;
+      const detailedLog = log ? getLogDetail(log, currentSignature) : null;
       if (detailedLog) {
-        console.log("found");
         newLogs.push(detailedLog);
       }
 
@@ -145,8 +169,7 @@ export function TransactionsProvider(props: { children: any }) {
     // Add transaction logs and stop loading
     setLogs([...logs, ...newLogs]);
     setLoadingLogs(false);
-    console.log([...logs, ...newLogs]);
-  }
+  }, []);
 
   // Once we have a pubkey for user's wallet, init their logs
   // Call reset on any new pubkey or rpc node change
@@ -158,7 +181,8 @@ export function TransactionsProvider(props: { children: any }) {
         getDetailedLogs(signatures);
       });
     }
-  }, [connected, publicKey]);
+    return () => setLogs([]);
+  }, [publicKey, connection, getDetailedLogs]);
 
   return (
     <TransactionsContext.Provider
