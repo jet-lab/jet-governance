@@ -52,6 +52,12 @@ export function fromLamports(account?: number | BN, mint?: MintInfo, rate: numbe
   return (amount / precision) * rate;
 }
 
+export const toTokens = (amount: BN | number | undefined, mint?: MintInfo) => {
+  return fromLamports(amount, mint).toLocaleString(undefined, {
+    maximumFractionDigits: 0
+  });
+};
+
 var SI_SYMBOL = ["", "k", "M", "G", "T", "P", "E"];
 
 export const abbreviateNumber = (number: number, precision: number) => {

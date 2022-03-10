@@ -3,7 +3,7 @@ import { RewardsClient, StakeClient } from "@jet-lab/jet-engine";
 import { ConfirmedSignatureInfo, TransactionResponse } from "@solana/web3.js";
 import { useWallet } from "@solana/wallet-adapter-react";
 import bs58 from "bs58";
-import { dateFromUnixTimestamp, JET_TOKEN_MINT, shortenAddress } from "../utils";
+import { dateFromUnixTimestamp, JET_TOKEN_MINT, shortenAddress, toTokens } from "../utils";
 import { useRpcContext } from "../hooks";
 import { BN } from "@project-serum/anchor";
 
@@ -13,7 +13,7 @@ export interface TransactionLog {
   blockDate: string;
   signature: string;
   action: string;
-  amount?: number;
+  amount: number;
 }
 interface TransactionLogs {
   loadingLogs: boolean;
@@ -47,7 +47,10 @@ export function TransactionsProvider(props: { children: any }) {
     let actionType;
     switch (action) {
       case "stake":
-        actionType = `Staked from wallet ${shortenAddress(publicKey ? publicKey.toString() : "")}`;
+        actionType = `Staked from wallet ${shortenAddress(
+          publicKey ? publicKey.toString() : "",
+          4
+        )}`;
         break;
       case "unStake":
         actionType = "Unstaked";
@@ -78,7 +81,7 @@ export function TransactionsProvider(props: { children: any }) {
       withdraw: "[237,172,52,157,194,124,79,168]",
 
       // Airdrop program
-      claim: "[193, 51, 206, 17, 20, 120, 124, 24]"
+      claim: "[193,51,206,17,20,120,124,24]"
     };
 
     // Convert log accounts to strings
@@ -89,7 +92,7 @@ export function TransactionsProvider(props: { children: any }) {
 
     // Search for our program Id's in transaction's accounts
     for (let program of programIds) {
-      if (logAccounts.includes(program)) {
+      if (logAccounts.includes(program) && log.meta.err === null) {
         // Get first 8 bytes from instruction data, stringify for comparison
         for (let inst of log.transaction.message.instructions) {
           // Get first 8 bytes from data
@@ -114,7 +117,7 @@ export function TransactionsProvider(props: { children: any }) {
                         blockDate: dateFromUnixTimestamp(new BN(log.blockTime)),
                         signature,
                         action: getActionType(progInst),
-                        amount: pre.uiTokenAmount.uiAmount! - post.uiTokenAmount.uiAmount!
+                        amount: post.uiTokenAmount.uiAmount! - pre.uiTokenAmount.uiAmount!
                       };
 
                       // If we found mint match, add tx to logs

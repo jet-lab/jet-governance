@@ -5,7 +5,7 @@ import { Button, Tooltip } from "antd";
 import BN from "bn.js";
 import { useEffect, useState } from "react";
 import { useProposalContext } from "../../contexts/proposal";
-import { dateFromUnixTimestamp, fromLamports } from "../../utils";
+import { dateFromUnixTimestamp, toTokens } from "../../utils";
 import { RestakeModal } from "../modals/RestakeModal";
 import { WithdrawModal } from "../modals/WithdrawModal";
 
@@ -19,12 +19,6 @@ export const UnbondingLog = ({
   const [restakeModalVisible, setRestakeModalVisible] = useState(false);
   const [withdrawModalVisible, setWithdrawModalVisible] = useState(false);
   const [canWithdraw, setCanWithdraw] = useState(false);
-
-  const toTokens = (lamports: BN | undefined, mint: MintInfo | undefined) => {
-    return fromLamports(lamports, mint).toLocaleString(undefined, {
-      maximumFractionDigits: 0
-    });
-  };
 
   useEffect(() => {
     const interval = setInterval(() => {

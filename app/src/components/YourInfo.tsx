@@ -13,10 +13,11 @@ import { useWithdrawVotesAbility } from "../hooks/proposalHooks";
 import {
   COUNCIL_FAUCET_DEVNET,
   COUNCIL_TOKEN_MINT,
-  fromLamports,
+  toTokens,
   JET_FAUCET_DEVNET,
   JET_REALM,
-  JET_TOKEN_MINT
+  JET_TOKEN_MINT,
+  fromLamports
 } from "../utils";
 import { FooterLinks } from "./FooterLinks";
 import { StakeModal } from "./modals/StakeModal";
@@ -62,17 +63,11 @@ export const YourInfo = () => {
     return {
       apr: stakingYield ? (stakingYield.apr * 100).toFixed(0) : undefined,
       estDailyReward:
-        stakingYield?.perDay !== undefined
-          ? Intl.NumberFormat().format(fromLamports(stakingYield.perDay, jetMint))
-          : undefined,
+        stakingYield?.perDay !== undefined ? toTokens(stakingYield.perDay, jetMint) : undefined,
       estMonthlyReward:
-        stakingYield?.perMonth !== undefined
-          ? Intl.NumberFormat().format(fromLamports(stakingYield.perMonth, jetMint))
-          : undefined,
+        stakingYield?.perMonth !== undefined ? toTokens(stakingYield.perMonth, jetMint) : undefined,
       estYearlyReward:
-        stakingYield?.perYear !== undefined
-          ? Intl.NumberFormat().format(fromLamports(stakingYield.perYear, jetMint))
-          : undefined
+        stakingYield?.perYear !== undefined ? toTokens(stakingYield.perYear, jetMint) : undefined
     };
   }, [stakingYield, jetMint]);
 
@@ -175,7 +170,7 @@ export const YourInfo = () => {
         with mutation observer
         when child changes */}
         <ReactFitty maxSize={100} className="text-gradient vote-balance">
-          {connected ? new Intl.NumberFormat().format(fromLamports(stakedJet, jetMint)) : "-"}
+          {connected ? toTokens(stakedJet, jetMint) : "-"}
         </ReactFitty>
 
         <div id="wallet-overview" className="flex justify-between column">
@@ -223,7 +218,7 @@ export const YourInfo = () => {
           )}
           <div className="flex justify-between cluster">
             <span>Staked JET</span>
-            <span>{new Intl.NumberFormat().format(fromLamports(stakedJet, jetMint))}</span>
+            <span>{toTokens(stakedJet, jetMint)}</span>
           </div>
           {connected && (
             <>
@@ -237,16 +232,12 @@ export const YourInfo = () => {
                     <InfoCircleFilled />
                   </Tooltip>
                 </span>
-                <span>
-                  {new Intl.NumberFormat().format(fromLamports(unbondingQueue.toNumber(), jetMint))}
-                </span>
+                <span>{toTokens(unbondingQueue.toNumber(), jetMint)}</span>
               </div>
               <div className="flex justify-between cluster">
                 <span className="text-gradient bold">Available for Withdrawal</span>
                 <span className="text-gradient bold">
-                  {new Intl.NumberFormat().format(
-                    fromLamports(unbondingComplete.toNumber(), jetMint)
-                  )}
+                  {toTokens(unbondingComplete.toNumber(), jetMint)}
                 </span>
               </div>
             </>

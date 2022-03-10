@@ -7,7 +7,7 @@ import { bnToNumber, StakeBalance } from "@jet-lab/jet-engine";
 import { getPubkeyIndex } from "../../models/PUBKEYS_INDEX";
 import { getProposalUrl } from "../../tools/routeTools";
 import { Link } from "react-router-dom";
-import { fromLamports, JET_GOVERNANCE } from "../../utils";
+import { JET_GOVERNANCE, toTokens } from "../../utils";
 import {
   Governance,
   ProgramAccount,
@@ -146,9 +146,8 @@ export const VoteModal = ({
           You are about to vote <strong>{voteText}</strong> proposal "{proposal.account.name}".
         </p>
         <p>
-          You have{" "}
-          {Intl.NumberFormat().format(fromLamports(bnToNumber(stakeBalance.stakedJet), jetMint))}{" "}
-          JET staked, and will be able to unstake these funds when voting ends on {endDate}.
+          You have {toTokens(stakeBalance.stakedJet, jetMint)} JET staked, and will be able to
+          unstake these funds when voting ends on {endDate}.
         </p>
       </>
     ),
