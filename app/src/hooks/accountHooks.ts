@@ -11,7 +11,8 @@ import {
   ProgramAccount,
   pubkeyFilter,
   Proposal,
-  Governance
+  Governance,
+  getProposalsByGovernance
 } from "@solana/spl-governance";
 
 export async function getUnrelinquishedVoteRecords(
@@ -39,9 +40,7 @@ export async function getParsedProposalsByGovernance(
   ]);
 
   const [proposalsByGovernance] = await Promise.all(
-    governances.map(g =>
-      getGovernanceAccounts(connection, programId, Proposal, [pubkeyFilter(1, g.pubkey)!])
-    )
+    governances.map(g => getProposalsByGovernance(connection, programId, governance.pubkey))
   );
 
   const proposals: {

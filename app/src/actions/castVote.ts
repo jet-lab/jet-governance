@@ -69,7 +69,7 @@ export const castVote = async (
     const voteMint = stakePool.addresses.stakeVoteMint;
     const mintRemainingVotes = stakeBalance?.stakedJet.sub(stakeAccount.stakeAccount.mintedVotes);
 
-    if (mintRemainingVotes > stakePool.jetVotesPerShare) {
+    if (mintRemainingVotes.gt(stakePool.jetVotesPerShare)) {
       const voterTokenAccount = await AssociatedToken.withCreate(
         castVoteIx,
         provider,

@@ -3,7 +3,7 @@ import { ReactNode, useEffect, useState } from "react";
 import { useProposalsByGovernance } from "../../hooks/apiHooks";
 import { useCountdown, VoteOption } from "../../hooks/proposalHooks";
 import { useRpcContext } from "../../hooks/useRpcContext";
-import { bnToNumber, StakeBalance } from "@jet-lab/jet-engine";
+import { StakeBalance } from "@jet-lab/jet-engine";
 import { getPubkeyIndex } from "../../models/PUBKEYS_INDEX";
 import { getProposalUrl } from "../../tools/routeTools";
 import { Link } from "react-router-dom";

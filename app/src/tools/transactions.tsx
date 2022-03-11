@@ -111,7 +111,7 @@ export async function sendAllTransactionsWithNotifications(
         </>
       )
     });
-    console.log("Successful vote cast", last);
+    console.log("Transaction confirmed", last);
   } catch (txError) {
     console.error(txError);
     if (isTransactionTimeoutError(txError)) {

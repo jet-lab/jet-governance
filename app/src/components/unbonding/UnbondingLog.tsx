@@ -1,8 +1,6 @@
 import { InfoCircleFilled } from "@ant-design/icons";
 import { bnToNumber, UnbondingAccount } from "@jet-lab/jet-engine";
-import { MintInfo } from "@solana/spl-token";
 import { Button, Tooltip } from "antd";
-import BN from "bn.js";
 import { useEffect, useState } from "react";
 import { useProposalContext } from "../../contexts/proposal";
 import { dateFromUnixTimestamp, toTokens } from "../../utils";

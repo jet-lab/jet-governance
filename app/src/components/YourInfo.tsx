@@ -72,7 +72,8 @@ export const YourInfo = () => {
   }, [stakingYield, jetMint]);
 
   const handleStake = () => {
-    if (!jetMint || !inputAmount || !jetAccount) {
+    if (!jetMint || !inputAmount || !jetAccount || inputAmount === 0) {
+      console.error("Please input a staking amount")
       return;
     }
     const balance = bnToNumber(jetAccount.info.amount) / 10 ** jetMint.decimals;
@@ -83,7 +84,8 @@ export const YourInfo = () => {
   };
 
   const handleUnstake = () => {
-    if (!jetMint || inputAmount === undefined || !tokenOwnerRecord) {
+    if (!jetMint || !inputAmount || !tokenOwnerRecord || inputAmount === 0) {
+      console.error("Please input an unstaking amount")
       return;
     }
     const balance =
@@ -253,7 +255,7 @@ export const YourInfo = () => {
           />
           <Button
             onClick={() => handleStake()}
-            disabled={!connected || !stakeAccount}
+            disabled={!connected || !inputAmount || !stakeAccount}
             className="no-margin-horizontal"
           >
             Stake
@@ -266,7 +268,7 @@ export const YourInfo = () => {
           />
           <Button
             onClick={() => handleUnstake()}
-            disabled={!connected || !withdrawVotesAbility}
+            disabled={!connected || !withdrawVotesAbility || !inputAmount}
             className="no-margin-horizontal"
           >
             Unstake

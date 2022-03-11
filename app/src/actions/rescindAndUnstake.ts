@@ -33,8 +33,8 @@ export const rescindAndUnstake = async (
   const relinquishAndWithdrawIx: TransactionInstruction[] = [];
   const ix: TransactionInstruction[] = [];
   const allTxs = [];
-  const remainingStake = tokenOwnerRecord.account.governingTokenDepositAmount.sub(amount);
   const provider = new Provider(connection, wallet as any, Provider.defaultOptions());
+  const remainingStake = tokenOwnerRecord.account.governingTokenDepositAmount.sub(amount);
 
   // Get unrescinded proposals and relinquish votes before unstaking
   const proposals = await getParsedProposalsByGovernance(connection, programId, governance);
@@ -54,7 +54,6 @@ export const rescindAndUnstake = async (
       programId,
       tokenOwnerRecord!.account!.governingTokenOwner
     );
-
     for (const voteRecord of Object.values(voteRecords)) {
       let proposal = proposals[voteRecord.account.proposal.toString()];
       console.log("Relinquishing proposal", proposal.pubkey.toString(), proposal);
@@ -80,7 +79,7 @@ export const rescindAndUnstake = async (
   }
 
   // Create vote token account
-  const relinquishVoterTokenAccount = await AssociatedToken.withCreate(
+  const voterTokenAccount = await AssociatedToken.withCreate(
     relinquishAndWithdrawIx,
     stakeProgram.provider,
     walletPubkey,
@@ -91,7 +90,7 @@ export const rescindAndUnstake = async (
     relinquishAndWithdrawIx,
     GOVERNANCE_PROGRAM_ID,
     governance.account.realm,
-    relinquishVoterTokenAccount,
+    voterTokenAccount,
     voteMint,
     walletPubkey
   );
@@ -101,7 +100,7 @@ export const rescindAndUnstake = async (
     stakePool,
     stakeAccount,
     walletPubkey,
-    relinquishVoterTokenAccount,
+    voterTokenAccount,
     amount
   );
   // Unstake Jet
@@ -114,42 +113,33 @@ export const rescindAndUnstake = async (
     amount
   );
 
-  // Close vote token account
-  //FIXME: Error 0xb Non-native account can only be closed if its balance is zero
-  await AssociatedToken.withClose(relinquishAndWithdrawIx, walletPubkey, voteMint, walletPubkey);
-
   const relinquishAndWithdrawTx = new Transaction().add(...relinquishAndWithdrawIx);
   allTxs.push({
     tx: relinquishAndWithdrawTx,
     signers: []
   });
 
-  // Create vote token account
-  const voterTokenAccount = await AssociatedToken.withCreate(
-    ix,
-    stakeProgram.provider,
-    walletPubkey,
-    voteMint
-  );
-
-  const transferAuthority = withApprove(ix, [], voterTokenAccount, walletPubkey, amount);
+  const transferAuthority = withApprove(ix, [], voterTokenAccount, walletPubkey, remainingStake);
   signers.push(transferAuthority);
-
+  // Get the total remaining token balance within the associated account
+  // after requested amount has been unbonded
   // Restake Remaining Votes
-  await withDepositGoverningTokens(
-    ix,
-    GOVERNANCE_PROGRAM_ID,
-    programVersion,
-    governance.account.realm,
-    voterTokenAccount,
-    voteMint,
-    walletPubkey,
-    transferAuthority.publicKey,
-    walletPubkey,
-    remainingStake
-  );
+  if (remainingStake) {
+    await withDepositGoverningTokens(
+      ix,
+      GOVERNANCE_PROGRAM_ID,
+      programVersion,
+      governance.account.realm,
+      voterTokenAccount,
+      voteMint,
+      walletPubkey,
+      transferAuthority.publicKey,
+      walletPubkey,
+      remainingStake
+    );
+  }
+
   // Close vote token account
-  //FIXME: Non-native account can only be closed if its balance is zero
   await AssociatedToken.withClose(ix, walletPubkey, voteMint, walletPubkey);
 
   const restakeTx = new Transaction().add(...ix);
@@ -158,5 +148,10 @@ export const rescindAndUnstake = async (
     signers
   });
 
-  await sendAllTransactionsWithNotifications(provider, allTxs, "Voting on proposal", "Vote cast");
+  await sendAllTransactionsWithNotifications(
+    provider,
+    allTxs,
+    "Unstaking tokens",
+    "Tokens have begun unbonding"
+  );
 };
