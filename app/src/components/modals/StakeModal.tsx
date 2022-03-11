@@ -55,12 +55,6 @@ export const StakeModal = (props: {
     onClose();
   };
 
-  console.log(
-    stakePool?.program?.provider?.wallet?.publicKey?.toBase58(),
-    stakePool?.program?.provider?.wallet,
-    stakePool?.program?.provider
-  );
-
   const steps: (ModalProps & { content: ReactNode })[] = [];
   steps[Steps.Start] = {
     title: `You are staking ${

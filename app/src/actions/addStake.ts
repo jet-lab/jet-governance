@@ -14,7 +14,6 @@ export const addStake = async (
 ) => {
   let instructions: TransactionInstruction[] = [];
   let signers: Keypair[] = [];
-  console.log(stakePool.program.provider.wallet.publicKey.toBase58());
 
   const provider = stakePool.program.provider;
   const voteMint = stakePool.addresses.stakeVoteMint;

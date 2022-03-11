@@ -253,7 +253,7 @@ export const YourInfo = () => {
           />
           <Button
             onClick={() => handleStake()}
-            disabled={!connected}
+            disabled={!connected || !stakeAccount}
             className="no-margin-horizontal"
           >
             Stake
