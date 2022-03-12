@@ -36,9 +36,6 @@ jobs:
             ~/.cargo/git/db/
             ~/.local/share/solana/
 
-      - name: Install Linux Dependencies
-        run: sudo apt-get update && sudo apt-get -y install pkg-config build-essential libudev-dev
-
       - name: Install Rust
         uses: actions-rs/toolchain@v1
         with:
@@ -66,6 +63,9 @@ jobs:
             ~/.cargo/registry/cache/
             ~/.cargo/git/db/
             ~/.local/share/solana/
+
+      - name: Install Linux Dependencies
+        run: sudo apt-get update && sudo apt-get -y install pkg-config build-essential libudev-dev
 
       - name: Setup NPM
         uses: actions/setup-node@v2
