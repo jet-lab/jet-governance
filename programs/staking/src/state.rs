@@ -106,11 +106,6 @@ impl StakePool {
     }
 }
 
-pub enum Rounding {
-    Up,
-    Down,
-}
-
 #[derive(AnchorSerialize, AnchorDeserialize, Debug, Default, Clone, Copy)]
 pub struct FullAmount {
     pub token_amount: u64,
