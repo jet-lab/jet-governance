@@ -1,4 +1,5 @@
 use anchor_lang::prelude::*;
+use anchor_lang::solana_program::pubkey;
 
 declare_id!("JPLockxtkngHkaQT5AuRYow3HyUv5qWzmhwsCPd653n");
 
@@ -58,7 +59,7 @@ pub mod jet_staking {
     }
 
     /// Mint voting tokens based on current stake
-    pub fn mint_votes(ctx: Context<MintVotes>, amount: Amount) -> ProgramResult {
+    pub fn mint_votes(ctx: Context<MintVotes>, amount: Option<Amount>) -> ProgramResult {
         instructions::mint_votes_handler(ctx, amount)
     }
 
@@ -115,5 +116,14 @@ mod error {
         NotYetUnbonded,
         StakeRemaining,
         InvalidAmount,
+    }
+}
+
+#[derive(Copy, Clone)]
+pub struct SplGovernance;
+
+impl Id for SplGovernance {
+    fn id() -> Pubkey {
+        pubkey!("JPGovTiAUgyqirerBbXXmfyt3SkHVEcpSAPjRCCSHVx")
     }
 }

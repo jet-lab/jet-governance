@@ -18,5 +18,7 @@ default = []
 [dependencies]
 anchor-lang = { git = "https://github.com/jet-lab/anchor" }
 anchor-spl = { git = "https://github.com/jet-lab/anchor" }
+solana-program = "1.9"
 
 jet-proto-auth = { path = "../auth", features = ["cpi"] }
+spl-governance = { version = "2", features = ["no-entrypoint"] }

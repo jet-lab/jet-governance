@@ -1,13 +1,30 @@
 import * as anchor from "@project-serum/anchor";
 import { Program } from "@project-serum/anchor";
-import { Keypair, PublicKey, SystemProgram, SYSVAR_RENT_PUBKEY } from "@solana/web3.js";
+import {
+  Keypair,
+  PublicKey,
+  sendAndConfirmTransaction,
+  SystemProgram,
+  SYSVAR_RENT_PUBKEY,
+  Transaction,
+  TransactionInstruction
+} from "@solana/web3.js";
 import { Token, TOKEN_PROGRAM_ID, u64 } from "@solana/spl-token";
+import {
+  withCreateRealm,
+  withCreateGovernance,
+  MintMaxVoteWeightSource,
+  MintMaxVoteWeightSourceType,
+  getTokenHoldingAddress,
+  getTokenOwnerRecordAddress
+} from "@solana/spl-governance";
 import { JetRewards } from "../target/types/jet_rewards";
 import { JetStaking } from "../target/types/jet_staking";
 import { JetAuth } from "../target/types/jet_auth";
 import { assert } from "chai";
 import { string } from "yargs";
 
+const GOVERNANCE_ID = new PublicKey("JPGovTiAUgyqirerBbXXmfyt3SkHVEcpSAPjRCCSHVx");
 const RewardsProgram = anchor.workspace.JetRewards as Program<JetRewards>;
 const StakingProgram = anchor.workspace.JetStaking as Program<JetStaking>;
 const AuthProgram = anchor.workspace.JetAuth as Program<JetAuth>;
@@ -90,6 +107,9 @@ describe("airdrop-staking", () => {
   let distVault: PublicKey;
   let awardAccount: PublicKey;
   let awardVault: PublicKey;
+  let govRealm: PublicKey;
+  let govVault: PublicKey;
+  let stakerGovRecord: PublicKey;
 
   before(async () => {
     testToken = await Token.createMint(
@@ -588,9 +608,40 @@ describe("airdrop-staking", () => {
     assert.equal(updatedAta.amount.toNumber(), 800_000_000);
   });
 
+  it("create governance realm", async () => {
+    let instructions: TransactionInstruction[] = [];
+
+    govRealm = await withCreateRealm(
+      instructions,
+      GOVERNANCE_ID,
+      2,
+      "localtest",
+      wallet.payer.publicKey,
+      stakeAcc.stakeVoteMint,
+      wallet.payer.publicKey,
+      undefined,
+      new MintMaxVoteWeightSource({ value: MintMaxVoteWeightSource.SUPPLY_FRACTION_BASE }),
+      new anchor.BN(1),
+      undefined,
+      undefined
+    );
+
+    govVault = await getTokenHoldingAddress(GOVERNANCE_ID, govRealm, stakeAcc.stakeVoteMint);
+    stakerGovRecord = await getTokenOwnerRecordAddress(
+      GOVERNANCE_ID,
+      govRealm,
+      stakeAcc.stakeVoteMint,
+      staker.publicKey
+    );
+
+    await sendAndConfirmTransaction(provider.connection, new Transaction().add(...instructions), [
+      wallet.payer
+    ]);
+  });
+
   it("mint zero votes", async () => {
     try {
-      const voteAta = await voteToken.getOrCreateAssociatedAccountInfo(wallet.publicKey);
+      const voteAta = await voteToken.getOrCreateAssociatedAccountInfo(staker.publicKey);
 
       await StakingProgram.rpc.mintVotes(
         { kind: { tokens: {} }, value: new u64(0) },
@@ -602,7 +653,14 @@ describe("airdrop-staking", () => {
             stakeVoteMint: stakeAcc.stakeVoteMint,
             stakeAccount: stakerAccount,
             voterTokenAccount: voteAta.address,
-            tokenProgram: TOKEN_PROGRAM_ID
+            governanceRealm: govRealm,
+            governanceVault: govVault,
+            governanceOwnerRecord: stakerGovRecord,
+            payer: wallet.publicKey,
+            tokenProgram: TOKEN_PROGRAM_ID,
+            governanceProgram: GOVERNANCE_ID,
+            systemProgram: SystemProgram.programId,
+            rent: SYSVAR_RENT_PUBKEY
           },
           signers: [staker]
         }
@@ -615,32 +673,36 @@ describe("airdrop-staking", () => {
   });
 
   it("mint max votes", async () => {
-    const voteAta = await voteToken.getOrCreateAssociatedAccountInfo(wallet.publicKey);
+    const voteAta = await voteToken.getOrCreateAssociatedAccountInfo(staker.publicKey);
 
-    await StakingProgram.rpc.mintVotes(
-      { kind: { tokens: {} }, value: new u64(10_000_000_000) },
-      {
-        accounts: {
-          owner: staker.publicKey,
-          stakePool: stakeAcc.stakePool,
-          stakePoolVault: stakeAcc.stakePoolVault,
-          stakeVoteMint: stakeAcc.stakeVoteMint,
-          stakeAccount: stakerAccount,
-          voterTokenAccount: voteAta.address,
-          tokenProgram: TOKEN_PROGRAM_ID
-        },
-        signers: [staker]
-      }
-    );
+    await StakingProgram.rpc.mintVotes(null, {
+      accounts: {
+        owner: staker.publicKey,
+        stakePool: stakeAcc.stakePool,
+        stakePoolVault: stakeAcc.stakePoolVault,
+        stakeVoteMint: stakeAcc.stakeVoteMint,
+        stakeAccount: stakerAccount,
+        voterTokenAccount: voteAta.address,
+        governanceRealm: govRealm,
+        governanceVault: govVault,
+        governanceOwnerRecord: stakerGovRecord,
+        payer: wallet.publicKey,
+        tokenProgram: TOKEN_PROGRAM_ID,
+        governanceProgram: GOVERNANCE_ID,
+        systemProgram: SystemProgram.programId,
+        rent: SYSVAR_RENT_PUBKEY
+      },
+      signers: [staker]
+    });
 
-    const updatedAta = await voteToken.getOrCreateAssociatedAccountInfo(wallet.publicKey);
+    const updatedVault = await voteToken.getAccountInfo(govVault);
 
-    assert.equal(updatedAta.amount.toNumber(), 10_000_000_000);
+    assert.equal(updatedVault.amount.toNumber(), 10_000_000_000);
   });
 
   it("user cannot mint extra votes", async () => {
     try {
-      const voteAta = await voteToken.getOrCreateAssociatedAccountInfo(wallet.publicKey);
+      const voteAta = await voteToken.getOrCreateAssociatedAccountInfo(staker.publicKey);
 
       await StakingProgram.rpc.mintVotes(
         { kind: { tokens: {} }, value: new u64(1_000) },
@@ -652,7 +714,14 @@ describe("airdrop-staking", () => {
             stakeVoteMint: stakeAcc.stakeVoteMint,
             stakeAccount: stakerAccount,
             voterTokenAccount: voteAta.address,
-            tokenProgram: TOKEN_PROGRAM_ID
+            governanceRealm: govRealm,
+            governanceVault: govVault,
+            governanceOwnerRecord: stakerGovRecord,
+            payer: wallet.publicKey,
+            tokenProgram: TOKEN_PROGRAM_ID,
+            governanceProgram: GOVERNANCE_ID,
+            systemProgram: SystemProgram.programId,
+            rent: SYSVAR_RENT_PUBKEY
           },
           signers: [staker]
         }

@@ -115,7 +115,7 @@ pub struct FullAmount {
 }
 
 impl FullAmount {
-    fn with_tokens(&self, token_amount: u64) -> Self {
+    pub fn with_tokens(&self, token_amount: u64) -> Self {
         let share_amount = (token_amount as u128) * (self.shares as u128) / (self.tokens as u128);
         assert!(share_amount < std::u64::MAX as u128);
         assert!((share_amount > 0 && token_amount > 0) || (share_amount == 0 && token_amount == 0));
@@ -129,7 +129,7 @@ impl FullAmount {
         }
     }
 
-    fn with_shares(&self, share_amount: u64) -> Self {
+    pub fn with_shares(&self, share_amount: u64) -> Self {
         let token_amount = (self.tokens as u128) * (share_amount as u128) / (self.shares as u128);
         assert!(token_amount < std::u64::MAX as u128);
         assert!((share_amount > 0 && token_amount > 0) || (share_amount == 0 && token_amount == 0));
