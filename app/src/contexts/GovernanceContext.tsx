@@ -4,6 +4,7 @@ import { useLocation } from "react-router-dom";
 import { getProgramVersion, PROGRAM_VERSION } from "../models/registry/api";
 import { useConnection, useConnectionConfig } from ".";
 import { getRealms, ProgramAccount, Realm } from "@solana/spl-governance";
+import { GOVERNANCE_PROGRAM_ID } from "../utils";
 
 export interface GovernanceContextState {
   realms: Record<string, ProgramAccount<Realm>>;
@@ -20,7 +21,7 @@ export default function GovernanceProvider({ children = null as any }) {
 
   const programId = useMemo(() => {
     const params = new URLSearchParams(location.search);
-    return params.get("programId") ?? "GovER5Lthms3bLBqWub97yVrMmEogzX7xNjdXpPPCVZw";
+    return params.get("programId") ?? GOVERNANCE_PROGRAM_ID.toBase58();
   }, [location]);
 
   const [realms, setRealms] = useState({});

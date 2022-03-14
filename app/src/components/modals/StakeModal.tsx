@@ -4,8 +4,8 @@ import { useWallet } from "@solana/wallet-adapter-react";
 import { useProposalContext } from "../../contexts/proposal";
 import { addStake } from "../../actions/addStake";
 import { useRpcContext } from "../../hooks/useRpcContext";
-import { PublicKey } from "@solana/web3.js";
 import { useBN } from "../../hooks";
+import { ProgramAccount, Realm } from "@solana/spl-governance";
 
 enum Steps {
   Start = 0,
@@ -17,7 +17,7 @@ export const StakeModal = (props: {
   visible: boolean;
   onClose: () => void;
   amount: number | undefined;
-  realm: PublicKey;
+  realm: ProgramAccount<Realm> | undefined;
 }) => {
   const { visible, onClose, amount, realm } = props;
 
@@ -30,12 +30,12 @@ export const StakeModal = (props: {
   // Handlers for staking info modal
 
   const handleSubmitTx = () => {
-    if (!stakePool || !publicKey || !jetAccount) {
+    if (!stakePool || !realm || !publicKey || !jetAccount) {
       return;
     }
 
     setLoading(true);
-    addStake(rpcContext, realm, stakePool, publicKey, stakeLamports)
+    addStake(rpcContext, stakePool, realm, publicKey, stakeLamports)
       .then(() => {
         setLoading(false);
         setCurrent(Steps.Success);

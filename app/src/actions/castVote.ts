@@ -6,20 +6,19 @@ import {
   GOVERNANCE_CHAT_PROGRAM_ID,
   ProgramAccount,
   Proposal,
+  Realm,
   RpcContext,
   Vote,
   withCastVote,
-  withDepositGoverningTokens,
   withPostChatMessage,
   withRelinquishVote,
   YesNoVote
 } from "@solana/spl-governance";
 import { AssociatedToken, StakeAccount, StakeBalance, StakePool } from "@jet-lab/jet-engine";
-import { withApprove } from "../models/withApprove";
 
 export const castVote = async (
   { connection, wallet, programId, programVersion, walletPubkey }: RpcContext,
-  realm: PublicKey,
+  realm: ProgramAccount<Realm>,
   proposal: ProgramAccount<Proposal>,
   tokenOwnerRecord: PublicKey,
   yesNoVote: YesNoVote,
@@ -86,32 +85,9 @@ export const castVote = async (
       await StakeAccount.withMintVotes(
         castVoteIx,
         stakePool,
-        wallet.publicKey,
-        voterTokenAccount,
-        mintRemainingVotes
-      );
-
-      const transferAuthority = withApprove(
-        castVoteIx,
-        [],
-        voterTokenAccount,
-        walletPubkey,
-        mintRemainingVotes
-      );
-
-      signers.push(transferAuthority);
-
-      await withDepositGoverningTokens(
-        castVoteIx,
-        programId,
-        programVersion,
         realm,
-        voterTokenAccount,
-        voteMint,
-        walletPubkey,
-        transferAuthority.publicKey,
-        walletPubkey,
-        mintRemainingVotes
+        wallet.publicKey,
+        voterTokenAccount
       );
 
       await AssociatedToken.withClose(castVoteIx, wallet.publicKey, voteMint, wallet.publicKey);
@@ -122,7 +98,7 @@ export const castVote = async (
     castVoteIx,
     programId,
     programVersion,
-    realm,
+    realm.pubkey,
     proposal.account.governance,
     proposal.pubkey,
     proposal.account.tokenOwnerRecord,
@@ -139,7 +115,7 @@ export const castVote = async (
       signers,
       GOVERNANCE_CHAT_PROGRAM_ID,
       programId,
-      realm,
+      realm.pubkey,
       proposal.account.governance,
       proposal.pubkey,
       tokenOwnerRecord,

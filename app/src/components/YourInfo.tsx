@@ -50,6 +50,7 @@ export const YourInfo = () => {
     jetMint,
     stakingYield,
 
+    realm,
     tokenOwnerRecord,
 
     programs
@@ -263,7 +264,7 @@ export const YourInfo = () => {
           <StakeModal
             visible={stakeModalVisible}
             onClose={() => setStakeModalVisible(false)}
-            realm={JET_REALM}
+            realm={realm}
             amount={inputAmount ?? 0}
           />
           <Button

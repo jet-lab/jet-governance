@@ -13,6 +13,7 @@ import {
   ProgramAccount,
   Proposal,
   ProposalState,
+  Realm,
   TokenOwnerRecord,
   VoteRecord,
   YesNoVote
@@ -32,6 +33,7 @@ export const VoteModal = ({
   vote,
   visible,
   onClose,
+  realm,
   governance,
   proposal,
   tokenOwnerRecord,
@@ -40,6 +42,7 @@ export const VoteModal = ({
   vote: VoteOption;
   visible: boolean;
   onClose: () => void;
+  realm: ProgramAccount<Realm>;
   governance: ProgramAccount<Governance>;
   proposal: ProgramAccount<Proposal>;
   tokenOwnerRecord?: ProgramAccount<TokenOwnerRecord>;
@@ -89,7 +92,7 @@ export const VoteModal = ({
     if (tokenOwnerRecord && programs) {
       castVote(
         rpcContext,
-        governance.account.realm,
+        realm,
         proposal,
         tokenOwnerRecord.pubkey,
         yesNoVote,

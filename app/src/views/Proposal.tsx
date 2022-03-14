@@ -30,12 +30,12 @@ import { voteRecordCsvDownload } from "../actions/voteRecordCsvDownload";
 import { DownloadOutlined, ArrowLeftOutlined } from "@ant-design/icons";
 import { getPubkeyIndex } from "../models/PUBKEYS_INDEX";
 import { useProposalContext } from "../contexts/proposal";
-import { StakeAccount, StakeBalance, StakePool } from "@jet-lab/jet-engine";
-import { Governance, ProgramAccount, Proposal, ProposalState } from "@solana/spl-governance";
-import { getExplorerUrl } from "../utils";
+import { StakeBalance } from "@jet-lab/jet-engine";
+import { Governance, ProgramAccount, Proposal, ProposalState, Realm } from "@solana/spl-governance";
 import { ReactComponent as ThumbsUp } from "../images/thumbs_up.svg";
 import { ReactComponent as ThumbsDown } from "../images/thumbs_down.svg";
 import { Loader } from "../components/Loader";
+import { getExplorerUrl } from "../utils";
 
 export const ProposalView = () => {
   const proposalAddress = useKeyParam();
@@ -43,8 +43,7 @@ export const ProposalView = () => {
 
   const voteRecords = useVoteRecordsByProposal(proposal?.pubkey);
 
-  const { stakePool, stakeAccount, stakeBalance, governance, proposalsByGovernance } =
-    useProposalContext();
+  const { stakeBalance, realm, governance, proposalsByGovernance } = useProposalContext();
 
   const tokenOwnerRecords = useTokenOwnerRecords(
     governance?.account.realm,
@@ -55,13 +54,12 @@ export const ProposalView = () => {
 
   const { allHasVoted } = useVoterDisplayData(voteRecords, tokenOwnerRecords);
 
-  return proposal && governance && stakePool && proposalsByGovernance ? (
+  return proposal && realm && governance && proposalsByGovernance ? (
     <InnerProposalView
       proposal={proposal}
+      realm={realm}
       governance={governance}
       voterDisplayData={allHasVoted}
-      stakePool={stakePool}
-      stakeAccount={stakeAccount}
       stakeBalance={stakeBalance}
       proposalsByGovernance={proposalsByGovernance}
     />
@@ -72,18 +70,16 @@ export const ProposalView = () => {
 
 const InnerProposalView = ({
   proposal,
+  realm,
   governance,
   voterDisplayData,
-  stakePool,
-  stakeAccount,
   stakeBalance,
   proposalsByGovernance
 }: {
   proposal: ProgramAccount<Proposal>;
+  realm: ProgramAccount<Realm>;
   governance: ProgramAccount<Governance>;
   voterDisplayData: VoterDisplayData[];
-  stakePool: StakePool;
-  stakeAccount: StakeAccount | undefined;
   stakeBalance: StakeBalance;
   proposalsByGovernance: ProgramAccount<Proposal>[];
 }) => {
@@ -270,6 +266,7 @@ const InnerProposalView = ({
             vote={vote}
             visible={isVoteModalVisible}
             onClose={() => setIsVoteModalVisible(false)}
+            realm={realm}
             governance={governance}
             proposal={proposal}
             tokenOwnerRecord={tokenOwnerRecord}
