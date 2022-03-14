@@ -17,7 +17,6 @@ import { AppLayout } from "./components/Layout";
 import { ConnectionProvider, WalletProvider } from "./contexts";
 import { ScrollToTop } from "./contexts/scrollToTop";
 import { ProposalProvider } from "./contexts/proposal";
-import { AirdropHistory } from "./views/AirdropHistory";
 import { ConfigProvider } from "antd-country-phone-input";
 import en from "world_countries_lists/data/en/world.json";
 import { GlossaryView } from "./views/Glossary";
@@ -50,11 +49,6 @@ export function Routes() {
                                   <Route exact path="/your-info" children={<YourInfo />} />
                                   <Route path={"/proposal/:key"} children={<ProposalView />} />
                                   <Route exact path="/claims" children={<AirdropView />} />
-                                  <Route
-                                    exact
-                                    path="/airdrop/history"
-                                    children={<AirdropHistory />}
-                                  />
                                   <Route exact path="/flight-logs" children={<FlightLogView />} />
                                   <Route exact path="/glossary" children={<GlossaryView />} />
                                   <Route exact path="/terms" children={<TermsView />} />

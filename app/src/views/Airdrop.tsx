@@ -18,6 +18,7 @@ export const AirdropView = () => {
 
   const availAirdropsRender = airdropsByWallet?.map(airdrop => ({
     airdrop,
+    finalized: !airdrop.targetInfo.finalized.isZero(),
     airdropAddress: airdrop.airdropAddress,
     shortDesc: String.fromCharCode(...airdrop.airdrop.shortDesc),
     expireAt: airdrop.airdrop.expireAt.toNumber(),
@@ -69,7 +70,7 @@ export const AirdropView = () => {
 
         {connected &&
           availAirdropsRender?.map(airdrop => (
-            <Available airdrop={airdrop} key={airdrop.airdropAddress.toString()} />
+            <Available airdropInfo={airdrop} key={airdrop.airdropAddress.toString()} />
           ))}
       </div>
       {/* todo - styling */}
