@@ -6,6 +6,7 @@ import { addStake } from "../../actions/addStake";
 import { useRpcContext } from "../../hooks/useRpcContext";
 import { useBN } from "../../hooks";
 import { ProgramAccount, Realm } from "@solana/spl-governance";
+import { DocsLink } from "../docsLink";
 
 enum Steps {
   Start = 0,
@@ -73,7 +74,7 @@ export const StakeModal = (props: {
         </p>
         <p>
           Remember: To unstake your tokens, there will be a 29.5-day unbonding period. For more
-          information, please <a>read the docs</a>.
+          information, please <DocsLink>read the docs</DocsLink>.
         </p>
       </>
     )

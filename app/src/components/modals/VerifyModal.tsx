@@ -6,6 +6,7 @@ import axios from "axios";
 import { useConnectionConfig } from "../../contexts";
 import { Auth } from "@jet-lab/jet-engine/lib/auth/auth";
 import CountryPhoneInput, { CountryPhoneInputValue } from "antd-country-phone-input";
+import { DocsLink } from "../docsLink";
 
 enum Steps {
   Welcome = 0,
@@ -410,15 +411,7 @@ export const VerifyModal = ({
         </p>
         <p>
           To make sure your vote counts, only unstake once a vote has completed! For more
-          information check out our{" "}
-          <a
-            href="https://docs.jetprotocol.io/jet-protocol/protocol/jet-staking"
-            target="_blank"
-            rel="noreferrer"
-          >
-            docs
-          </a>
-          .
+          information check out our <DocsLink>docs</DocsLink>.
         </p>
       </>
     ),

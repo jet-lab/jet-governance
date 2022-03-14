@@ -5,6 +5,7 @@ import { Airdrop } from "@jet-lab/jet-engine";
 import { useRpcContext } from "../../hooks/useRpcContext";
 import { useProposalContext } from "../../contexts/proposal";
 import { claimAndStake } from "../../actions/claimAndStake";
+import { DocsLink } from "../docsLink";
 
 enum Steps {
   Confirm = 0,
@@ -79,9 +80,8 @@ export const ClaimModal = ({
         </p>
         <p>
           You may unstake at anytime, but before the tokens can be withdrawn to your wallet, there
-          is a 29.5-day unbonding period. Please read{" "}
-          <a href="https://docs.jetprotocol.io/jet-protocol/protocol/jet-staking">the docs</a> for
-          more information.
+          is a 29.5-day unbonding period. Please <DocsLink>read the docs</DocsLink> for more
+          information.
         </p>
       </>
     )

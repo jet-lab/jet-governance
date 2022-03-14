@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { DocsLink } from "./docsLink";
 import { GlossaryModal } from "./modals/GlossaryModal";
 import { TermsConditionsModal } from "./modals/TermsConditionsModal";
 
@@ -18,7 +19,7 @@ export const FooterLinks = () => {
     <div className="footer-links">
       <span onClick={toggleTermsConditionsModal}>Terms of Use</span>
       <span>
-        <a href="https://docs.jetprotocol.io/jet-protocol/protocol/jet-staking">Docs</a>
+        <DocsLink>Docs</DocsLink>
       </span>
       <span onClick={toggleGlossaryModal}>Glossary</span>
 
