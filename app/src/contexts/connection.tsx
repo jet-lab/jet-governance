@@ -33,28 +33,33 @@ export const ENDPOINTS = [
   }
 ];
 
-const DEFAULT = ENDPOINTS[2].endpoint;
+const DEFAULT_NAME = (process.env.REACT_APP_CLUSTER as ENV) ?? ENDPOINTS[2].name;
+const DEFAULT = ENDPOINTS.find(end => end.name === DEFAULT_NAME)?.endpoint ?? ENDPOINTS[2].endpoint;
 
 interface ConnectionConfig {
   connection: Connection;
   endpoint: string;
   env: ENV;
   setEndpoint: (val: string) => void;
+  inDevelopment: boolean;
 }
 
 const ConnectionContext = React.createContext<ConnectionConfig>({
   endpoint: DEFAULT,
   setEndpoint: () => {},
   connection: new Connection(DEFAULT, "recent"),
-  env: ENDPOINTS[0].name
+  env: DEFAULT_NAME,
+  inDevelopment: false
 });
 
 export function ConnectionProvider({ children = undefined as any }) {
-  const [endpoint, setEndpoint] = useLocalStorageState("connectionEndpoint", ENDPOINTS[2].endpoint);
+  const [endpoint, setEndpoint] = useLocalStorageState("connectionEndpoint", DEFAULT);
 
   const connection = useMemo(() => new Connection(endpoint, "recent"), [endpoint]);
 
-  const env = ENDPOINTS.find(end => end.endpoint === endpoint)?.name || ENDPOINTS[2].name;
+  const env = ENDPOINTS.find(end => end.endpoint === endpoint)?.name || DEFAULT_NAME;
+
+  const inDevelopment = env === "devnet";
 
   setProgramIds(env);
 
@@ -64,7 +69,8 @@ export function ConnectionProvider({ children = undefined as any }) {
         endpoint,
         setEndpoint,
         connection,
-        env
+        env,
+        inDevelopment
       }}
     >
       {children}
@@ -81,6 +87,7 @@ export function useConnectionConfig() {
   return {
     endpoint: context.endpoint,
     setEndpoint: context.setEndpoint,
-    env: context.env
+    env: context.env,
+    inDevelopment: context.inDevelopment
   };
 }

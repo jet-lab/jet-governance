@@ -11,18 +11,11 @@ export const HomeView = () => {
   const {
     proposalFilter,
     setProposalFilter,
-    pastProposalFilter,
     setPastProposalFilter,
 
     filteredProposalsByGovernance,
     filteredPastProposals,
 
-    stakePool,
-    stakeAccount,
-    unbondingTotal,
-    stakeBalance: { stakedJet },
-
-    realm,
     governance
   } = useProposalContext();
   /* eslint-enable @typescript-eslint/no-unused-vars */

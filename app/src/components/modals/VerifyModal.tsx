@@ -275,7 +275,7 @@ export const VerifyModal = ({
           {wallets.map(w => (
             <div
               key={w.name}
-              className={`wallet flex align-center justify-between 
+              className={`wallet flex align-center justify-between
                 ${wallet?.name === w.name ? "active" : ""}`}
               onClick={() => {
                 select(w.name);
@@ -309,12 +309,16 @@ export const VerifyModal = ({
       <>
         <p>
           Due to regulatory restrictions, only users in authorized regions are able to access
-          JetGovern. <a>Read more</a>
+          JetGovern. For more info, see our{" "}
+          <a href="https://www.jetprotocol.io/terms-of-use" target="_blank" rel="noreferrer">
+            Terms of Use
+          </a>
+          .
         </p>
         <p>
           <strong>
             This information is never stored with us or our SMS verification partner, and is used
-            solely for regional access.
+            solely for regional verification.
           </strong>
         </p>
         <p>
@@ -398,7 +402,15 @@ export const VerifyModal = ({
         </p>
         <p>
           To make sure your vote counts, only unstake once a vote has completed! For more
-          information check out our <a>docs</a>.
+          information check out our{" "}
+          <a
+            href="https://docs.jetprotocol.io/jet-protocol/protocol/jet-staking"
+            target="_blank"
+            rel="noreferrer"
+          >
+            docs
+          </a>
+          .
         </p>
       </>
     ),

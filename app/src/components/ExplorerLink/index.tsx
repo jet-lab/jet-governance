@@ -2,7 +2,6 @@ import React from "react";
 import { Typography } from "antd";
 import { shortenAddress } from "../../utils/utils";
 import { Connection, PublicKey } from "@solana/web3.js";
-import { useConnectionConfig } from "../../contexts";
 import { getExplorerUrl } from "../../utils/explorer";
 
 export const ExplorerLink = (props: {
@@ -15,7 +14,6 @@ export const ExplorerLink = (props: {
   connection?: Connection;
 }) => {
   const { type, code, short } = props;
-  let { endpoint } = useConnectionConfig();
 
   const address = typeof props.address === "string" ? props.address : props.address?.toBase58();
 
@@ -28,7 +26,7 @@ export const ExplorerLink = (props: {
 
   return (
     <a
-      href={getExplorerUrl(address, endpoint, type, props.connection)}
+      href={getExplorerUrl(address, type)}
       // eslint-disable-next-line react/jsx-no-target-blank
       target="_blank"
       rel="noreferrer"

@@ -34,7 +34,7 @@ export const YourInfo = () => {
   const { vestedAirdrops } = useAirdrop();
   const { connected } = useWallet();
   const { darkTheme, toggleDarkTheme } = useDarkTheme();
-  const { env } = useConnectionConfig();
+  const { inDevelopment } = useConnectionConfig();
 
   const {
     refresh,
@@ -73,7 +73,7 @@ export const YourInfo = () => {
 
   const handleStake = () => {
     if (!jetMint || !inputAmount || !jetAccount || inputAmount === 0) {
-      console.error("Please input a staking amount")
+      console.error("Please input a staking amount");
       return;
     }
     const balance = bnToNumber(jetAccount.info.amount) / 10 ** jetMint.decimals;
@@ -85,7 +85,7 @@ export const YourInfo = () => {
 
   const handleUnstake = () => {
     if (!jetMint || !inputAmount || !tokenOwnerRecord || inputAmount === 0) {
-      console.error("Please input an unstaking amount")
+      console.error("Please input an unstaking amount");
       return;
     }
     const balance =
@@ -306,15 +306,8 @@ export const YourInfo = () => {
           unCheckedChildren="light"
         />
         <br />
-        <Button onClick={getJetAirdrop} style={{ display: env === "mainnet-beta" ? "none" : "" }}>
-          GET JET
-        </Button>
-        <Button
-          onClick={getCouncilAirdrop}
-          style={{ display: env === "mainnet-beta" ? "none" : "" }}
-        >
-          GET COUNCIL TOKEN
-        </Button>
+        {inDevelopment && <Button onClick={getJetAirdrop}>GET JET</Button>}
+        {inDevelopment && <Button onClick={getCouncilAirdrop}>GET COUNCIL TOKEN</Button>}
       </div>
 
       <FooterLinks />

@@ -3,7 +3,7 @@ import { bnToNumber, UnbondingAccount } from "@jet-lab/jet-engine";
 import { Button, Tooltip } from "antd";
 import { useEffect, useState } from "react";
 import { useProposalContext } from "../../contexts/proposal";
-import { dateFromUnixTimestamp, toTokens } from "../../utils";
+import { dateFromUnixTimestamp, openExplorer, toTokens } from "../../utils";
 import { RestakeModal } from "../modals/RestakeModal";
 import { WithdrawModal } from "../modals/WithdrawModal";
 
@@ -30,7 +30,7 @@ export const UnbondingLog = ({
   });
 
   return (
-    <tr>
+    <tr onClick={() => openExplorer(unbondingAccount!.address.toString(), "account")}>
       <td className="italics">
         {dateFromUnixTimestamp(unbondingAccount?.unbondingAccount.unbondedAt)}
       </td>

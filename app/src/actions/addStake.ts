@@ -60,7 +60,7 @@ export const addStake = async (
     wallet,
     instructions,
     signers,
-    "Staking governing tokens",
-    "Tokens have been staked"
+    "Staking JET",
+    "JET has been staked"
   );
 };

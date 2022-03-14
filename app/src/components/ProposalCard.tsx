@@ -49,7 +49,7 @@ export const ProposalCard = ({
               {proposal.account.state === ProposalState.Voting &&
               countdownTime - currentTime <= ONE_DAY &&
               countdownTime > currentTime
-                ? `Ends in 
+                ? `Ends in
                 ${getRemainingTime(currentTime, countdownTime)}`
                 : `Ends on: ${endDate}`}
 

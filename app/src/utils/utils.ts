@@ -119,12 +119,6 @@ export const getRemainingTime = (currentTime: number, endTime: number): string =
   }
 };
 
-// Generate solana explorer url from a transaction id
-export function explorerUrl(txid: string) {
-  const clusterParam = process.env.REACT_APP_CLUSTER === "devnet" ? `?cluster=devnet` : "";
-  return `https://explorer.solana.com/transaction/${txid}${clusterParam}`;
-}
-
 // Formatters for historical txns
 export function dateFromUnixTimestamp(time: BN | undefined) {
   const date = new Date(bnToNumber(time) * 1000);

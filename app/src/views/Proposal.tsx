@@ -32,7 +32,7 @@ import { getPubkeyIndex } from "../models/PUBKEYS_INDEX";
 import { useProposalContext } from "../contexts/proposal";
 import { StakeAccount, StakeBalance, StakePool } from "@jet-lab/jet-engine";
 import { Governance, ProgramAccount, Proposal, ProposalState } from "@solana/spl-governance";
-import { explorerUrl } from "../utils";
+import { getExplorerUrl } from "../utils";
 import { ReactComponent as ThumbsUp } from "../images/thumbs_up.svg";
 import { ReactComponent as ThumbsDown } from "../images/thumbs_down.svg";
 import { Loader } from "../components/Loader";
@@ -180,7 +180,7 @@ const InnerProposalView = ({
           <div className="neu-inset" id="details">
             <span>Proposal ID</span>
             <span>
-              <a href={explorerUrl(addressStr)} target="_blank" rel="noreferrer">
+              <a href={getExplorerUrl(addressStr, "account")} target="_blank" rel="noreferrer">
                 {addressStr}
               </a>
             </span>

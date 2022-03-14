@@ -5,15 +5,12 @@ import { UnbondingLog } from "../components/unbonding/UnbondingLog";
 import { useTransactionLogs } from "../contexts/transactionLogs";
 import { Divider } from "antd";
 import { Loader } from "../components/Loader";
+import { openExplorer } from "../utils";
 
 export const FlightLogView = () => {
   const { unbondingAccounts } = useProposalContext();
   const { loadingLogs, logs } = useTransactionLogs();
   const { connected } = useWallet();
-
-  // Open explorer
-  const explorerUrl = (txid: string) =>
-    window.open(`https://explorer.solana.com/${txid}`, "_blank");
 
   return (
     <div className="view-container column-grid" id="flight-logs-view">
@@ -56,7 +53,7 @@ export const FlightLogView = () => {
                 <tr>
                   <td>{row.blockDate}</td>
                   <td>Complete</td>
-                  <td className="asset" onClick={() => explorerUrl(row.signature)}>
+                  <td className="asset" onClick={() => openExplorer(row.signature)}>
                     {row.action}
                   </td>
                   <td className="reserve-detail center-text">
