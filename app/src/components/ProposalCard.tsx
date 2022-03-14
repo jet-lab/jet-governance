@@ -36,12 +36,20 @@ export const ProposalCard = ({
 
   const ONE_DAY = 24 * 60 * 60 * 1000;
 
+  const truncateName = () => {
+    let name = proposal.account.name;
+    if (name.length > 50) {
+      name = name.substring(0, 47) + "...";
+    }
+    return name;
+  };
+
   return (
     <Link to={headlineUrl}>
       <Card bordered={false} className={`proposal-card clickable`} style={{}}>
         <div>
           <div className="header">JUMP-{getPubkeyIndex(proposalStr)} </div>
-          <h1>{proposal.account.name}</h1>
+          <h1>{truncateName()}</h1>
         </div>
         <div className="details">
           {!proposal.account.isPreVotingState() && !!countdownTime && !!endDate ? (

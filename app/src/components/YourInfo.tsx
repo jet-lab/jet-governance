@@ -212,11 +212,7 @@ export const YourInfo = () => {
           {connected && (
             <div className="flex justify-between cluster">
               <span>Wallet Balance</span>
-              <span>
-                {new Intl.NumberFormat().format(
-                  jetAccount ? fromLamports(jetAccount.info.amount, jetMint) : 0
-                )}
-              </span>
+              <span>{jetAccount ? toTokens(jetAccount.info.amount, jetMint) : 0}</span>
             </div>
           )}
           <div className="flex justify-between cluster">

@@ -134,10 +134,18 @@ export const VerifyModal = ({
           ) {
             console.error("VPN blocked");
             setCurrent(Steps.VpnBlocked);
-          } else {
-            console.error("Phone number geo-banned");
+          } else if (
+            err?.response?.data.error[0] ===
+            "the ip of the requester has been detected as originating from a geo-banned region."
+          ) {
+            console.error("You are attempting to access Jet Govern from an unavailable region.");
             setCurrent(Steps.AccessDenied);
+          } else {
+            setCurrent(Steps.UnknownError);
           }
+        } else if (err.response.status === 423) {
+          // The provided mobile number originates from a geo-banned region.
+          setCurrent(Steps.AccessDenied);
         } else if (err.response.status === 500) {
           // Unknown or MessageBird API error.
           setCurrent(Steps.UnknownError);
@@ -207,7 +215,7 @@ export const VerifyModal = ({
             console.error("VPN blocked");
             setCurrent(Steps.VpnBlocked);
           } else {
-            console.error("Phone number geo-banned");
+            console.error("You are attempting to access Jet Govern from an unavailable region.");
             setCurrent(Steps.AccessDenied);
           }
         } else if (err.response.status === 500) {

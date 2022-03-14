@@ -1,3 +1,4 @@
 .anchor/
 node_modules/
 target/
+/app/src/models/PUBKEYS_INDEX.ts
