@@ -26,7 +26,7 @@ export const jetFaucet = async (
   });
   let txid = await TokenFaucet.airdropToken(provider, faucet, provider.wallet.publicKey, mint);
   notify({
-    message: `${tokenDesc} airdrop received. Please refresh your page to update your wallet balance.`,
+    message: `${tokenDesc} airdrop received.`,
     type: "success",
     description: (
       <>

@@ -90,7 +90,6 @@ export const RestakeModal = ({
           You've restaked {Intl.NumberFormat("us-US").format(stakeAmount)} JET into JetGovern and
           can begin voting on active proposals immediately.
         </p>
-        <p>Please refresh your page to see your update balance.</p>
       </>
     )
   };

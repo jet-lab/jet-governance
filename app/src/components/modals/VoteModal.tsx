@@ -197,9 +197,7 @@ export const VoteModal = ({
     onCancel: () => onClose(),
     content: (
       <>
-        <p>
-          We're not really sure what went wrong here, please refresh your browser and try again.
-        </p>
+        <p>We're not really sure what went wrong here, please try again.</p>
       </>
     ),
     closable: true,

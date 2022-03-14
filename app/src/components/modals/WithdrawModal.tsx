@@ -77,10 +77,7 @@ export const WithdrawModal = ({
     closable: true,
     cancelButtonProps: { style: { display: "none " } },
     children: (
-      <>
-        <p>You've withdrawn {Intl.NumberFormat("us-US").format(stakeAmount)} JET from JetGovern.</p>
-        <p>Please refresh your page to see your updated balance.</p>
-      </>
+      <p>You've withdrawn {Intl.NumberFormat("us-US").format(stakeAmount)} JET from JetGovern.</p>
     )
   };
   steps[Steps.Error] = {

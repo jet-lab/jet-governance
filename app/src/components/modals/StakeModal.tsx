@@ -87,13 +87,10 @@ export const StakeModal = (props: {
     closable: true,
     cancelButtonProps: { style: { display: "none" } },
     content: (
-      <>
-        <p>
-          You've staked {amount && Intl.NumberFormat("us-US").format(amount)}
-          JET into JetGovern and can begin using to vote on active proposals immediately.
-        </p>
-        <p>Please refresh your page to see your update balance.</p>
-      </>
+      <p>
+        You've staked {amount && Intl.NumberFormat("us-US").format(amount)}
+        JET into JetGovern and can begin using to vote on active proposals immediately.
+      </p>
     )
   };
   steps[Steps.Error] = {
