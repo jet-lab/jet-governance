@@ -48,6 +48,7 @@ interface ProposalContextState {
   pastProposalFilter: ProposalFilter;
   setPastProposalFilter: (showing: ProposalFilter) => void;
   refresh: () => void;
+  walletLoaded: boolean;
 
   stakePool?: StakePool;
   stakeAccount?: StakeAccount;
@@ -85,6 +86,7 @@ const ProposalContext = React.createContext<ProposalContextState>({
   pastProposalFilter: "all",
   setPastProposalFilter: () => {},
   refresh: () => {},
+  walletLoaded: false,
 
   filteredProposalsByGovernance: [],
   filteredPastProposals: [],
@@ -197,7 +199,7 @@ export function ProposalProvider({ children = undefined as any }) {
     { enabled: !!programs }
   );
 
-  const { data: wallet } = useQuery(
+  const { data: wallet, isLoading: isWalletLoading } = useQuery(
     ["wallet", endpoint, walletAddress?.toBase58()],
     async () => {
       if (!programs || !stakePool || !walletAddress || !realm) {
@@ -281,7 +283,7 @@ export function ProposalProvider({ children = undefined as any }) {
 
   function refresh() {
     // Wait 2500ms to allow the rpc node to catch up after a transaction is sent
-    setTimeout(() => queryClient.invalidateQueries("stakePool"), 2500);
+    setTimeout(() => queryClient.invalidateQueries("stakePool"), 4000);
   }
 
   return (
@@ -292,6 +294,7 @@ export function ProposalProvider({ children = undefined as any }) {
         pastProposalFilter,
         setPastProposalFilter,
         refresh,
+        walletLoaded: !isWalletLoading,
 
         stakingYield,
 

@@ -38,6 +38,7 @@ export const YourInfo = () => {
 
   const {
     refresh,
+    walletLoaded,
 
     unbondingTotal: { unbondingQueue, unbondingComplete },
 
@@ -252,7 +253,7 @@ export const YourInfo = () => {
           />
           <Button
             onClick={() => handleStake()}
-            disabled={!connected || !inputAmount || !stakeAccount}
+            disabled={!connected || !inputAmount || !walletLoaded}
             className="no-margin-horizontal"
           >
             Stake

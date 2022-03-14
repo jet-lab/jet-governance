@@ -1,3 +1,4 @@
+import { Provider } from "@project-serum/anchor";
 import { Keypair, PublicKey, TransactionInstruction } from "@solana/web3.js";
 import BN from "bn.js";
 import { ProgramAccount, Realm, RpcContext } from "@solana/spl-governance";
@@ -14,7 +15,7 @@ export const addStake = async (
   let instructions: TransactionInstruction[] = [];
   let signers: Keypair[] = [];
 
-  const provider = stakePool.program.provider;
+  const provider = new Provider(connection, wallet as any, Provider.defaultOptions());
   const voteMint = stakePool.addresses.stakeVoteMint;
   const tokenMint = stakePool.stakePool.tokenMint;
   const tokenAccount = AssociatedToken.derive(tokenMint, owner);

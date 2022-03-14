@@ -81,7 +81,7 @@ export const rescindAndUnstake = async (
   // Create vote token account
   const voterTokenAccount = await AssociatedToken.withCreate(
     relinquishAndWithdrawIx,
-    stakeProgram.provider,
+    provider,
     walletPubkey,
     voteMint
   );
