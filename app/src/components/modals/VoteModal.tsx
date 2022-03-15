@@ -166,7 +166,11 @@ export const VoteModal = ({
         </h2>
         {otherActiveProposals && otherActiveProposals.length > 0
           ? otherActiveProposals.map(otherProposal => (
-              <VoteOnOtherProposal proposal={otherProposal} governance={governance} />
+              <VoteOnOtherProposal
+                proposal={otherProposal}
+                governance={governance}
+                onClose={onClose}
+              />
             ))
           : "There are no other proposals at this time."}
       </>

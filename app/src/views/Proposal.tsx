@@ -97,6 +97,7 @@ const InnerProposalView = ({
   };
 
   const { connected } = useWallet();
+  const { jetMint } = useProposalContext();
 
   // FIXME!
   const isStaked = true;
@@ -203,7 +204,10 @@ const InnerProposalView = ({
         <div className="neu-container flex column">
           <div className="flex">
             <h1>Vote Turnout</h1>
-            <span onClick={() => voteRecordCsvDownload(proposal.pubkey, voterDisplayData)} id="csv">
+            <span
+              onClick={() => voteRecordCsvDownload(proposal.pubkey, voterDisplayData, jetMint)}
+              id="csv"
+            >
               Download CSV <DownloadOutlined />
             </span>
           </div>
