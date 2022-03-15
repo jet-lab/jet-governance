@@ -16,6 +16,7 @@ import {
 import {
   getVoteCounts,
   getVoteType,
+  getVotingDeadline,
   useCountdown,
   useVoterDisplayData,
   VoterDisplayData,
@@ -101,9 +102,19 @@ const InnerProposalView = ({
   const isStaked = true;
   // const isStaked = stakedJet !== undefined && stakedJet > 0;
 
-  const otherActiveProposals = proposalsByGovernance.filter(
-    p => !p.pubkey.equals(proposal.pubkey) && p.account.state === ProposalState.Voting
-  );
+  const deadlineTimestamp = Date.now() / 1000;
+  const deadline = getVotingDeadline(proposal, governance);
+  const hasDeadlineLapsed = deadline ? deadlineTimestamp > deadline.toNumber() : false;
+
+  const otherActiveProposals = proposalsByGovernance.filter(p => {
+    const deadline = getVotingDeadline(p, governance);
+    const hasDeadlineLapsed = deadline ? deadlineTimestamp > deadline.toNumber() : false;
+    return (
+      !p.pubkey.equals(proposal.pubkey) &&
+      p.account.state === ProposalState.Voting &&
+      !hasDeadlineLapsed
+    );
+  });
 
   const proposalAddress = useKeyParam();
 
@@ -138,7 +149,9 @@ const InnerProposalView = ({
       <h2 className="mobile-only">Proposal detail</h2>
       <div
         className={`flex column ${
-          proposal.account.state === ProposalState.Voting ? "proposal-left" : "centered"
+          proposal.account.state === ProposalState.Voting && !hasDeadlineLapsed
+            ? "proposal-left"
+            : "centered"
         }`}
       >
         <div className="description neu-container">
@@ -233,55 +246,56 @@ const InnerProposalView = ({
       </div>
 
       <div className="flex column proposal-right">
-        <div
-          className={`neu-container flex column ${
-            proposal.account.state !== ProposalState.Voting && "hidden"
-          }`}
-          id="your-vote"
-        >
-          <Button
-            onClick={() => setVote(VoteOption.Yes)}
-            className={`vote-select ${vote === VoteOption.Yes ? "selected" : ""}`}
-            size="large"
-          >
-            In favor
-            <ThumbsUp className="mobile-only" />
-          </Button>
-          <Button
-            onClick={() => setVote(VoteOption.No)}
-            className={`vote-select ${vote === VoteOption.No ? "selected" : ""}`}
-            size="large"
-          >
-            Against
-            <ThumbsDown className="mobile-only" />
-          </Button>
-          <Button
-            type="primary"
-            onClick={() => handleVoteModal()}
-            disabled={(connected && !isStaked) || (connected && vote === undefined) || !connected}
-          >
-            Vote
-          </Button>
-          <VoteModal
-            vote={vote}
-            visible={isVoteModalVisible}
-            onClose={() => setIsVoteModalVisible(false)}
-            realm={realm}
-            governance={governance}
-            proposal={proposal}
-            tokenOwnerRecord={tokenOwnerRecord}
-            voteRecord={voteRecord}
-            stakeBalance={stakeBalance}
-          />
-          <span className="helper-text">{errorMessage}</span>
-        </div>
+        {!(proposal.account.state !== ProposalState.Voting || hasDeadlineLapsed) && (
+          <div className={`neu-container flex column`} id="your-vote">
+            <Button
+              onClick={() => setVote(VoteOption.Yes)}
+              className={`vote-select ${vote === VoteOption.Yes ? "selected" : ""}`}
+              size="large"
+            >
+              In favor
+              <ThumbsUp className="mobile-only" />
+            </Button>
+            <Button
+              onClick={() => setVote(VoteOption.No)}
+              className={`vote-select ${vote === VoteOption.No ? "selected" : ""}`}
+              size="large"
+            >
+              Against
+              <ThumbsDown className="mobile-only" />
+            </Button>
+            <Button
+              type="primary"
+              onClick={() => handleVoteModal()}
+              disabled={(connected && !isStaked) || (connected && vote === undefined) || !connected}
+            >
+              Vote
+            </Button>
+            <VoteModal
+              vote={vote}
+              visible={isVoteModalVisible}
+              onClose={() => setIsVoteModalVisible(false)}
+              realm={realm}
+              governance={governance}
+              proposal={proposal}
+              tokenOwnerRecord={tokenOwnerRecord}
+              voteRecord={voteRecord}
+              stakeBalance={stakeBalance}
+            />
+            <span className="helper-text">{errorMessage}</span>
+          </div>
+        )}
       </div>
 
-      <Divider className={proposal.account.state === ProposalState.Voting ? "" : "centered"} />
+      <Divider
+        className={
+          proposal.account.state === ProposalState.Voting && !hasDeadlineLapsed ? "" : "centered"
+        }
+      />
 
       <div
         className={`other-proposals ${
-          proposal.account.state === ProposalState.Voting ? "" : "centered"
+          proposal.account.state === ProposalState.Voting && !hasDeadlineLapsed ? "" : "centered"
         }`}
       >
         <h3>Other active proposals</h3>

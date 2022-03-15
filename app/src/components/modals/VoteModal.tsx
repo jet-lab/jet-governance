@@ -1,8 +1,14 @@
 import { Modal, ModalProps } from "antd";
-import { ReactNode, useEffect, useState } from "react";
-import { useCountdown, VoteOption } from "../../hooks/proposalHooks";
+import { ReactNode, useEffect, useMemo, useState } from "react";
+import {
+  getVotingDeadline,
+  useCountdown,
+  useCurrentTime,
+  useOtherActiveProposals,
+  VoteOption
+} from "../../hooks/proposalHooks";
 import { useRpcContext } from "../../hooks/useRpcContext";
-import { StakeBalance } from "@jet-lab/jet-engine";
+import { bnToNumber, StakeBalance } from "@jet-lab/jet-engine";
 import { getPubkeyIndex } from "../../models/PUBKEYS_INDEX";
 import { toTokens } from "../../utils";
 import {
@@ -119,10 +125,7 @@ export const VoteModal = ({
   };
 
   // Handlers for tx success all set modal
-  const otherActiveProposals =
-    proposalsByGovernance?.filter(
-      p => !p.pubkey.equals(proposal.pubkey) && p.account.state === ProposalState.Voting
-    ) ?? [];
+  const otherActiveProposals = useOtherActiveProposals(proposalsByGovernance, proposal, governance);
 
   const steps: (ModalProps & { content: ReactNode })[] = [];
   steps[Steps.ConfirmVote] = {
@@ -161,7 +164,7 @@ export const VoteModal = ({
         <h2 className="text-gradient" style={{ marginLeft: 0 }}>
           Vote on other proposals:
         </h2>
-        {otherActiveProposals.length > 0
+        {otherActiveProposals && otherActiveProposals.length > 0
           ? otherActiveProposals.map(otherProposal => (
               <VoteOnOtherProposal proposal={otherProposal} governance={governance} />
             ))

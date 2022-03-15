@@ -39,7 +39,9 @@ export const getProposalFilters = (
   proposalFilter: ProposalFilter
 ) => {
   if (proposalFilter === "active") {
-    return proposals.filter(p => p.account.state === ProposalState.Voting);
+    return proposals.filter(
+      p => p.account.state === ProposalState.Voting && p.account.votingCompletedAt !== null
+    );
   } else if (proposalFilter === "inactive") {
     return proposals.filter(p => p.account.isVoteFinalized() || p.account.isPreVotingState());
   } else if (proposalFilter === "passed") {
@@ -115,6 +117,25 @@ export function useCurrentTime() {
     return () => clearInterval(secondInterval);
   });
   return currentTime;
+}
+
+export function useOtherActiveProposals(
+  proposals: ProgramAccount<Proposal>[] | undefined,
+  currentProposal: ProgramAccount<Proposal>,
+  governance: ProgramAccount<Governance>
+) {
+  let currentTime = useCurrentTime();
+  currentTime = currentTime / 1000;
+
+  return proposals?.filter(p => {
+    const deadline = getVotingDeadline(p, governance);
+    const hasDeadlineLapsed = deadline ? currentTime > bnToNumber(deadline) : false;
+    return (
+      !p.pubkey.equals(currentProposal.pubkey) &&
+      p.account.state === ProposalState.Voting &&
+      !hasDeadlineLapsed
+    );
+  });
 }
 
 /**
