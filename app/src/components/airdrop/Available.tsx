@@ -26,7 +26,7 @@ export const Available = ({ airdropInfo }: { airdropInfo: availAirdropsRender })
   // Update current time every second
   useEffect(() => {
     const secondInterval = setInterval(() => {
-      setCurrentTime(currentTime + 1000);
+      setCurrentTime(Date.now());
     }, 1000);
     return () => clearInterval(secondInterval);
   });
@@ -44,7 +44,7 @@ export const Available = ({ airdropInfo }: { airdropInfo: availAirdropsRender })
         <br />
         {finalized ? shortDesc : "You'll just have to wait to find out!"}
         <span className="gray">
-          Ends in {finalized ? getRemainingTime(currentTime, expireAt * 1000) : "?"}
+          {finalized ? getRemainingTime(currentTime, expireAt * 1000) : "?"}
         </span>
       </span>
 

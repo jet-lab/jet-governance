@@ -95,6 +95,7 @@ export function sleep(ms: number): Promise<void> {
 
 // Get remaining days, hours and minutes
 export const getRemainingTime = (currentTime: number, endTime: number): string => {
+  if (endTime <= currentTime) return `Expired on ${dateToString(new Date(endTime))}`;
   let difference = Math.abs(endTime - currentTime) / 1000;
 
   const days = Math.floor(difference / 86400);
@@ -109,9 +110,9 @@ export const getRemainingTime = (currentTime: number, endTime: number): string =
   const seconds = Math.floor(difference % 60);
 
   if (days > 0) {
-    return `${days} ${days === 1 ? "day" : "days"}`;
+    return `Ends in ${days} ${days === 1 ? "day" : "days"}`;
   } else {
-    return `${hours.toLocaleString(undefined, {
+    return `Ends in ${hours.toLocaleString(undefined, {
       minimumIntegerDigits: 2
     })}:${minutes.toLocaleString(undefined, {
       minimumIntegerDigits: 2

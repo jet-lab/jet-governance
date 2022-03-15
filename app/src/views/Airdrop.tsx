@@ -5,6 +5,7 @@ import { useState } from "react";
 import { FooterLinks } from "../components/FooterLinks";
 import { GlossaryModal } from "../components/modals/GlossaryModal";
 import { Available } from "../components/airdrop/Available";
+import { bnToNumber } from "@jet-lab/jet-engine";
 
 export const AirdropView = () => {
   const { connected, publicKey } = useWallet();
@@ -21,10 +22,12 @@ export const AirdropView = () => {
     finalized: !airdrop.targetInfo.finalized.isZero(),
     airdropAddress: airdrop.airdropAddress,
     shortDesc: String.fromCharCode(...airdrop.airdrop.shortDesc),
-    expireAt: airdrop.airdrop.expireAt.toNumber(),
-    amount: airdrop.targetInfo.recipients
-      .find(({ recipient }) => recipient.toString() === publicKey?.toString())
-      ?.amount?.toNumber()
+    expireAt: bnToNumber(airdrop.airdrop.expireAt),
+    amount: bnToNumber(
+      airdrop.targetInfo.recipients.find(
+        ({ recipient }) => recipient.toString() === publicKey?.toString()
+      )?.amount
+    )
   }));
 
   return (

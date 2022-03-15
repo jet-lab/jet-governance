@@ -2,11 +2,10 @@ import { InfoCircleFilled, PlusOutlined } from "@ant-design/icons";
 import { bnToNumber } from "@jet-lab/jet-engine";
 import { Tooltip, Divider, Button, Switch, notification } from "antd";
 import { Input } from "../components/Input";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { ReactFitty } from "react-fitty";
 import { jetFaucet } from "../actions/jetFaucet";
 import { useConnectionConfig } from "../contexts";
-import { useAirdrop } from "../contexts/airdrop";
 import { useDarkTheme } from "../contexts/darkTheme";
 import { useProposalContext } from "../contexts/proposal";
 import { useWithdrawVotesAbility } from "../hooks/proposalHooks";
@@ -15,13 +14,14 @@ import {
   COUNCIL_TOKEN_MINT,
   toTokens,
   JET_FAUCET_DEVNET,
-  JET_TOKEN_MINT
+  JET_TOKEN_MINT,
+  fromLamports
 } from "../utils";
 import { FooterLinks } from "./FooterLinks";
 import { StakeModal } from "./modals/StakeModal";
 import { UnstakeModal } from "./modals/UnstakeModal";
 import { useWallet } from "@solana/wallet-adapter-react";
-import { useLocation } from "react-router";
+import { useHistory, useLocation } from "react-router";
 import { withdrawAllUnbonded } from "../actions/withdrawUnbonded";
 import { useRpcContext } from "../hooks";
 
@@ -29,10 +29,11 @@ export const YourInfo = () => {
   const [stakeModalVisible, setStakeModalVisible] = useState(false);
   const [unstakeModalVisible, setUnstakeModalVisible] = useState(false);
   const [inputAmount, setInputAmount] = useState<number | undefined>();
-  const { vestedAirdrops } = useAirdrop();
   const { connected } = useWallet();
   const { darkTheme, toggleDarkTheme } = useDarkTheme();
   const { inDevelopment } = useConnectionConfig();
+  const { claimsCount } = useProposalContext();
+  const history = useHistory();
 
   const {
     refresh,
@@ -131,20 +132,21 @@ export const YourInfo = () => {
     }
   };
 
-  const openNotification = () => {
-    const vestedAirdropNotifications = vestedAirdrops();
-    vestedAirdropNotifications.map(
-      (airdrop: { name: string; amount: number; end: Date; claimed: boolean; vested: boolean }) =>
+  useEffect(() => {
+    const openNotification = () => {
+      if (claimsCount > 0) {
         notification.open({
-          message: "Fully vested",
-          description: `${airdrop.name} has fully vested and may now be unstaked! Click for info.`,
+          message: "Available Airdrop",
+          description: "You have care package(s) waiting for you! Click here for info.",
           onClick: () => {
-            console.log("Go to Airdrop page");
+            history.push("/claims");
           },
           placement: "bottomRight"
-        })
-    );
-  };
+        });
+      }
+    };
+    openNotification();
+  }, [claimsCount, history]);
 
   const showRewards = () => {
     document.getElementById("show-more-apr")?.classList.toggle("hidden");

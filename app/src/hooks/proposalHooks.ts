@@ -1,4 +1,4 @@
-import { Airdrop, StakePool } from "@jet-lab/jet-engine";
+import { Airdrop, bnToNumber, StakePool } from "@jet-lab/jet-engine";
 import {
   Governance,
   ProgramAccount,
@@ -286,32 +286,83 @@ export function useAirdropsByWallet(
     }
 
     return airdrops?.filter(airdrop => {
-      const found = airdrop.targetInfo.recipients.find(
-        ({ recipient }) => recipient.toString() === wallet?.toString()
-      );
+      const found = airdrop.targetInfo.recipients.find(({ recipient }) => recipient.equals(wallet));
       return !!found;
     });
   }, [airdrops, wallet]);
 }
-// TODO - double check and use in Navbar
+
 export function useClaimsCount(airdrops: Airdrop[] | undefined, wallet: PublicKey | undefined) {
+  const [currentTime, setCurrentTime] = useState(Date.now());
+  // Update current time every second
+  useEffect(() => {
+    const secondInterval = setInterval(() => {
+      setCurrentTime(Date.now());
+    }, 1000);
+    return () => clearInterval(secondInterval);
+  });
+
   return useMemo(() => {
-    if (!airdrops) {
+    if (!airdrops || !wallet) {
       return 0;
     }
+
     let claims = 0;
     for (let i = 0; i < airdrops.length; i++) {
       const airdrop = airdrops[i];
-      let found = airdrop.targetInfo.recipients.find(
-        ({ recipient }) => recipient.toString() === wallet?.toString()
-      );
 
-      if (found?.amount.gtn(0)) {
+      // check expiration
+      if (bnToNumber(airdrop.airdrop.expireAt) * 1000 <= currentTime) continue;
+      // check finalized
+      if (airdrop.targetInfo.finalized.isZero()) continue;
+
+      let found = airdrop.targetInfo.recipients.find(({ recipient }) => recipient.equals(wallet));
+
+      // check claimed
+      if (found?.amount.gt(new BN(0))) {
         claims++;
       }
     }
     return claims;
-  }, [airdrops, wallet]);
+  }, [airdrops, wallet, currentTime]);
+}
+
+export function useAvailableAirdrop(
+  airdrops: Airdrop[] | undefined,
+  wallet: PublicKey | undefined
+) {
+  const [currentTime, setCurrentTime] = useState(Date.now());
+  // Update current time every second
+  useEffect(() => {
+    const secondInterval = setInterval(() => {
+      setCurrentTime(Date.now());
+    }, 1000);
+    return () => clearInterval(secondInterval);
+  });
+
+  return useMemo(() => {
+    if (!airdrops || !wallet) {
+      return undefined;
+    }
+
+    let availableAirdrop = [];
+    for (let i = 0; i < airdrops.length; i++) {
+      const airdrop = airdrops[i];
+
+      // check finalized
+      if (airdrop.targetInfo.finalized.isZero()) continue;
+      // check expiration
+      if (bnToNumber(airdrop.airdrop.expireAt) * 1000 <= currentTime) continue;
+
+      let found = airdrop.targetInfo.recipients.find(({ recipient }) => recipient.equals(wallet));
+
+      // check claimed
+      if (found?.amount.gt(new BN(0))) {
+        availableAirdrop.push(airdrop);
+      }
+    }
+    return availableAirdrop;
+  }, [airdrops, wallet, currentTime]);
 }
 
 /** Returns if the user can unstake.

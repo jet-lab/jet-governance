@@ -14,6 +14,7 @@ import { MintInfo } from "@solana/spl-token";
 import { JET_REALM, JET_GOVERNANCE } from "../utils";
 import {
   useAirdropsByWallet,
+  useAvailableAirdrop,
   useClaimsCount,
   useProposalFilters,
   useStakingCompatibleWithRealm as useStakePoolCompatibleWithRealm
@@ -61,6 +62,7 @@ interface ProposalContextState {
   airdrops?: Airdrop[];
   airdropsByWallet?: Airdrop[];
   claimsCount: number;
+  availableAirdrop?: Airdrop[];
 
   jetAccount?: AssociatedToken;
   jetMint?: MintInfo;
@@ -270,6 +272,7 @@ export function ProposalProvider({ children = undefined as any }) {
   // ----- Airdrops -----
   const airdropsByWallet = useAirdropsByWallet(realm?.airdrops, walletAddress);
   const claimsCount = useClaimsCount(airdropsByWallet, walletAddress);
+  const availableAirdrop = useAvailableAirdrop(airdropsByWallet, walletAddress);
 
   // ----- Governance -----
   const filteredProposalsByGovernance = useProposalFilters(
@@ -303,6 +306,7 @@ export function ProposalProvider({ children = undefined as any }) {
 
         airdropsByWallet,
         claimsCount,
+        availableAirdrop,
 
         filteredProposalsByGovernance,
         filteredPastProposals,
