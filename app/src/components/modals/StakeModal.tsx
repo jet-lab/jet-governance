@@ -20,6 +20,7 @@ export const StakeModal = (props: {
   amount: number | undefined;
   realm: ProgramAccount<Realm> | undefined;
 }) => {
+  const { jetMint } = useProposalContext();
   const { visible, onClose, amount, realm } = props;
 
   const [current, setCurrent] = useState<Steps>(Steps.Start);
@@ -36,7 +37,7 @@ export const StakeModal = (props: {
     }
 
     setLoading(true);
-    addStake(rpcContext, stakePool, realm, publicKey, stakeLamports)
+    addStake(rpcContext, stakePool, realm, publicKey, stakeLamports, jetMint)
       .then(() => {
         setLoading(false);
         setCurrent(Steps.Success);

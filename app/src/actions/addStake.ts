@@ -4,13 +4,16 @@ import BN from "bn.js";
 import { ProgramAccount, Realm, RpcContext } from "@solana/spl-governance";
 import { sendTransactionWithNotifications } from "../tools/transactions";
 import { AssociatedToken, StakeAccount, StakePool } from "@jet-lab/jet-engine";
+import { fromLamports } from "../utils";
+import { MintInfo } from "@solana/spl-token";
 
 export const addStake = async (
   { connection, wallet, programId, programVersion, walletPubkey }: RpcContext,
   stakePool: StakePool,
   realm: ProgramAccount<Realm>,
   owner: PublicKey,
-  amount: BN
+  amount: BN,
+  jetMint: MintInfo | undefined
 ) => {
   let instructions: TransactionInstruction[] = [];
   let signers: Keypair[] = [];
@@ -38,12 +41,14 @@ export const addStake = async (
 
   await AssociatedToken.withClose(instructions, owner, voteMint, owner);
 
+  const notification_title = `${fromLamports(amount, jetMint)} JET staked`;
+
   await sendTransactionWithNotifications(
     connection,
     wallet,
     instructions,
     signers,
     "Staking JET",
-    "JET has been staked"
+    notification_title
   );
 };
