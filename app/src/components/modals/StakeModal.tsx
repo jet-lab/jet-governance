@@ -88,8 +88,8 @@ export const StakeModal = (props: {
     cancelButtonProps: { style: { display: "none" } },
     content: (
       <p>
-        You've staked {amount && Intl.NumberFormat("us-US").format(amount)}
-        JET into JetGovern and can begin using to vote on active proposals immediately.
+        You've staked {amount && Intl.NumberFormat("us-US").format(amount)} JET into JetGovern and
+        can begin using to vote on active proposals immediately.
       </p>
     )
   };

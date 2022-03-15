@@ -1,11 +1,10 @@
-import { useMemo, useState, useEffect } from "react";
+import { useMemo } from "react";
 import { Link } from "react-router-dom";
 import { Card, Progress } from "antd";
 import { getProposalUrl } from "../tools/routeTools";
 import { getVoteCounts, useCountdown } from "../hooks/proposalHooks";
 import { getPubkeyIndex } from "../models/PUBKEYS_INDEX";
 import { Governance, ProgramAccount, Proposal, ProposalState } from "@solana/spl-governance";
-import { getRemainingTime } from "../utils";
 
 export const ProposalCard = ({
   proposal,
@@ -22,19 +21,7 @@ export const ProposalCard = ({
 
   // Active votes show progress bar
   const { yesPercent, yesAbstainPercent } = getVoteCounts(proposal);
-  const { endDate, countdownTime } = useCountdown(proposal, governance);
-
-  const [currentTime, setCurrentTime] = useState(Date.now());
-
-  // Update current time every second
-  useEffect(() => {
-    const secondInterval = setInterval(() => {
-      setCurrentTime(Date.now());
-    }, 1000);
-    return () => clearInterval(secondInterval);
-  });
-
-  const ONE_DAY = 24 * 60 * 60 * 1000;
+  const { endDateOrCountdown } = useCountdown(proposal, governance);
 
   const truncateName = () => {
     let name = proposal.account.name;
@@ -52,14 +39,9 @@ export const ProposalCard = ({
           <h1>{truncateName()}</h1>
         </div>
         <div className="details">
-          {!proposal.account.isPreVotingState() && !!countdownTime && !!endDate ? (
+          {!proposal.account.isPreVotingState() && !!endDateOrCountdown ? (
             <>
-              {proposal.account.state === ProposalState.Voting &&
-              countdownTime - currentTime <= ONE_DAY &&
-              countdownTime > currentTime
-                ? `Ends in
-                ${getRemainingTime(currentTime, countdownTime)}`
-                : `Ends on: ${endDate}`}
+              {endDateOrCountdown}
 
               <Progress
                 percent={yesAbstainPercent}

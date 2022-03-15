@@ -12,11 +12,11 @@ import {
 } from "@solana/spl-governance";
 import { PublicKey } from "@solana/web3.js";
 import BN from "bn.js";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { ZERO } from "../constants";
 import { ProposalFilter } from "../contexts/proposal";
 import { bnToIntLossy } from "../tools/units";
-import { dateToString } from "../utils";
+import { dateToString, getRemainingTime } from "../utils";
 import { useGovernanceAccounts } from "./accountHooks";
 import { useRpcContext } from "./useRpcContext";
 
@@ -69,6 +69,8 @@ export function useCountdown(
   proposal: ProgramAccount<Proposal>,
   governance: ProgramAccount<Governance>
 ) {
+  const currentTime = useCurrentTime();
+
   const deadline = getVotingDeadline(proposal, governance);
 
   const countdownTime = useMemo(() => {
@@ -87,7 +89,32 @@ export function useCountdown(
     return deadline ? dateToString(new Date(deadline.toNumber() * 1000)) : undefined;
   }, [proposal, governance]);
 
-  return { startDate, endDate, countdownTime };
+  let endDateOrCountdown: string | undefined = useMemo(() => {
+    const ONE_DAY = 24 * 60 * 60 * 1000;
+    if (!proposal.account.isPreVotingState() && !!countdownTime && !!endDate) {
+      return proposal.account.state === ProposalState.Voting &&
+        countdownTime - currentTime <= ONE_DAY &&
+        countdownTime > currentTime
+        ? `Ends in
+        ${getRemainingTime(currentTime, countdownTime)}`
+        : `Ends on: ${endDate}`;
+    }
+  }, [countdownTime, currentTime, endDate, proposal.account]);
+
+  return { startDate, endDate, countdownTime, endDateOrCountdown };
+}
+
+export function useCurrentTime() {
+  const [currentTime, setCurrentTime] = useState(Date.now());
+
+  // Update current time every second
+  useEffect(() => {
+    const secondInterval = setInterval(() => {
+      setCurrentTime(Date.now());
+    }, 1000);
+    return () => clearInterval(secondInterval);
+  });
+  return currentTime;
 }
 
 /**

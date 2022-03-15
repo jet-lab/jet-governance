@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { useConnectWallet } from "../contexts/connectWallet";
@@ -14,7 +14,7 @@ export function Nav() {
   const { connected, disconnect, publicKey } = useWallet();
   const { setConnecting } = useConnectWallet();
   const [drawerOpened, setDrawerOpened] = useState(false);
-  const { claimsCount } = useProposalContext();
+  const { claimsCount, unbondingAccounts } = useProposalContext();
   const { darkTheme, toggleDarkTheme } = useDarkTheme();
 
   const navLinks = [
@@ -22,12 +22,17 @@ export function Nav() {
     { title: "Dashboard", route: "/", mobileOnly: false },
     {
       title: `Claims`,
-      class: "shimmer",
+      class: claimsCount > 0 ? "shimmer" : "",
       badge: claimsCount,
       route: "/claims",
       mobileOnly: false
     },
-    { title: "Flight Logs", route: "/flight-logs", mobileOnly: false }
+    {
+      title: "Flight Logs",
+      class: unbondingAccounts && unbondingAccounts.length > 0 ? "shimmer" : "",
+      route: "/flight-logs",
+      mobileOnly: false
+    }
   ];
 
   const mobileFooterLinks = [

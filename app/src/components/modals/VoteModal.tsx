@@ -1,13 +1,10 @@
 import { Modal, ModalProps } from "antd";
 import { ReactNode, useEffect, useState } from "react";
-import { useProposalsByGovernance } from "../../hooks/apiHooks";
 import { useCountdown, VoteOption } from "../../hooks/proposalHooks";
 import { useRpcContext } from "../../hooks/useRpcContext";
 import { StakeBalance } from "@jet-lab/jet-engine";
 import { getPubkeyIndex } from "../../models/PUBKEYS_INDEX";
-import { getProposalUrl } from "../../tools/routeTools";
-import { Link } from "react-router-dom";
-import { JET_GOVERNANCE, toTokens } from "../../utils";
+import { toTokens } from "../../utils";
 import {
   Governance,
   ProgramAccount,
@@ -21,6 +18,7 @@ import {
 import { castVote } from "../../actions/castVote";
 import { useProposalContext } from "../../contexts/proposal";
 import { useWallet } from "@solana/wallet-adapter-react";
+import { VoteOnOtherProposal } from "../proposal/VoteOnOtherProposal";
 
 enum Steps {
   ConfirmVote = 0,
@@ -51,10 +49,17 @@ export const VoteModal = ({
 }) => {
   const [current, setCurrent] = useState(0);
 
-  const { endDate, countdownTime } = useCountdown(proposal, governance);
+  const { endDate } = useCountdown(proposal, governance);
   const rpcContext = useRpcContext();
-  const { stakePool, stakeAccount, stakeBalance, jetMint, programs, refresh } =
-    useProposalContext();
+  const {
+    stakePool,
+    stakeAccount,
+    stakeBalance,
+    jetMint,
+    programs,
+    refresh,
+    proposalsByGovernance
+  } = useProposalContext();
 
   let voteText: string = "";
 
@@ -114,26 +119,10 @@ export const VoteModal = ({
   };
 
   // Handlers for tx success all set modal
-  const proposals = useProposalsByGovernance(JET_GOVERNANCE);
-  const activeProposals = proposals.filter(p => p.account.state === ProposalState.Voting);
-
-  const proposalMap = (proposal: ProgramAccount<Proposal>, key: number) => {
-    const headlineUrl = getProposalUrl(
-      proposal.pubkey,
-      proposal.account.name.substring(0, 15).replace(" ", "-")
-    );
-
-    return (
-      <div key={key}>
-        <p>
-          <Link to={headlineUrl}>
-            <u>Proposal {getPubkeyIndex(proposal.pubkey.toBase58())}</u>
-          </Link>
-          : {proposal.account.name}. <span className="secondary-text">Ends in {countdownTime}</span>
-        </p>
-      </div>
-    );
-  };
+  const otherActiveProposals =
+    proposalsByGovernance?.filter(
+      p => !p.pubkey.equals(proposal.pubkey) && p.account.state === ProposalState.Voting
+    ) ?? [];
 
   const steps: (ModalProps & { content: ReactNode })[] = [];
   steps[Steps.ConfirmVote] = {
@@ -146,7 +135,8 @@ export const VoteModal = ({
     content: (
       <>
         <p>
-          You are about to vote <strong>{voteText}</strong> proposal "{proposal.account.name}".
+          You are about to vote <strong>{voteText}</strong> JUMP-
+          {getPubkeyIndex(proposal.pubkey.toBase58())}: {proposal.account.name}.
         </p>
         <p>
           You have {toTokens(stakeBalance.stakedJet, jetMint)} JET staked, and will be able to
@@ -165,17 +155,17 @@ export const VoteModal = ({
     content: (
       <>
         <p>
-          You've successfully voted <strong>{voteText}</strong> proposal #
+          You've successfully voted <strong>{voteText}</strong> JUMP-
           {getPubkeyIndex(proposal.pubkey.toBase58())}: {proposal.account.name}.
         </p>
         <h2 className="text-gradient" style={{ marginLeft: 0 }}>
           Vote on other proposals:
         </h2>
-        <p>
-          {activeProposals && activeProposals.length > 0
-            ? activeProposals?.map((proposal, key) => proposalMap(proposal, key))
-            : "There are no active proposals at this time."}
-        </p>
+        {otherActiveProposals.length > 0
+          ? otherActiveProposals.map(otherProposal => (
+              <VoteOnOtherProposal proposal={otherProposal} governance={governance} />
+            ))
+          : "There are no other proposals at this time."}
       </>
     ),
     closable: true,

@@ -101,8 +101,8 @@ const InnerProposalView = ({
   const isStaked = true;
   // const isStaked = stakedJet !== undefined && stakedJet > 0;
 
-  const activeProposals = proposalsByGovernance.filter(
-    p => p.account.state === ProposalState.Voting
+  const otherActiveProposals = proposalsByGovernance.filter(
+    p => !p.pubkey.equals(proposal.pubkey) && p.account.state === ProposalState.Voting
   );
 
   const proposalAddress = useKeyParam();
@@ -286,15 +286,15 @@ const InnerProposalView = ({
       >
         <h3>Other active proposals</h3>
         <div className="flex">
-          {activeProposals.length > 0
-            ? activeProposals.map(proposal => (
+          {otherActiveProposals.length > 0
+            ? otherActiveProposals.map(proposal => (
                 <ProposalCard
                   proposal={proposal}
                   governance={governance}
                   key={proposal.pubkey.toBase58()}
                 />
               ))
-            : "There are no active proposals at this time."}
+            : "There are no other proposals at this time."}
         </div>
       </div>
       <Link to="/" className="mobile-only">

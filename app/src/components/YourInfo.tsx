@@ -264,21 +264,25 @@ export const YourInfo = () => {
             realm={realm}
             amount={inputAmount ?? 0}
           />
-          <Button
-            onClick={() => handleUnstake()}
-            disabled={!connected || !withdrawVotesAbility || !inputAmount}
-            className="no-margin-horizontal"
-          >
-            Unstake
-            {withdrawVotesAbility ? null : (
+          <div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
+            <Button
+              onClick={() => handleUnstake()}
+              disabled={!connected || !withdrawVotesAbility || !inputAmount}
+              className="no-margin-horizontal"
+              style={{ flex: 1 }}
+            >
+              Unstake
+            </Button>
+            {tokenOwnerRecord && !withdrawVotesAbility && (
               <Tooltip
-                title="You cannot unstake JET until you have finalised all proposals that you created."
+                title="You cannot unstake JET until all your created proposals are finalised."
                 overlayClassName="no-arrow"
+                style={{ width: 10 }}
               >
                 <InfoCircleFilled style={{ marginLeft: "5px" }} />
               </Tooltip>
             )}
-          </Button>
+          </div>
           <UnstakeModal
             visible={unstakeModalVisible}
             amount={inputAmount ?? 0}
