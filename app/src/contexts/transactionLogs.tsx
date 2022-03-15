@@ -3,7 +3,7 @@ import { RewardsClient, StakeClient } from "@jet-lab/jet-engine";
 import { ConfirmedSignatureInfo, TransactionResponse } from "@solana/web3.js";
 import { useWallet } from "@solana/wallet-adapter-react";
 import bs58 from "bs58";
-import { dateFromUnixTimestamp, JET_TOKEN_MINT, shortenAddress, toTokens } from "../utils";
+import { dateFromUnixTimestamp, JET_TOKEN_MINT, shortenAddress } from "../utils";
 import { useRpcContext } from "../hooks";
 import { BN } from "@project-serum/anchor";
 

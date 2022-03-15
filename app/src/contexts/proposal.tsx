@@ -282,7 +282,7 @@ export function ProposalProvider({ children = undefined as any }) {
   useStakePoolCompatibleWithRealm(stakePool?.stakePool, realm?.realm);
 
   function refresh() {
-    // Wait 2500ms to allow the rpc node to catch up after a transaction is sent
+    // Allow the rpc node to catch up after a transaction before refreshing
     setTimeout(() => queryClient.invalidateQueries("stakePool"), 4000);
   }
 

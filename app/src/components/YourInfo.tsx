@@ -15,9 +15,7 @@ import {
   COUNCIL_TOKEN_MINT,
   toTokens,
   JET_FAUCET_DEVNET,
-  JET_REALM,
-  JET_TOKEN_MINT,
-  fromLamports
+  JET_TOKEN_MINT
 } from "../utils";
 import { FooterLinks } from "./FooterLinks";
 import { StakeModal } from "./modals/StakeModal";
