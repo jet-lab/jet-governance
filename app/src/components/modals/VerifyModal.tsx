@@ -35,7 +35,6 @@ export const VerifyModal = ({
   const [current, setCurrent] = useState<Steps>(Steps.Welcome);
   const { wallets, select, connected, disconnect, disconnecting, wallet, publicKey } = useWallet();
   const { connecting, setConnecting } = useConnectWallet();
-  const [authorizationConfirmed, setAuthorizationConfirmed] = useState(false);
   const [phoneNumber, setPhoneNumber] = useState<CountryPhoneInputValue>({ short: "US" });
   // The ID of the SMS verification session with MessageBird.
   const [verificationId, setVerificationId] = useState<string>();
@@ -44,7 +43,20 @@ export const VerifyModal = ({
   const [confirmCodeLoading, setConfirmCodeLoading] = useState(false);
   const { env } = useConnectionConfig();
 
+  function setAuthorizationConfirmed(confirmed: boolean) {
+    if (publicKey) {
+      localStorage.setItem(`authConfirmed:${publicKey.toBase58()}`, JSON.stringify(confirmed));
+    }
+  }
+
   useEffect(() => {
+    function getAuthorizationConfirmed() {
+      return (
+        publicKey &&
+        JSON.parse(localStorage.getItem(`authConfirmed:${publicKey.toBase58()}`) ?? "false") ===
+          true
+      );
+    }
     function onStepOrClosed(step: Steps) {
       return current === step || !connecting;
     }
@@ -52,9 +64,14 @@ export const VerifyModal = ({
       if (!authAccount || !authAccount.userAuthentication.complete) {
         setCurrent(Steps.ConfirmLocation);
         setConnecting(true);
-      } else if (authAccount.userAuthentication.allowed && !authorizationConfirmed) {
-        setCurrent(Steps.AccessGranted1);
-        setConnecting(true);
+      } else if (authAccount.userAuthentication.allowed) {
+        if (getAuthorizationConfirmed()) {
+          setConnecting(false);
+          setCurrent(Steps.Welcome);
+        } else {
+          setCurrent(Steps.AccessGranted1);
+          setConnecting(true);
+        }
       } else if (!authAccount.userAuthentication.allowed) {
         setCurrent(Steps.AccessDenied);
         setConnecting(true);
@@ -63,19 +80,13 @@ export const VerifyModal = ({
   }, [
     authAccount,
     authAccountLoading,
-    authorizationConfirmed,
     connected,
     connecting,
     current,
     disconnecting,
+    publicKey,
     setConnecting
   ]);
-
-  useEffect(() => {
-    if (!connected) {
-      setAuthorizationConfirmed(false);
-    }
-  }, [connected]);
 
   const handleInputPhoneNumber = (e: CountryPhoneInputValue) => {
     setPhoneNumber(e);
