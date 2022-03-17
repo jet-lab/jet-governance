@@ -92,14 +92,10 @@ export function useCountdown(
   }, [proposal, governance]);
 
   let endDateOrCountdown: string | undefined = useMemo(() => {
-    const ONE_DAY = 24 * 60 * 60 * 1000;
     if (!proposal.account.isPreVotingState() && !!countdownTime && !!endDate) {
-      return proposal.account.state === ProposalState.Voting &&
-        countdownTime - currentTime <= ONE_DAY &&
-        countdownTime > currentTime
-        ? `Ends in
-        ${getRemainingTime(currentTime, countdownTime)}`
-        : `Ends on: ${endDate}`;
+      return proposal.account.state === ProposalState.Voting && countdownTime > currentTime
+        ? `${getRemainingTime(currentTime, countdownTime)}`
+        : `Expired at: ${endDate}`;
     }
   }, [countdownTime, currentTime, endDate, proposal.account]);
 
