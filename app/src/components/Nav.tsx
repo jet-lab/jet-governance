@@ -8,6 +8,7 @@ import { useProposalContext } from "../contexts/proposal";
 import { shortenAddress } from "../utils";
 import User from "../images/user.svg";
 import { ReactComponent as Wallet } from "../images/wallet.svg";
+import { DocsLink } from "./docsLink";
 
 export function Nav() {
   const { pathname } = useLocation();
@@ -164,6 +165,7 @@ export function Nav() {
                 {link.title}
               </Link>
             ))}
+            <DocsLink className="footer-link">Docs</DocsLink>
             <Switch
               className="secondary-switch"
               onClick={() => toggleDarkTheme()}
