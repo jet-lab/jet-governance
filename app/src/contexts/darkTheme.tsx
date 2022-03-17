@@ -15,14 +15,21 @@ export function DarkThemeProvider(props: { children: any }) {
   const [darkTheme, setDarkTheme] = useState(localStorage.getItem("jetDarkTheme") === "true");
   useEffect(() => {
     localStorage.setItem("jetDarkTheme", JSON.stringify(darkTheme));
-    ["black", "dark-grey", "grey", "light-grey", "white", "light-shadow", "dark-shadow"].forEach(
-      color => {
-        document.documentElement.style.setProperty(
-          `--${color}`,
-          `var(--${darkTheme ? "dt" : "lt"}-${color})`
-        );
-      }
-    );
+    [
+      "black",
+      "dark-grey",
+      "grey",
+      "light-grey",
+      "dark-white",
+      "white",
+      "light-shadow",
+      "dark-shadow"
+    ].forEach(color => {
+      document.documentElement.style.setProperty(
+        `--${color}`,
+        `var(--${darkTheme ? "dt" : "lt"}-${color})`
+      );
+    });
   }, [darkTheme]);
 
   return (
