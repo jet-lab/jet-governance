@@ -31,7 +31,7 @@ export const AirdropView = () => {
   }));
 
   return (
-    <div className="view-container column-grid">
+    <div className="view-container column-grid" id="airdrop-view">
       <div className="neu-container centered" id="airdrop">
         <h1>Claim your airdrop!</h1>
         <p>
@@ -77,6 +77,7 @@ export const AirdropView = () => {
           ))}
       </div>
       {/* todo - styling */}
+      <div className="spacer" />
       <FooterLinks />
     </div>
   );
