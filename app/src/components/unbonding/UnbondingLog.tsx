@@ -30,11 +30,21 @@ export const UnbondingLog = ({
   });
 
   return (
-    <tr onClick={() => openExplorer(unbondingAccount!.address.toString(), "account")}>
-      <td className="italics">
+    <tr>
+      <td
+        className="italics"
+        onClick={() =>
+          unbondingAccount && openExplorer(unbondingAccount.address.toBase58(), "account")
+        }
+      >
         {dateFromUnixTimestamp(unbondingAccount?.unbondingAccount.unbondedAt)}
       </td>
-      <td className="italics">
+      <td
+        className="italics"
+        onClick={() =>
+          unbondingAccount && openExplorer(unbondingAccount.address.toBase58(), "account")
+        }
+      >
         Unbonding{" "}
         <Tooltip
           title="Unstaking transactions require a 29.5-day unbonding period. before withdrawal to your wallet is enabled. Status will show as 'unbonding' until this period completes."
@@ -66,7 +76,12 @@ export const UnbondingLog = ({
           unbondingAccount={unbondingAccount}
         />
       </td>
-      <td className="italics">
+      <td
+        className="italics"
+        onClick={() =>
+          unbondingAccount && openExplorer(unbondingAccount.address.toBase58(), "account")
+        }
+      >
         -{toTokens(unbondingAccount?.unbondingAccount.amount.tokenAmount, jetMint)}
       </td>
     </tr>

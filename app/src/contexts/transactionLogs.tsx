@@ -13,7 +13,7 @@ export interface TransactionLog {
   blockDate: string;
   signature: string;
   action: string;
-  amount: number;
+  amount: string;
 }
 interface TransactionLogs {
   loadingLogs: boolean;
@@ -43,20 +43,28 @@ export function TransactionsProvider(props: { children: any }) {
 
   // Returns the correct action type string
   // For staking from airdrop or wallet
-  const getActionType = (action: string): string => {
+  const getActionType = (
+    action: string,
+    wallet: string
+  ): {
+    actionType: string;
+    sign: string;
+  } => {
     let actionType;
+    let sign = "+";
     switch (action) {
       case "stake":
-        actionType = `Staked from wallet ${shortenAddress(
-          publicKey ? publicKey.toString() : "",
-          4
-        )}`;
+        actionType = `Staked from wallet ${shortenAddress(wallet, 4)}`;
         break;
-      case "unStake":
+      case "unbond_stake":
         actionType = "Unstaked";
+        sign = "-";
         break;
-      case "withdraw":
+      case "withdraw_unbonded":
         actionType = "Withdrawn";
+        break;
+      case "cancel_unbond":
+        actionType = "Unbonding canceled";
         break;
       case "claim":
         actionType = "Staked from Care Package";
@@ -64,7 +72,7 @@ export function TransactionsProvider(props: { children: any }) {
       default:
         actionType = "Staked";
     }
-    return actionType;
+    return { actionType, sign };
   };
 
   // Get transaction details from a signature
@@ -77,8 +85,9 @@ export function TransactionsProvider(props: { children: any }) {
     const instructionBytes: Record<string, string> = {
       // Stake program
       stake: "[58,135,189,105,160,120,165,224]",
-      unStake: "[205,137,113,189,236,71,83,169]",
-      withdraw: "[237,172,52,157,194,124,79,168]",
+      unbond_stake: "[205,137,113,189,236,71,83,169]",
+      withdraw_unbonded: "[237,172,52,157,194,124,79,168]",
+      cancel_unbond: "[31, 195, 15, 13, 60, 233, 214, 208]",
 
       // Airdrop program
       claim: "[193,51,206,17,20,120,124,24]"
@@ -109,21 +118,24 @@ export function TransactionsProvider(props: { children: any }) {
                 for (let post of log.meta.postTokenBalances!) {
                   if (
                     pre.mint === post.mint &&
-                    pre.uiTokenAmount.amount !== post.uiTokenAmount.amount
+                    pre.uiTokenAmount.amount !== post.uiTokenAmount.amount &&
+                    pre.mint === JET_TOKEN_MINT.toString()
                   ) {
-                    if (pre.mint === JET_TOKEN_MINT.toString()) {
-                      const detailedLog: TransactionLog = {
-                        log,
-                        blockDate: dateFromUnixTimestamp(new BN(log.blockTime)),
-                        signature,
-                        action: getActionType(progInst),
-                        amount: post.uiTokenAmount.uiAmount! - pre.uiTokenAmount.uiAmount!
-                      };
+                    const detailedLog: TransactionLog = {
+                      log,
+                      blockDate: dateFromUnixTimestamp(new BN(log.blockTime)),
+                      signature,
+                      action: getActionType(progInst, pre.owner!).actionType,
+                      amount:
+                        getActionType(progInst, pre.owner!).sign +
+                        `${Math.abs(
+                          pre.uiTokenAmount.uiAmount! - post.uiTokenAmount.uiAmount!
+                        ).toFixed(5)}`
+                    };
 
-                      // If we found mint match, add tx to logs
-                      if (detailedLog.action !== undefined) {
-                        return detailedLog;
-                      }
+                    // If we found mint match, add tx to logs
+                    if (detailedLog.action !== undefined) {
+                      return detailedLog;
                     }
                   }
                 }

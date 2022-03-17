@@ -3,13 +3,13 @@ import { FooterLinks } from "../components/FooterLinks";
 import { useProposalContext } from "../contexts/proposal";
 import { UnbondingLog } from "../components/unbonding/UnbondingLog";
 import { useTransactionLogs } from "../contexts/transactionLogs";
-import { Divider } from "antd";
+import { Button, Divider } from "antd";
 import { Loader } from "../components/Loader";
 import { openExplorer } from "../utils";
 
 export const FlightLogView = () => {
   const { unbondingAccounts } = useProposalContext();
-  const { loadingLogs, logs } = useTransactionLogs();
+  const { loadingLogs, logs, searchMoreLogs } = useTransactionLogs();
   const { connected } = useWallet();
 
   return (
@@ -50,20 +50,19 @@ export const FlightLogView = () => {
 
               {/* Staking actions and completed unstaking actions */}
               {logs.map(row => (
-                <tr>
+                <tr onClick={() => openExplorer(row.signature)}>
                   <td>{row.blockDate}</td>
                   <td>Complete</td>
-                  <td className="asset" onClick={() => openExplorer(row.signature)}>
-                    {row.action}
-                  </td>
-                  <td className="reserve-detail center-text">
-                    {row.amount && row.amount > 0 ? "+" : ""} {row.amount}
-                  </td>
+                  <td className="asset">{row.action}</td>
+                  <td className="reserve-detail center-text">{row.amount}</td>
                 </tr>
               ))}
             </tbody>
           )}
         </table>
+        <Button type="dashed" onClick={searchMoreLogs} className="centered">
+          Load More
+        </Button>
       </div>
       <div className="spacer" />
       <FooterLinks />
