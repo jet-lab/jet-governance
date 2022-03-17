@@ -17,7 +17,9 @@ npm run start
 `localhost:3000` in browser
 
 ## Troubleshooting
+
 Downgrade node to fix `ECONNRESET`
+
 ```
 npm install -g n
 n 16.6.2
