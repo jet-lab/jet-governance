@@ -29,7 +29,6 @@ export function Nav() {
     },
     {
       title: "Flight Logs",
-      class: unbondingAccounts && unbondingAccounts.length > 0 ? "shimmer" : "",
       route: "/flight-logs",
       mobileOnly: false
     }
