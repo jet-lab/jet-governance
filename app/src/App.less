@@ -9,6 +9,11 @@
   @disabled-opacity: 0.6;
   --gradient: @gradient;
   @md-font-size: 14px;
+  @keyframes rotate {
+    100% {
+      transform: rotate(-360deg);
+    }
+  }
 }
 
 /* Styles between these lines should be included at the next version of the jet-antd library */
@@ -719,7 +724,6 @@ button,
     width: 100px;
     height: 100px;
     border-radius: 100%;
-    box-shadow: inset -2px -2px 6px 0px @light-shadow, inset 2px 2px 6px 0px @dark-shadow;
   }
   .inner-circle {
     z-index: 2;
