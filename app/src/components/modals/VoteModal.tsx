@@ -1,21 +1,14 @@
 import { Modal, ModalProps } from "antd";
-import { ReactNode, useEffect, useMemo, useState } from "react";
-import {
-  getVotingDeadline,
-  useCountdown,
-  useCurrentTime,
-  useOtherActiveProposals,
-  VoteOption
-} from "../../hooks/proposalHooks";
+import { ReactNode, useEffect, useState } from "react";
+import { useCountdown, useOtherActiveProposals, VoteOption } from "../../hooks/proposalHooks";
 import { useRpcContext } from "../../hooks/useRpcContext";
-import { bnToNumber, StakeBalance } from "@jet-lab/jet-engine";
+import { StakeBalance } from "@jet-lab/jet-engine";
 import { getPubkeyIndex } from "../../models/PUBKEYS_INDEX";
 import { toTokens } from "../../utils";
 import {
   Governance,
   ProgramAccount,
   Proposal,
-  ProposalState,
   Realm,
   TokenOwnerRecord,
   VoteRecord,
@@ -70,7 +63,7 @@ export const VoteModal = ({
   let voteText: string = "";
 
   useEffect(() => {
-    if (vote === undefined) {
+    if (vote === undefined || vote === VoteOption.Undecided) {
       setCurrent(Steps.NoVoteError);
     } else {
       setCurrent(Steps.ConfirmVote);
@@ -181,7 +174,7 @@ export const VoteModal = ({
   steps[Steps.NoVoteError] = {
     title: "Set a vote!",
     okText: "Okay",
-    onOk: () => {},
+    onOk: () => onClose(),
     onCancel: () => onClose(),
     content: [<p>Please select a vote.</p>],
     closable: true,

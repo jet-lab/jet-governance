@@ -1,5 +1,5 @@
 import { InfoCircleFilled } from "@ant-design/icons";
-import { bnToNumber, UnbondingAccount } from "@jet-lab/jet-engine";
+import { UnbondingAccount } from "@jet-lab/jet-engine";
 import { Button, Tooltip } from "antd";
 import { useEffect, useState } from "react";
 import { useProposalContext } from "../../contexts/proposal";
@@ -7,27 +7,17 @@ import { dateFromUnixTimestamp, openExplorer, toTokens } from "../../utils";
 import { RestakeModal } from "../modals/RestakeModal";
 import { WithdrawModal } from "../modals/WithdrawModal";
 
-export const UnbondingLog = ({
-  unbondingAccount
-}: {
-  unbondingAccount: UnbondingAccount | undefined;
-}) => {
+export const UnbondingLog = ({ unbondingAccount }: { unbondingAccount: UnbondingAccount }) => {
   const { jetMint } = useProposalContext();
 
   const [restakeModalVisible, setRestakeModalVisible] = useState(false);
   const [withdrawModalVisible, setWithdrawModalVisible] = useState(false);
-  const [canWithdraw, setCanWithdraw] = useState(false);
+  const [isUnbonded, setIsUnbonded] = useState(false);
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      const time = new Date().getTime() / 1000;
-      const canWithdraw = time > bnToNumber(unbondingAccount?.unbondingAccount.unbondedAt);
-      setCanWithdraw(canWithdraw);
-    }, 4000);
-    return () => {
-      clearInterval(interval);
-    };
-  });
+    const unbondedState = UnbondingAccount.isUnbonded(unbondingAccount);
+    return setIsUnbonded(unbondedState);
+  }, [setIsUnbonded, unbondingAccount]);
 
   return (
     <tr>
@@ -55,15 +45,15 @@ export const UnbondingLog = ({
       </td>
       <td className="italics">
         <i className="italics">
-          Unstake complete on {dateFromUnixTimestamp(unbondingAccount?.unbondingAccount.unbondedAt)}
+          Unstake complete on {dateFromUnixTimestamp(unbondingAccount.unbondingAccount.unbondedAt)}
         </i>{" "}
         <Button
           type="dashed"
           onClick={() =>
-            canWithdraw ? setWithdrawModalVisible(true) : setRestakeModalVisible(true)
+            isUnbonded ? setWithdrawModalVisible(true) : setRestakeModalVisible(true)
           }
         >
-          {canWithdraw ? "Withdraw" : "Restake"}
+          {isUnbonded ? "Withdraw" : "Restake"}
         </Button>
         <RestakeModal
           visible={restakeModalVisible}

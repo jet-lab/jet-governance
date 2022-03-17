@@ -392,7 +392,10 @@ export function useAvailableAirdrop(
 export function useWithdrawVotesAbility(
   tokenOwnerRecord: ProgramAccount<TokenOwnerRecord> | undefined
 ) {
-  return tokenOwnerRecord?.account.outstandingProposalCount === 0;
+  return (
+    tokenOwnerRecord?.account.outstandingProposalCount === 0 ||
+    tokenOwnerRecord?.account.outstandingProposalCount === undefined
+  );
 }
 
 export function useStakingCompatibleWithRealm(

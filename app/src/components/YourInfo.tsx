@@ -14,20 +14,19 @@ import {
   COUNCIL_TOKEN_MINT,
   toTokens,
   JET_FAUCET_DEVNET,
-  JET_TOKEN_MINT,
-  fromLamports
+  JET_TOKEN_MINT
 } from "../utils";
 import { FooterLinks } from "./FooterLinks";
 import { StakeModal } from "./modals/StakeModal";
 import { UnstakeModal } from "./modals/UnstakeModal";
+import { WithdrawAllModal } from "./modals/WithdrawAllModal";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { useHistory, useLocation } from "react-router";
-import { withdrawAllUnbonded } from "../actions/withdrawUnbonded";
-import { useRpcContext } from "../hooks";
 
 export const YourInfo = () => {
   const [stakeModalVisible, setStakeModalVisible] = useState(false);
   const [unstakeModalVisible, setUnstakeModalVisible] = useState(false);
+  const [withdrawAllModalVisible, setWithdrawAllModalVisible] = useState(false);
   const [inputAmount, setInputAmount] = useState<number | undefined>();
   const { connected } = useWallet();
   const { darkTheme, toggleDarkTheme } = useDarkTheme();
@@ -40,10 +39,6 @@ export const YourInfo = () => {
     walletLoaded,
 
     unbondingTotal: { unbondingQueue, unbondingComplete },
-
-    stakeAccount,
-    stakePool,
-    unbondingAccounts,
     stakeBalance: { stakedJet },
 
     jetAccount,
@@ -55,7 +50,6 @@ export const YourInfo = () => {
 
     programs
   } = useProposalContext();
-  const rpcContext = useRpcContext();
 
   const withdrawVotesAbility = useWithdrawVotesAbility(tokenOwnerRecord);
   /* eslint-enable @typescript-eslint/no-unused-vars */
@@ -74,7 +68,9 @@ export const YourInfo = () => {
 
   const handleStake = () => {
     if (!jetMint || !inputAmount || !jetAccount || inputAmount === 0) {
-      console.error("Please input a staking amount");
+      if (!inputAmount || inputAmount === 0) {
+        console.error("Please input an unstaking amount");
+      }
       return;
     }
     const balance = bnToNumber(jetAccount.info.amount) / 10 ** jetMint.decimals;
@@ -86,7 +82,9 @@ export const YourInfo = () => {
 
   const handleUnstake = () => {
     if (!jetMint || !inputAmount || !tokenOwnerRecord || inputAmount === 0) {
-      console.error("Please input an unstaking amount");
+      if (!inputAmount || inputAmount === 0) {
+        console.error("Please input an unstaking amount");
+      }
       return;
     }
     const balance =
@@ -98,10 +96,7 @@ export const YourInfo = () => {
   };
 
   const handleWithdrawUnstaked = () => {
-    if (!unbondingAccounts || !stakeAccount || !stakePool) {
-      return;
-    }
-    withdrawAllUnbonded(rpcContext, unbondingAccounts, stakeAccount, stakePool);
+    setWithdrawAllModalVisible(true);
   };
 
   // Devnet only: airdrop JET tokens
@@ -295,8 +290,12 @@ export const YourInfo = () => {
             onClick={() => handleWithdrawUnstaked()}
             disabled={!connected}
           >
-            Withdraw
+            Withdraw all
           </Button>
+          <WithdrawAllModal
+            visible={withdrawAllModalVisible}
+            onClose={() => setWithdrawAllModalVisible(false)}
+          />
         </div>
       </div>
 
