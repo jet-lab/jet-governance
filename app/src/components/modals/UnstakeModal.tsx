@@ -7,18 +7,16 @@ import { u64 } from "@solana/spl-token";
 import { isSignTransactionError } from "../../utils";
 
 enum Steps {
-  Start = 0,
+  Confirm = 0,
   Success = 1,
   Error = 2
 }
 
 export const UnstakeModal = ({
-  visible,
   onClose,
   resetInput,
   amount
 }: {
-  visible: boolean;
   onClose: () => void;
   resetInput: () => void;
   amount: number | null;
@@ -38,7 +36,7 @@ export const UnstakeModal = ({
   } = useProposalContext();
   const rpcContext = useRpcContext();
 
-  const [current, setCurrent] = useState(Steps.Start);
+  const [current, setCurrent] = useState(Steps.Confirm);
   const [loading, setLoading] = useState(false);
 
   const unrelinquishedVoteRecords = walletVoteRecords?.filter(
@@ -74,7 +72,6 @@ export const UnstakeModal = ({
       })
       .catch(err => {
         if (isSignTransactionError(err)) {
-          setCurrent(Steps.Start);
           onClose();
         } else {
           setCurrent(Steps.Error);
@@ -87,13 +84,8 @@ export const UnstakeModal = ({
       });
   };
 
-  const handleClose = () => {
-    setCurrent(Steps.Start);
-    onClose();
-  };
-
   const steps: (ModalProps & { content: ReactNode })[] = [];
-  steps[Steps.Start] = {
+  steps[Steps.Confirm] = {
     title: `You're unstaking ${
       amount && Intl.NumberFormat("us-US").format(amount)
     } JET from the platform.`,
@@ -132,8 +124,8 @@ export const UnstakeModal = ({
   steps[Steps.Success] = {
     title: `All set!`,
     okText: "Okay",
-    onOk: () => handleClose(),
-    onCancel: () => handleClose(),
+    onOk: () => onClose(),
+    onCancel: () => onClose(),
     closable: true,
     cancelButtonProps: { style: { display: "none" } },
     content: (
@@ -148,8 +140,8 @@ export const UnstakeModal = ({
   steps[Steps.Error] = {
     title: "Oops! Something went wrong",
     okText: "Okay",
-    onOk: () => handleClose(),
-    onCancel: () => handleClose(),
+    onOk: () => onClose(),
+    onCancel: () => onClose(),
     closable: true,
     cancelButtonProps: { style: { display: "none" } },
     content: <p>Well that was embarassing. We've encountered an unknown error, please try again.</p>
@@ -158,7 +150,7 @@ export const UnstakeModal = ({
   return (
     <Modal
       title={steps[current].title}
-      visible={visible}
+      visible={true}
       okText={steps[current].okText}
       onOk={steps[current].onOk}
       okButtonProps={steps[current].okButtonProps}

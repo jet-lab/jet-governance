@@ -55,16 +55,18 @@ export const UnbondingLog = ({ unbondingAccount }: { unbondingAccount: Unbonding
         >
           {isUnbonded ? "Withdraw" : "Restake"}
         </Button>
-        <RestakeModal
-          visible={restakeModalVisible}
-          onClose={() => setRestakeModalVisible(false)}
-          unbondingAccount={unbondingAccount}
-        />
-        <WithdrawModal
-          visible={withdrawModalVisible}
-          onClose={() => setWithdrawModalVisible(false)}
-          unbondingAccount={unbondingAccount}
-        />
+        {restakeModalVisible && (
+          <RestakeModal
+            onClose={() => setRestakeModalVisible(false)}
+            unbondingAccount={unbondingAccount}
+          />
+        )}
+        {withdrawModalVisible && (
+          <WithdrawModal
+            onClose={() => setWithdrawModalVisible(false)}
+            unbondingAccount={unbondingAccount}
+          />
+        )}
       </td>
       <td
         className="italics"

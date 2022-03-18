@@ -13,13 +13,7 @@ enum Steps {
   NothingToWithdraw = 3
 }
 
-export const WithdrawAllModal = ({
-  visible,
-  onClose
-}: {
-  visible: boolean;
-  onClose: () => void;
-}) => {
+export const WithdrawAllModal = ({ onClose }: { onClose: () => void }) => {
   const rpcContext = useRpcContext();
   const [current, setCurrent] = useState<Steps>(Steps.Confirm);
   const [loading, setLoading] = useState(false);
@@ -51,18 +45,13 @@ export const WithdrawAllModal = ({
       });
   };
 
-  const handleClose = () => {
-    setCurrent(Steps.Confirm);
-    onClose();
-  };
-
   const steps: PropsWithChildren<ModalProps>[] = [];
 
   steps[Steps.Confirm] = {
     title: `Confirm you'd like to withdraw?`,
     okText: "I understand.",
     onOk: () => handleOk(),
-    onCancel: () => handleClose(),
+    onCancel: () => onClose(),
     closable: true,
     okButtonProps: { loading },
     children: (
@@ -76,8 +65,8 @@ export const WithdrawAllModal = ({
   steps[Steps.Success] = {
     title: `All set!`,
     okText: "I understand.",
-    onOk: () => handleClose(),
-    onCancel: () => handleClose(),
+    onOk: () => onClose(),
+    onCancel: () => onClose(),
     closable: true,
     cancelButtonProps: { style: { display: "none " } },
     children: <p>You've withdrawn {stakeAmount} JET from JetGovern.</p>
@@ -85,8 +74,8 @@ export const WithdrawAllModal = ({
   steps[Steps.Error] = {
     title: "Error",
     okText: "I understand.",
-    onOk: () => handleClose(),
-    onCancel: () => handleClose(),
+    onOk: () => onClose(),
+    onCancel: () => onClose(),
     closable: true,
     cancelButtonProps: { style: { display: "none " } },
     children: <p>We have encountered an unknown error, please try again.</p>
@@ -94,12 +83,12 @@ export const WithdrawAllModal = ({
   steps[Steps.NothingToWithdraw] = {
     title: "Nothing To Withdraw",
     okText: "Okay",
-    onOk: () => handleClose(),
-    onCancel: () => handleClose(),
+    onOk: () => onClose(),
+    onCancel: () => onClose(),
     closable: true,
     cancelButtonProps: { style: { display: "none " } },
     children: <p>You don't have any tokens ready for you to withdraw. Come back later!</p>
   };
 
-  return <Modal visible={visible} {...steps[current]} />;
+  return <Modal visible={true} {...steps[current]} />;
 };

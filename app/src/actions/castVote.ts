@@ -20,7 +20,7 @@ export const castVote = async (
   { connection, wallet, programId, programVersion, walletPubkey }: RpcContext,
   realm: ProgramAccount<Realm>,
   proposal: ProgramAccount<Proposal>,
-  tokenOwnerRecord: PublicKey,
+  tokenOwnerRecordPubkey: PublicKey,
   yesNoVote: YesNoVote,
   stakeProgram: Program,
   stakePool?: StakePool,
@@ -40,13 +40,13 @@ export const castVote = async (
 
   // Withdraw existing vote before casting new vote
   // Then sign both transactions at once
-  if (tokenOwnerRecord && voteRecord) {
+  if (voteRecord) {
     await withRelinquishVote(
       relinquishVoteIx,
       programId,
       proposal.account.governance,
       proposal.pubkey,
-      tokenOwnerRecord,
+      tokenOwnerRecordPubkey,
       proposal.account.governingTokenMint,
       voteRecord,
       governanceAuthority,
@@ -102,7 +102,7 @@ export const castVote = async (
     proposal.account.governance,
     proposal.pubkey,
     proposal.account.tokenOwnerRecord,
-    tokenOwnerRecord,
+    tokenOwnerRecordPubkey,
     governanceAuthority,
     proposal.account.governingTokenMint,
     Vote.fromYesNoVote(yesNoVote),
@@ -118,7 +118,7 @@ export const castVote = async (
       realm.pubkey,
       proposal.account.governance,
       proposal.pubkey,
-      tokenOwnerRecord,
+      tokenOwnerRecordPubkey,
       governanceAuthority,
       payer,
       undefined,

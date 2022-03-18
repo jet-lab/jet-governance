@@ -23,11 +23,10 @@ export const FooterLinks = () => {
       </span>
       <span onClick={toggleGlossaryModal}>Glossary</span>
 
-      <GlossaryModal visible={showGlossaryModal} onClose={() => setShowGlossaryModal(false)} />
-      <TermsConditionsModal
-        visible={showTermsConditionsModal}
-        onClose={() => setShowTermsConditionsModal(false)}
-      />
+      {showGlossaryModal && <GlossaryModal onClose={() => setShowGlossaryModal(false)} />}
+      {showTermsConditionsModal && (
+        <TermsConditionsModal onClose={() => setShowTermsConditionsModal(false)} />
+      )}
     </div>
   );
 };

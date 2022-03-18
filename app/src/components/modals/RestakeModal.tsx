@@ -13,11 +13,9 @@ enum Steps {
 }
 
 export const RestakeModal = ({
-  visible,
   onClose,
   unbondingAccount
 }: {
-  visible: boolean;
   onClose: () => void;
   unbondingAccount: UnbondingAccount | undefined;
 }) => {
@@ -40,7 +38,6 @@ export const RestakeModal = ({
       })
       .catch(err => {
         if (isSignTransactionError(err)) {
-          setCurrent(Steps.Confirm);
           onClose();
         } else {
           setCurrent(Steps.Error);
@@ -52,23 +49,13 @@ export const RestakeModal = ({
       });
   };
 
-  const handleClose = () => {
-    setCurrent(Steps.Confirm);
-    onClose();
-  };
-
-  const handleCloseAndRefresh = () => {
-    handleClose();
-    window.location.reload();
-  };
-
   const steps: PropsWithChildren<ModalProps>[] = [];
 
   steps[Steps.Confirm] = {
     title: `Confirm you'd like to restake?`,
     okText: "I understand.",
     onOk: () => handleOk(),
-    onCancel: () => handleClose(),
+    onCancel: () => onClose(),
     closable: true,
     okButtonProps: { loading },
     children: (
@@ -85,8 +72,8 @@ export const RestakeModal = ({
   steps[Steps.Success] = {
     title: `All set!`,
     okText: "I understand.",
-    onOk: () => handleCloseAndRefresh(),
-    onCancel: () => handleClose(),
+    onOk: () => onClose(),
+    onCancel: () => onClose(),
     closable: true,
     cancelButtonProps: { style: { display: "none " } },
     children: (
@@ -101,12 +88,12 @@ export const RestakeModal = ({
   steps[Steps.Error] = {
     title: "Error",
     okText: "I understand.",
-    onOk: () => setCurrent(Steps.Confirm),
-    onCancel: () => handleClose(),
+    onOk: () => onClose(),
+    onCancel: () => onClose(),
     closable: true,
     cancelButtonProps: { style: { display: "none " } },
     children: <p>We have encountered an unknown error, please try again.</p>
   };
 
-  return <Modal visible={visible} {...steps[current]} />;
+  return <Modal visible={true} {...steps[current]} />;
 };

@@ -15,12 +15,10 @@ enum Steps {
 }
 
 export const ClaimModal = ({
-  visible,
   stakeAmount,
   airdrop,
   onClose
 }: {
-  visible: boolean;
   stakeAmount: number | undefined;
   airdrop: Airdrop | undefined;
   onClose: () => void;
@@ -43,7 +41,6 @@ export const ClaimModal = ({
         })
         .catch(err => {
           if (isSignTransactionError(err)) {
-            setCurrent(Steps.Confirm);
             onClose();
           } else {
             setCurrent(Steps.Error);
@@ -56,23 +53,13 @@ export const ClaimModal = ({
     }
   };
 
-  const handleCancel = () => {
-    setCurrent(Steps.Confirm);
-    onClose();
-  };
-
-  const handleCloseAndRefresh = () => {
-    handleCancel();
-    window.location.reload();
-  };
-
   const steps: PropsWithChildren<ModalProps>[] = [];
 
   steps[Steps.Confirm] = {
     title: `Confirm you'd like to claim airdrop`,
     okText: "Claim and Stake",
     onOk: () => handleOk(),
-    onCancel: () => handleCancel(),
+    onCancel: () => onClose(),
     closable: true,
     okButtonProps: { loading },
     children: (
@@ -96,8 +83,8 @@ export const ClaimModal = ({
   steps[Steps.Success] = {
     title: "Congratulations and welcome aboard!",
     okText: "Okay",
-    onOk: () => handleCloseAndRefresh(),
-    onCancel: () => handleCancel(),
+    onOk: () => onClose(),
+    onCancel: () => onClose(),
     closable: false,
     cancelButtonProps: { style: { display: "none " } },
     children: (
@@ -116,12 +103,12 @@ export const ClaimModal = ({
   steps[Steps.Error] = {
     title: "Error ",
     okText: "Okay",
-    onOk: () => handleCancel(),
-    onCancel: () => handleCancel(),
+    onOk: () => onClose(),
+    onCancel: () => onClose(),
     closable: true,
     cancelButtonProps: { style: { display: "none " } },
     children: <p>We have encountered an unknown error</p>
   };
 
-  return <Modal visible={visible} {...steps[current]} />;
+  return <Modal visible={true} {...steps[current]} />;
 };

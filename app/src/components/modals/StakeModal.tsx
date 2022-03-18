@@ -10,21 +10,22 @@ import { DocsLink } from "../docsLink";
 import { isSignTransactionError } from "../../utils";
 
 enum Steps {
-  Start = 0,
+  Confirm = 0,
   Success = 1,
   Error = 2
 }
 
-export const StakeModal = (props: {
-  visible: boolean;
+export const StakeModal = ({
+  onClose,
+  amount,
+  realm
+}: {
   onClose: () => void;
   amount: number | undefined;
   realm: ProgramAccount<Realm> | undefined;
 }) => {
   const { jetMint } = useProposalContext();
-  const { visible, onClose, amount, realm } = props;
-
-  const [current, setCurrent] = useState<Steps>(Steps.Start);
+  const [current, setCurrent] = useState<Steps>(Steps.Confirm);
   const [loading, setLoading] = useState(false);
   const { publicKey } = useWallet();
   const { stakePool, jetAccount, refresh } = useProposalContext();
@@ -44,7 +45,6 @@ export const StakeModal = (props: {
       })
       .catch((err: any) => {
         if (isSignTransactionError(err)) {
-          setCurrent(Steps.Start);
           onClose();
         } else {
           setCurrent(Steps.Error);
@@ -56,19 +56,14 @@ export const StakeModal = (props: {
       });
   };
 
-  const handleClose = () => {
-    setCurrent(Steps.Start);
-    onClose();
-  };
-
   const steps: (ModalProps & { content: ReactNode })[] = [];
-  steps[Steps.Start] = {
+  steps[Steps.Confirm] = {
     title: `You are staking ${
       amount && Intl.NumberFormat("us-US").format(amount)
     } JET into the platform.`,
     okText: "I understand.",
     onOk: () => handleSubmitTx(),
-    onCancel: () => handleClose(),
+    onCancel: () => onClose(),
     okButtonProps: { loading: loading },
     closable: true,
     content: (
@@ -87,8 +82,8 @@ export const StakeModal = (props: {
   steps[Steps.Success] = {
     title: `All set!`,
     okText: "Okay",
-    onOk: () => handleClose(),
-    onCancel: () => handleClose(),
+    onOk: () => onClose(),
+    onCancel: () => onClose(),
     closable: true,
     cancelButtonProps: { style: { display: "none" } },
     content: (
@@ -101,8 +96,8 @@ export const StakeModal = (props: {
   steps[Steps.Error] = {
     title: `Error.`,
     okText: "I understand.",
-    onOk: () => handleClose(),
-    onCancel: () => handleClose(),
+    onOk: () => onClose(),
+    onCancel: () => onClose(),
     content: <p>We have encountered an unknown error.</p>,
     closable: true
   };
@@ -110,7 +105,7 @@ export const StakeModal = (props: {
   return (
     <Modal
       title={steps[current].title}
-      visible={visible}
+      visible={true}
       okText={steps[current].okText}
       onOk={steps[current].onOk}
       okButtonProps={steps[current].okButtonProps}

@@ -56,12 +56,13 @@ export const Available = ({ airdropInfo }: { airdropInfo: availAirdropsRender })
       >
         {claimed ? <CheckOutlined /> : "claim"}
       </Button>
-      <ClaimModal
-        visible={showModal}
-        stakeAmount={fromLamports(amount, jetMint)}
-        airdrop={airdrop}
-        onClose={() => setShowModal(false)}
-      />
+      {showModal && (
+        <ClaimModal
+          stakeAmount={fromLamports(amount, jetMint)}
+          airdrop={airdrop}
+          onClose={() => setShowModal(false)}
+        />
+      )}
     </div>
   );
 };

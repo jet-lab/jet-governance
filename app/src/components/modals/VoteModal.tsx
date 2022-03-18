@@ -10,17 +10,16 @@ import {
   ProgramAccount,
   Proposal,
   Realm,
-  TokenOwnerRecord,
   VoteRecord,
-  YesNoVote
+  YesNoVote,
+  getTokenOwnerRecordAddress
 } from "@solana/spl-governance";
 import { castVote } from "../../actions/castVote";
 import { useProposalContext } from "../../contexts/proposal";
-import { useWallet } from "@solana/wallet-adapter-react";
 import { VoteOnOtherProposal } from "../proposal/VoteOnOtherProposal";
 
 enum Steps {
-  ConfirmVote = 0,
+  Confirm = 0,
   VoteSuccess = 1,
   NoVoteError = 2,
   UnknownError = 3
@@ -28,21 +27,17 @@ enum Steps {
 
 export const VoteModal = ({
   vote,
-  visible,
   onClose,
   realm,
   governance,
   proposal,
-  tokenOwnerRecord,
   voteRecord
 }: {
   vote: VoteOption;
-  visible: boolean;
   onClose: () => void;
   realm: ProgramAccount<Realm>;
   governance: ProgramAccount<Governance>;
   proposal: ProgramAccount<Proposal>;
-  tokenOwnerRecord?: ProgramAccount<TokenOwnerRecord>;
   voteRecord: ProgramAccount<VoteRecord> | undefined;
   stakeBalance: StakeBalance;
 }) => {
@@ -50,6 +45,7 @@ export const VoteModal = ({
 
   const { endDate } = useCountdown(proposal, governance);
   const rpcContext = useRpcContext();
+  const { programId, walletPubkey } = useRpcContext();
   const {
     stakePool,
     stakeAccount,
@@ -65,8 +61,6 @@ export const VoteModal = ({
   useEffect(() => {
     if (vote === undefined || vote === VoteOption.Undecided) {
       setCurrent(Steps.NoVoteError);
-    } else {
-      setCurrent(Steps.ConfirmVote);
     }
   }, [vote]);
 
@@ -76,10 +70,8 @@ export const VoteModal = ({
     voteText = "against";
   }
 
-  const { publicKey } = useWallet();
-
   // Handlers for vote modal
-  const confirmVote = async (vote: VoteOption) => {
+  const confirm = async (vote: VoteOption) => {
     let yesNoVote: YesNoVote;
     if (vote === VoteOption.Yes) {
       yesNoVote = YesNoVote.Yes;
@@ -89,16 +81,19 @@ export const VoteModal = ({
       throw new Error("Not a yes or no vote.");
     }
 
-    if (!publicKey) {
-      return;
-    }
+    if (programs && stakePool) {
+      const tokenOwnerRecordPubkey = await getTokenOwnerRecordAddress(
+        programId,
+        realm.pubkey,
+        stakePool.addresses.stakeVoteMint,
+        walletPubkey
+      );
 
-    if (tokenOwnerRecord && programs) {
       castVote(
         rpcContext,
         realm,
         proposal,
-        tokenOwnerRecord.pubkey,
+        tokenOwnerRecordPubkey,
         yesNoVote,
         programs.stake,
         stakePool,
@@ -112,7 +107,6 @@ export const VoteModal = ({
         })
         .catch(err => {
           if (isSignTransactionError(err)) {
-            setCurrent(Steps.ConfirmVote);
             onClose();
           } else {
             setCurrent(Steps.UnknownError);
@@ -124,22 +118,17 @@ export const VoteModal = ({
     }
   };
 
-  const handleClose = () => {
-    setCurrent(Steps.ConfirmVote);
-    onClose();
-  };
-
   // Handlers for tx success all set modal
   const otherActiveProposals = useOtherActiveProposals(proposalsByGovernance, proposal, governance);
 
   const steps: (ModalProps & { content: ReactNode })[] = [];
-  steps[Steps.ConfirmVote] = {
+  steps[Steps.Confirm] = {
     title: "Confirm vote",
     okText: "Confirm",
     onOk: () => {
-      vote !== undefined && confirmVote(vote);
+      vote !== VoteOption.Undecided && confirm(vote);
     },
-    onCancel: () => handleClose(),
+    onCancel: () => onClose(),
     content: (
       <>
         <p>
@@ -158,8 +147,8 @@ export const VoteModal = ({
   steps[Steps.VoteSuccess] = {
     title: `All set`,
     okText: "Okay",
-    onOk: () => handleClose(),
-    onCancel: () => handleClose(),
+    onOk: () => onClose(),
+    onCancel: () => onClose(),
     content: (
       <>
         <p>
@@ -174,7 +163,7 @@ export const VoteModal = ({
               <VoteOnOtherProposal
                 proposal={otherProposal}
                 governance={governance}
-                onClose={handleClose}
+                onClose={onClose}
               />
             ))
           : "There are no other proposals at this time."}
@@ -186,8 +175,8 @@ export const VoteModal = ({
   steps[Steps.NoVoteError] = {
     title: "Set a vote!",
     okText: "Okay",
-    onOk: () => handleClose(),
-    onCancel: () => handleClose(),
+    onOk: () => onClose(),
+    onCancel: () => onClose(),
     content: [<p>Please select a vote.</p>],
     closable: true,
     cancelButtonProps: { style: { display: "none " } }
@@ -195,8 +184,8 @@ export const VoteModal = ({
   steps[Steps.UnknownError] = {
     title: `Uh-oh`,
     okText: "Okay",
-    onOk: () => handleClose(),
-    onCancel: () => handleClose(),
+    onOk: () => onClose(),
+    onCancel: () => onClose(),
     content: <p>We're not really sure what went wrong here, please try again.</p>,
     closable: true,
     cancelButtonProps: { style: { display: "none " } }
@@ -205,7 +194,7 @@ export const VoteModal = ({
   return (
     <Modal
       title={steps[current].title}
-      visible={visible}
+      visible={true}
       okText={steps[current].okText}
       onOk={steps[current].onOk}
       onCancel={steps[current].onCancel}

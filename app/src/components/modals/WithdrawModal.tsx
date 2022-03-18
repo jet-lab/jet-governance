@@ -13,11 +13,9 @@ enum Steps {
 }
 
 export const WithdrawModal = ({
-  visible,
   onClose,
   unbondingAccount
 }: {
-  visible: boolean;
   onClose: () => void;
   unbondingAccount: UnbondingAccount | undefined;
 }) => {
@@ -51,19 +49,13 @@ export const WithdrawModal = ({
         refresh();
       });
   };
-
-  const handleClose = () => {
-    setCurrent(Steps.Confirm);
-    onClose();
-  };
-
   const steps: PropsWithChildren<ModalProps>[] = [];
 
   steps[Steps.Confirm] = {
     title: `Confirm you'd like to withdraw?`,
     okText: "I understand.",
     onOk: () => handleOk(),
-    onCancel: () => handleClose(),
+    onCancel: () => onClose(),
     closable: true,
     okButtonProps: { loading },
     children: (
@@ -77,8 +69,8 @@ export const WithdrawModal = ({
   steps[Steps.Success] = {
     title: `All set!`,
     okText: "I understand.",
-    onOk: () => handleClose(),
-    onCancel: () => handleClose(),
+    onOk: () => onClose(),
+    onCancel: () => onClose(),
     closable: true,
     cancelButtonProps: { style: { display: "none " } },
     children: (
@@ -89,11 +81,11 @@ export const WithdrawModal = ({
     title: "Error",
     okText: "I understand.",
     onOk: () => setCurrent(Steps.Confirm),
-    onCancel: () => handleClose(),
+    onCancel: () => onClose(),
     closable: true,
     cancelButtonProps: { style: { display: "none " } },
     children: <p>We have encountered an unknown error, please try again.</p>
   };
 
-  return <Modal visible={visible} {...steps[current]} />;
+  return <Modal visible={true} {...steps[current]} />;
 };

@@ -253,12 +253,13 @@ export const YourInfo = () => {
             >
               Stake
             </Button>
-            <StakeModal
-              visible={stakeModalVisible}
-              onClose={() => setStakeModalVisible(false)}
-              realm={realm}
-              amount={inputAmount ?? 0}
-            />
+            {stakeModalVisible && (
+              <StakeModal
+                onClose={() => setStakeModalVisible(false)}
+                realm={realm}
+                amount={inputAmount ?? 0}
+              />
+            )}
             <div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
               <Button
                 onClick={() => handleUnstake()}
@@ -278,12 +279,13 @@ export const YourInfo = () => {
                 </Tooltip>
               )}
             </div>
-            <UnstakeModal
-              visible={unstakeModalVisible}
-              amount={inputAmount ?? 0}
-              resetInput={() => setInputAmount(undefined)}
-              onClose={() => setUnstakeModalVisible(false)}
-            />
+            {unstakeModalVisible && (
+              <UnstakeModal
+                amount={inputAmount ?? 0}
+                resetInput={() => setInputAmount(undefined)}
+                onClose={() => setUnstakeModalVisible(false)}
+              />
+            )}
             <Button
               type="dashed"
               className="full-width"
@@ -292,10 +294,9 @@ export const YourInfo = () => {
             >
               Withdraw all
             </Button>
-            <WithdrawAllModal
-              visible={withdrawAllModalVisible}
-              onClose={() => setWithdrawAllModalVisible(false)}
-            />
+            {withdrawAllModalVisible && (
+              <WithdrawAllModal onClose={() => setWithdrawAllModalVisible(false)} />
+            )}
           </div>
         </div>
       </Typography>

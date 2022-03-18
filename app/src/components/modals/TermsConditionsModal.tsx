@@ -1,16 +1,10 @@
 import { Modal } from "antd";
 
-export const TermsConditionsModal = ({
-  visible,
-  onClose
-}: {
-  visible: boolean;
-  onClose: () => void;
-}) => {
+export const TermsConditionsModal = ({ onClose }: { onClose: () => void }) => {
   return (
     <Modal
       title="Terms of Use"
-      visible={visible}
+      visible={true}
       okText="Okay"
       onOk={onClose}
       okButtonProps={{ style: { display: "none " } }}

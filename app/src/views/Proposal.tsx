@@ -251,16 +251,16 @@ const InnerProposalView = ({
             <div className={`neu-container flex column`} id="your-vote">
               <Button
                 onClick={() => setVote(VoteOption.Yes)}
-                className={`vote-btn ${vote === VoteOption.Yes ? "selected" : ""} ${hasBorder}`}
-                type="dashed"
+                className={`vote-select vote-btn ${vote === VoteOption.Yes ? "selected" : ""}`}
+                size="large"
               >
                 In favor
                 <ThumbsUp className="mobile-only" />
               </Button>
               <Button
                 onClick={() => setVote(VoteOption.No)}
-                className={`vote-btn ${vote === VoteOption.No ? "selected" : ""} ${hasBorder}`}
-                type="dashed"
+                className={`vote-select vote-btn ${vote === VoteOption.No ? "selected" : ""}`}
+                size="large"
               >
                 Against
                 <ThumbsDown className="mobile-only" />
@@ -274,17 +274,17 @@ const InnerProposalView = ({
               >
                 Vote
               </Button>
-              <VoteModal
-                vote={vote}
-                visible={isVoteModalVisible}
-                onClose={() => setIsVoteModalVisible(false)}
-                realm={realm}
-                governance={governance}
-                proposal={proposal}
-                tokenOwnerRecord={tokenOwnerRecord}
-                voteRecord={voteRecord}
-                stakeBalance={stakeBalance}
-              />
+              {isVoteModalVisible && (
+                <VoteModal
+                  vote={vote}
+                  onClose={() => setIsVoteModalVisible(false)}
+                  realm={realm}
+                  governance={governance}
+                  proposal={proposal}
+                  voteRecord={voteRecord}
+                  stakeBalance={stakeBalance}
+                />
+              )}
               <span className="helper-text">{errorMessage}</span>
             </div>
           )}

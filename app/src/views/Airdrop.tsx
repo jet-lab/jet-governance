@@ -63,10 +63,7 @@ export const AirdropView = () => {
             style={{ textDecoration: "underline", cursor: "pointer" }}
           >
             glossary
-            <GlossaryModal
-              visible={showGlossaryModal}
-              onClose={() => setShowGlossaryModal(false)}
-            />
+            {showGlossaryModal && <GlossaryModal onClose={() => setShowGlossaryModal(false)} />}
           </span>
         </p>
         <Divider />

@@ -1,10 +1,10 @@
 import { Modal } from "antd";
 
-export const GlossaryModal = ({ visible, onClose }: { visible: boolean; onClose: () => void }) => {
+export const GlossaryModal = ({ onClose }: { onClose: () => void }) => {
   return (
     <Modal
       title="Glossary"
-      visible={visible}
+      visible={true}
       okText="Okay"
       onOk={onClose}
       okButtonProps={{ style: { display: "none " } }}
