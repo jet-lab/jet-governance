@@ -112,11 +112,9 @@ export const getRemainingTime = (currentTime: number, endTime: number): string =
   if (days > 0) {
     return `Ends in ${days} ${days === 1 ? "day" : "days"}`;
   } else {
-    return `Ends in ${hours.toLocaleString(undefined, {
-      minimumIntegerDigits: 2
-    })}:${minutes.toLocaleString(undefined, {
-      minimumIntegerDigits: 2
-    })}:${seconds.toLocaleString(undefined, { minimumIntegerDigits: 2 })}`;
+    return `Ends in ${hours !== 0 ? `${hours.toLocaleString()}h` : ""} ${
+      minutes !== 0 ? `${minutes.toLocaleString()}m` : ""
+    } ${seconds.toLocaleString()}s`;
   }
 };
 

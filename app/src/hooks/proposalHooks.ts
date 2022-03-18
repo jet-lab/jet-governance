@@ -96,7 +96,7 @@ export function useCountdown(
     if (!proposal.account.isPreVotingState() && !!countdownTime && !!endDate) {
       return proposal.account.state === ProposalState.Voting && countdownTime > currentTime
         ? `${getRemainingTime(currentTime, countdownTime)}`
-        : `Expired at: ${endDate}`;
+        : `Ended on: ${endDate}`;
     }
   }, [countdownTime, currentTime, endDate, proposal.account]);
 
