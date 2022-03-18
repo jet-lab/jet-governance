@@ -4,6 +4,8 @@ import { useProposalContext } from "../../contexts/proposal";
 import { rescindAndUnstake } from "../../actions/rescindAndUnstake";
 import { useRpcContext } from "../../hooks/useRpcContext";
 import { u64 } from "@solana/spl-token";
+import { dateToString } from "../../utils";
+import { bnToNumber } from "@jet-lab/jet-engine";
 import { isSignTransactionError } from "../../utils";
 
 enum Steps {
@@ -43,6 +45,14 @@ export const UnstakeModal = ({
     voteRecord => !voteRecord.account.isRelinquished
   );
 
+  const [unbondDate, setUnbondDate] = useState("");
+  const setDisplayUnbondDate = () => {
+    stakePool &&
+      setUnbondDate(
+        dateToString(new Date(Date.now() + bnToNumber(stakePool.stakePool.unbondPeriod) * 1000))
+      );
+  };
+
   const handleSubmitUnstake = () => {
     if (
       amount === null ||
@@ -68,6 +78,8 @@ export const UnstakeModal = ({
       unstakeAmount
     )
       .then(() => {
+        setLoading(false);
+        setDisplayUnbondDate();
         setCurrent(Steps.Success);
       })
       .catch(err => {
@@ -133,7 +145,7 @@ export const UnstakeModal = ({
         <p>
           You've unstaked {amount && Intl.NumberFormat("us-US").format(amount)} JET from JetGovern.
         </p>
-        <p>Your 29.5-day unbonding period will complete on {new Date().toString()}.</p>
+        <p>Your 29.5-day unbonding period will complete on {unbondDate}.</p>
       </>
     )
   };
