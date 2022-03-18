@@ -42,13 +42,13 @@ export function shortenAddress(address: PublicKey | string, chars = 4): string {
 }
 
 export function fromLamports(account?: number | BN, mint?: MintInfo, rate: number = 1.0): number {
-  if (!account) {
+  if (!account || !mint) {
     return 0;
   }
 
-  const amount = Math.floor(typeof account === "number" ? account : account.toNumber());
+  const amount = Math.floor(typeof account === "number" ? account : bnToNumber(account));
 
-  const precision = Math.pow(10, mint?.decimals || 0);
+  const precision = Math.pow(10, mint.decimals || 0);
   return (amount / precision) * rate;
 }
 

@@ -11,7 +11,6 @@ import { ProposalView } from "./views/Proposal";
 import { YourInfo } from "./components/YourInfo";
 import { DarkThemeProvider } from "./contexts/darkTheme";
 import { ConnectWalletProvider } from "./contexts/connectWallet";
-import { AirdropProvider } from "./contexts/airdrop";
 import { TransactionsProvider } from "./contexts/transactionLogs";
 import { AppLayout } from "./components/Layout";
 import { ConnectionProvider, WalletProvider } from "./contexts";
@@ -39,25 +38,23 @@ export function Routes() {
                 <WalletProvider>
                   <ConfigProvider locale={en}>
                     <ConnectWalletProvider>
-                      <AirdropProvider>
-                        <ProposalProvider>
-                          <TransactionsProvider>
-                            <AppLayout>
-                              <Switch>
-                                <ScrollToTop>
-                                  <Route exact path="/" children={<HomeView />} />
-                                  <Route exact path="/your-info" children={<YourInfo />} />
-                                  <Route path={"/proposal/:key"} children={<ProposalView />} />
-                                  <Route exact path="/claims" children={<AirdropView />} />
-                                  <Route exact path="/flight-logs" children={<FlightLogView />} />
-                                  <Route exact path="/glossary" children={<GlossaryView />} />
-                                  <Route exact path="/terms" children={<TermsView />} />
-                                </ScrollToTop>
-                              </Switch>
-                            </AppLayout>
-                          </TransactionsProvider>
-                        </ProposalProvider>
-                      </AirdropProvider>
+                      <ProposalProvider>
+                        <TransactionsProvider>
+                          <AppLayout>
+                            <Switch>
+                              <ScrollToTop>
+                                <Route exact path="/" children={<HomeView />} />
+                                <Route exact path="/your-info" children={<YourInfo />} />
+                                <Route path={"/proposal/:key"} children={<ProposalView />} />
+                                <Route exact path="/claims" children={<AirdropView />} />
+                                <Route exact path="/flight-logs" children={<FlightLogView />} />
+                                <Route exact path="/glossary" children={<GlossaryView />} />
+                                <Route exact path="/terms" children={<TermsView />} />
+                              </ScrollToTop>
+                            </Switch>
+                          </AppLayout>
+                        </TransactionsProvider>
+                      </ProposalProvider>
                     </ConnectWalletProvider>
                   </ConfigProvider>
                 </WalletProvider>

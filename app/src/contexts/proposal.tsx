@@ -49,7 +49,7 @@ interface ProposalContextState {
   pastProposalFilter: ProposalFilter;
   setPastProposalFilter: (showing: ProposalFilter) => void;
   refresh: () => void;
-  walletLoaded: boolean;
+  walletFetched: boolean;
 
   stakePool?: StakePool;
   stakeAccount?: StakeAccount;
@@ -88,7 +88,7 @@ const ProposalContext = React.createContext<ProposalContextState>({
   pastProposalFilter: "all",
   setPastProposalFilter: () => {},
   refresh: () => {},
-  walletLoaded: false,
+  walletFetched: false,
 
   filteredProposalsByGovernance: [],
   filteredPastProposals: [],
@@ -201,7 +201,7 @@ export function ProposalProvider({ children = undefined as any }) {
     { enabled: !!programs }
   );
 
-  const { data: wallet, isLoading: isWalletLoading } = useQuery(
+  const { data: wallet, isFetched: walletFetched } = useQuery(
     ["wallet", endpoint, walletAddress?.toBase58()],
     async () => {
       if (!programs || !stakePool || !walletAddress || !realm) {
@@ -297,7 +297,7 @@ export function ProposalProvider({ children = undefined as any }) {
         pastProposalFilter,
         setPastProposalFilter,
         refresh,
-        walletLoaded: !isWalletLoading,
+        walletFetched,
 
         stakingYield,
 

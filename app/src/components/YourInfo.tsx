@@ -5,10 +5,9 @@ import { Input } from "../components/Input";
 import { useEffect, useMemo, useState } from "react";
 import { jetFaucet } from "../actions/jetFaucet";
 import { useConnectionConfig } from "../contexts";
-import { useAirdrop } from "../contexts/airdrop";
 import { useDarkTheme } from "../contexts/darkTheme";
 import { useProposalContext } from "../contexts/proposal";
-import { useWithdrawVotesAbility } from "../hooks";
+import { useGoverningTokenDepositAmount, useWithdrawVotesAbility } from "../hooks";
 import {
   COUNCIL_FAUCET_DEVNET,
   COUNCIL_TOKEN_MINT,
@@ -23,15 +22,12 @@ import { WithdrawAllModal } from "./modals/WithdrawAllModal";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { useHistory, useLocation } from "react-router";
 import "./YourInfo.less";
-import { withdrawAllUnbonded } from "../actions/withdrawUnbonded";
-import { useRpcContext } from "../hooks";
 
 export const YourInfo = () => {
   const [stakeModalVisible, setStakeModalVisible] = useState(false);
   const [unstakeModalVisible, setUnstakeModalVisible] = useState(false);
   const [withdrawAllModalVisible, setWithdrawAllModalVisible] = useState(false);
   const [inputAmount, setInputAmount] = useState<number | undefined>();
-  const { vestedAirdrops } = useAirdrop();
   const { connected } = useWallet();
   const { darkTheme, toggleDarkTheme } = useDarkTheme();
   const { inDevelopment } = useConnectionConfig();
@@ -40,7 +36,7 @@ export const YourInfo = () => {
 
   const {
     refresh,
-    walletLoaded,
+    walletFetched,
 
     unbondingTotal: { unbondingQueue, unbondingComplete },
     stakeBalance: { stakedJet },
@@ -55,6 +51,7 @@ export const YourInfo = () => {
     programs
   } = useProposalContext();
 
+  const votes = useGoverningTokenDepositAmount();
   const withdrawVotesAbility = useWithdrawVotesAbility(tokenOwnerRecord);
   /* eslint-enable @typescript-eslint/no-unused-vars */
 
@@ -71,24 +68,22 @@ export const YourInfo = () => {
   }, [stakingYield, jetMint]);
 
   const handleStake = () => {
-    if (!jetMint || !inputAmount || !jetAccount || inputAmount === 0) {
-      if (!inputAmount || inputAmount === 0) {
-        console.error("Please input an unstaking amount");
-      }
+    if (!jetMint || !inputAmount || !jetAccount || !inputAmount) {
       return;
     }
     const balance = bnToNumber(jetAccount.info.amount) / 10 ** jetMint.decimals;
     const stakable = Math.min(inputAmount, balance);
 
     setInputAmount(stakable);
+
+    if (stakable === 0) {
+      return;
+    }
     setStakeModalVisible(true);
   };
 
   const handleUnstake = () => {
-    if (!jetMint || !inputAmount || !tokenOwnerRecord || inputAmount === 0) {
-      if (!inputAmount || inputAmount === 0) {
-        console.error("Please input an unstaking amount");
-      }
+    if (!jetMint || !inputAmount || !tokenOwnerRecord || !inputAmount) {
       return;
     }
     const balance =
@@ -96,6 +91,11 @@ export const YourInfo = () => {
     const stakable = Math.min(inputAmount, balance);
 
     setInputAmount(stakable);
+
+    if (stakable === 0) {
+      return;
+    }
+
     setUnstakeModalVisible(true);
   };
 
@@ -170,9 +170,7 @@ export const YourInfo = () => {
               <InfoCircleFilled />
             </Tooltip>
           </Text>
-          <Paragraph className="text-gradient vote-balance">
-            {connected ? toTokens(stakedJet, jetMint) : "-"}
-          </Paragraph>
+          <Paragraph className="text-gradient vote-balance">{votes}</Paragraph>
           <div className="wallet-overview flex justify-between column">
             <div className="flex justify-between">
               <Text className="staking-info current-staking-apr">
@@ -250,7 +248,7 @@ export const YourInfo = () => {
             />
             <Button
               onClick={() => handleStake()}
-              disabled={!connected || !inputAmount || !walletLoaded}
+              disabled={!connected || !inputAmount || !walletFetched}
               className="no-margin-horizontal"
             >
               Stake
@@ -264,7 +262,7 @@ export const YourInfo = () => {
             <div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
               <Button
                 onClick={() => handleUnstake()}
-                disabled={!connected || !withdrawVotesAbility || !inputAmount}
+                disabled={!connected || !inputAmount || !walletFetched || !withdrawVotesAbility}
                 className="no-margin-horizontal"
                 style={{ flex: 1 }}
               >

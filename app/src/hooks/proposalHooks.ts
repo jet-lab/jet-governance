@@ -1,3 +1,4 @@
+import { useProposalContext } from "./../contexts/proposal";
 import { Airdrop, bnToNumber, StakePool } from "@jet-lab/jet-engine";
 import {
   Governance,
@@ -16,7 +17,7 @@ import { useEffect, useMemo, useState } from "react";
 import { ZERO } from "../constants";
 import { ProposalFilter } from "../contexts/proposal";
 import { bnToIntLossy } from "../tools/units";
-import { dateToString, getRemainingTime } from "../utils";
+import { dateToString, getRemainingTime, toTokens } from "../utils";
 import { useGovernanceAccounts } from "./accountHooks";
 import { useRpcContext } from "./useRpcContext";
 
@@ -273,6 +274,16 @@ export function useVoterDisplayData(
       allData: data
     };
   }, [voteRecords, tokenOwnerRecords]);
+}
+
+export function useGoverningTokenDepositAmount() {
+  const { tokenOwnerRecord, jetMint, walletFetched } = useProposalContext();
+  return useMemo(() => {
+    if (!walletFetched || !jetMint) {
+      return "-";
+    }
+    return toTokens(tokenOwnerRecord?.account.governingTokenDepositAmount, jetMint);
+  }, [tokenOwnerRecord, jetMint, walletFetched]);
 }
 
 export function getVoteCounts(proposal: ProgramAccount<Proposal>) {
