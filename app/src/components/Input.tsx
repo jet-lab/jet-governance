@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useCallback } from "react";
+import logoMark from "../images/jet_logomark_gradient.png";
+import "./Input.less";
 
 export const Input = ({
   value,
   placeholder,
   token,
   type,
-  maxInput,
   error,
   disabled,
   onChange,
@@ -15,7 +16,6 @@ export const Input = ({
   value: string | number;
   placeholder?: string;
   token?: boolean;
-  maxInput?: number | null;
   error?: string | null;
   disabled?: boolean;
   onChange: Function;
@@ -47,13 +47,13 @@ export const Input = ({
 
   return (
     <div className={`flex-centered ${disabled ? "disabled-input" : ""}`}>
-      <div className={`flex-centered ${token ? "token-input" : ""}`} id="staking-input">
+      <div className={`flex-centered staking-input-layout ${token ? "token-input" : ""}`}>
         <input
           type={type}
           disabled={disabled}
           value={value as string | number | readonly string[] | undefined}
           placeholder={error ?? placeholder}
-          className={`with-btn ${error ? "error" : ""}`}
+          className={`staking-input with-btn ${error ? "error" : ""}`}
           onChange={e => onChange(e.target.value)}
           onKeyPress={e => enterKeySubmit(e)}
           id="input-element"
@@ -61,11 +61,14 @@ export const Input = ({
         {token && (
           <>
             <img
-              src="img/jet/jet_logomark_gradient.png"
+              className="staking-input-icon"
+              src={logoMark}
               alt="Jet Token Icon"
               style={{ filter: isActive ? "none" : "grayscale(1)" }}
             />
-            <span className={`token-abbrev ${isActive ? "text-gradient" : ""}`}>JET</span>
+            <span className={`legend-input token-abbrev ${isActive ? "text-gradient" : ""}`}>
+              JET
+            </span>
           </>
         )}
       </div>

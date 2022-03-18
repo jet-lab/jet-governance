@@ -1,0 +1,45 @@
+@import "~@jet-lab/jet-antd/lib/jet-antd.less";
+
+.title-home {
+  font-size: @sm-font-size;
+  line-height: 18px;
+}
+
+.home {
+  .neu-inset {
+    margin-bottom: 20px;
+  }
+  .show-proposals {
+    grid-row-start: 1;
+    grid-column: 3 / span 6;
+    #proposal-cards {
+      display: inline-grid;
+      grid-gap: 30px;
+      grid-template-columns: 250px 250px 250px;
+      grid-template-rows: 250px;
+      a {
+        margin: 0;
+      }
+    }
+  }
+
+  .filter-status {
+  }
+
+  .filter-status-item {
+    padding: 0 10px;
+    cursor: pointer;
+    &:hover,
+    &.active {
+      text-decoration: underline;
+    }
+  }
+  .filter-status-item:last-child {
+    padding-right: 0;
+  }
+
+  .details {
+    display: flex;
+    flex-direction: column;
+  }
+}

@@ -1,14 +1,14 @@
 import { InfoCircleFilled, PlusOutlined } from "@ant-design/icons";
 import { bnToNumber } from "@jet-lab/jet-engine";
-import { Tooltip, Divider, Button, Switch, notification } from "antd";
+import { Typography, Tooltip, Divider, Button, Switch, notification } from "antd";
 import { Input } from "../components/Input";
 import { useEffect, useMemo, useState } from "react";
-import { ReactFitty } from "react-fitty";
 import { jetFaucet } from "../actions/jetFaucet";
 import { useConnectionConfig } from "../contexts";
+import { useAirdrop } from "../contexts/airdrop";
 import { useDarkTheme } from "../contexts/darkTheme";
 import { useProposalContext } from "../contexts/proposal";
-import { useWithdrawVotesAbility } from "../hooks/proposalHooks";
+import { useWithdrawVotesAbility } from "../hooks";
 import {
   COUNCIL_FAUCET_DEVNET,
   COUNCIL_TOKEN_MINT,
@@ -22,12 +22,16 @@ import { UnstakeModal } from "./modals/UnstakeModal";
 import { WithdrawAllModal } from "./modals/WithdrawAllModal";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { useHistory, useLocation } from "react-router";
+import "./YourInfo.less";
+import { withdrawAllUnbonded } from "../actions/withdrawUnbonded";
+import { useRpcContext } from "../hooks";
 
 export const YourInfo = () => {
   const [stakeModalVisible, setStakeModalVisible] = useState(false);
   const [unstakeModalVisible, setUnstakeModalVisible] = useState(false);
   const [withdrawAllModalVisible, setWithdrawAllModalVisible] = useState(false);
   const [inputAmount, setInputAmount] = useState<number | undefined>();
+  const { vestedAirdrops } = useAirdrop();
   const { connected } = useWallet();
   const { darkTheme, toggleDarkTheme } = useDarkTheme();
   const { inDevelopment } = useConnectionConfig();
@@ -148,157 +152,155 @@ export const YourInfo = () => {
   };
 
   const isOwnPage = Boolean(useLocation().pathname.includes("your-info"));
-
+  const { Paragraph, Title, Text } = Typography;
   return (
-    <div id="your-info" className={isOwnPage ? "view-container" : ""}>
-      <h2>Your Info</h2>
-
-      <div className="neu-inset">
-        <span>
-          Votes{" "}
-          <Tooltip
-            title="For each JET token staked, you may cast 1 vote in JetGovern."
-            placement="topLeft"
-            overlayClassName="no-arrow"
-          >
-            <InfoCircleFilled />
-          </Tooltip>
-        </span>
-
-        {/* todo: Rerender react-fitty
-        with mutation observer
-        when child changes */}
-        <ReactFitty maxSize={100} className="text-gradient vote-balance">
-          {connected ? toTokens(stakedJet, jetMint) : "-"}
-        </ReactFitty>
-
-        <div id="wallet-overview" className="flex justify-between column">
-          <div className="flex justify-between" id="current-staking-apr">
-            <span>
-              {connected ? `${rewards.apr ?? "-"}% Staking APR` : `Current Staking APR `}
-              <Tooltip
-                title="The displayed APR depends upon many factors, including the total number of JET staked in the module and the amount of protocol revenue flowing to depositors."
-                overlayClassName="no-arrow"
-              >
-                <InfoCircleFilled />
-              </Tooltip>
-            </span>
-            <span>
-              {connected ? (
-                <PlusOutlined style={{ marginRight: 0 }} onClick={showRewards} />
-              ) : (
-                `${rewards.apr ?? "-"}%`
-              )}
-            </span>
-          </div>
-          <div className={connected ? "hidden" : undefined} id="show-more-apr">
-            <div className="flex justify-between cluster">
-              <span>Est. Daily Reward</span>
-              <span>{rewards.estDailyReward}</span>
-            </div>
-            <div className="flex justify-between cluster">
-              <span>Est. Monthly Reward</span>
-              <span>{rewards.estMonthlyReward}</span>
-            </div>
-          </div>
-        </div>
-
-        <Divider />
-        <div className="flex column">
-          {connected && (
-            <div className="flex justify-between cluster">
-              <span>Wallet Balance</span>
-              <span>{jetAccount ? toTokens(jetAccount.info.amount, jetMint) : 0}</span>
-            </div>
-          )}
-          <div className="flex justify-between cluster">
-            <span>Staked JET</span>
-            <span>{toTokens(stakedJet, jetMint)}</span>
-          </div>
-          {connected && (
-            <>
-              <div className="flex justify-between cluster">
-                <span>
-                  Unbonding queue{" "}
-                  <Tooltip
-                    title="This is the amount of tokens you've unstaked that are currently in an unbonding period. For detailed information about the availability of your tokens, visit the Flight Logs page."
-                    overlayClassName="no-arrow"
-                  >
-                    <InfoCircleFilled />
-                  </Tooltip>
-                </span>
-                <span>{toTokens(unbondingQueue.toNumber(), jetMint)}</span>
-              </div>
-              <div className="flex justify-between cluster">
-                <span className="text-gradient bold">Available for Withdrawal</span>
-                <span className="text-gradient bold">
-                  {toTokens(unbondingComplete.toNumber(), jetMint)}
-                </span>
-              </div>
-            </>
-          )}
-          <Input
-            type="number"
-            token
-            value={inputAmount === undefined ? "" : inputAmount}
-            maxInput={undefined}
-            disabled={!connected}
-            onChange={(value: number) => setInputAmount(value)}
-            submit={() => handleStake()}
-          />
-          <Button
-            onClick={() => handleStake()}
-            disabled={!connected || !inputAmount || !walletLoaded}
-            className="no-margin-horizontal"
-          >
-            Stake
-          </Button>
-          <StakeModal
-            visible={stakeModalVisible}
-            onClose={() => setStakeModalVisible(false)}
-            realm={realm}
-            amount={inputAmount ?? 0}
-          />
-          <div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
-            <Button
-              onClick={() => handleUnstake()}
-              disabled={!connected || !withdrawVotesAbility || !inputAmount}
-              className="no-margin-horizontal"
-              style={{ flex: 1 }}
+    <div className={`your-info ${isOwnPage ? "view-container" : ""}`}>
+      <Typography>
+        <Title className="title-info" level={2}>
+          Your Info
+        </Title>
+        <div className="box-info">
+          <Text>
+            Votes{" "}
+            <Tooltip
+              title="For each JET token staked, you may cast 1 vote in JetGovern."
+              placement="topLeft"
+              overlayClassName="no-arrow"
             >
-              Unstake
-            </Button>
-            {tokenOwnerRecord && !withdrawVotesAbility && (
-              <Tooltip
-                title="You cannot unstake JET until all your created proposals are finalised."
-                overlayClassName="no-arrow"
-                style={{ width: 10 }}
-              >
-                <InfoCircleFilled style={{ marginLeft: "5px" }} />
-              </Tooltip>
-            )}
+              <InfoCircleFilled />
+            </Tooltip>
+          </Text>
+          <Paragraph className="text-gradient vote-balance">
+            {connected ? toTokens(stakedJet, jetMint) : "-"}
+          </Paragraph>
+          <div className="wallet-overview flex justify-between column">
+            <div className="flex justify-between">
+              <Text className="staking-info current-staking-apr">
+                {connected ? `${rewards.apr ?? "-"}% Staking APR` : `Current Staking APR `}
+                <Tooltip
+                  title="The displayed APR depends upon many factors, including the total number of JET staked in the module and the amount of protocol revenue flowing to depositors."
+                  overlayClassName="no-arrow"
+                >
+                  <InfoCircleFilled />
+                </Tooltip>
+              </Text>
+              <Text>
+                {connected ? (
+                  <PlusOutlined style={{ marginRight: 0 }} onClick={showRewards} />
+                ) : (
+                  `${rewards.apr ?? "-"}%`
+                )}
+              </Text>
+            </div>
+            <div className={connected ? "hidden" : undefined} id="show-more-apr">
+              <div className="flex justify-between cluster">
+                <Text className="cluster">Est. Daily Reward</Text>
+                <Text className="cluster">{rewards.estDailyReward}</Text>
+              </div>
+              <div className="flex justify-between cluster">
+                <Text className="cluster">Est. Monthly Reward</Text>
+                <Text className="cluster">{rewards.estMonthlyReward}</Text>
+              </div>
+            </div>
           </div>
-          <UnstakeModal
-            visible={unstakeModalVisible}
-            amount={inputAmount ?? 0}
-            resetInput={() => setInputAmount(undefined)}
-            onClose={() => setUnstakeModalVisible(false)}
-          />
-          <Button
-            type="dashed"
-            className="full-width"
-            onClick={() => handleWithdrawUnstaked()}
-            disabled={!connected}
-          >
-            Withdraw all
-          </Button>
-          <WithdrawAllModal
-            visible={withdrawAllModalVisible}
-            onClose={() => setWithdrawAllModalVisible(false)}
-          />
-        </div>
-      </div>
 
+          <Divider className="divider-info" />
+          <div className="flex column">
+            {connected && (
+              <div className="flex justify-between">
+                <Text className="cluster">Wallet Balance</Text>
+                <Text className="cluster">
+                  {jetAccount ? toTokens(jetAccount.info.amount, jetMint) : 0}
+                </Text>
+              </div>
+            )}
+            <div className="flex justify-between">
+              <Text>Staked JET</Text>
+              <Text>{toTokens(stakedJet, jetMint)}</Text>
+            </div>
+            {connected && (
+              <>
+                <div className="flex justify-between">
+                  <Text>
+                    Unbonding queue{" "}
+                    <Tooltip
+                      title="This is the amount of tokens you've unstaked that are currently in an unbonding period. For detailed information about the availability of your tokens, visit the Flight Logs page."
+                      overlayClassName="no-arrow"
+                    >
+                      <InfoCircleFilled />
+                    </Tooltip>
+                  </Text>
+                  <Text>{toTokens(unbondingQueue.toNumber(), jetMint)}</Text>
+                </div>
+                <div className="flex justify-between cluster">
+                  <Text className="text-gradient bold">Available for Withdrawal</Text>
+                  <Text className="text-gradient bold">
+                    {toTokens(unbondingComplete.toNumber(), jetMint)}
+                  </Text>
+                </div>
+              </>
+            )}
+            <Input
+              type="number"
+              token
+              value={inputAmount === undefined ? "" : inputAmount}
+              disabled={!connected}
+              onChange={(value: number) => setInputAmount(value)}
+              submit={() => handleStake()}
+            />
+            <Button
+              onClick={() => handleStake()}
+              disabled={!connected || !inputAmount || !walletLoaded}
+              className="no-margin-horizontal"
+            >
+              Stake
+            </Button>
+            <StakeModal
+              visible={stakeModalVisible}
+              onClose={() => setStakeModalVisible(false)}
+              realm={realm}
+              amount={inputAmount ?? 0}
+            />
+            <div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
+              <Button
+                onClick={() => handleUnstake()}
+                disabled={!connected || !withdrawVotesAbility || !inputAmount}
+                className="no-margin-horizontal"
+                style={{ flex: 1 }}
+              >
+                Unstake
+              </Button>
+              {tokenOwnerRecord && !withdrawVotesAbility && (
+                <Tooltip
+                  title="You cannot unstake JET until all your created proposals are finalised."
+                  overlayClassName="no-arrow"
+                  style={{ width: 10 }}
+                >
+                  <InfoCircleFilled style={{ marginLeft: "5px" }} />
+                </Tooltip>
+              )}
+            </div>
+            <UnstakeModal
+              visible={unstakeModalVisible}
+              amount={inputAmount ?? 0}
+              resetInput={() => setInputAmount(undefined)}
+              onClose={() => setUnstakeModalVisible(false)}
+            />
+            <Button
+              type="dashed"
+              className="full-width"
+              onClick={() => handleWithdrawUnstaked()}
+              disabled={!connected}
+            >
+              Withdraw all
+            </Button>
+            <WithdrawAllModal
+              visible={withdrawAllModalVisible}
+              onClose={() => setWithdrawAllModalVisible(false)}
+            />
+          </div>
+        </div>
+      </Typography>
       <div>
         <Switch
           onChange={() => toggleDarkTheme()}

@@ -24,9 +24,7 @@
 button.inactive {
   filter: blur(2px);
 }
-button.ant-btn.ant-btn-lg {
-  padding: 10px 14px;
-}
+
 .ant-modal-content {
   a {
     text-decoration: underline;
@@ -91,9 +89,6 @@ strong,
 .bold {
   font-weight: @subheader-weight !important;
 }
-p {
-  margin: 20px auto;
-}
 h1 {
   font-size: 25px !important;
 }
@@ -109,10 +104,6 @@ svg {
 }
 .wide .ant-modal-content {
   max-width: unset !important;
-}
-.no-margin-horizontal {
-  margin-left: 0;
-  margin-right: 0;
 }
 
 /* Navbar and connect wallet */
@@ -328,113 +319,6 @@ p,
   }
 }
 
-/* Styles for home page */
-
-#home {
-  h2,
-  .neu-inset {
-    margin-bottom: 20px;
-  }
-  #show-proposals {
-    grid-row-start: 1;
-    grid-column: 3 / span 6;
-    #proposal-cards {
-      display: inline-grid;
-      grid-gap: 30px;
-      grid-template-columns: 250px 250px 250px;
-      grid-template-rows: 250px;
-      a {
-        margin: 0;
-      }
-    }
-  }
-
-  .filter-status {
-    span {
-      padding: 0 10px;
-      cursor: pointer;
-      &:hover,
-      &.active {
-        text-decoration: underline;
-      }
-    }
-    span:last-child {
-      padding-right: 0;
-    }
-  }
-
-  .details {
-    display: flex;
-    flex-direction: column;
-  }
-}
-
-#your-info {
-  grid-column: 1 / 3;
-  grid-row: 1 / 3;
-  height: 85vh;
-  display: grid;
-  grid-template-rows: auto auto 1fr auto;
-  .vote-balance {
-    padding-bottom: 10px;
-    line-height: 90%;
-  }
-  .stake-info {
-    background: #e0e7f2;
-    box-shadow: inset 0px -1px 2px rgba(255, 255, 255, 0.75), inset 0px 1px 2px rgba(0, 0, 0, 0.1);
-    border-radius: 15px;
-    margin-bottom: 82px;
-    width: 230px;
-    display: flex;
-    flex-direction: column;
-    padding: 20px;
-  }
-  #wallet-overview {
-    width: 100%;
-    #current-staking-apr span {
-      font-weight: 500;
-      margin-bottom: 12px;
-    }
-    span {
-      color: @black;
-    }
-  }
-  .cluster span {
-    margin: 2px 4px;
-    font-size: @xs-font-size;
-  }
-  #staking-input {
-    position: relative;
-    width: 100%;
-    margin-top: 10px;
-    input {
-      position: relative;
-      font-size: 20px;
-      padding-left: 50px;
-      padding-right: 80px;
-    }
-    span {
-      font-size: 20px !important;
-      color: @dark-grey;
-    }
-    .token-abbrev {
-      position: absolute;
-      top: 50%;
-      transform: translateY(-65%);
-      right: @spacing-md;
-      padding: unset;
-    }
-    img {
-      width: 25px;
-      height: auto;
-      position: absolute;
-      top: 50%;
-      transform: translateY(-50%);
-      left: @spacing-md;
-    }
-  }
-}
-
 /* Proposal page */
 #proposal-page {
   #csv {
@@ -460,6 +344,21 @@ p,
       padding: 0 @spacing-sm;
     }
   }
+
+  .description-text {
+    font-size: @base-font-size;
+    p {
+      margin-top: @spacing-xs;
+      margin-bottom: @spacing-xs;
+    }
+    margin-bottom: @spacing-xl;
+  }
+
+  .description-title {
+    margin-top: 43px;
+    margin-bottom: 15px;
+  }
+
   .description {
     padding: 39px 36px;
     margin-bottom: 39px;
@@ -468,21 +367,14 @@ p,
     &:first-of-type span {
       margin-left: 0 !important;
     }
-    h1 {
-      margin-top: 50px;
-    }
-    p {
-      font-size: @base-font-size;
-      line-height: 26px;
-      margin-bottom: 26px;
-    }
-    #details {
-      display: grid;
-      grid-template-columns: 150px 1fr;
-      grid-auto-flow: dense;
-      span {
-        overflow: scroll;
-      }
+  }
+
+  .details {
+    display: grid;
+    grid-template-columns: 150px 1fr;
+    grid-auto-flow: dense;
+    span {
+      overflow: scroll;
     }
   }
   .ant-divider-horizontal {
@@ -493,117 +385,6 @@ p,
     div {
       overflow-y: scroll;
       flex-wrap: wrap;
-    }
-  }
-}
-
-/* Vote selector */
-button,
-.ant-btn {
-  &.vote-select {
-    box-shadow: @neu-shadow;
-    background: var(--dark-white) !important;
-    text-transform: uppercase;
-    background-clip: content-box, border-box;
-    span {
-      opacity: 1;
-      background-image: linear-gradient(135deg, #3d9e83 25%, #278db6 85%);
-      background-clip: text;
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-    &:hover {
-      box-shadow: @neu-shadow-low;
-    }
-    &.selected {
-      box-shadow: @neu-shadow-inset !important;
-    }
-  }
-  &.ant-btn-primary {
-    margin-top: 10px;
-  }
-  &[disabled] {
-    cursor: not-allowed;
-  }
-}
-
-#vote-turnout {
-  margin-bottom: 39px;
-  .results {
-    margin: 15px 20px 37px 0;
-    flex-grow: 1;
-    .amount {
-      margin-left: 20px;
-      font-size: @sm-font-size !important;
-    }
-  }
-  .voters {
-    flex-grow: 1;
-  }
-
-  /* Overrides for jet-antd >> stakeholders  */
-  .ant-list-item {
-    border-bottom: none;
-    padding: 0;
-  }
-  .ant-list {
-    padding: 0;
-    box-shadow: none;
-    button {
-      background: @white;
-      span {
-        opacity: 1;
-        background-image: linear-gradient(135deg, #3d9e83 25%, #278db6 85%);
-        background-clip: text;
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-      }
-      &:active {
-        box-shadow: none;
-      }
-    }
-  }
-  .your-vote {
-    border-radius: 30px;
-    box-shadow: @neu-shadow-inset;
-    margin-bottom: -10px;
-  }
-  .stakeholders {
-    display: flex;
-    line-height: @base-font-size;
-    letter-spacing: 0.05em;
-    width: 100%;
-    padding-top: 3px;
-    padding-bottom: 3px;
-    .voter {
-      color: @dark-grey;
-      text-transform: uppercase;
-      width: 25%;
-      text-align: left;
-      font-size: @xs-font-size !important;
-      padding-left: 10px;
-    }
-    .address {
-      width: 25%;
-      text-align: left;
-      overflow-x: auto;
-      font-size: @sm-font-size !important;
-    }
-    .amount {
-      width: 25%;
-      text-align: left;
-      margin-right: 21px;
-      font-size: @sm-font-size !important;
-    }
-    .vote {
-      width: 25%;
-      text-align: left;
-      text-transform: uppercase;
-      font-size: @sm-font-size !important;
-    }
-    .title {
-      font-size: @xs-font-size !important;
-      text-transform: uppercase;
     }
   }
 }
@@ -916,67 +697,6 @@ button,
       .claim-button {
         width: 100% !important;
       }
-    }
-  }
-  #proposal-page {
-    flex-direction: column;
-    .proposal-left,
-    .centered {
-      .description #details {
-        grid-template-columns: 80px 1fr;
-      }
-      #vote-turnout {
-        flex-direction: column;
-      }
-    }
-    .proposal-right {
-      position: fixed;
-      bottom: 0;
-      width: 85%;
-      left: 7.5%;
-      z-index: 100;
-      &::after {
-        content: "";
-        display: block;
-        background: linear-gradient(180deg, var(--light-shadow) 0%, rgba(229, 235, 244, 0) 100%);
-        transform: rotate(-180deg);
-        height: 30px;
-        width: 150%;
-      }
-      #your-vote {
-        flex-direction: row;
-        justify-content: space-between;
-        height: 60px;
-        padding: @spacing-md @spacing-xl;
-        background: @gradient;
-        .ant-btn.ant-btn-lg {
-          box-shadow: @drop-shadow;
-          height: 60px;
-          width: 60px;
-          margin: 0;
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          justify-content: center;
-          &.ant-btn-primary {
-            box-shadow: none;
-            border: 1px solid @white;
-            background: transparent;
-          }
-        }
-        .vote-select {
-          background: @white;
-          span {
-            font-size: 6px !important;
-            letter-spacing: 0;
-            padding: @spacing-xs 0;
-          }
-        }
-      }
-    }
-    .ant-divider,
-    .other-proposals {
-      display: none;
     }
   }
   #flight-logs-view {

@@ -2,9 +2,10 @@ import { ProposalFilter, useProposalContext } from "../contexts/proposal";
 import { ProposalCard } from "../components/ProposalCard";
 import { YourInfo } from "../components/YourInfo";
 import { PastProposalCard } from "../components/MobilePastProposals";
-// import { getFirstTwoHundredPubkeys } from "../models/PUBKEYS_INDEX";
 import { ReactComponent as Filter } from "../images/filter.svg";
 import { useEffect } from "react";
+import { Typography } from "antd";
+import "./Home.less";
 
 export const HomeView = () => {
   /* eslint-disable @typescript-eslint/no-unused-vars */
@@ -12,20 +13,12 @@ export const HomeView = () => {
     proposalFilter,
     setProposalFilter,
     setPastProposalFilter,
-
     filteredProposalsByGovernance,
     filteredPastProposals,
-
     governance
   } = useProposalContext();
   /* eslint-enable @typescript-eslint/no-unused-vars */
-
-  // First 200 Public Keys
-  //getFirstTwoHundredPubkeys(realm?.account.communityMint);
-
-  // On mobile, only show active proposals
-  // in main view
-
+  const { Title, Text } = Typography;
   useEffect(() => {
     const onResize = () => {
       if (window.matchMedia("(max-width: 840px)").matches) {
@@ -46,46 +39,56 @@ export const HomeView = () => {
   };
 
   return (
-    <div className="view-container content-body column-grid" id="home">
+    <section className="home view-container content-body column-grid">
       <YourInfo />
-
-      <div id="show-proposals">
-        <div className="flex justify-between header">
-          <h2>Proposals</h2>
-          <div className="filter-status">
-            <span
-              onClick={() => setProposalFilter("active")}
-              className={proposalFilter === "active" ? "active" : undefined}
-            >
-              Active
-            </span>
-            <span
-              onClick={() => setProposalFilter("inactive")}
-              className={proposalFilter === "inactive" ? "active" : undefined}
-            >
-              Inactive
-            </span>
-            <span
-              onClick={() => setProposalFilter("passed")}
-              className={proposalFilter === "passed" ? "active" : undefined}
-            >
-              Passed
-            </span>
-            <span
-              onClick={() => setProposalFilter("rejected")}
-              className={proposalFilter === "rejected" ? "active" : undefined}
-            >
-              Rejected
-            </span>
-            <span
-              onClick={() => setProposalFilter("all")}
-              className={proposalFilter === "all" ? "active" : undefined}
-            >
-              All
-            </span>
+      <div className="show-proposals">
+        <Typography>
+          <div className="flex justify-between header">
+            <Title className="title-home" level={2}>
+              Proposals
+            </Title>
+            <div className="filter-status">
+              <Text
+                onClick={() => setProposalFilter("active")}
+                className={`filter-status-item ${
+                  proposalFilter === "active" ? "active" : undefined
+                }`}
+              >
+                Active
+              </Text>
+              <Text
+                onClick={() => setProposalFilter("inactive")}
+                className={`filter-status-item ${
+                  proposalFilter === "inactive" ? "active" : undefined
+                }`}
+              >
+                Inactive
+              </Text>
+              <Text
+                onClick={() => setProposalFilter("passed")}
+                className={`filter-status-item ${
+                  proposalFilter === "passed" ? "active" : undefined
+                }`}
+              >
+                Passed
+              </Text>
+              <Text
+                onClick={() => setProposalFilter("rejected")}
+                className={`filter-status-item ${
+                  proposalFilter === "rejected" ? "active" : undefined
+                }`}
+              >
+                Rejected
+              </Text>
+              <Text
+                onClick={() => setProposalFilter("all")}
+                className={`filter-status-item ${proposalFilter === "all" ? "active" : undefined}`}
+              >
+                All
+              </Text>
+            </div>
           </div>
-        </div>
-
+        </Typography>
         <div id="proposal-cards">
           {filteredProposalsByGovernance.map(
             proposal =>
@@ -124,6 +127,6 @@ export const HomeView = () => {
         )}
         <p>That's all for now! Check back soon for new proposals.</p>
       </div>
-    </div>
+    </section>
   );
 };

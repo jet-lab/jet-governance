@@ -3,11 +3,12 @@ import { Link, useLocation } from "react-router-dom";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { useConnectWallet } from "../contexts/connectWallet";
 import { useDarkTheme } from "../contexts/darkTheme";
-import { Button, Switch } from "antd";
+import { Button, Switch, Typography } from "antd";
 import { useProposalContext } from "../contexts/proposal";
 import { shortenAddress } from "../utils";
 import User from "../images/user.svg";
 import { ReactComponent as Wallet } from "../images/wallet.svg";
+import "./Nav.less";
 import { DocsLink } from "./docsLink";
 
 export function Nav() {
@@ -93,7 +94,7 @@ export function Nav() {
               )
           )}
           <Button
-            className="secondary-btn flex-centered"
+            className="secondary-btn flex-centered connect-wallet-btn"
             type="ghost"
             title={connected ? "disconnect" : "connect"}
             onClick={() => (connected ? disconnect() : setConnecting(true))}
