@@ -130,13 +130,13 @@ export const YourInfo = () => {
   useEffect(() => {
     const openNotification = () => {
       if (claimsCount > 0) {
-        notification.open({
+        notification.success({
           message: "Available Airdrop",
           description: "You have care package(s) waiting for you! Click here for info.",
           onClick: () => {
             history.push("/claims");
           },
-          placement: "bottomRight"
+          placement: "bottomLeft"
         });
       }
     };

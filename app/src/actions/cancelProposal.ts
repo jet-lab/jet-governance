@@ -35,7 +35,6 @@ export const cancelProposal = async (
     wallet,
     instructions,
     signers,
-    "Cancelling proposal",
     "Proposal cancelled"
   );
 };

@@ -17,7 +17,6 @@ export const claimAndStake = async (
     rpcContext.wallet,
     ix,
     [],
-    "Claiming and staking tokens",
-    "Tokens claimed and staked"
+    "JET claimed and staked"
   );
 };

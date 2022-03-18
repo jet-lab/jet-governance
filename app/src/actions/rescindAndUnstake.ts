@@ -148,10 +148,5 @@ export const rescindAndUnstake = async (
     signers
   });
 
-  await sendAllTransactionsWithNotifications(
-    provider,
-    allTxs,
-    "Unstaking tokens",
-    "Tokens have begun unbonding"
-  );
+  await sendAllTransactionsWithNotifications(provider, allTxs, "JET has begun unbonding");
 };

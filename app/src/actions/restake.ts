@@ -21,7 +21,6 @@ export const restake = async (
     rpcContext.wallet,
     ix,
     [],
-    "Restaking governance tokens",
-    "Tokens have been staked"
+    "JET has been staked"
   );
 };

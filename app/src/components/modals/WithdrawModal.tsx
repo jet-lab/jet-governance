@@ -2,7 +2,7 @@ import { PropsWithChildren, useState } from "react";
 import { Modal, ModalProps } from "antd";
 import { useRpcContext } from "../../hooks/useRpcContext";
 import { UnbondingAccount } from "@jet-lab/jet-engine";
-import { fromLamports } from "../../utils";
+import { fromLamports, isSignTransactionError } from "../../utils";
 import { withdrawUnbonded } from "../../actions/withdrawUnbonded";
 import { useProposalContext } from "../../contexts/proposal";
 
@@ -38,8 +38,13 @@ export const WithdrawModal = ({
       .then(() => {
         setCurrent(Steps.Success);
       })
-      .catch(() => {
-        setCurrent(Steps.Error);
+      .catch(err => {
+        if (isSignTransactionError(err)) {
+          setCurrent(Steps.Confirm);
+          onClose();
+        } else {
+          setCurrent(Steps.Error);
+        }
       })
       .finally(() => {
         setLoading(false);

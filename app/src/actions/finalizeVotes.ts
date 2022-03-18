@@ -33,7 +33,6 @@ export const finalizeVote = async (
     wallet,
     instructions,
     signers,
-    "Finalizing votes",
     "Votes finalized"
   );
 };

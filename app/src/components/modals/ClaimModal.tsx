@@ -6,6 +6,7 @@ import { useRpcContext } from "../../hooks/useRpcContext";
 import { useProposalContext } from "../../contexts/proposal";
 import { claimAndStake } from "../../actions/claimAndStake";
 import { DocsLink } from "../docsLink";
+import { isSignTransactionError } from "../../utils";
 
 enum Steps {
   Confirm = 0,
@@ -40,8 +41,13 @@ export const ClaimModal = ({
         .then(() => {
           setCurrent(Steps.Success);
         })
-        .catch(() => {
-          setCurrent(Steps.Error);
+        .catch(err => {
+          if (isSignTransactionError(err)) {
+            setCurrent(Steps.Confirm);
+            onClose();
+          } else {
+            setCurrent(Steps.Error);
+          }
         })
         .finally(() => {
           setLoading(false);

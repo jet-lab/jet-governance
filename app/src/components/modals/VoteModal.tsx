@@ -4,7 +4,7 @@ import { useCountdown, useOtherActiveProposals, VoteOption } from "../../hooks/p
 import { useRpcContext } from "../../hooks/useRpcContext";
 import { StakeBalance } from "@jet-lab/jet-engine";
 import { getPubkeyIndex } from "../../models/PUBKEYS_INDEX";
-import { toTokens } from "../../utils";
+import { isSignTransactionError, toTokens } from "../../utils";
 import {
   Governance,
   ProgramAccount,
@@ -110,11 +110,23 @@ export const VoteModal = ({
         .then(() => {
           setCurrent(Steps.VoteSuccess);
         })
-        .catch(() => setCurrent(Steps.UnknownError))
+        .catch(err => {
+          if (isSignTransactionError(err)) {
+            setCurrent(Steps.ConfirmVote);
+            onClose();
+          } else {
+            setCurrent(Steps.UnknownError);
+          }
+        })
         .finally(() => {
           refresh();
         });
     }
+  };
+
+  const handleClose = () => {
+    setCurrent(Steps.ConfirmVote);
+    onClose();
   };
 
   // Handlers for tx success all set modal
@@ -127,7 +139,7 @@ export const VoteModal = ({
     onOk: () => {
       vote !== undefined && confirmVote(vote);
     },
-    onCancel: () => onClose(),
+    onCancel: () => handleClose(),
     content: (
       <>
         <p>
@@ -146,8 +158,8 @@ export const VoteModal = ({
   steps[Steps.VoteSuccess] = {
     title: `All set`,
     okText: "Okay",
-    onOk: () => onClose(),
-    onCancel: () => onClose(),
+    onOk: () => handleClose(),
+    onCancel: () => handleClose(),
     content: (
       <>
         <p>
@@ -162,7 +174,7 @@ export const VoteModal = ({
               <VoteOnOtherProposal
                 proposal={otherProposal}
                 governance={governance}
-                onClose={onClose}
+                onClose={handleClose}
               />
             ))
           : "There are no other proposals at this time."}
@@ -174,8 +186,8 @@ export const VoteModal = ({
   steps[Steps.NoVoteError] = {
     title: "Set a vote!",
     okText: "Okay",
-    onOk: () => onClose(),
-    onCancel: () => onClose(),
+    onOk: () => handleClose(),
+    onCancel: () => handleClose(),
     content: [<p>Please select a vote.</p>],
     closable: true,
     cancelButtonProps: { style: { display: "none " } }
@@ -183,13 +195,9 @@ export const VoteModal = ({
   steps[Steps.UnknownError] = {
     title: `Uh-oh`,
     okText: "Okay",
-    onOk: () => onClose(),
-    onCancel: () => onClose(),
-    content: (
-      <>
-        <p>We're not really sure what went wrong here, please try again.</p>
-      </>
-    ),
+    onOk: () => handleClose(),
+    onCancel: () => handleClose(),
+    content: <p>We're not really sure what went wrong here, please try again.</p>,
     closable: true,
     cancelButtonProps: { style: { display: "none " } }
   };

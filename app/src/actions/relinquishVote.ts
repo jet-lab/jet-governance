@@ -10,8 +10,7 @@ export const relinquishVote = async (
   { connection, wallet, programId, walletPubkey }: RpcContext,
   proposal: ProgramAccount<Proposal>,
   tokenOwnerRecord: PublicKey,
-  voteRecord: PublicKey,
-  isWithdrawal: boolean
+  voteRecord: PublicKey
 ) => {
   const signers: Keypair[] = [];
   const instructions: TransactionInstruction[] = [];
@@ -39,7 +38,6 @@ export const relinquishVote = async (
     wallet,
     instructions,
     signers,
-    isWithdrawal ? "Withdrawing vote from proposal" : "Releasing voting tokens",
-    isWithdrawal ? "Vote withdrawn" : "Tokens released"
+    "Vote withdrawn"
   );
 };

@@ -40,7 +40,6 @@ export async function postChatMessage(
     wallet,
     instructions,
     signers,
-    "Posting chat message",
     "Chat message posted"
   );
 }

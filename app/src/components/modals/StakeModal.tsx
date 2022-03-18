@@ -7,6 +7,7 @@ import { useRpcContext } from "../../hooks/useRpcContext";
 import { useBN } from "../../hooks";
 import { ProgramAccount, Realm } from "@solana/spl-governance";
 import { DocsLink } from "../docsLink";
+import { isSignTransactionError } from "../../utils";
 
 enum Steps {
   Start = 0,
@@ -39,15 +40,18 @@ export const StakeModal = (props: {
     setLoading(true);
     addStake(rpcContext, stakePool, realm, publicKey, stakeLamports, jetMint)
       .then(() => {
-        setLoading(false);
         setCurrent(Steps.Success);
       })
       .catch((err: any) => {
-        console.error(err);
-        setLoading(false);
-        setCurrent(Steps.Error);
+        if (isSignTransactionError(err)) {
+          setCurrent(Steps.Start);
+          onClose();
+        } else {
+          setCurrent(Steps.Error);
+        }
       })
       .finally(() => {
+        setLoading(false);
         refresh();
       });
   };

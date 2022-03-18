@@ -8,7 +8,6 @@ import {
   getMathWallet
 } from "@solana/wallet-adapter-wallets";
 import { useCallback, useMemo } from "react";
-import { notify } from "../utils";
 import { useConnectionConfig } from "./connection";
 
 export const WalletProvider = ({ children }: { children: any }) => {
@@ -41,10 +40,6 @@ export const WalletProvider = ({ children }: { children: any }) => {
 
   const onError = useCallback((error: WalletError) => {
     console.error(error);
-    notify({
-      message: "Wallet error",
-      description: error.message
-    });
   }, []);
 
   return (

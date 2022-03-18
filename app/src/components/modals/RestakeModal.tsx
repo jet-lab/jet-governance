@@ -3,7 +3,7 @@ import { Modal, ModalProps } from "antd";
 import { restake } from "../../actions/restake";
 import { useRpcContext } from "../../hooks/useRpcContext";
 import { UnbondingAccount } from "@jet-lab/jet-engine";
-import { fromLamports } from "../../utils";
+import { fromLamports, isSignTransactionError } from "../../utils";
 import { useProposalContext } from "../../contexts/proposal";
 
 enum Steps {
@@ -38,8 +38,13 @@ export const RestakeModal = ({
       .then(() => {
         setCurrent(Steps.Success);
       })
-      .catch(() => {
-        setCurrent(Steps.Error);
+      .catch(err => {
+        if (isSignTransactionError(err)) {
+          setCurrent(Steps.Confirm);
+          onClose();
+        } else {
+          setCurrent(Steps.Error);
+        }
       })
       .finally(() => {
         setLoading(false);

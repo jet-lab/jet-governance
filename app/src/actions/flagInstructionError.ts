@@ -40,7 +40,6 @@ export const flagInstructionError = async (
     wallet,
     instructions,
     signers,
-    "Flagging instruction as broken",
     "Instruction flagged as broken"
   );
 };

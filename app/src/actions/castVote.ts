@@ -132,5 +132,5 @@ export const castVote = async (
     signers
   });
 
-  await sendAllTransactionsWithNotifications(provider, allTxs, "Voting on proposal", "Vote cast");
+  await sendAllTransactionsWithNotifications(provider, allTxs, "Vote cast");
 };

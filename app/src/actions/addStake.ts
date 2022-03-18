@@ -41,14 +41,13 @@ export const addStake = async (
 
   await AssociatedToken.withClose(instructions, owner, voteMint, owner);
 
-  const notification_title = `${fromLamports(amount, jetMint)} JET staked`;
+  const notificationTitle = `${fromLamports(amount, jetMint)} JET staked`;
 
   await sendTransactionWithNotifications(
     connection,
     wallet,
     instructions,
     signers,
-    "Staking JET",
-    notification_title
+    notificationTitle
   );
 };

@@ -15,7 +15,7 @@ export function Nav() {
   const { connected, disconnect, publicKey } = useWallet();
   const { setConnecting } = useConnectWallet();
   const [drawerOpened, setDrawerOpened] = useState(false);
-  const { claimsCount, unbondingAccounts } = useProposalContext();
+  const { claimsCount } = useProposalContext();
   const { darkTheme, toggleDarkTheme } = useDarkTheme();
 
   const navLinks = [

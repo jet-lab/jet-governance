@@ -22,8 +22,7 @@ export const withdrawUnbonded = async (
     wallet,
     instructions,
     [],
-    "Withdrawing governing tokens",
-    "Tokens have been withdrawn"
+    "JET has been withdrawn"
   );
 };
 
@@ -44,12 +43,5 @@ export const withdrawAllUnbonded = async (
     );
   }
 
-  await sendTransactionWithNotifications(
-    connection,
-    wallet,
-    ix,
-    [],
-    "Withdrawing governing tokens",
-    "Tokens have been withdrawn"
-  );
+  await sendTransactionWithNotifications(connection, wallet, ix, [], "JET has been withdrawn");
 };

@@ -4,6 +4,7 @@ import { useProposalContext } from "../../contexts/proposal";
 import { rescindAndUnstake } from "../../actions/rescindAndUnstake";
 import { useRpcContext } from "../../hooks/useRpcContext";
 import { u64 } from "@solana/spl-token";
+import { isSignTransactionError } from "../../utils";
 
 enum Steps {
   Start = 0,
@@ -69,21 +70,24 @@ export const UnstakeModal = ({
       unstakeAmount
     )
       .then(() => {
-        setLoading(false);
         setCurrent(Steps.Success);
       })
       .catch(err => {
-        console.log(err);
-        setLoading(false);
-        setCurrent(Steps.Error);
-        resetInput();
+        if (isSignTransactionError(err)) {
+          setCurrent(Steps.Start);
+          onClose();
+        } else {
+          setCurrent(Steps.Error);
+          resetInput();
+        }
       })
       .finally(() => {
+        setLoading(false);
         refresh();
       });
   };
 
-  const handleCancel = () => {
+  const handleClose = () => {
     setCurrent(Steps.Start);
     onClose();
   };
@@ -128,8 +132,8 @@ export const UnstakeModal = ({
   steps[Steps.Success] = {
     title: `All set!`,
     okText: "Okay",
-    onOk: () => handleCancel(),
-    onCancel: () => handleCancel(),
+    onOk: () => handleClose(),
+    onCancel: () => handleClose(),
     closable: true,
     cancelButtonProps: { style: { display: "none" } },
     content: (
@@ -144,8 +148,8 @@ export const UnstakeModal = ({
   steps[Steps.Error] = {
     title: "Oops! Something went wrong",
     okText: "Okay",
-    onOk: () => handleCancel(),
-    onCancel: () => handleCancel(),
+    onOk: () => handleClose(),
+    onCancel: () => handleClose(),
     closable: true,
     cancelButtonProps: { style: { display: "none" } },
     content: <p>Well that was embarassing. We've encountered an unknown error, please try again.</p>
