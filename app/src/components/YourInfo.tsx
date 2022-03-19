@@ -174,7 +174,7 @@ export const YourInfo = () => {
           <div className="wallet-overview flex justify-between column">
             <div className="flex justify-between">
               <Text className="staking-info current-staking-apr">
-                {connected ? `${rewards.apr ?? "-"}% Staking APR` : `Current Staking APR `}
+                {connected ? `${rewards.apr ?? "-"}% Staking APR ` : `Current Staking APR `}
                 <Tooltip
                   title="The displayed APR depends upon many factors, including the total number of JET staked in the module and the amount of protocol revenue flowing to depositors."
                   overlayClassName="no-arrow"
@@ -205,20 +205,18 @@ export const YourInfo = () => {
           <Divider className="divider-info" />
           <div className="flex column">
             {connected && (
-              <div className="flex justify-between">
-                <Text className="cluster">Wallet Balance</Text>
-                <Text className="cluster">
-                  {jetAccount ? toTokens(jetAccount.info.amount, jetMint) : 0}
-                </Text>
+              <div className="flex justify-between info-legend-item">
+                <Text>Wallet Balance</Text>
+                <Text>{jetAccount ? toTokens(jetAccount.info.amount, jetMint) : 0}</Text>
               </div>
             )}
-            <div className="flex justify-between">
+            <div className="flex justify-between info-legend-item">
               <Text>Staked JET</Text>
               <Text>{toTokens(stakedJet, jetMint)}</Text>
             </div>
             {connected && (
               <>
-                <div className="flex justify-between">
+                <div className="flex justify-between info-legend-item">
                   <Text>
                     Unbonding queue{" "}
                     <Tooltip
@@ -230,7 +228,7 @@ export const YourInfo = () => {
                   </Text>
                   <Text>{toTokens(unbondingQueue.toNumber(), jetMint)}</Text>
                 </div>
-                <div className="flex justify-between cluster">
+                <div className="flex justify-between info-legend-item">
                   <Text className="text-gradient bold">Available for Withdrawal</Text>
                   <Text className="text-gradient bold">
                     {toTokens(unbondingComplete.toNumber(), jetMint)}
