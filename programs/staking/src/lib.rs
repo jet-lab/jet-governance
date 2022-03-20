@@ -34,12 +34,16 @@ pub mod jet_staking {
     /// # Params
     ///
     /// * `amount` - The amount of tokens to transfer to the stake pool
-    pub fn add_stake(ctx: Context<AddStake>, amount: Amount) -> ProgramResult {
+    pub fn add_stake(ctx: Context<AddStake>, amount: Option<u64>) -> ProgramResult {
         instructions::add_stake_handler(ctx, amount)
     }
 
     /// Unbond stake from an account, allowing it to be withdrawn
-    pub fn unbond_stake(ctx: Context<UnbondStake>, seed: u32, amount: Amount) -> ProgramResult {
+    pub fn unbond_stake(
+        ctx: Context<UnbondStake>,
+        seed: u32,
+        amount: Option<u64>,
+    ) -> ProgramResult {
         instructions::unbond_stake_handler(ctx, seed, amount)
     }
 
@@ -59,46 +63,18 @@ pub mod jet_staking {
     }
 
     /// Mint voting tokens based on current stake
-    pub fn mint_votes(ctx: Context<MintVotes>, amount: Option<Amount>) -> ProgramResult {
+    pub fn mint_votes(ctx: Context<MintVotes>, amount: Option<u64>) -> ProgramResult {
         instructions::mint_votes_handler(ctx, amount)
     }
 
     /// Burn outstanding burning tokens to unlock stake
-    pub fn burn_votes(ctx: Context<BurnVotes>, amount: u64) -> ProgramResult {
+    pub fn burn_votes(ctx: Context<BurnVotes>, amount: Option<u64>) -> ProgramResult {
         instructions::burn_votes_handler(ctx, amount)
     }
 
     /// Close out the stake account, return any rent
     pub fn close_stake_account(ctx: Context<CloseStakeAccount>) -> ProgramResult {
         instructions::close_stake_account_handler(ctx)
-    }
-}
-
-#[derive(AnchorSerialize, AnchorDeserialize, Debug, Clone, Copy)]
-pub enum AmountKind {
-    Tokens,
-    Shares,
-}
-
-#[derive(AnchorSerialize, AnchorDeserialize, Debug, Clone, Copy)]
-pub struct Amount {
-    pub kind: AmountKind,
-    pub value: u64,
-}
-
-impl Amount {
-    pub fn tokens(value: u64) -> Self {
-        Self {
-            kind: AmountKind::Tokens,
-            value,
-        }
-    }
-
-    pub fn shares(value: u64) -> Self {
-        Self {
-            kind: AmountKind::Shares,
-            value,
-        }
     }
 }
 

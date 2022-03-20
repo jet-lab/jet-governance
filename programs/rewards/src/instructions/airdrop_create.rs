@@ -16,6 +16,9 @@ pub struct AirdropCreateParams {
     /// A description for this airdrop
     pub short_desc: String,
 
+    /// A longer description for this airdrop
+    pub long_desc: String,
+
     /// Airdrop settings
     pub flags: u64,
 }
@@ -75,6 +78,10 @@ pub fn airdrop_create_handler(
         .short_desc
         .as_mut()
         .write_all(params.short_desc.as_bytes())?;
+    airdrop
+        .long_desc
+        .as_mut()
+        .write_all(params.long_desc.as_bytes())?;
 
     Ok(())
 }

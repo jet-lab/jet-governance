@@ -1,6 +1,6 @@
 [package]
 name = "jet-proto-rewards"
-version = "0.1.0"
+version = "1.0.0"
 description = "Created with Anchor"
 edition = "2018"
 
@@ -16,8 +16,8 @@ cpi = ["no-entrypoint"]
 default = []
 
 [dependencies]
-anchor-lang = { git = "https://github.com/jet-lab/anchor" }
-anchor-spl = { git = "https://github.com/jet-lab/anchor" }
+anchor-lang = "0.21.0"
+anchor-spl = "0.21.0"
 
 bytemuck = "1.7"
 bitflags = "1.3"

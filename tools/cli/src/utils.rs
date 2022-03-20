@@ -130,6 +130,7 @@ struct ParamData {
     token_mint: String, //Pubkey,
     stake_pool: String, //Pubkey,
     short_desc: String,
+    long_desc: String,
 }
 
 #[derive(Debug)]
@@ -161,6 +162,7 @@ pub fn json_to_create_airdrop_param(
         expire_at: get_unix_time_90_days(),
         stake_pool,
         short_desc: json_data.short_desc,
+        long_desc: json_data.long_desc,
         flags: 0,
     };
 

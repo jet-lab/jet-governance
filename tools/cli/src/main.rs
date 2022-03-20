@@ -89,6 +89,7 @@ fn run_create_airdrop_account_and_add_recipients(
         expire_at: airdrop_create_result.create_params.expire_at,
         stake_pool: airdrop_create_result.create_params.stake_pool,
         short_desc: airdrop_create_result.create_params.short_desc,
+        long_desc: airdrop_create_result.create_params.long_desc,
         flags: airdrop_create_result.create_params.flags,
     };
 

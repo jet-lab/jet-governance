@@ -1,6 +1,7 @@
 use anchor_lang::prelude::*;
 use anchor_spl::token;
 use anchor_spl::token::Token;
+use anchor_spl::token::TokenAccount;
 use anchor_spl::token::Transfer;
 
 use crate::state::*;
@@ -31,7 +32,7 @@ pub struct WithdrawUnbonded<'info> {
 
     /// The stake pool token vault
     #[account(mut)]
-    pub stake_pool_vault: AccountInfo<'info>,
+    pub stake_pool_vault: Account<'info, TokenAccount>,
 
     /// The account that recorded the initial unbonding request
     #[account(mut,
@@ -65,21 +66,17 @@ pub fn withdraw_unbonded_handler(ctx: Context<WithdrawUnbonded>) -> ProgramResul
         return Err(ErrorCode::NotYetUnbonded.into());
     }
 
-    let vault_amount = token::accessor::amount(&ctx.accounts.stake_pool_vault)?;
-    let amount = stake_pool.convert_withdraw_amount(vault_amount, &unbonding_account.amount)?;
+    stake_pool.update_vault(ctx.accounts.stake_pool_vault.amount);
+    let unbond_amount = stake_pool.withdraw_unbonded(stake_account, unbonding_account);
 
-    stake_pool.withdraw(&amount);
-    stake_account.withdraw_unbonded(&amount);
     unbonding_account.stake_account = Pubkey::default();
-
     let stake_pool = &ctx.accounts.stake_pool;
-    let token_amount = amount.token_amount;
 
     token::transfer(
         ctx.accounts
             .transfer_context()
             .with_signer(&[&stake_pool.signer_seeds()]),
-        token_amount,
+        unbond_amount.token_amount,
     )?;
 
     Ok(())

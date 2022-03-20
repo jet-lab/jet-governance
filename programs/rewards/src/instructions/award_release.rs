@@ -60,7 +60,7 @@ pub fn award_release_handler(ctx: Context<AwardRelease>) -> ProgramResult {
         ctx.accounts
             .add_stake_context()
             .with_signer(&[&award.signer_seeds()]),
-        jet_staking::Amount::tokens(to_distribute),
+        Some(to_distribute),
     )?;
 
     Ok(())

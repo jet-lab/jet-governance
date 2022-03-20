@@ -1,6 +1,7 @@
 use anchor_lang::prelude::*;
 use anchor_spl::token;
 use anchor_spl::token::Token;
+use anchor_spl::token::TokenAccount;
 use anchor_spl::token::Transfer;
 
 use crate::state::*;
@@ -11,7 +12,8 @@ pub struct WithdrawBonded<'info> {
     pub authority: Signer<'info>,
 
     /// The stake pool to withdraw from
-    #[account(has_one = authority,
+    #[account(mut,
+              has_one = authority,
               has_one = stake_pool_vault)]
     pub stake_pool: Account<'info, StakePool>,
 
@@ -21,7 +23,7 @@ pub struct WithdrawBonded<'info> {
 
     /// The stake pool token vault
     #[account(mut)]
-    pub stake_pool_vault: AccountInfo<'info>,
+    pub stake_pool_vault: Account<'info, TokenAccount>,
 
     pub token_program: Program<'info, Token>,
 }
@@ -40,8 +42,12 @@ impl<'info> WithdrawBonded<'info> {
 }
 
 pub fn withdraw_bonded_handler(ctx: Context<WithdrawBonded>, amount: u64) -> ProgramResult {
-    let stake_pool = &ctx.accounts.stake_pool;
+    let stake_pool = &mut ctx.accounts.stake_pool;
 
+    stake_pool.update_vault(ctx.accounts.stake_pool_vault.amount);
+    stake_pool.withdraw_bonded(amount);
+
+    let stake_pool = &ctx.accounts.stake_pool;
     token::transfer(
         ctx.accounts
             .transfer_context()

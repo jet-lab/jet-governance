@@ -1,6 +1,9 @@
 use anchor_lang::prelude::*;
 
-use crate::{Amount, AmountKind, ErrorCode};
+use crate::ErrorCode;
+
+const INIT_TOKEN_SCALE: u64 = 1_000_000_000;
+const INIT_SHARE_SCALE: u64 = 10_000_000_000;
 
 #[account]
 #[derive(Default, Debug)]
@@ -31,9 +34,15 @@ pub struct StakePool {
     /// The total amount of virtual stake tokens that can receive rewards
     pub shares_bonded: u64,
 
-    /// The total amount of tokens that are being unbonded, and can be withdrawn
-    /// in the future.
+    /// The total amount of tokens being unbonded
     pub tokens_unbonding: u64,
+
+    /// The amount of tokens stored by the pool's vault
+    pub vault_amount: u64,
+
+    /// A token to identify when unbond conversions are invalidated due to
+    /// a withdraw of bonded tokens.
+    pub unbond_change_index: u64,
 }
 
 impl StakePool {
@@ -41,69 +50,133 @@ impl StakePool {
         [&self.seed[..self.seed_len as usize], &self.bump_seed[..]]
     }
 
-    pub fn deposit(&mut self, amount: &FullAmount) {
-        self.shares_bonded = self.shares_bonded.checked_add(amount.share_amount).unwrap();
-    }
+    pub fn amount(&self) -> FullAmount {
+        let (tokens, shares) = match self.vault_amount {
+            0 => (INIT_TOKEN_SCALE, INIT_SHARE_SCALE),
+            n => (n - self.tokens_unbonding, self.shares_bonded),
+        };
 
-    pub fn withdraw(&mut self, amount: &FullAmount) {
-        self.shares_bonded = self.shares_bonded.checked_sub(amount.share_amount).unwrap();
-        self.tokens_unbonding = self
-            .tokens_unbonding
-            .checked_sub(amount.token_amount)
-            .unwrap();
-    }
-
-    pub fn unbond(&mut self, amount: &FullAmount) {
-        self.tokens_unbonding = self
-            .tokens_unbonding
-            .checked_add(amount.token_amount)
-            .unwrap();
-    }
-
-    pub fn rebond(&mut self, amount: &FullAmount) {
-        self.withdraw(amount);
-        self.deposit(amount);
-    }
-
-    pub fn convert_amount(
-        &self,
-        vault_amount: u64,
-        amount: Amount,
-    ) -> Result<FullAmount, ErrorCode> {
-        if amount.value == 0 {
-            msg!("the amount cannot be zero");
-            return Err(ErrorCode::InvalidAmount);
-        }
-
-        let tokens = std::cmp::max(vault_amount, 1);
-        let shares = std::cmp::max(self.shares_bonded, 1);
-        let full_amount = FullAmount {
+        FullAmount {
             token_amount: 0,
             share_amount: 0,
             shares,
             tokens,
-        };
-
-        Ok(match amount.kind {
-            AmountKind::Tokens => full_amount.with_tokens(amount.value),
-            AmountKind::Shares => full_amount.with_shares(amount.value),
-        })
-    }
-
-    pub fn convert_withdraw_amount(
-        &self,
-        vault_amount: u64,
-        full_amount: &FullAmount,
-    ) -> Result<FullAmount, ErrorCode> {
-        let cur_amount =
-            self.convert_amount(vault_amount, Amount::shares(full_amount.share_amount))?;
-
-        if cur_amount.token_amount < full_amount.token_amount {
-            Ok(cur_amount)
-        } else {
-            Ok(*full_amount)
         }
     }
+
+    pub fn update_vault(&mut self, vault_amount: u64) {
+        self.vault_amount = vault_amount;
+    }
+
+    pub fn deposit(&mut self, account: &mut StakeAccount, amount: u64) -> FullAmount {
+        let full_amount = self.amount().with_tokens(Rounding::Down, amount);
+
+        self.shares_bonded = self
+            .shares_bonded
+            .checked_add(full_amount.share_amount)
+            .unwrap();
+
+        self.vault_amount = self
+            .vault_amount
+            .checked_add(full_amount.token_amount)
+            .unwrap();
+
+        account.deposit(&full_amount);
+
+        full_amount
+    }
+
+    pub fn unbond(
+        &mut self,
+        account: &mut StakeAccount,
+        record: &mut UnbondingAccount,
+        amount: Option<u64>,
+    ) -> Result<(), ErrorCode> {
+        let full_amount = match amount {
+            Some(n) => self.amount().with_tokens(Rounding::Up, n),
+            None => self.amount().with_shares(Rounding::Down, account.shares),
+        };
+
+        account.unbond(&full_amount)?;
+
+        self.shares_bonded = self
+            .shares_bonded
+            .checked_sub(full_amount.share_amount)
+            .unwrap();
+        self.tokens_unbonding = self
+            .tokens_unbonding
+            .checked_add(full_amount.token_amount)
+            .unwrap();
+
+        record.amount = full_amount;
+        record.unbond_change_index = self.unbond_change_index;
+
+        Ok(())
+    }
+
+    pub fn withdraw_unbonded(
+        &mut self,
+        account: &mut StakeAccount,
+        record: &UnbondingAccount,
+    ) -> FullAmount {
+        let full_amount = match record.unbond_change_index {
+            idx if idx == self.unbond_change_index => {
+                self.tokens_unbonding = self
+                    .tokens_unbonding
+                    .checked_sub(record.amount.token_amount)
+                    .unwrap();
+
+                record.amount
+            }
+
+            _ => self
+                .amount()
+                .with_shares(Rounding::Down, record.amount.share_amount),
+        };
+
+        account.withdraw_unbonded(&full_amount);
+        self.vault_amount = self
+            .vault_amount
+            .checked_sub(full_amount.token_amount)
+            .unwrap();
+
+        full_amount
+    }
+
+    pub fn withdraw_bonded(&mut self, amount: u64) {
+        self.tokens_unbonding = 0;
+        self.unbond_change_index += 1;
+        self.vault_amount = self.vault_amount.checked_sub(amount).unwrap();
+    }
+
+    pub fn rebond(&mut self, account: &mut StakeAccount, record: &UnbondingAccount) {
+        let amount = self.withdraw_unbonded(account, record);
+        self.deposit(account, amount.token_amount);
+    }
+
+    pub fn mint_votes(
+        &self,
+        account: &mut StakeAccount,
+        amount: Option<u64>,
+    ) -> Result<u64, ErrorCode> {
+        let full_amount = match amount {
+            Some(token_amount) => self.amount().with_tokens(Rounding::Up, token_amount),
+            None => {
+                let user_amount = self.amount().with_shares(Rounding::Down, account.shares);
+
+                let unminted = user_amount.token_amount - account.minted_votes;
+                user_amount.with_tokens(Rounding::Up, unminted)
+            }
+        };
+
+        account.mint_votes(&full_amount)
+    }
+}
+
+#[derive(Debug, Eq, PartialEq, Clone, Copy)]
+pub enum Rounding {
+    Up,
+    Down,
 }
 
 #[derive(AnchorSerialize, AnchorDeserialize, Debug, Default, Clone, Copy)]
@@ -115,12 +188,20 @@ pub struct FullAmount {
 }
 
 impl FullAmount {
-    pub fn with_tokens(&self, token_amount: u64) -> Self {
-        let share_amount = (token_amount as u128) * (self.shares as u128) / (self.tokens as u128);
+    pub fn with_tokens(&self, rounding: Rounding, token_amount: u64) -> Self {
+        let round_amount = match rounding {
+            Rounding::Up if token_amount > 0 => self.shares as u128 / 2,
+            _ => 0,
+        };
+        let share_amount =
+            (round_amount + (token_amount as u128) * (self.shares as u128)) / (self.tokens as u128);
+
         assert!(share_amount < std::u64::MAX as u128);
         assert!((share_amount > 0 && token_amount > 0) || (share_amount == 0 && token_amount == 0));
 
         let share_amount = share_amount as u64;
+        let token_amount = token_amount as u64;
+
         Self {
             token_amount,
             share_amount,
@@ -129,12 +210,19 @@ impl FullAmount {
         }
     }
 
-    pub fn with_shares(&self, share_amount: u64) -> Self {
-        let token_amount = (self.tokens as u128) * (share_amount as u128) / (self.shares as u128);
+    pub fn with_shares(&self, rounding: Rounding, share_amount: u64) -> Self {
+        let round_amount = match rounding {
+            Rounding::Up if share_amount > 0 => self.tokens as u128 / 2,
+            _ => 0,
+        };
+        let token_amount =
+            (round_amount + (self.tokens as u128) * (share_amount as u128)) / (self.shares as u128);
+
         assert!(token_amount < std::u64::MAX as u128);
         assert!((share_amount > 0 && token_amount > 0) || (share_amount == 0 && token_amount == 0));
 
         let token_amount = token_amount as u64;
+
         Self {
             token_amount,
             share_amount,
@@ -145,7 +233,7 @@ impl FullAmount {
 }
 
 #[account]
-#[derive(Default)]
+#[derive(Default, Debug)]
 pub struct StakeAccount {
     /// The account that has ownership over this stake
     pub owner: Pubkey,
@@ -184,7 +272,7 @@ impl StakeAccount {
         self.shares = self.shares.checked_sub(amount.share_amount).unwrap();
         self.unbonding = self.unbonding.checked_add(amount.share_amount).unwrap();
 
-        let minted_vote_amount = amount.with_tokens(self.minted_votes);
+        let minted_vote_amount = amount.with_tokens(Rounding::Up, self.minted_votes);
         if minted_vote_amount.share_amount > self.shares {
             return Err(ErrorCode::VotesLocked);
         }
@@ -200,31 +288,30 @@ impl StakeAccount {
         self.unbonding = self.unbonding.checked_sub(amount.share_amount).unwrap();
     }
 
-    pub fn mint_votes(&mut self, amount: &FullAmount) -> Result<(), ErrorCode> {
-        let initial_minted_amount = amount.with_tokens(self.minted_votes);
+    pub fn mint_votes(&mut self, amount: &FullAmount) -> Result<u64, ErrorCode> {
+        let initial_minted_amount = amount.with_tokens(Rounding::Down, self.minted_votes);
         let total_requested_vote_amount = self
             .minted_votes
             .checked_add(amount.token_amount)
             .ok_or(ErrorCode::InvalidAmount)?;
 
-        let minted_vote_amount = amount.with_tokens(total_requested_vote_amount);
+        let minted_vote_amount = amount.with_tokens(Rounding::Down, total_requested_vote_amount);
         if initial_minted_amount.share_amount == minted_vote_amount.share_amount {
             msg!("the amount provided is too insignificant to mint new votes for");
-            return Err(ErrorCode::InvalidAmount);
+            return Ok(0);
         }
 
         if minted_vote_amount.share_amount > self.shares {
-            let max_amount = amount.with_shares(self.shares);
             msg!(
                 "insufficient stake for votes: requested={}, available={}",
-                minted_vote_amount.token_amount,
-                max_amount.token_amount
+                minted_vote_amount.share_amount,
+                self.shares
             );
             return Err(ErrorCode::InsufficientStake);
         }
 
         self.minted_votes = total_requested_vote_amount;
-        Ok(())
+        Ok(amount.token_amount)
     }
 
     pub fn burn_votes(&mut self, amount: u64) {
@@ -243,208 +330,157 @@ pub struct UnbondingAccount {
 
     /// The time after which the staked amount can be withdrawn
     pub unbonded_at: i64,
+
+    /// The unbonding index at the time the request was made
+    pub unbond_change_index: u64,
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
 
-    fn deposit(pool: &mut StakePool, user: &mut StakeAccount, vault: &mut u64, amount: Amount) {
-        let full_amount = pool.convert_amount(*vault, amount).unwrap();
-
-        pool.deposit(&full_amount);
-        user.deposit(&full_amount);
-        *vault += full_amount.token_amount;
-    }
-
-    fn unbond(
-        pool: &mut StakePool,
-        user: &mut StakeAccount,
-        vault: &mut u64,
-        amount: Amount,
-    ) -> FullAmount {
-        let full_amount = pool.convert_amount(*vault, amount).unwrap();
-
-        pool.unbond(&full_amount);
-        user.unbond(&full_amount).unwrap();
-
-        full_amount
-    }
-
-    fn withdraw(
-        pool: &mut StakePool,
-        user: &mut StakeAccount,
-        vault: &mut u64,
-        full_amount: &FullAmount,
-    ) {
-        let full_amount = pool.convert_withdraw_amount(*vault, full_amount).unwrap();
-
-        pool.withdraw(&full_amount);
-        user.withdraw_unbonded(&full_amount);
-        *vault -= full_amount.token_amount;
-    }
-
-    fn mint_votes(
-        pool: &StakePool,
-        user: &mut StakeAccount,
-        vault: &u64,
-        amount: Amount,
-    ) -> Result<(), ErrorCode> {
-        let full_amount = pool.convert_amount(*vault, amount)?;
-
-        user.mint_votes(&full_amount)
-    }
-
     #[test]
     fn check_precision() {
-        let mut vault = 0;
         let mut pool = StakePool::default();
         let mut user_a = StakeAccount::default();
         let mut user_b = StakeAccount::default();
 
         // user A deposit 1_000 units, should be 1:1 ratio with shares
-        deposit(&mut pool, &mut user_a, &mut vault, Amount::tokens(1_000));
+        pool.deposit(&mut user_a, 1_000);
 
-        assert_eq!(1_000, vault);
-        assert_eq!(1_000, pool.shares_bonded);
+        assert_eq!(1_000, pool.vault_amount);
+        assert_eq!(10_000, pool.shares_bonded);
 
-        // increase the vault contents to change the unit to share ratio to 1.5:1
-        vault += 500;
+        // increase the vault contents to change the unit to share ratio to 0.15:1
+        pool.vault_amount += 500;
 
-        // user B deposit 19 units, which is about 12.66 shares
-        deposit(&mut pool, &mut user_b, &mut vault, Amount::tokens(19));
+        // user B deposit 28 units, which is about 186.6 shares (rounded to 22 units)
+        pool.deposit(&mut user_b, 28);
 
-        assert_eq!(1_519, vault);
-        assert_eq!(1_012, pool.shares_bonded);
+        assert_eq!(1_528, pool.vault_amount);
+        assert_eq!(10_186, pool.shares_bonded);
 
-        // attempt to withdraw all 12 shares for user B, expect only 18 units
-        let unbonded = unbond(&mut pool, &mut user_b, &mut vault, Amount::shares(12));
-        withdraw(&mut pool, &mut user_b, &mut vault, &unbonded);
+        // attempt to withdraw all 186 shares for user B, expect 27 units
+        let mut unbond_b_0 = UnbondingAccount::default();
+        pool.unbond(&mut user_b, &mut unbond_b_0, None).unwrap();
+        pool.withdraw_unbonded(&mut user_b, &mut unbond_b_0);
 
-        assert_eq!(1_501, vault);
-        assert_eq!(1_000, pool.shares_bonded);
-        assert_eq!(0, pool.tokens_unbonding);
+        assert_eq!(1_501, pool.vault_amount);
+        assert_eq!(10_000, pool.shares_bonded);
 
-        // user B deposits 173_231 units, with 1.5:1 ratio
-        deposit(&mut pool, &mut user_b, &mut vault, Amount::tokens(173_231));
+        // Increase share ratio to 1.5:1
+        pool.vault_amount *= 10;
 
-        assert_eq!(174_732, vault);
-        assert_eq!(116_410, pool.shares_bonded);
+        // user B deposits 1_732_311 units
+        pool.deposit(&mut user_b, 1_732_311);
 
-        // attempt to withdraw all shares for user B, expect 1 less token
-        let unbonded = unbond(&mut pool, &mut user_b, &mut vault, Amount::shares(115410));
-        withdraw(&mut pool, &mut user_b, &mut vault, &unbonded);
+        assert_eq!(1_747_321, pool.vault_amount);
+        assert_eq!(1_164_104, pool.shares_bonded);
 
-        assert_eq!(1_502, vault);
-        assert_eq!(1_000, pool.shares_bonded);
-        assert_eq!(0, pool.tokens_unbonding);
+        // attempt to withdraw all tokens for user B, expect 1 less token
+        let mut unbond_b_1 = UnbondingAccount::default();
+        pool.unbond(&mut user_b, &mut unbond_b_1, None).unwrap();
+        pool.withdraw_unbonded(&mut user_b, &mut unbond_b_1);
+
+        assert_eq!(15_011, pool.vault_amount);
+        assert_eq!(10_000, pool.shares_bonded);
     }
 
     #[test]
     fn check_unbond_conversion_effect() {
-        let mut vault = 0;
         let mut pool = StakePool::default();
         let mut user_a = StakeAccount::default();
         let mut user_b = StakeAccount::default();
 
-        deposit(
-            &mut pool,
-            &mut user_a,
-            &mut vault,
-            Amount::tokens(1_250_000),
-        );
-        deposit(&mut pool, &mut user_b, &mut vault, Amount::tokens(750_000));
+        pool.deposit(&mut user_a, 1_250_000);
+        pool.deposit(&mut user_b, 750_000);
 
-        assert_eq!(2_000_000, vault);
-        assert_eq!(2_000_000, pool.shares_bonded);
+        assert_eq!(2_000_000, pool.vault_amount);
+        assert_eq!(20_000_000, pool.shares_bonded);
 
-        vault += 1_200_000;
+        pool.vault_amount += 1_200_000;
 
         // at this point user_a has 2_000_000 tokens
         // ..            user_b has 1_200_000 tokens
 
-        // unbond 200_000 tokens, which should be equal to 125_000 shares
-        let unbonded_0 = unbond(&mut pool, &mut user_b, &mut vault, Amount::tokens(200_000));
+        // unbond 200_000 tokens, which should be equal to 1_250_000 shares
+        let mut unbond_b_0 = UnbondingAccount::default();
+        pool.unbond(&mut user_b, &mut unbond_b_0, Some(200_000))
+            .unwrap();
 
-        assert_eq!(125_000, user_b.unbonding);
-        assert_eq!(625_000, user_b.shares);
+        assert_eq!(1_250_003, user_b.unbonding);
+        assert_eq!(6_249_997, user_b.shares);
 
         // increase share value while unbond is waiting
-        vault += 2_400_000;
+        pool.vault_amount += 2_400_000;
 
-        // unbond 200_000 tokens, which should be equal to 71_429 shares
-        let unbonded_1 = unbond(&mut pool, &mut user_b, &mut vault, Amount::tokens(200_000));
+        // unbond 200_000 tokens, which should be equal to 694_446 shares
+        let mut unbond_b_1 = UnbondingAccount::default();
+        pool.unbond(&mut user_b, &mut unbond_b_1, Some(200_000))
+            .unwrap();
 
-        assert_eq!(196_428, user_b.unbonding);
-        assert_eq!(553_572, user_b.shares);
+        assert_eq!(1_944_449, user_b.unbonding);
+        assert_eq!(5_555_551, user_b.shares);
 
         // increased share value shouldn't matter
-        vault += 2_400_000;
+        pool.vault_amount += 2_400_000;
 
         // withdraw all unbonded tokens
-        withdraw(&mut pool, &mut user_b, &mut vault, &unbonded_0);
-        withdraw(&mut pool, &mut user_b, &mut vault, &unbonded_1);
+        pool.withdraw_unbonded(&mut user_b, &unbond_b_1);
+        pool.withdraw_unbonded(&mut user_b, &unbond_b_0);
 
         assert_eq!(0, user_b.unbonding);
-        assert_eq!(553_572, user_b.shares);
-        assert_eq!(7_600_000, vault);
+        assert_eq!(5_555_551, user_b.shares);
+        assert_eq!(7_600_000, pool.vault_amount);
 
         // start unbonding again, then reduce share values
-        let unbonded_2 = unbond(&mut pool, &mut user_b, &mut vault, Amount::shares(53_572));
+        let mut unbond_b_2 = UnbondingAccount::default();
+        pool.unbond(&mut user_b, &mut unbond_b_2, Some(233_844))
+            .unwrap();
 
-        vault -= 5_600_000;
+        pool.withdraw_bonded(5_600_000);
 
         // withdraw should provide less than what was unbonded, since token per share was reduced
-        withdraw(&mut pool, &mut user_b, &mut vault, &unbonded_2);
+        let _ = pool.withdraw_unbonded(&mut user_b, &unbond_b_2);
 
         assert_eq!(0, user_b.unbonding);
-        assert_eq!(500_000, user_b.shares);
-        assert_eq!(1_940_594, vault);
+        assert_eq!(5_000_000, user_b.shares);
+        assert_eq!(1_936_509, pool.vault_amount);
     }
 
     #[test]
     fn check_minting_votes_effect() {
-        let mut vault = 0;
         let mut pool = StakePool::default();
         let mut user_a = StakeAccount::default();
         let mut user_b = StakeAccount::default();
 
-        deposit(
-            &mut pool,
-            &mut user_a,
-            &mut vault,
-            Amount::tokens(1_250_000),
-        );
-        deposit(&mut pool, &mut user_b, &mut vault, Amount::tokens(750_000));
+        pool.deposit(&mut user_a, 1_250_000);
+        pool.deposit(&mut user_b, 750_000);
 
-        vault += 1_200_000;
+        pool.vault_amount += 1_200_000;
 
         // at this point user_a has 2_000_000 tokens
         // ..            user_b has 1_200_000 tokens
 
-        let result_a = mint_votes(&pool, &mut user_a, &vault, Amount::tokens(2_000_000));
+        let result_a = pool.mint_votes(&mut user_a, Some(2_000_000));
+        let result_b = pool.mint_votes(&mut user_b, None);
 
-        let shares_b = Amount::shares(user_b.shares);
-        let result_b = mint_votes(&pool, &mut user_b, &vault, shares_b);
+        assert_eq!(Ok(2_000_000), result_a);
+        assert_eq!(Ok(1_200_000), result_b);
 
-        assert_eq!(Ok(()), result_a);
-        assert_eq!(Ok(()), result_b);
-
-        let result_a = mint_votes(&pool, &mut user_a, &vault, Amount::tokens(2));
-        let result_b = mint_votes(&pool, &mut user_b, &vault, Amount::shares(2));
+        let result_a = pool.mint_votes(&mut user_a, Some(20));
 
         assert_eq!(Err(ErrorCode::InsufficientStake), result_a);
-        assert_eq!(Err(ErrorCode::InsufficientStake), result_b);
 
-        vault += 1_200_000;
+        pool.vault_amount += 1_200_000;
 
         // at this point user_a has 2_750_000 tokens
         // ..            user_b has 1_650_000 tokens
 
-        let result_a = mint_votes(&pool, &mut user_a, &vault, Amount::tokens(750_000));
-        let result_b = mint_votes(&pool, &mut user_b, &vault, Amount::tokens(450_000));
+        let result_a = pool.mint_votes(&mut user_a, Some(750_000));
+        let result_b = pool.mint_votes(&mut user_b, Some(450_000));
 
-        assert_eq!(Ok(()), result_a);
-        assert_eq!(Ok(()), result_b);
+        assert_eq!(Ok(750_000), result_a);
+        assert_eq!(Ok(450_000), result_b);
     }
 }

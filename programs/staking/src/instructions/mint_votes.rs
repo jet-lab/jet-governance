@@ -1,8 +1,8 @@
 use anchor_lang::prelude::*;
-use anchor_spl::token::{self, MintTo, Token};
+use anchor_spl::token::{self, MintTo, Token, TokenAccount};
 use solana_program::program::invoke;
 
-use crate::{state::*, Amount, SplGovernance};
+use crate::{state::*, SplGovernance};
 
 #[derive(Accounts)]
 pub struct MintVotes<'info> {
@@ -10,12 +10,13 @@ pub struct MintVotes<'info> {
     pub owner: Signer<'info>,
 
     /// The stake pool to mint votes from
-    #[account(has_one = stake_vote_mint,
+    #[account(mut,
+              has_one = stake_vote_mint,
               has_one = stake_pool_vault)]
-    pub stake_pool: Account<'info, StakePool>,
+    pub stake_pool: Box<Account<'info, StakePool>>,
 
     /// The stake pool token vault
-    pub stake_pool_vault: AccountInfo<'info>,
+    pub stake_pool_vault: Box<Account<'info, TokenAccount>>,
 
     /// The stake pool's voter mint
     #[account(mut)]
@@ -25,7 +26,7 @@ pub struct MintVotes<'info> {
     #[account(mut,
               has_one = owner,
               has_one = stake_pool)]
-    pub stake_account: Account<'info, StakeAccount>,
+    pub stake_account: Box<Account<'info, StakeAccount>>,
 
     /// A temporary token account for storing vote tokens
     #[account(mut)]
@@ -94,32 +95,22 @@ impl<'info> MintVotes<'info> {
     }
 }
 
-pub fn mint_votes_handler(ctx: Context<MintVotes>, amount: Option<Amount>) -> ProgramResult {
-    let stake_pool = &ctx.accounts.stake_pool;
+pub fn mint_votes_handler(ctx: Context<MintVotes>, amount: Option<u64>) -> ProgramResult {
+    let stake_pool = &mut ctx.accounts.stake_pool;
     let stake_account = &mut ctx.accounts.stake_account;
 
-    let vault_amount = token::accessor::amount(&ctx.accounts.stake_pool_vault)?;
-    let full_amount = match amount {
-        Some(amount) => stake_pool.convert_amount(vault_amount, amount)?,
-        None => {
-            let user_amount =
-                stake_pool.convert_amount(vault_amount, Amount::shares(stake_account.shares))?;
-            let unminted = user_amount.token_amount - stake_account.minted_votes;
-
-            user_amount.with_tokens(unminted)
-        }
-    };
-
-    stake_account.mint_votes(&full_amount)?;
+    stake_pool.update_vault(ctx.accounts.stake_pool_vault.amount);
+    let mint_amount = stake_pool.mint_votes(stake_account, amount)?;
+    let stake_pool = &ctx.accounts.stake_pool;
 
     token::mint_to(
         ctx.accounts
             .mint_context()
             .with_signer(&[&stake_pool.signer_seeds()]),
-        full_amount.token_amount,
+        mint_amount,
     )?;
 
-    ctx.accounts.deposit_gov_tokens(full_amount.token_amount)?;
+    ctx.accounts.deposit_gov_tokens(mint_amount)?;
 
     Ok(())
 }

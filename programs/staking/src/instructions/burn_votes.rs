@@ -45,17 +45,21 @@ impl<'info> BurnVotes<'info> {
     }
 }
 
-pub fn burn_votes_handler(ctx: Context<BurnVotes>, amount: u64) -> ProgramResult {
+pub fn burn_votes_handler(ctx: Context<BurnVotes>, amount: Option<u64>) -> ProgramResult {
     let stake_pool = &ctx.accounts.stake_pool;
     let stake_account = &mut ctx.accounts.stake_account;
 
-    stake_account.burn_votes(amount);
+    let token_amount = match amount {
+        Some(n) => n,
+        None => token::accessor::amount(&ctx.accounts.voter_token_account)?,
+    };
+    stake_account.burn_votes(token_amount);
 
     token::burn(
         ctx.accounts
             .burn_context()
             .with_signer(&[&stake_pool.signer_seeds()]),
-        amount,
+        token_amount,
     )?;
 
     Ok(())

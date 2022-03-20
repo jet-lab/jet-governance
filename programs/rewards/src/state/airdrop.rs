@@ -27,7 +27,10 @@ pub struct Airdrop {
     pub flags: u64,
 
     /// A short descriptive text for the airdrop
-    pub short_desc: [u8; 31],
+    pub short_desc: [u8; 32],
+
+    /// A longer descriptive text for the airdrop
+    pub long_desc: [u8; 255],
 
     /// The bump seed for the reward vault
     pub vault_bump: [u8; 1],

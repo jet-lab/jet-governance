@@ -31,7 +31,10 @@ pub struct DistributionCreateParams {
 pub struct DistributionCreate<'info> {
     /// The account to store the distribution info
     #[account(init,
-              seeds = [params.seed.as_bytes()],
+              seeds = [
+                  b"distribution".as_ref(),
+                  params.seed.as_bytes()
+              ],
               bump,
               payer = payer_rent)]
     pub distribution: Account<'info, Distribution>,

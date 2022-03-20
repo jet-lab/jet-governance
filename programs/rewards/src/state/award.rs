@@ -28,8 +28,9 @@ pub struct Award {
 }
 
 impl Award {
-    pub fn signer_seeds(&self) -> [&[u8]; 3] {
+    pub fn signer_seeds(&self) -> [&[u8]; 4] {
         [
+            b"award".as_ref(),
             self.stake_account.as_ref(),
             &self.seed[..self.seed_len as usize],
             self.bump_seed.as_ref(),

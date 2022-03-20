@@ -73,7 +73,7 @@ pub fn airdrop_claim_handler(ctx: Context<AirdropClaim>) -> ProgramResult {
         ctx.accounts
             .add_stake_context()
             .with_signer(&[&airdrop.signer_seeds()]),
-        jet_staking::Amount::tokens(claimed_amount),
+        Some(claimed_amount),
     )?;
 
     Ok(())

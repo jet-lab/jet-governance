@@ -32,6 +32,7 @@ pub struct AwardCreate<'info> {
     /// The award being created
     #[account(init,
               seeds = [
+                  b"award".as_ref(),
                   params.stake_account.as_ref(),
                   params.seed.as_bytes(),
               ],

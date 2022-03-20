@@ -12,9 +12,7 @@ import {
 import { Token, TOKEN_PROGRAM_ID, u64 } from "@solana/spl-token";
 import {
   withCreateRealm,
-  withCreateGovernance,
   MintMaxVoteWeightSource,
-  MintMaxVoteWeightSourceType,
   getTokenHoldingAddress,
   getTokenOwnerRecordAddress
 } from "@solana/spl-governance";
@@ -22,7 +20,6 @@ import { JetRewards } from "../target/types/jet_rewards";
 import { JetStaking } from "../target/types/jet_staking";
 import { JetAuth } from "../target/types/jet_auth";
 import { assert } from "chai";
-import { string } from "yargs";
 
 const GOVERNANCE_ID = new PublicKey("JPGovTiAUgyqirerBbXXmfyt3SkHVEcpSAPjRCCSHVx");
 const RewardsProgram = anchor.workspace.JetRewards as Program<JetRewards>;
@@ -212,6 +209,7 @@ describe("airdrop-staking", () => {
       expireAt: new anchor.BN(Date.now() / 1000 + 10),
       stakePool: stakeAcc.stakePool,
       shortDesc: "integ-test-airdrop",
+      longDesc: "integ-test-airdrop description",
       flags: new anchor.BN(0)
     };
 
@@ -311,7 +309,7 @@ describe("airdrop-staking", () => {
 
     await StakingProgram.rpc.unbondStake(
       0,
-      { kind: { tokens: {} }, value: new u64(4_200_000_000) },
+      new u64(4_199_999_999),
       {
         accounts: {
           owner: staker.publicKey,
@@ -344,7 +342,7 @@ describe("airdrop-staking", () => {
   it("user unbonds again", async () => {
     await StakingProgram.rpc.unbondStake(
       0,
-      { kind: { tokens: {} }, value: new u64(4_200_000_000) },
+      new u64(4_199_999_999),
       {
         accounts: {
           owner: staker.publicKey,
@@ -379,7 +377,7 @@ describe("airdrop-staking", () => {
 
     const updatedAta = await testToken.getOrCreateAssociatedAccountInfo(staker.publicKey);
 
-    assert.equal(updatedAta.amount.toNumber(), 4_200_000_000);
+    assert.equal(updatedAta.amount.toNumber(), 4_199_999_999);
   });
 
   it("close airdrop", async () => {
@@ -406,7 +404,7 @@ describe("airdrop-staking", () => {
     const testAta = await testToken.getOrCreateAssociatedAccountInfo(staker.publicKey);
 
     await StakingProgram.rpc.addStake(
-      { kind: { tokens: {} }, value: new u64(4_200_000_000) },
+      new u64(4_199_999_999),
       {
         accounts: {
           stakeAccount: stakerAccount,
@@ -431,7 +429,7 @@ describe("airdrop-staking", () => {
     let distSeed = "foo";
 
     [distAccount, bumpSeed] = await PublicKey.findProgramAddress(
-      [Buffer.from(distSeed)],
+      [Buffer.from("distribution"), Buffer.from(distSeed)],
       RewardsProgram.programId
     );
 
@@ -485,7 +483,7 @@ describe("airdrop-staking", () => {
     let distSeed = "foo-award";
 
     [awardAccount, bumpSeed] = await PublicKey.findProgramAddress(
-      [stakerAccount.toBuffer(), Buffer.from(distSeed)],
+      [Buffer.from("award"), stakerAccount.toBuffer(), Buffer.from(distSeed)],
       RewardsProgram.programId
     );
 
@@ -552,7 +550,7 @@ describe("airdrop-staking", () => {
     let distSeed = "revoke-award";
 
     [awardAccount, bumpSeed] = await PublicKey.findProgramAddress(
-      [stakerAccount.toBuffer(), Buffer.from(distSeed)],
+      [Buffer.from("award"), stakerAccount.toBuffer(), Buffer.from(distSeed)],
       RewardsProgram.programId
     );
 
@@ -640,11 +638,10 @@ describe("airdrop-staking", () => {
   });
 
   it("mint zero votes", async () => {
-    try {
       const voteAta = await voteToken.getOrCreateAssociatedAccountInfo(staker.publicKey);
 
       await StakingProgram.rpc.mintVotes(
-        { kind: { tokens: {} }, value: new u64(0) },
+        new u64(0),
         {
           accounts: {
             owner: staker.publicKey,
@@ -665,11 +662,6 @@ describe("airdrop-staking", () => {
           signers: [staker]
         }
       );
-
-      assert.ok(false);
-    } catch (e) {
-      assert.equal(e.code, 6005);
-    }
   });
 
   it("mint max votes", async () => {
@@ -705,7 +697,7 @@ describe("airdrop-staking", () => {
       const voteAta = await voteToken.getOrCreateAssociatedAccountInfo(staker.publicKey);
 
       await StakingProgram.rpc.mintVotes(
-        { kind: { tokens: {} }, value: new u64(1_000) },
+        new u64(1_000),
         {
           accounts: {
             owner: staker.publicKey,
@@ -744,7 +736,7 @@ describe("airdrop-staking", () => {
 
       await StakingProgram.rpc.unbondStake(
         0,
-        { kind: { tokens: {} }, value: new u64(4_200_000_000) },
+        new u64(4_200_000_000),
         {
           accounts: {
             owner: staker.publicKey,
@@ -777,6 +769,7 @@ describe("airdrop-staking", () => {
       expireAt: new anchor.BN(Date.now() / 1000 + 1000),
       stakePool: stakeAcc.stakePool,
       shortDesc: "integ-test-airdrop",
+      longDesc: "some airdrop testing",
       vaultBump: bumpSeed,
       flags: new anchor.BN(0)
     };

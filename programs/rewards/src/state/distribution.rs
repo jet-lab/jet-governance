@@ -29,8 +29,9 @@ pub struct Distribution {
 }
 
 impl Distribution {
-    pub fn signer_seeds(&self) -> [&[u8]; 2] {
+    pub fn signer_seeds(&self) -> [&[u8]; 3] {
         [
+            b"distribution".as_ref(),
             &self.seed[..self.seed_len as usize],
             self.bump_seed.as_ref(),
         ]
