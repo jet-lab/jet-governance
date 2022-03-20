@@ -307,22 +307,18 @@ describe("airdrop-staking", () => {
       StakingProgram.programId
     );
 
-    await StakingProgram.rpc.unbondStake(
-      0,
-      new u64(4_199_999_999),
-      {
-        accounts: {
-          owner: staker.publicKey,
-          payer: wallet.publicKey,
-          stakeAccount: stakerAccount,
-          stakePool: stakeAcc.stakePool,
-          stakePoolVault: stakeAcc.stakePoolVault,
-          unbondingAccount: stakerUnbond,
-          systemProgram: SystemProgram.programId
-        },
-        signers: [staker]
-      }
-    );
+    await StakingProgram.rpc.unbondStake(0, new u64(4_199_999_999), {
+      accounts: {
+        owner: staker.publicKey,
+        payer: wallet.publicKey,
+        stakeAccount: stakerAccount,
+        stakePool: stakeAcc.stakePool,
+        stakePoolVault: stakeAcc.stakePoolVault,
+        unbondingAccount: stakerUnbond,
+        systemProgram: SystemProgram.programId
+      },
+      signers: [staker]
+    });
   });
 
   it("user cancels unbonding", async () => {
@@ -340,22 +336,18 @@ describe("airdrop-staking", () => {
   });
 
   it("user unbonds again", async () => {
-    await StakingProgram.rpc.unbondStake(
-      0,
-      new u64(4_199_999_999),
-      {
-        accounts: {
-          owner: staker.publicKey,
-          payer: wallet.publicKey,
-          stakeAccount: stakerAccount,
-          stakePool: stakeAcc.stakePool,
-          stakePoolVault: stakeAcc.stakePoolVault,
-          unbondingAccount: stakerUnbond,
-          systemProgram: SystemProgram.programId
-        },
-        signers: [staker]
-      }
-    );
+    await StakingProgram.rpc.unbondStake(0, new u64(4_199_999_999), {
+      accounts: {
+        owner: staker.publicKey,
+        payer: wallet.publicKey,
+        stakeAccount: stakerAccount,
+        stakePool: stakeAcc.stakePool,
+        stakePoolVault: stakeAcc.stakePoolVault,
+        unbondingAccount: stakerUnbond,
+        systemProgram: SystemProgram.programId
+      },
+      signers: [staker]
+    });
   });
 
   it("user withdraws unbonded stake", async () => {
@@ -403,20 +395,17 @@ describe("airdrop-staking", () => {
   it("user restakes", async () => {
     const testAta = await testToken.getOrCreateAssociatedAccountInfo(staker.publicKey);
 
-    await StakingProgram.rpc.addStake(
-      new u64(4_199_999_999),
-      {
-        accounts: {
-          stakeAccount: stakerAccount,
-          stakePool: stakeAcc.stakePool,
-          stakePoolVault: stakeAcc.stakePoolVault,
-          payer: staker.publicKey,
-          payerTokenAccount: testAta.address,
-          tokenProgram: TOKEN_PROGRAM_ID
-        },
-        signers: [staker]
-      }
-    );
+    await StakingProgram.rpc.addStake(new u64(4_199_999_999), {
+      accounts: {
+        stakeAccount: stakerAccount,
+        stakePool: stakeAcc.stakePool,
+        stakePoolVault: stakeAcc.stakePoolVault,
+        payer: staker.publicKey,
+        payerTokenAccount: testAta.address,
+        tokenProgram: TOKEN_PROGRAM_ID
+      },
+      signers: [staker]
+    });
 
     const updatedAta = await testToken.getOrCreateAssociatedAccountInfo(staker.publicKey);
 
@@ -638,30 +627,27 @@ describe("airdrop-staking", () => {
   });
 
   it("mint zero votes", async () => {
-      const voteAta = await voteToken.getOrCreateAssociatedAccountInfo(staker.publicKey);
+    const voteAta = await voteToken.getOrCreateAssociatedAccountInfo(staker.publicKey);
 
-      await StakingProgram.rpc.mintVotes(
-        new u64(0),
-        {
-          accounts: {
-            owner: staker.publicKey,
-            stakePool: stakeAcc.stakePool,
-            stakePoolVault: stakeAcc.stakePoolVault,
-            stakeVoteMint: stakeAcc.stakeVoteMint,
-            stakeAccount: stakerAccount,
-            voterTokenAccount: voteAta.address,
-            governanceRealm: govRealm,
-            governanceVault: govVault,
-            governanceOwnerRecord: stakerGovRecord,
-            payer: wallet.publicKey,
-            tokenProgram: TOKEN_PROGRAM_ID,
-            governanceProgram: GOVERNANCE_ID,
-            systemProgram: SystemProgram.programId,
-            rent: SYSVAR_RENT_PUBKEY
-          },
-          signers: [staker]
-        }
-      );
+    await StakingProgram.rpc.mintVotes(new u64(0), {
+      accounts: {
+        owner: staker.publicKey,
+        stakePool: stakeAcc.stakePool,
+        stakePoolVault: stakeAcc.stakePoolVault,
+        stakeVoteMint: stakeAcc.stakeVoteMint,
+        stakeAccount: stakerAccount,
+        voterTokenAccount: voteAta.address,
+        governanceRealm: govRealm,
+        governanceVault: govVault,
+        governanceOwnerRecord: stakerGovRecord,
+        payer: wallet.publicKey,
+        tokenProgram: TOKEN_PROGRAM_ID,
+        governanceProgram: GOVERNANCE_ID,
+        systemProgram: SystemProgram.programId,
+        rent: SYSVAR_RENT_PUBKEY
+      },
+      signers: [staker]
+    });
   });
 
   it("mint max votes", async () => {
@@ -696,28 +682,25 @@ describe("airdrop-staking", () => {
     try {
       const voteAta = await voteToken.getOrCreateAssociatedAccountInfo(staker.publicKey);
 
-      await StakingProgram.rpc.mintVotes(
-        new u64(1_000),
-        {
-          accounts: {
-            owner: staker.publicKey,
-            stakePool: stakeAcc.stakePool,
-            stakePoolVault: stakeAcc.stakePoolVault,
-            stakeVoteMint: stakeAcc.stakeVoteMint,
-            stakeAccount: stakerAccount,
-            voterTokenAccount: voteAta.address,
-            governanceRealm: govRealm,
-            governanceVault: govVault,
-            governanceOwnerRecord: stakerGovRecord,
-            payer: wallet.publicKey,
-            tokenProgram: TOKEN_PROGRAM_ID,
-            governanceProgram: GOVERNANCE_ID,
-            systemProgram: SystemProgram.programId,
-            rent: SYSVAR_RENT_PUBKEY
-          },
-          signers: [staker]
-        }
-      );
+      await StakingProgram.rpc.mintVotes(new u64(1_000), {
+        accounts: {
+          owner: staker.publicKey,
+          stakePool: stakeAcc.stakePool,
+          stakePoolVault: stakeAcc.stakePoolVault,
+          stakeVoteMint: stakeAcc.stakeVoteMint,
+          stakeAccount: stakerAccount,
+          voterTokenAccount: voteAta.address,
+          governanceRealm: govRealm,
+          governanceVault: govVault,
+          governanceOwnerRecord: stakerGovRecord,
+          payer: wallet.publicKey,
+          tokenProgram: TOKEN_PROGRAM_ID,
+          governanceProgram: GOVERNANCE_ID,
+          systemProgram: SystemProgram.programId,
+          rent: SYSVAR_RENT_PUBKEY
+        },
+        signers: [staker]
+      });
       assert.ok(false);
     } catch (e) {
       assert.equal(e.code, 6000);
@@ -734,22 +717,18 @@ describe("airdrop-staking", () => {
         StakingProgram.programId
       );
 
-      await StakingProgram.rpc.unbondStake(
-        0,
-        new u64(4_200_000_000),
-        {
-          accounts: {
-            owner: staker.publicKey,
-            payer: wallet.publicKey,
-            stakeAccount: stakerAccount,
-            stakePool: stakeAcc.stakePool,
-            stakePoolVault: stakeAcc.stakePoolVault,
-            unbondingAccount: stakerUnbond,
-            systemProgram: SystemProgram.programId
-          },
-          signers: [staker]
-        }
-      );
+      await StakingProgram.rpc.unbondStake(0, new u64(4_200_000_000), {
+        accounts: {
+          owner: staker.publicKey,
+          payer: wallet.publicKey,
+          stakeAccount: stakerAccount,
+          stakePool: stakeAcc.stakePool,
+          stakePoolVault: stakeAcc.stakePoolVault,
+          unbondingAccount: stakerUnbond,
+          systemProgram: SystemProgram.programId
+        },
+        signers: [staker]
+      });
 
       assert.ok(false);
     } catch (e) {
