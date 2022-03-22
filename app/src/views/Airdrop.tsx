@@ -6,6 +6,7 @@ import { FooterLinks } from "../components/FooterLinks";
 import { GlossaryModal } from "../components/modals/GlossaryModal";
 import { Available } from "../components/airdrop/Available";
 import { bnToNumber } from "@jet-lab/jet-engine";
+import { DocsLink } from "../components/docsLink";
 
 export const AirdropView = () => {
   const { connected, publicKey } = useWallet();
@@ -49,13 +50,17 @@ export const AirdropView = () => {
         <p>
           In addition to the
           <u>
-            <a href="https://medium.com/jetprotocol/jet-staking-and-the-jetdrop-two-more-steps-towards-jet-governance-84d8de26be4a">
+            <a
+              href="https://medium.com/jetprotocol/jet-staking-and-the-jetdrop-two-more-steps-towards-jet-governance-84d8de26be4a"
+              target="_blank"
+              rel="noreferrer"
+            >
               blog announcement
             </a>
           </u>
           on airdrop and staking details, more details can be found in the
           <u>
-            <a href="https://docs.jetprotocol.io/jet-protocol/protocol/jet-staking">docs</a>
+            <DocsLink>docs</DocsLink>
           </u>
           and
           <span
