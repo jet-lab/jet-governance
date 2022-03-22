@@ -94,7 +94,12 @@ impl StakePool {
     ) -> Result<(), ErrorCode> {
         let full_amount = match amount {
             Some(n) => self.amount().with_tokens(Rounding::Up, n),
-            None => self.amount().with_shares(Rounding::Down, account.shares),
+            None => {
+                let user_amount = self.amount().with_shares(Rounding::Down, account.shares);
+
+                let unminted = user_amount.token_amount - account.minted_votes;
+                user_amount.with_tokens(Rounding::Up, unminted)
+            }
         };
 
         account.unbond(&full_amount)?;
