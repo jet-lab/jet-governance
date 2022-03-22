@@ -62,13 +62,13 @@ export const StakeModal = ({
     title: `You are staking ${
       amount && Intl.NumberFormat("us-US").format(amount)
     } JET into the platform.`,
-    okText: "I understand.",
+    okText: "I understand",
     onOk: () => handleSubmitTx(),
     onCancel: () => onClose(),
     okButtonProps: { loading: loading },
     closable: true,
     content: (
-      <>
+      <div className="flex column">
         <p>
           Staking tokens gives your voice a vote and entitles you to rewards sourced from protocol
           revenue.
@@ -77,7 +77,7 @@ export const StakeModal = ({
           Remember: To unstake your tokens, there will be a 29.5-day unbonding period. For more
           information, please <DocsLink>read the docs</DocsLink>.
         </p>
-      </>
+      </div>
     )
   };
   steps[Steps.Success] = {
@@ -96,7 +96,7 @@ export const StakeModal = ({
   };
   steps[Steps.Error] = {
     title: `Error.`,
-    okText: "I understand.",
+    okText: "I understand",
     onOk: () => onClose(),
     onCancel: () => onClose(),
     content: <p>We have encountered an unknown error.</p>,

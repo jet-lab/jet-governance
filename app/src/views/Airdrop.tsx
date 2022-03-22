@@ -32,20 +32,18 @@ export const AirdropView = () => {
 
   return (
     <section className="view-container justify-start">
-      <div className="neu-container" id="airdrop">
+      <div className="neu-container flex justify-center align-start column" id="airdrop">
         <h1>Claim your airdrop!</h1>
         <p>
           Available airdrops for the connected wallet are listed below. All airdrops must be claimed
           by the receiver within 90 days. After 90 days, any unclaimed claims will be redirected to
           the Jet DAO treasury for future allocation.
         </p>
-
         <p>
           All airdrops will be autostaked in the governance module immediately after claiming, and
           will begin earning yield immediately. Staked tokens are subject to a 29.5-day unbonding
           period.
         </p>
-
         <p>
           In addition to the{" "}
           <u>

@@ -7,6 +7,7 @@ import { useProposalContext } from "../../contexts/proposal";
 import { dateFromUnixTimestamp, toTokens } from "../../utils";
 import { RestakeModal } from "../modals/RestakeModal";
 import { WithdrawModal } from "../modals/WithdrawModal";
+import { ReactComponent as ArrowIcon } from "../../images/arrow_icon.svg";
 
 export const UnbondingLog = ({ unbondingAccount }: { unbondingAccount: UnbondingAccount }) => {
   const { jetMint } = useProposalContext();
@@ -47,7 +48,7 @@ export const UnbondingLog = ({ unbondingAccount }: { unbondingAccount: Unbonding
           <InfoCircleFilled />
         </Tooltip>
       </td>
-      <td className="italics">
+      <td className="action italics">
         <i className="italics">
           Unstake complete on {dateFromUnixTimestamp(unbondingAccount.unbondingAccount.unbondedAt)}
         </i>{" "}
@@ -81,6 +82,9 @@ export const UnbondingLog = ({ unbondingAccount }: { unbondingAccount: Unbonding
         }
       >
         -{toTokens(unbondingAccount?.unbondingAccount.amount.tokenAmount, jetMint)}
+      </td>
+      <td>
+        <ArrowIcon width="25px" />
       </td>
     </tr>
   );

@@ -41,7 +41,10 @@ export const getProposalFilters = (
 ) => {
   if (proposalFilter === "active") {
     return proposals.filter(
-      p => p.account.state === ProposalState.Voting && p.account.votingCompletedAt !== null
+      p =>
+        !p.account.hasVoteTimeEnded &&
+        p.account.state === ProposalState.Voting &&
+        p.account.votingCompletedAt !== null
     );
   } else if (proposalFilter === "inactive") {
     return proposals.filter(p => p.account.isVoteFinalized() || p.account.isPreVotingState());

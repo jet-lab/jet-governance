@@ -47,8 +47,8 @@ export const FlightLogView = () => {
               <tr onClick={() => window.open(getExplorerUrl(row.signature), "_blank")}>
                 <td>{row.blockDate}</td>
                 <td>Complete</td>
-                <td className="asset">{row.action}</td>
-                <td className="reserve-detail">{row.amount}</td>
+                <td className="action">{row.action}</td>
+                <td>{row.amount}</td>
                 <td>
                   <ArrowIcon width="25px" />
                 </td>
@@ -57,7 +57,7 @@ export const FlightLogView = () => {
             <tr className="no-interaction">
               <td></td>
               <td></td>
-              <td className="load-more" style={{ padding: "10px 0 0 0" }}>
+              <td className="action load-more" style={{ padding: "10px 0 0 0" }}>
                 {loadingLogs ? (
                   <Loader button />
                 ) : (

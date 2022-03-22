@@ -388,9 +388,14 @@ p,
 }
 
 #airdrop {
+  max-width: 525px;
+  margin: 0 auto;
+
   h1 {
-    margin-left: 0;
-    margin-bottom: -10px;
+    margin: unset;
+  }
+  p {
+    margin: @spacing-sm 0;
   }
   .ant-progress-bg {
     height: 31px !important;
@@ -421,7 +426,6 @@ p,
     margin: 0 @spacing-xs;
   }
 }
-
 .gray {
   color: @dark-grey;
 }
@@ -433,11 +437,12 @@ p,
 #flight-logs-view {
   grid-template-rows: auto 1fr auto;
   .neu-container {
-    padding-top: unset;
+    padding-top: @spacing-xs;
     padding-bottom: @spacing-sm;
   }
   #flight-log {
-    grid-column: 2 / 8;
+    max-width: 775px;
+    margin: 0 auto;
   }
   .spacer {
     grid-row-start: 2;
@@ -447,9 +452,8 @@ p,
     grid-column: 2 / 4;
   }
   table {
+    margin-top: @spacing-xl;
     svg {
-      opacity: 0;
-      transition: opacity @transition-duration ease-in-out;
       path {
         fill: @jet-green;
       }
@@ -459,8 +463,23 @@ p,
         min-width: unset;
         padding-bottom: @spacing-xs;
       }
-      td:last-of-type {
-        text-align: center;
+      td {
+        width: 100px;
+        &.action {
+          width: 400px;
+
+          button {
+            margin-left: @spacing-sm !important;
+          }
+        }
+        &:last-of-type {
+          width: unset;
+          text-align: center;
+          svg {
+            opacity: 0;
+            transition: opacity @transition-duration ease-in-out;
+          }
+        }
       }
       &:last-of-type {
         .load-more {
@@ -470,7 +489,7 @@ p,
       }
       &:hover {
         svg {
-          opacity: 1;
+          opacity: 1 !important;
         }
       }
     }
@@ -618,6 +637,10 @@ p,
 
     .theme-toggle-container {
       width: 100px;
+    }
+
+    .ant-select-selection-search {
+      display: none !important;
     }
   }
 

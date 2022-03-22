@@ -54,22 +54,21 @@ export const WithdrawAllModal = ({ onClose }: { onClose: () => void }) => {
 
   steps[Steps.Confirm] = {
     title: `Confirm you'd like to withdraw?`,
-    okText: "I understand.",
+    okText: "I understand",
     onOk: () => handleOk(),
     onCancel: () => onClose(),
     closable: true,
     okButtonProps: { loading },
     children: (
-      <>
+      <div className="flex column">
         <p>Choosing to withdraw will return your governance tokens to your wallet.</p>
-
         <p>Withdrawn governance tokens will not be able to vote on proposals.</p>
-      </>
+      </div>
     )
   };
   steps[Steps.Success] = {
     title: `All set!`,
-    okText: "I understand.",
+    okText: "I understand",
     onOk: () => onClose(),
     onCancel: () => onClose(),
     closable: true,
@@ -78,7 +77,7 @@ export const WithdrawAllModal = ({ onClose }: { onClose: () => void }) => {
   };
   steps[Steps.Error] = {
     title: "Error",
-    okText: "I understand.",
+    okText: "I understand",
     onOk: () => onClose(),
     onCancel: () => onClose(),
     closable: true,

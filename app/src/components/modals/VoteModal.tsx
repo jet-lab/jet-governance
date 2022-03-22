@@ -129,7 +129,7 @@ export const VoteModal = ({
     },
     onCancel: () => onClose(),
     content: (
-      <>
+      <div className="flex column">
         <p>
           You are about to vote <strong>{voteText}</strong> JUMP-
           {getPubkeyIndex(proposal.pubkey.toBase58())}: {proposal.account.name}.
@@ -138,7 +138,7 @@ export const VoteModal = ({
           You have {toTokens(stakeBalance.stakedJet, jetMint)} JET staked, and will be able to
           unstake these funds when voting ends on {endDate}.
         </p>
-      </>
+      </div>
     ),
     closable: true,
     cancelButtonProps: undefined
@@ -149,7 +149,7 @@ export const VoteModal = ({
     onOk: () => onClose(),
     onCancel: () => onClose(),
     content: (
-      <>
+      <div className="flex column">
         <p>
           You've successfully voted <strong>{voteText}</strong> JUMP-
           {getPubkeyIndex(proposal.pubkey.toBase58())}: {proposal.account.name}.
@@ -166,7 +166,7 @@ export const VoteModal = ({
               />
             ))
           : "There are no other proposals at this time."}
-      </>
+      </div>
     ),
     closable: true,
     cancelButtonProps: { style: { display: "none " } }

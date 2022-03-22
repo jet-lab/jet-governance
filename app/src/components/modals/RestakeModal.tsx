@@ -54,25 +54,25 @@ export const RestakeModal = ({
 
   steps[Steps.Confirm] = {
     title: `Confirm you'd like to restake?`,
-    okText: "I understand.",
+    okText: "I understand",
     onOk: () => handleOk(),
     onCancel: () => onClose(),
     closable: true,
     okButtonProps: { loading },
     children: (
-      <>
+      <div className="flex column">
         <p>
           Choosing to restake will cancel your unstake transaction and you will immediately be able
           to vote and earn rewards with this amount.
         </p>
 
         <p>Votes that were rescinded when unstaking will not reactivate, and must be recast.</p>
-      </>
+      </div>
     )
   };
   steps[Steps.Success] = {
     title: `All set!`,
-    okText: "I understand.",
+    okText: "I understand",
     onOk: () => onClose(),
     onCancel: () => onClose(),
     closable: true,

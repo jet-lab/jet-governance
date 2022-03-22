@@ -108,7 +108,7 @@ export const UnstakeModal = ({
     onCancel: () => onClose(),
     closable: true,
     content: (
-      <>
+      <div className="flex column">
         {unrelinquishedVoteRecords && unrelinquishedVoteRecords.length !== 0 && (
           <p>
             You currently have votes cast on active proposals, which will be rescinded upon
@@ -131,7 +131,7 @@ export const UnstakeModal = ({
             Logs page at any point during the unbonding period.
           </p>
         </div>
-      </>
+      </div>
     )
   };
   steps[Steps.Success] = {
@@ -142,12 +142,12 @@ export const UnstakeModal = ({
     closable: true,
     cancelButtonProps: { style: { display: "none" } },
     content: (
-      <>
+      <div className="flex column">
         <p>
           You've unstaked {amount && Intl.NumberFormat("us-US").format(amount)} JET from JetGovern.
         </p>
         <p>Your 29.5-day unbonding period will complete on {unbondDate}.</p>
-      </>
+      </div>
     )
   };
   steps[Steps.Error] = {

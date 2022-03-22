@@ -64,7 +64,7 @@ export const ClaimModal = ({
     closable: true,
     okButtonProps: { loading },
     children: (
-      <>
+      <div className="flex column">
         <p>
           You are claiming <b>{stakeAmount} JET</b>.
         </p>
@@ -77,7 +77,7 @@ export const ClaimModal = ({
           is a 29.5-day unbonding period. Please <DocsLink>read the docs</DocsLink> for more
           information.
         </p>
-      </>
+      </div>
     )
   };
 

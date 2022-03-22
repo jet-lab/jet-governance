@@ -327,7 +327,7 @@ export const VerifyModal = ({
     onOk: () => handlePhoneVerify(),
     onCancel: () => handleDisconnect(),
     children: (
-      <>
+      <div className="flex column">
         <p>
           Due to regulatory restrictions, only users in authorized regions are able to access
           JetGovern. For more info, see our{" "}
@@ -353,7 +353,7 @@ export const VerifyModal = ({
           onKeyPress={(e: any) => enterKeyPhoneVerify(e)}
           type={"number"}
         />
-      </>
+      </div>
     ),
     closable: false
   };
@@ -364,7 +364,7 @@ export const VerifyModal = ({
     onOk: () => handleConfirmCode(),
     onCancel: () => handleDisconnect(),
     children: (
-      <>
+      <div className="flex column">
         <p>You will receive a secure access code via SMS. Enter the code here to proceed.</p>
         <Input
           onChange={e => handleInputCode(e.target.value)}
@@ -372,7 +372,7 @@ export const VerifyModal = ({
           maxLength={6}
           type={"number"}
         />
-      </>
+      </div>
     ),
     closable: false
   };
@@ -395,7 +395,7 @@ export const VerifyModal = ({
     onOk: () => setCurrent(Steps.AccessGranted2),
     onCancel: () => handleAccessGranted(),
     children: (
-      <>
+      <div className="flex column">
         <p>
           Your wallet has been verified and you now have full access to the JetGovern module. You
           will not need to verify again.
@@ -404,7 +404,7 @@ export const VerifyModal = ({
           To begin, make sure you have some JET tokens staked. Once they are staked, you will begin
           earning rewards and may vote on active proposals (1 staked JET token = 1 vote).
         </p>
-      </>
+      </div>
     ),
     closable: true
   };
