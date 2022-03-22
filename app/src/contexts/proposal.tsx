@@ -152,7 +152,9 @@ export function ProposalProvider({ children = undefined as any }) {
       );
 
       // ----- Airdrops -----
-      const airdrops = await Airdrop.loadAll(programs.rewards);
+      //TODO: Fetching airdrops does not return a value.
+      // const airdrops = await Airdrop.loadAll(programs.rewards);
+      const airdrops: Airdrop[] = [];
 
       // ----- Governance -----
       const realm = await getGovernanceAccount(connection, JET_REALM, Realm);
@@ -185,7 +187,6 @@ export function ProposalProvider({ children = undefined as any }) {
         governanceProgramId,
         JET_GOVERNANCE
       );
-
       // ----- Staking -----
       const stakePool = await StakePool.load(programs.stake, StakePool.CANONICAL_SEED);
 
