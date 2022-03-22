@@ -273,6 +273,7 @@ p,
 .proposal-card.ant-card .header,
 .ant-card-body .details {
   font-size: @sm-font-size !important;
+  display: unset !important;
 }
 
 .proposal-card.ant-card {
@@ -307,7 +308,6 @@ p,
 .ant-layout-content {
   display: flex;
   background-color: @white;
-  margin-top: 20px;
   justify-content: center;
   .panel {
     margin: 0 10px;
@@ -380,7 +380,7 @@ p,
   }
   .other-proposals {
     grid-column: 1 / 9;
-    div {
+    div:first-child {
       overflow-y: scroll;
       flex-wrap: wrap;
     }
@@ -390,6 +390,7 @@ p,
 #airdrop {
   h1 {
     margin-left: 0;
+    margin-bottom: -10px;
   }
   .ant-progress-bg {
     height: 31px !important;
@@ -404,22 +405,75 @@ p,
     width: 15%;
   }
   .announced {
-    filter: blur(3px);
+    filter: blur(2px);
+  }
+}
+// Claims
+#airdrop-view {
+  .spacer {
+    grid-row-start: 2;
+  }
+  .footer-links {
+    grid-row-start: 19;
+    grid-column: 2 / 4;
+  }
+  a {
+    margin: 0 @spacing-xs;
   }
 }
 
 .gray {
   color: @dark-grey;
 }
+.airdrop-time {
+  margin: 0 @spacing-xs;
+}
 
+// Flight Logs
 #flight-logs-view {
   grid-template-rows: auto 1fr auto;
-  height: 85vh;
+  .neu-container {
+    padding-top: unset;
+    padding-bottom: @spacing-sm;
+  }
   #flight-log {
     grid-column: 2 / 8;
   }
   .spacer {
     grid-row-start: 2;
+  }
+  .footer-links {
+    grid-row-start: 3;
+    grid-column: 2 / 4;
+  }
+  table {
+    svg {
+      opacity: 0;
+      transition: opacity @transition-duration ease-in-out;
+      path {
+        fill: @jet-green;
+      }
+    }
+    tr {
+      th {
+        min-width: unset;
+        padding-bottom: @spacing-xs;
+      }
+      td:last-of-type {
+        text-align: center;
+      }
+      &:last-of-type {
+        .load-more {
+          padding: unset;
+          text-align: center;
+        }
+      }
+      &:hover {
+        svg {
+          opacity: 1;
+        }
+      }
+    }
   }
 }
 
@@ -472,6 +526,11 @@ p,
   }
 }
 
+// Navbar
+.navbar-container nav button {
+  margin-left: @spacing-lg !important;
+}
+
 // Spinning Loader
 .loader {
   left: 0;
@@ -520,6 +579,62 @@ p,
   }
 }
 
+// Settings View
+.settings {
+  width: 350px;
+  padding: @spacing-lg;
+  box-shadow: @neu-shadow-low;
+  border-radius: @border-radius;
+
+  .setting {
+    &-title {
+      margin: @spacing-sm 0 0 0;
+    }
+
+    input {
+      width: 275px;
+    }
+
+    &.wallet {
+      cursor: pointer;
+
+      div {
+        margin: @spacing-sm 0;
+      }
+      img {
+        margin: 0 @spacing-xs;
+      }
+      .wallet-address {
+        margin: @spacing-xs;
+      }
+      button {
+        margin: 0 @spacing-xs !important;
+        svg {
+          opacity: 0.5;
+          margin-right: @spacing-sm;
+        }
+      }
+    }
+
+    .theme-toggle-container {
+      width: 100px;
+    }
+  }
+
+  .socials {
+    a {
+      margin: @spacing-sm;
+      opacity: @subtle-opacity;
+      cursor: pointer;
+
+      &:hover {
+        opacity: 1;
+      }
+    }
+  }
+}
+
+/* Extra small devices (840px and down) */
 @media only screen and (max-width: 840px) {
   .mobile-only {
     display: inline !important;

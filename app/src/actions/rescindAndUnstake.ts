@@ -33,7 +33,7 @@ export const rescindAndUnstake = async (
   const relinquishAndWithdrawIx: TransactionInstruction[] = [];
   const ix: TransactionInstruction[] = [];
   const allTxs = [];
-  const provider = new Provider(connection, wallet as any, Provider.defaultOptions());
+  const provider = new Provider(connection, wallet as any, { skipPreflight: true });
   const remainingStake = tokenOwnerRecord.account.governingTokenDepositAmount.sub(amount);
 
   // Get unrescinded proposals and relinquish votes before unstaking
@@ -110,7 +110,10 @@ export const rescindAndUnstake = async (
     stakeAccount,
     wallet.publicKey!,
     unbondingSeed,
-    amount
+    // Hack to get unbond stake working
+    // FIXME: When unbond max unminted is merged, do not pass in any amount
+    // https://github.com/jet-lab/jet-governance/pull/128
+    amount.sub(new BN(100))
   );
 
   const relinquishAndWithdrawTx = new Transaction().add(...relinquishAndWithdrawIx);
@@ -124,7 +127,7 @@ export const rescindAndUnstake = async (
   // Get the total remaining token balance within the associated account
   // after requested amount has been unbonded
   // Restake Remaining Votes
-  if (remainingStake) {
+  if (remainingStake.gt(new BN(0))) {
     await withDepositGoverningTokens(
       ix,
       GOVERNANCE_PROGRAM_ID,

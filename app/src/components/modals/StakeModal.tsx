@@ -47,6 +47,7 @@ export const StakeModal = ({
         if (isSignTransactionError(err)) {
           onClose();
         } else {
+          console.log(err);
           setCurrent(Steps.Error);
         }
       })

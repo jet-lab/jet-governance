@@ -26,7 +26,7 @@ export const ProposalCard = ({
   const truncateName = () => {
     let name = proposal.account.name;
     if (name.length > 50) {
-      name = name.substring(0, 47) + "...";
+      name = name.substring(0, 42) + "...";
     }
     return name;
   };

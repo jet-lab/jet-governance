@@ -2,19 +2,18 @@ import React from "react";
 import { Typography } from "antd";
 import { shortenAddress } from "../../utils/utils";
 import { Connection, PublicKey } from "@solana/web3.js";
-import { getExplorerUrl } from "../../utils/explorer";
+import { useBlockExplorer } from "../../contexts/blockExplorer";
 
 export const ExplorerLink = (props: {
   address: string | PublicKey;
-  type: string;
   code?: boolean;
   style?: React.CSSProperties;
   length?: number;
   short?: boolean;
   connection?: Connection;
 }) => {
-  const { type, code, short } = props;
-
+  const { getExplorerUrl } = useBlockExplorer();
+  const { code, short } = props;
   const address = typeof props.address === "string" ? props.address : props.address?.toBase58();
 
   if (!address) {
@@ -26,7 +25,7 @@ export const ExplorerLink = (props: {
 
   return (
     <a
-      href={getExplorerUrl(address, type)}
+      href={getExplorerUrl(address)}
       // eslint-disable-next-line react/jsx-no-target-blank
       target="_blank"
       rel="noreferrer"

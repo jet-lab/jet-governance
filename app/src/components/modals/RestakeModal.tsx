@@ -22,17 +22,17 @@ export const RestakeModal = ({
   const rpcContext = useRpcContext();
   const [current, setCurrent] = useState<Steps>(Steps.Confirm);
   const [loading, setLoading] = useState(false);
-  const { stakePool, stakeAccount, jetMint, refresh } = useProposalContext();
+  const { stakePool, stakeAccount, jetMint, realm, refresh } = useProposalContext();
 
   const stakeAmount = fromLamports(unbondingAccount?.unbondingAccount.amount.tokenAmount, jetMint);
 
   const handleOk = () => {
-    if (!unbondingAccount || !stakePool || !stakeAccount) {
+    if (!unbondingAccount || !stakePool || !stakeAccount || !realm) {
       return;
     }
 
     setLoading(true);
-    restake(rpcContext, unbondingAccount, stakeAccount, stakePool)
+    restake(rpcContext, unbondingAccount, stakeAccount, stakePool, realm)
       .then(() => {
         setCurrent(Steps.Success);
       })
@@ -40,6 +40,7 @@ export const RestakeModal = ({
         if (isSignTransactionError(err)) {
           onClose();
         } else {
+          console.log(err);
           setCurrent(Steps.Error);
         }
       })
@@ -87,7 +88,7 @@ export const RestakeModal = ({
   };
   steps[Steps.Error] = {
     title: "Error",
-    okText: "I understand.",
+    okText: "I understand",
     onOk: () => onClose(),
     onCancel: () => onClose(),
     closable: true,

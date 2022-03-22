@@ -34,14 +34,12 @@ import { Governance, ProgramAccount, Proposal, ProposalState, Realm } from "@sol
 import { ReactComponent as ThumbsUp } from "../images/thumbs_up.svg";
 import { ReactComponent as ThumbsDown } from "../images/thumbs_down.svg";
 import { Loader } from "../components/Loader";
-import { getExplorerUrl } from "../utils";
 import "./Proposal.less";
-import { useDarkTheme } from "../contexts/darkTheme";
+import { useBlockExplorer } from "../contexts/blockExplorer";
 
 export const ProposalView = () => {
   const proposalAddress = useKeyParam();
   const proposal = useProposal(proposalAddress);
-
   const voteRecords = useVoteRecordsByProposal(proposal?.pubkey);
 
   const { stakeBalance, realm, governance, proposalsByGovernance } = useProposalContext();
@@ -98,6 +96,7 @@ const InnerProposalView = ({
 
   const { connected } = useWallet();
   const { jetMint } = useProposalContext();
+  const { getExplorerUrl } = useBlockExplorer();
 
   // FIXME!
   const isStaked = true;
@@ -142,8 +141,6 @@ const InnerProposalView = ({
   } else if (vote === undefined && connected) {
     errorMessage = "Please select an option to submit your vote.";
   }
-  const { darkTheme } = useDarkTheme();
-  const hasBorder = !darkTheme ? "no-border" : "";
   const { Title, Text, Paragraph } = Typography;
   return (
     <Typography>
@@ -190,7 +187,7 @@ const InnerProposalView = ({
             <div className="neu-inset details">
               <Text>Proposal ID</Text>
               <Text>
-                <a href={getExplorerUrl(addressStr, "account")} target="_blank" rel="noreferrer">
+                <a href={getExplorerUrl(addressStr)} target="_blank" rel="noreferrer">
                   {addressStr}
                 </a>
               </Text>

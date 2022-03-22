@@ -1,123 +1,111 @@
+import "./Navbar.less";
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { useConnectWallet } from "../contexts/connectWallet";
 import { useDarkTheme } from "../contexts/darkTheme";
-import { Button, Switch, Typography } from "antd";
+import { Button, Switch } from "antd";
 import { useProposalContext } from "../contexts/proposal";
 import { shortenAddress } from "../utils";
-import User from "../images/user.svg";
-import { ReactComponent as Wallet } from "../images/wallet.svg";
-import "./Nav.less";
+import { ReactComponent as AccountIcon } from "../images/account_icon.svg";
+import { ReactComponent as WalletIcon } from "../images/wallet_icon.svg";
 import { DocsLink } from "./docsLink";
 
-export function Nav() {
+export function Navbar() {
   const { pathname } = useLocation();
   const { connected, disconnect, publicKey } = useWallet();
   const { setConnecting } = useConnectWallet();
   const [drawerOpened, setDrawerOpened] = useState(false);
   const { claimsCount } = useProposalContext();
   const { darkTheme, toggleDarkTheme } = useDarkTheme();
-
   const navLinks = [
-    { title: "Your Info", route: "/your-info", mobileOnly: true },
-    { title: "Dashboard", route: "/", mobileOnly: false },
+    { title: "Dashboard", route: "/" },
     {
       title: `Claims`,
       class: claimsCount > 0 ? "shimmer" : "",
       badge: claimsCount,
-      route: "/claims",
-      mobileOnly: false
+      route: "/claims"
     },
     {
       title: "Flight Logs",
-      route: "/flight-logs",
-      mobileOnly: false
+      route: "/flight-logs"
+    },
+    {
+      title: "Settings",
+      route: "/settings"
     }
   ];
-
   const mobileFooterLinks = [
-    { title: "Terms of Use", route: "/terms" },
-    { title: "Glossary", route: "/glossary" }
+    {
+      title: "Terms of Service",
+      route: "/"
+    },
+    {
+      title: "Glossary",
+      url: "https://docs.jetprotocol.io/jet-protocol/terms-and-definitions#jetgovern-definitions"
+    }
   ];
-
   const accountLink = { title: "Account", route: "/your-info" };
-
-  // Handle swiping of nav drawer
-  const [touchStartX, setTouchStartX] = useState(0);
-  const [touchEndX, setTouchEndX] = useState(0);
-  window.addEventListener("touchstart", e => {
-    setTouchStartX(e.changedTouches[0].screenX);
-  });
-  window.addEventListener("touchend", e => {
-    setTouchEndX(e.changedTouches[0].screenX);
-    handleSwipe();
-  });
-
-  const handleSwipe = () => {
-    // Open drawer
-    if (!drawerOpened && touchEndX < touchStartX - 75) {
-      setDrawerOpened(true);
-    }
-
-    // Close drawer
-    if (drawerOpened && touchEndX > touchStartX + 75) {
-      setDrawerOpened(false);
-    }
-  };
 
   return (
     <div className={`navbar-container flex-centered ${drawerOpened ? "drawer-open" : ""}`}>
       {/* Desktop Nav */}
       <nav className="desktop flex align-center justify-between">
-        <Link to="/" className="left-container-logo flex-centered">
-          <img src="img/jetgovern_white.png" height="100%" alt="Jet Protocol" />
+        <Link className="logo flex-centered" to="/">
+          <img src="img/jet/jet_govern_white.png" width="90%" height="auto" alt="Jet Protocol" />
         </Link>
         <div className="nav-links flex-centered">
-          {navLinks.map(
-            link =>
-              !link.mobileOnly && (
-                <Link
-                  to={link.route}
-                  className={`nav-link ${pathname === link.route ? "active" : ""} ${link.class}`}
-                  key={link.route}
-                >
-                  {link.title}
-                  {link.badge ? (
-                    <span className="badge">
-                      <span className="text-gradient">{link.badge}</span>
-                    </span>
-                  ) : (
-                    ""
-                  )}
-                </Link>
-              )
-          )}
+          {navLinks.map(link => (
+            <Link
+              to={link.route}
+              className={`nav-link ${pathname === link.route ? "active" : ""} ${link.class}`}
+              key={link.route}
+            >
+              {link.title}
+              {link.badge ? (
+                <span className="badge">
+                  <span className="text-gradient">{link.badge}</span>
+                </span>
+              ) : (
+                ""
+              )}
+            </Link>
+          ))}
           <Button
-            className="secondary-btn flex-centered connect-wallet-btn"
-            type="ghost"
-            title={connected ? "disconnect" : "connect"}
+            ghost
+            className="flex-centered"
+            style={{ textTransform: "unset" }}
+            title={connected ? "Disconnect Wallet" : "Connect Wallet"}
             onClick={() => (connected ? disconnect() : setConnecting(true))}
           >
-            <Wallet width="15px" style={{ paddingRight: "10px" }} />
+            <WalletIcon width="20px" />
             {connected
               ? `${shortenAddress(publicKey ? publicKey.toString() : "")} CONNECTED`
-              : "CONNECT WALLET"}
+              : "CONNECT"}
           </Button>
         </div>
       </nav>
-
       {/* Mobile Nav */}
       <nav className="mobile flex align-center justify-between">
         <Link className="account" to={accountLink.route}>
-          <img width="25px" src={User} alt={accountLink.title} />
+          <AccountIcon width="25px" />
         </Link>
-
+        <Link className="logo flex-centered" to="/">
+          <img
+            className="logo"
+            src="img/jet/jet_govern_white.png"
+            width="90%"
+            height="auto"
+            alt="Jet Govern"
+          />
+        </Link>
         <div
           className={`hamburger flex align-center justify-between column ${
             drawerOpened ? "close" : ""
           }`}
-          onClick={() => setDrawerOpened(!drawerOpened)}
+          onClick={() => {
+            setDrawerOpened(!drawerOpened);
+          }}
         >
           <span></span>
           <span></span>
@@ -139,7 +127,7 @@ export function Nav() {
               ghost
               className="flex-centered small-btn"
               style={{ textTransform: "unset" }}
-              title={connected ? "Disconnect" : "Connect"}
+              title={connected ? "Disconnect Wallet" : "Connect Wallet"}
               onClick={() => {
                 if (connected) {
                   disconnect();
@@ -149,7 +137,7 @@ export function Nav() {
                 }
               }}
             >
-              <Wallet width="15px" style={{ paddingRight: "10px" }} />
+              <WalletIcon width="20px" />
               {connected
                 ? `${shortenAddress(publicKey ? publicKey.toString() : "")} CONNECTED`
                 : "CONNECT"}
@@ -157,14 +145,15 @@ export function Nav() {
           </div>
           <div className="drawer-bottom flex-centered column">
             {mobileFooterLinks.map(link => (
-              <Link
+              <a
                 key={link.title}
-                to={link.route}
+                href={link.url}
                 className="footer-link"
-                onClick={() => setDrawerOpened(false)}
+                rel="noopener noreferrer"
+                target="_blank"
               >
                 {link.title}
-              </Link>
+              </a>
             ))}
             <DocsLink className="footer-link">Docs</DocsLink>
             <Switch

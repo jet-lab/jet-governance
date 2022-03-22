@@ -28,7 +28,8 @@ Run `ctrl-c.` to kill the solana-test-validator process to stop the localnet
     "authority": <PubKey address>,
     "token_mint": <PubKey address>,
     "stake_pool": <PubKey address>,
-    "short_desc": String
+    "short_desc": String,
+    "long_desc": String
 }
 ```
 

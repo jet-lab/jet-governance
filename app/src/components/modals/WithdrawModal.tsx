@@ -38,9 +38,9 @@ export const WithdrawModal = ({
       })
       .catch(err => {
         if (isSignTransactionError(err)) {
-          setCurrent(Steps.Confirm);
           onClose();
         } else {
+          console.log(err);
           setCurrent(Steps.Error);
         }
       })
@@ -79,8 +79,8 @@ export const WithdrawModal = ({
   };
   steps[Steps.Error] = {
     title: "Error",
-    okText: "I understand.",
-    onOk: () => setCurrent(Steps.Confirm),
+    okText: "I understand",
+    onOk: () => onClose(),
     onCancel: () => onClose(),
     closable: true,
     cancelButtonProps: { style: { display: "none " } },

@@ -2,8 +2,6 @@ import { Divider } from "antd";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { useProposalContext } from "../contexts/proposal";
 import { useState } from "react";
-import { FooterLinks } from "../components/FooterLinks";
-import { GlossaryModal } from "../components/modals/GlossaryModal";
 import { Available } from "../components/airdrop/Available";
 import { bnToNumber } from "@jet-lab/jet-engine";
 import { DocsLink } from "../components/docsLink";
@@ -23,6 +21,7 @@ export const AirdropView = () => {
     finalized: !airdrop.targetInfo.finalized.isZero(),
     airdropAddress: airdrop.airdropAddress,
     shortDesc: String.fromCharCode(...airdrop.airdrop.shortDesc),
+    longDesc: String.fromCharCode(...airdrop.airdrop.longDesc),
     expireAt: bnToNumber(airdrop.airdrop.expireAt),
     amount: bnToNumber(
       airdrop.targetInfo.recipients.find(
@@ -48,7 +47,7 @@ export const AirdropView = () => {
         </p>
 
         <p>
-          In addition to the
+          In addition to the{" "}
           <u>
             <a
               href="https://medium.com/jetprotocol/jet-staking-and-the-jetdrop-two-more-steps-towards-jet-governance-84d8de26be4a"
@@ -57,18 +56,23 @@ export const AirdropView = () => {
             >
               blog announcement
             </a>
-          </u>
-          on airdrop and staking details, more details can be found in the
+          </u>{" "}
+          on airdrop and staking details, more details can be found in the{" "}
           <u>
             <DocsLink>docs</DocsLink>
-          </u>
-          and
+          </u>{" "}
+          and{" "}
           <span
             onClick={toggleGlossaryModal}
             style={{ textDecoration: "underline", cursor: "pointer" }}
           >
-            glossary
-            {showGlossaryModal && <GlossaryModal onClose={() => setShowGlossaryModal(false)} />}
+            <a
+              href="https://docs.jetprotocol.io/jet-protocol/terms-and-definitions#jetgovern-definitions"
+              about="_blank"
+              rel="noreferrer"
+            >
+              glossary.
+            </a>
           </span>
         </p>
         <Divider />
@@ -77,8 +81,6 @@ export const AirdropView = () => {
             <Available airdropInfo={airdrop} key={airdrop.airdropAddress.toString()} />
           ))}
       </div>
-      <Divider />
-      <FooterLinks />
     </section>
   );
 };

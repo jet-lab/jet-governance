@@ -14,7 +14,7 @@ import {
   withRelinquishVote,
   YesNoVote
 } from "@solana/spl-governance";
-import { AssociatedToken, StakeAccount, StakeBalance, StakePool } from "@jet-lab/jet-engine";
+import { AssociatedToken, StakeAccount, StakePool } from "@jet-lab/jet-engine";
 
 export const castVote = async (
   { connection, wallet, programId, programVersion, walletPubkey }: RpcContext,
@@ -23,11 +23,9 @@ export const castVote = async (
   tokenOwnerRecordPubkey: PublicKey,
   yesNoVote: YesNoVote,
   stakeProgram: Program,
-  stakePool?: StakePool,
-  stakeAccount?: StakeAccount,
+  stakePool: StakePool,
   message?: ChatMessageBody,
-  voteRecord?: PublicKey,
-  stakeBalance?: StakeBalance
+  voteRecord?: PublicKey
 ) => {
   let relinquishVoteIx: TransactionInstruction[] = [];
   let signers: Keypair[] = [];
@@ -60,39 +58,24 @@ export const castVote = async (
     });
   }
 
-  // Check for difference between vote tokens
-  //in governance program and staked JET
-  // Mint vote tokens to top-up any difference
-  if (stakeAccount && stakePool && stakeBalance?.stakedJet && wallet.publicKey) {
-    const provider = stakeProgram.provider;
-    const voteMint = stakePool.addresses.stakeVoteMint;
-    const mintRemainingVotes = stakeBalance?.stakedJet.sub(stakeAccount.stakeAccount.mintedVotes);
+  const voteMint = stakePool.addresses.stakeVoteMint;
 
-    if (mintRemainingVotes.gt(stakePool.jetVotesPerShare)) {
-      const voterTokenAccount = await AssociatedToken.withCreate(
-        castVoteIx,
-        provider,
-        wallet.publicKey,
-        voteMint
-      );
-      await StakeAccount.withCreate(
-        castVoteIx,
-        stakeProgram,
-        stakePool.addresses.stakePool,
-        wallet.publicKey,
-        wallet.publicKey
-      );
-      await StakeAccount.withMintVotes(
-        castVoteIx,
-        stakePool,
-        realm,
-        wallet.publicKey,
-        voterTokenAccount
-      );
+  const voterTokenAccount = await AssociatedToken.withCreate(
+    castVoteIx,
+    provider,
+    walletPubkey,
+    voteMint
+  );
+  await StakeAccount.withCreate(
+    castVoteIx,
+    stakeProgram,
+    stakePool.addresses.stakePool,
+    walletPubkey,
+    walletPubkey
+  );
+  await StakeAccount.withMintVotes(castVoteIx, stakePool, realm, walletPubkey, voterTokenAccount);
 
-      await AssociatedToken.withClose(castVoteIx, wallet.publicKey, voteMint, wallet.publicKey);
-    }
-  }
+  await AssociatedToken.withClose(castVoteIx, walletPubkey, voteMint, walletPubkey);
 
   await withCastVote(
     castVoteIx,

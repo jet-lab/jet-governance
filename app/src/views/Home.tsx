@@ -6,6 +6,7 @@ import { ReactComponent as Filter } from "../images/filter.svg";
 import { useEffect } from "react";
 import { Typography } from "antd";
 import "./Home.less";
+import { getFirstTwoHundredPubkeys } from "../models/PUBKEYS_INDEX";
 
 export const HomeView = () => {
   /* eslint-disable @typescript-eslint/no-unused-vars */
@@ -15,7 +16,8 @@ export const HomeView = () => {
     setPastProposalFilter,
     filteredProposalsByGovernance,
     filteredPastProposals,
-    governance
+    governance,
+    realm
   } = useProposalContext();
   /* eslint-enable @typescript-eslint/no-unused-vars */
   const { Title, Text } = Typography;
@@ -37,6 +39,11 @@ export const HomeView = () => {
     setPastProposalFilter(string);
     toggleShowFilter();
   };
+
+  // useEffect(() => {
+  //   console.log(realm?.account.communityMint.toBase58(), realm?.account.config.councilMint?.toBase58(), realm?.pubkey.toBase58(), governance?.pubkey.toBase58())
+  //   getFirstTwoHundredPubkeys(realm?.account.communityMint);
+  // }, [realm?.account.communityMint.toBase58()]);
 
   return (
     <section className="home view-container content-body column-grid">

@@ -7,6 +7,7 @@ import { useConnectionConfig } from "../../contexts";
 import { Auth } from "@jet-lab/jet-engine/lib/auth/auth";
 import CountryPhoneInput, { CountryPhoneInputValue } from "antd-country-phone-input";
 import { DocsLink } from "../docsLink";
+import { ReactComponent as ArrowIcon } from "../../images/arrow_icon.svg";
 
 enum Steps {
   Welcome = 0,
@@ -310,7 +311,7 @@ export const VerifyModal = ({
                 />
                 <p className="center-text">{w.name}</p>
               </div>
-              <i className="text-gradient fas fa-arrow-right"></i>
+              <ArrowIcon width="25px" />
             </div>
           ))}
         </div>

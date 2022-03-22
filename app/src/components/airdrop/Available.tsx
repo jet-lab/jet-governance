@@ -12,12 +12,13 @@ interface availAirdropsRender {
   finalized: boolean;
   airdropAddress: PublicKey;
   shortDesc: string;
+  longDesc: string;
   expireAt: number;
   amount: number | undefined;
 }
 
 export const Available = ({ airdropInfo }: { airdropInfo: availAirdropsRender }) => {
-  const { airdrop, finalized, shortDesc, expireAt, amount } = airdropInfo;
+  const { airdrop, finalized, shortDesc, longDesc, expireAt, amount } = airdropInfo;
   const [showModal, setShowModal] = useState(false);
   const [currentTime, setCurrentTime] = useState(Date.now());
   const key = airdrop.airdropAddress.toString();
@@ -40,10 +41,12 @@ export const Available = ({ airdropInfo }: { airdropInfo: availAirdropsRender })
       key={key}
     >
       <span className="avail-info">
-        <strong>CARE PACKAGE | {fromLamports(amount, jetMint)} JET</strong>
+        <strong>
+          {shortDesc} | {fromLamports(amount, jetMint)} JET
+        </strong>
         <br />
         {finalized ? shortDesc : "You'll just have to wait to find out!"}
-        <span className="gray">
+        <span className="gray airdrop-time">
           {finalized ? getRemainingTime(currentTime, expireAt * 1000) : "?"}
         </span>
       </span>

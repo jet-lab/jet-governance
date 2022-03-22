@@ -4,7 +4,7 @@ import { useRpcContext } from "../../hooks/useRpcContext";
 import { withdrawAllUnbonded } from "../../actions/withdrawUnbonded";
 import { useProposalContext } from "../../contexts/proposal";
 import { UnbondingAccount } from "@jet-lab/jet-engine";
-import { toTokens } from "../../utils";
+import { isSignTransactionError, toTokens } from "../../utils";
 
 enum Steps {
   Confirm = 0,
@@ -36,8 +36,13 @@ export const WithdrawAllModal = ({ onClose }: { onClose: () => void }) => {
       .then(() => {
         setCurrent(Steps.Success);
       })
-      .catch(() => {
-        setCurrent(Steps.Error);
+      .catch(err => {
+        if (isSignTransactionError(err)) {
+          onClose();
+        } else {
+          console.log(err);
+          setCurrent(Steps.Error);
+        }
       })
       .finally(() => {
         setLoading(false);

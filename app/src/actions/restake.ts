@@ -1,26 +1,40 @@
-import { StakeAccount, StakePool } from "@jet-lab/jet-engine";
+import { AssociatedToken, StakeAccount, StakePool } from "@jet-lab/jet-engine";
 import { UnbondingAccount } from "@jet-lab/jet-engine";
-import { RpcContext } from "@solana/spl-governance";
+import { Provider } from "@project-serum/anchor";
+import { ProgramAccount, Realm, RpcContext } from "@solana/spl-governance";
+import { TransactionInstruction } from "@solana/web3.js";
 import { sendTransactionWithNotifications } from "../tools/transactions";
 
 export const restake = async (
-  rpcContext: RpcContext,
+  { connection, wallet, walletPubkey }: RpcContext,
   unbondingAccount: UnbondingAccount,
   stakeAccount: StakeAccount,
-  stakePool: StakePool
+  stakePool: StakePool,
+  realm: ProgramAccount<Realm>
 ) => {
-  const ix = await UnbondingAccount.cancelUnbond(
+  const provider = new Provider(connection, wallet as any, Provider.defaultOptions());
+  const ix: TransactionInstruction[] = [];
+  await UnbondingAccount.withCancelUnbond(
+    ix,
     unbondingAccount,
     stakeAccount,
     stakePool,
-    rpcContext.walletPubkey
+    walletPubkey
   );
 
-  sendTransactionWithNotifications(
-    rpcContext.connection,
-    rpcContext.wallet,
+  const voteMint = stakePool.addresses.stakeVoteMint;
+
+  const voterTokenAccount = await AssociatedToken.withCreate(ix, provider, walletPubkey, voteMint);
+
+  await StakeAccount.withMintVotes(
     ix,
-    [],
-    "JET has been staked"
+    stakePool,
+    realm,
+    stakeAccount.stakeAccount.owner,
+    voterTokenAccount
   );
+
+  await AssociatedToken.withClose(ix, walletPubkey, voteMint, walletPubkey);
+
+  await sendTransactionWithNotifications(connection, wallet, ix, [], "JET has been staked");
 };

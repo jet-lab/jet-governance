@@ -97,10 +97,8 @@ export const VoteModal = ({
         yesNoVote,
         programs.stake,
         stakePool,
-        stakeAccount,
         undefined,
-        voteRecord ? voteRecord!.pubkey : undefined,
-        stakeBalance
+        voteRecord ? voteRecord!.pubkey : undefined
       )
         .then(() => {
           setCurrent(Steps.VoteSuccess);
@@ -109,6 +107,7 @@ export const VoteModal = ({
           if (isSignTransactionError(err)) {
             onClose();
           } else {
+            console.log(err);
             setCurrent(Steps.UnknownError);
           }
         })

@@ -1,4 +1,4 @@
-import { InfoCircleFilled, PlusOutlined } from "@ant-design/icons";
+import { InfoCircleFilled, MinusOutlined, PlusOutlined } from "@ant-design/icons";
 import { bnToNumber } from "@jet-lab/jet-engine";
 import { Typography, Tooltip, Divider, Button, Switch, notification } from "antd";
 import { Input } from "../components/Input";
@@ -15,7 +15,6 @@ import {
   JET_FAUCET_DEVNET,
   JET_TOKEN_MINT
 } from "../utils";
-import { FooterLinks } from "./FooterLinks";
 import { StakeModal } from "./modals/StakeModal";
 import { UnstakeModal } from "./modals/UnstakeModal";
 import { WithdrawAllModal } from "./modals/WithdrawAllModal";
@@ -27,6 +26,7 @@ export const YourInfo = () => {
   const [stakeModalVisible, setStakeModalVisible] = useState(false);
   const [unstakeModalVisible, setUnstakeModalVisible] = useState(false);
   const [withdrawAllModalVisible, setWithdrawAllModalVisible] = useState(false);
+  const [showRewards, setShowRewards] = useState(false);
   const [inputAmount, setInputAmount] = useState<number | undefined>();
   const { connected } = useWallet();
   const { darkTheme, toggleDarkTheme } = useDarkTheme();
@@ -68,7 +68,7 @@ export const YourInfo = () => {
   }, [stakingYield, jetMint]);
 
   const handleStake = () => {
-    if (!jetMint || !inputAmount || !jetAccount || !inputAmount) {
+    if (!jetMint || !inputAmount || !jetAccount) {
       return;
     }
     const balance = bnToNumber(jetAccount.info.amount) / 10 ** jetMint.decimals;
@@ -83,7 +83,7 @@ export const YourInfo = () => {
   };
 
   const handleUnstake = () => {
-    if (!jetMint || !inputAmount || !tokenOwnerRecord || !inputAmount) {
+    if (!jetMint || !inputAmount || !tokenOwnerRecord) {
       return;
     }
     const balance =
@@ -147,10 +147,6 @@ export const YourInfo = () => {
     openNotification();
   }, [claimsCount, history]);
 
-  const showRewards = () => {
-    document.getElementById("show-more-apr")?.classList.toggle("hidden");
-  };
-
   const isOwnPage = Boolean(useLocation().pathname.includes("your-info"));
   const { Paragraph, Title, Text } = Typography;
   return (
@@ -184,24 +180,35 @@ export const YourInfo = () => {
               </Text>
               <Text>
                 {connected ? (
-                  <PlusOutlined style={{ marginRight: 0 }} onClick={showRewards} />
+                  showRewards ? (
+                    <MinusOutlined
+                      style={{ marginRight: 0 }}
+                      onClick={() => setShowRewards(!showRewards)}
+                    />
+                  ) : (
+                    <PlusOutlined
+                      style={{ marginRight: 0 }}
+                      onClick={() => setShowRewards(!showRewards)}
+                    />
+                  )
                 ) : (
                   `${rewards.apr ?? "-"}%`
                 )}
               </Text>
             </div>
-            <div className={connected ? "hidden" : undefined} id="show-more-apr">
-              <div className="flex justify-between cluster">
-                <Text className="cluster">Est. Daily Reward</Text>
-                <Text className="cluster">{rewards.estDailyReward}</Text>
+            {showRewards && (
+              <div id="show-more-apr">
+                <div className="flex justify-between cluster">
+                  <Text className="cluster">Est. Daily Reward</Text>
+                  <Text className="cluster">{rewards.estDailyReward}</Text>
+                </div>
+                <div className="flex justify-between cluster">
+                  <Text className="cluster">Est. Monthly Reward</Text>
+                  <Text className="cluster">{rewards.estMonthlyReward}</Text>
+                </div>
               </div>
-              <div className="flex justify-between cluster">
-                <Text className="cluster">Est. Monthly Reward</Text>
-                <Text className="cluster">{rewards.estMonthlyReward}</Text>
-              </div>
-            </div>
+            )}
           </div>
-
           <Divider className="divider-info" />
           <div className="flex column">
             {connected && (
@@ -284,33 +291,36 @@ export const YourInfo = () => {
                 onClose={() => setUnstakeModalVisible(false)}
               />
             )}
-            <Button
-              type="dashed"
-              className="full-width"
-              onClick={() => handleWithdrawUnstaked()}
-              disabled={!connected}
-            >
-              Withdraw all
-            </Button>
+            {!unbondingComplete.isZero() && (
+              <Button
+                type="dashed"
+                className="full-width"
+                onClick={() => handleWithdrawUnstaked()}
+                disabled={!connected}
+              >
+                Withdraw all
+              </Button>
+            )}
             {withdrawAllModalVisible && (
               <WithdrawAllModal onClose={() => setWithdrawAllModalVisible(false)} />
             )}
           </div>
+          {inDevelopment && (
+            <div className="airdrops flex-centered">
+              <i
+                onClick={getJetAirdrop}
+                className="clickable-icon text-gradient fas fa-parachute-box"
+                title="Airdrop Jet"
+              ></i>
+              <i
+                onClick={getCouncilAirdrop}
+                className="clickable-icon text-gradient fas fa-crown"
+                title="Airdrop Council"
+              ></i>
+            </div>
+          )}
         </div>
       </Typography>
-      <div>
-        <Switch
-          onChange={() => toggleDarkTheme()}
-          checked={darkTheme}
-          checkedChildren="dark"
-          unCheckedChildren="light"
-        />
-        <br />
-        {inDevelopment && <Button onClick={getJetAirdrop}>GET JET</Button>}
-        {inDevelopment && <Button onClick={getCouncilAirdrop}>GET COUNCIL TOKEN</Button>}
-      </div>
-      <Divider />
-      <FooterLinks />
     </div>
   );
 };

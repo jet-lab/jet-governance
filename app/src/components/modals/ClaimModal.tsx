@@ -43,6 +43,7 @@ export const ClaimModal = ({
           if (isSignTransactionError(err)) {
             onClose();
           } else {
+            console.log(err);
             setCurrent(Steps.Error);
           }
         })
@@ -101,7 +102,7 @@ export const ClaimModal = ({
     )
   };
   steps[Steps.Error] = {
-    title: "Error ",
+    title: "Error",
     okText: "Okay",
     onOk: () => onClose(),
     onCancel: () => onClose(),

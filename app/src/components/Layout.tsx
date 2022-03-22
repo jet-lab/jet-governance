@@ -1,7 +1,8 @@
 import React from "react";
 import "../App.less";
 import { Layout } from "antd";
-import { Nav } from "./Nav";
+import { Navbar } from "./Navbar";
+import { TermsPrivacy } from "./TermsPrivacy";
 
 const { Content } = Layout;
 
@@ -9,8 +10,9 @@ export const AppLayout = React.memo(({ children }) => {
   return (
     <div className="App">
       <Layout>
-        <Nav />
+        <Navbar />
         <Content>{children}</Content>
+        <TermsPrivacy />
       </Layout>
     </div>
   );

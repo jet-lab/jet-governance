@@ -81,13 +81,14 @@ export const UnstakeModal = ({
         setLoading(false);
         setDisplayUnbondDate();
         setCurrent(Steps.Success);
+        resetInput();
       })
       .catch(err => {
         if (isSignTransactionError(err)) {
           onClose();
         } else {
+          console.log(err);
           setCurrent(Steps.Error);
-          resetInput();
         }
       })
       .finally(() => {
