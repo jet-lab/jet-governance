@@ -1,5 +1,3 @@
-use std::convert::TryInto;
-
 use anchor_lang::prelude::*;
 
 use crate::ErrorCode;
@@ -33,20 +31,18 @@ pub struct StakePool {
     /// Length of the unbonding period
     pub unbond_period: i64,
 
+    /// The total amount of virtual stake tokens that can receive rewards
+    pub shares_bonded: u64,
+
+    /// The total amount of tokens being unbonded
+    pub tokens_unbonding: u64,
+
     /// The amount of tokens stored by the pool's vault
     pub vault_amount: u64,
 
     /// A token to identify when unbond conversions are invalidated due to
     /// a withdraw of bonded tokens.
     pub unbond_change_index: u64,
-
-    /// Tokens that are currently bonded,
-    /// and the distinctly valued shares that represent stake in bonded tokens
-    pub bonded: SharedTokenPool,
-
-    /// Tokens that are in the process of unbonding,
-    /// and the distinctly valued shares that represent stake in unbonding tokens
-    pub unbonding: SharedTokenPool,
 }
 
 impl StakePool {
@@ -54,21 +50,38 @@ impl StakePool {
         [&self.seed[..self.seed_len as usize], &self.bump_seed[..]]
     }
 
+    pub fn amount(&self) -> FullAmount {
+        let (tokens, shares) = match self.vault_amount {
+            0 => (INIT_TOKEN_SCALE, INIT_SHARE_SCALE),
+            n => (n - self.tokens_unbonding, self.shares_bonded),
+        };
+
+        FullAmount {
+            token_amount: 0,
+            share_amount: 0,
+            shares,
+            tokens,
+        }
+    }
+
     pub fn update_vault(&mut self, vault_amount: u64) {
-        // todo decide how to handle vault_amount < self.vault_amount?
-        self.bonded.donate(vault_amount - self.vault_amount);
         self.vault_amount = vault_amount;
     }
 
-    pub fn deposit(&mut self, account: &mut StakeAccount, tokens: u64) -> FullAmount {
-        let full_amount = self.bonded.deposit(tokens);
+    pub fn deposit(&mut self, account: &mut StakeAccount, amount: u64) -> FullAmount {
+        let full_amount = self.amount().with_tokens(Rounding::Down, amount);
+
+        self.shares_bonded = self
+            .shares_bonded
+            .checked_add(full_amount.share_amount)
+            .unwrap();
 
         self.vault_amount = self
             .vault_amount
             .checked_add(full_amount.token_amount)
             .unwrap();
 
-        account.deposit(full_amount.share_amount);
+        account.deposit(&full_amount);
 
         full_amount
     }
@@ -77,28 +90,30 @@ impl StakePool {
         &mut self,
         account: &mut StakeAccount,
         record: &mut UnbondingAccount,
-        tokens: Option<u64>,
+        amount: Option<u64>,
     ) -> Result<(), ErrorCode> {
-        let bonded_to_unbond = match tokens {
-            Some(n) => self.bonded.withdraw_tokens(n),
+        let full_amount = match amount {
+            Some(n) => self.amount().with_tokens(Rounding::Up, n),
             None => {
-                let minted_votes = self
-                    .bonded
-                    .amount()
-                    .with_tokens(Rounding::Up, account.minted_votes);
-                self.bonded
-                    .withdraw(account.bonded_shares - minted_votes.share_amount)
+                let user_amount = self.amount().with_shares(Rounding::Down, account.shares);
+
+                let unminted = user_amount.token_amount - account.minted_votes;
+                user_amount.with_tokens(Rounding::Up, unminted)
             }
         };
 
-        let unbonding_shares = self
-            .unbonding
-            .deposit(bonded_to_unbond.token_amount)
-            .share_amount;
+        account.unbond(&full_amount)?;
 
-        account.unbond(bonded_to_unbond, unbonding_shares)?;
+        self.shares_bonded = self
+            .shares_bonded
+            .checked_sub(full_amount.share_amount)
+            .unwrap();
+        self.tokens_unbonding = self
+            .tokens_unbonding
+            .checked_add(full_amount.token_amount)
+            .unwrap();
 
-        record.shares = unbonding_shares;
+        record.amount = full_amount;
         record.unbond_change_index = self.unbond_change_index;
 
         Ok(())
@@ -109,8 +124,22 @@ impl StakePool {
         account: &mut StakeAccount,
         record: &UnbondingAccount,
     ) -> FullAmount {
-        let full_amount = self.unbonding.withdraw(record.shares);
-        account.withdraw_unbonded(full_amount.share_amount);
+        let full_amount = match record.unbond_change_index {
+            idx if idx == self.unbond_change_index => {
+                self.tokens_unbonding = self
+                    .tokens_unbonding
+                    .checked_sub(record.amount.token_amount)
+                    .unwrap();
+
+                record.amount
+            }
+
+            _ => self
+                .amount()
+                .with_shares(Rounding::Down, record.amount.share_amount),
+        };
+
+        account.withdraw_unbonded(&full_amount);
         self.vault_amount = self
             .vault_amount
             .checked_sub(full_amount.token_amount)
@@ -120,16 +149,8 @@ impl StakePool {
     }
 
     pub fn withdraw_bonded(&mut self, amount: u64) {
-        let bonded_withdrawal: u64 = (amount as u128)
-            .checked_mul(self.bonded.tokens as u128)
-            .unwrap()
-            .checked_div(self.vault_amount as u128)
-            .unwrap()
-            .try_into()
-            .unwrap();
-        let unbonding_withdrawal = amount - bonded_withdrawal;
-        self.bonded.dilute(bonded_withdrawal);
-        self.unbonding.dilute(unbonding_withdrawal);
+        self.tokens_unbonding = 0;
+        self.unbond_change_index += 1;
         self.vault_amount = self.vault_amount.checked_sub(amount).unwrap();
     }
 
@@ -144,12 +165,9 @@ impl StakePool {
         amount: Option<u64>,
     ) -> Result<u64, ErrorCode> {
         let full_amount = match amount {
-            Some(token_amount) => self.bonded.amount().with_tokens(Rounding::Up, token_amount),
+            Some(token_amount) => self.amount().with_tokens(Rounding::Up, token_amount),
             None => {
-                let user_amount = self
-                    .bonded
-                    .amount()
-                    .with_shares(Rounding::Down, account.bonded_shares);
+                let user_amount = self.amount().with_shares(Rounding::Down, account.shares);
 
                 let unminted = user_amount.token_amount - account.minted_votes;
                 user_amount.with_tokens(Rounding::Up, unminted)
@@ -157,72 +175,6 @@ impl StakePool {
         };
 
         account.mint_votes(&full_amount)
-    }
-}
-
-/// Primitive that represents a pool of tokens with ownership of a portion
-/// of the pool represented by shares. Each SharedTokenPool has a distinct
-/// value for its own shares.
-#[derive(Default, Debug, Copy, Clone, AnchorSerialize, AnchorDeserialize)]
-pub struct SharedTokenPool {
-    tokens: u64,
-    shares: u64,
-}
-
-impl SharedTokenPool {
-    fn amount(&self) -> FullAmount {
-        let (tokens, shares) = match self.tokens {
-            0 => (INIT_TOKEN_SCALE, INIT_SHARE_SCALE),
-            n => (n, self.shares),
-        };
-
-        FullAmount {
-            token_amount: 0,
-            share_amount: 0,
-            all_shares: shares,
-            all_tokens: tokens,
-        }
-    }
-
-    /// Add specified tokens and mint a proportional amount of shares
-    pub fn deposit(&mut self, tokens: u64) -> FullAmount {
-        let full_amount = self.amount().with_tokens(Rounding::Down, tokens);
-        self.shares = self.shares.checked_add(full_amount.share_amount).unwrap();
-        self.tokens = self.tokens.checked_add(full_amount.token_amount).unwrap();
-
-        full_amount
-    }
-
-    /// Burn specified shares and remove a proportional amount of tokens
-    pub fn withdraw(&mut self, shares: u64) -> FullAmount {
-        let full_amount = self.amount().with_shares(Rounding::Down, shares);
-        self.withdraw_full_amount_impl(&full_amount);
-
-        full_amount
-    }
-
-    /// Remove specified tokens and burn a proportional amount of shares
-    pub fn withdraw_tokens(&mut self, tokens: u64) -> FullAmount {
-        let full_amount = self.amount().with_tokens(Rounding::Up, tokens);
-        self.withdraw_full_amount_impl(&full_amount);
-
-        full_amount
-    }
-
-    /// only use with a FullAmount derived from this SharedTokenPool
-    fn withdraw_full_amount_impl(&mut self, full_amount: &FullAmount) {
-        self.shares = self.shares.checked_sub(full_amount.share_amount).unwrap();
-        self.tokens = self.tokens.checked_sub(full_amount.token_amount).unwrap();
-    }
-
-    /// Deposit tokens without creating any shares
-    pub fn donate(&mut self, tokens: u64) {
-        self.tokens = self.tokens.checked_add(tokens).unwrap();
-    }
-
-    /// Remove tokens without burning any shares
-    pub fn dilute(&mut self, tokens: u64) {
-        self.tokens = self.tokens.checked_sub(tokens).unwrap();
     }
 }
 
@@ -234,27 +186,20 @@ pub enum Rounding {
 
 #[derive(AnchorSerialize, AnchorDeserialize, Debug, Default, Clone, Copy)]
 pub struct FullAmount {
-    /// Desired number of tokens resulting from the latest calculation
     pub token_amount: u64,
-
-    /// Desired number of shares resulting from the latest calculation
     pub share_amount: u64,
-
-    /// Full amount of shares from entire pool used to determine exchange rate
-    all_shares: u64,
-
-    /// Full amount of tokens from entire pool used to determine exchange rate
-    all_tokens: u64,
+    pub shares: u64,
+    pub tokens: u64,
 }
 
 impl FullAmount {
     pub fn with_tokens(&self, rounding: Rounding, token_amount: u64) -> Self {
         let round_amount = match rounding {
-            Rounding::Up if token_amount > 0 => self.all_shares as u128 / 2,
+            Rounding::Up if token_amount > 0 => self.shares as u128 / 2,
             _ => 0,
         };
-        let share_amount = (round_amount + (token_amount as u128) * (self.all_shares as u128))
-            / (self.all_tokens as u128);
+        let share_amount =
+            (round_amount + (token_amount as u128) * (self.shares as u128)) / (self.tokens as u128);
 
         assert!(share_amount < std::u64::MAX as u128);
         assert!((share_amount > 0 && token_amount > 0) || (share_amount == 0 && token_amount == 0));
@@ -265,18 +210,18 @@ impl FullAmount {
         Self {
             token_amount,
             share_amount,
-            all_shares: self.all_shares,
-            all_tokens: self.all_tokens,
+            shares: self.shares,
+            tokens: self.tokens,
         }
     }
 
     pub fn with_shares(&self, rounding: Rounding, share_amount: u64) -> Self {
         let round_amount = match rounding {
-            Rounding::Up if share_amount > 0 => self.all_tokens as u128 / 2,
+            Rounding::Up if share_amount > 0 => self.tokens as u128 / 2,
             _ => 0,
         };
-        let token_amount = (round_amount + (self.all_tokens as u128) * (share_amount as u128))
-            / (self.all_shares as u128);
+        let token_amount =
+            (round_amount + (self.tokens as u128) * (share_amount as u128)) / (self.shares as u128);
 
         assert!(token_amount < std::u64::MAX as u128);
         assert!((share_amount > 0 && token_amount > 0) || (share_amount == 0 && token_amount == 0));
@@ -286,8 +231,8 @@ impl FullAmount {
         Self {
             token_amount,
             share_amount,
-            all_shares: self.all_shares,
-            all_tokens: self.all_tokens,
+            shares: self.shares,
+            tokens: self.tokens,
         }
     }
 }
@@ -302,7 +247,7 @@ pub struct StakeAccount {
     pub stake_pool: Pubkey,
 
     /// The stake balance (in share units)
-    pub bonded_shares: u64,
+    pub shares: u64,
 
     /// The token balance locked by existence of voting tokens
     pub minted_votes: u64,
@@ -310,42 +255,42 @@ pub struct StakeAccount {
     /// The stake balance locked by existence of collateral tokens
     pub minted_collateral: u64,
 
-    /// The total share of currently unbonding tokens to be withdrawn in the future
-    pub unbonding_shares: u64,
+    /// The total staked tokens currently unbonding so as to be withdrawn in the future
+    pub unbonding: u64,
 }
 
 impl StakeAccount {
-    pub fn deposit(&mut self, shares: u64) {
-        self.bonded_shares = self.bonded_shares.checked_add(shares).unwrap();
+    pub fn deposit(&mut self, amount: &FullAmount) {
+        self.shares = self.shares.checked_add(amount.share_amount).unwrap();
     }
 
-    pub fn rebond(&mut self, bonded_shares: u64, unbonding_shares: u64) {
-        self.withdraw_unbonded(unbonding_shares);
-        self.deposit(bonded_shares);
+    pub fn rebond(&mut self, amount: &FullAmount) {
+        self.withdraw_unbonded(amount);
+        self.deposit(amount);
     }
 
-    pub fn unbond(&mut self, bonded: FullAmount, unbonding_shares: u64) -> Result<(), ErrorCode> {
-        if self.bonded_shares < bonded.share_amount {
+    pub fn unbond(&mut self, amount: &FullAmount) -> Result<(), ErrorCode> {
+        if self.shares < amount.share_amount {
             return Err(ErrorCode::InsufficientStake);
         }
 
-        self.bonded_shares = self.bonded_shares.checked_sub(bonded.share_amount).unwrap();
-        self.unbonding_shares = self.unbonding_shares.checked_add(unbonding_shares).unwrap();
+        self.shares = self.shares.checked_sub(amount.share_amount).unwrap();
+        self.unbonding = self.unbonding.checked_add(amount.share_amount).unwrap();
 
-        let minted_vote_amount = bonded.with_tokens(Rounding::Up, self.minted_votes);
-        if minted_vote_amount.share_amount > self.bonded_shares {
+        let minted_vote_amount = amount.with_tokens(Rounding::Up, self.minted_votes);
+        if minted_vote_amount.share_amount > self.shares {
             return Err(ErrorCode::VotesLocked);
         }
 
-        if self.minted_collateral > self.bonded_shares {
+        if self.minted_collateral > self.shares {
             return Err(ErrorCode::CollateralLocked);
         }
 
         Ok(())
     }
 
-    pub fn withdraw_unbonded(&mut self, shares: u64) {
-        self.unbonding_shares = self.unbonding_shares.checked_sub(shares).unwrap();
+    pub fn withdraw_unbonded(&mut self, amount: &FullAmount) {
+        self.unbonding = self.unbonding.checked_sub(amount.share_amount).unwrap();
     }
 
     pub fn mint_votes(&mut self, amount: &FullAmount) -> Result<u64, ErrorCode> {
@@ -361,11 +306,11 @@ impl StakeAccount {
             return Ok(0);
         }
 
-        if minted_vote_amount.share_amount > self.bonded_shares {
+        if minted_vote_amount.share_amount > self.shares {
             msg!(
                 "insufficient stake for votes: requested={}, available={}",
                 minted_vote_amount.share_amount,
-                self.bonded_shares
+                self.shares
             );
             return Err(ErrorCode::InsufficientStake);
         }
@@ -385,9 +330,8 @@ pub struct UnbondingAccount {
     /// The related account requesting to unstake
     pub stake_account: Pubkey,
 
-    /// The share of the unbonding tokens to be unstaked
-    /// These shares do not have equal value to the bonded shares
-    pub shares: u64,
+    /// The amount of shares/tokens to be unstaked
+    pub amount: FullAmount,
 
     /// The time after which the staked amount can be withdrawn
     pub unbonded_at: i64,
@@ -410,17 +354,16 @@ mod tests {
         pool.deposit(&mut user_a, 1_000);
 
         assert_eq!(1_000, pool.vault_amount);
-        assert_eq!(10_000, pool.bonded.shares);
+        assert_eq!(10_000, pool.shares_bonded);
 
         // increase the vault contents to change the unit to share ratio to 0.15:1
         pool.vault_amount += 500;
-        pool.bonded.tokens += 500;
 
         // user B deposit 28 units, which is about 186.6 shares (rounded to 22 units)
         pool.deposit(&mut user_b, 28);
 
         assert_eq!(1_528, pool.vault_amount);
-        assert_eq!(10_186, pool.bonded.shares);
+        assert_eq!(10_186, pool.shares_bonded);
 
         // attempt to withdraw all 186 shares for user B, expect 27 units
         let mut unbond_b_0 = UnbondingAccount::default();
@@ -428,17 +371,16 @@ mod tests {
         pool.withdraw_unbonded(&mut user_b, &mut unbond_b_0);
 
         assert_eq!(1_501, pool.vault_amount);
-        assert_eq!(10_000, pool.bonded.shares);
+        assert_eq!(10_000, pool.shares_bonded);
 
         // Increase share ratio to 1.5:1
         pool.vault_amount *= 10;
-        pool.bonded.tokens *= 10;
 
         // user B deposits 1_732_311 units
         pool.deposit(&mut user_b, 1_732_311);
 
         assert_eq!(1_747_321, pool.vault_amount);
-        assert_eq!(1_164_104, pool.bonded.shares);
+        assert_eq!(1_164_104, pool.shares_bonded);
 
         // attempt to withdraw all tokens for user B, expect 1 less token
         let mut unbond_b_1 = UnbondingAccount::default();
@@ -446,7 +388,7 @@ mod tests {
         pool.withdraw_unbonded(&mut user_b, &mut unbond_b_1);
 
         assert_eq!(15_011, pool.vault_amount);
-        assert_eq!(10_000, pool.bonded.shares);
+        assert_eq!(10_000, pool.shares_bonded);
     }
 
     #[test]
@@ -459,10 +401,9 @@ mod tests {
         pool.deposit(&mut user_b, 750_000);
 
         assert_eq!(2_000_000, pool.vault_amount);
-        assert_eq!(20_000_000, pool.bonded.shares);
+        assert_eq!(20_000_000, pool.shares_bonded);
 
         pool.vault_amount += 1_200_000;
-        pool.bonded.tokens += 1_200_000;
 
         // at this point user_a has 2_000_000 tokens
         // ..            user_b has 1_200_000 tokens
@@ -472,32 +413,29 @@ mod tests {
         pool.unbond(&mut user_b, &mut unbond_b_0, Some(200_000))
             .unwrap();
 
-        // unbonding shares are counted separately and init at 10x the tokens
-        assert_eq!(2_000_000, user_b.unbonding_shares);
-        assert_eq!(6_249_997, user_b.bonded_shares);
+        assert_eq!(1_250_003, user_b.unbonding);
+        assert_eq!(6_249_997, user_b.shares);
 
         // increase share value while unbond is waiting
         pool.vault_amount += 2_400_000;
-        pool.bonded.tokens += 2_400_000;
 
-        // unbond 200_000 tokens, which should be equal to 694_446 bonded shares and 2_000_000 unbonding shares
+        // unbond 200_000 tokens, which should be equal to 694_446 shares
         let mut unbond_b_1 = UnbondingAccount::default();
         pool.unbond(&mut user_b, &mut unbond_b_1, Some(200_000))
             .unwrap();
 
-        assert_eq!(4_000_000, user_b.unbonding_shares);
-        assert_eq!(5_555_551, user_b.bonded_shares);
+        assert_eq!(1_944_449, user_b.unbonding);
+        assert_eq!(5_555_551, user_b.shares);
 
         // increased share value shouldn't matter
         pool.vault_amount += 2_400_000;
-        pool.bonded.tokens += 2_400_000;
 
         // withdraw all unbonded tokens
         pool.withdraw_unbonded(&mut user_b, &unbond_b_1);
         pool.withdraw_unbonded(&mut user_b, &unbond_b_0);
 
-        assert_eq!(0, user_b.unbonding_shares);
-        assert_eq!(5_555_551, user_b.bonded_shares);
+        assert_eq!(0, user_b.unbonding);
+        assert_eq!(5_555_551, user_b.shares);
         assert_eq!(7_600_000, pool.vault_amount);
 
         // start unbonding again, then reduce share values
@@ -510,9 +448,9 @@ mod tests {
         // withdraw should provide less than what was unbonded, since token per share was reduced
         let _ = pool.withdraw_unbonded(&mut user_b, &unbond_b_2);
 
-        assert_eq!(0, user_b.unbonding_shares);
-        assert_eq!(5_000_000, user_b.bonded_shares);
-        assert_eq!(1_938_463, pool.vault_amount);
+        assert_eq!(0, user_b.unbonding);
+        assert_eq!(5_000_000, user_b.shares);
+        assert_eq!(1_936_509, pool.vault_amount);
     }
 
     #[test]
@@ -525,7 +463,6 @@ mod tests {
         pool.deposit(&mut user_b, 750_000);
 
         pool.vault_amount += 1_200_000;
-        pool.bonded.tokens += 1_200_000;
 
         // at this point user_a has 2_000_000 tokens
         // ..            user_b has 1_200_000 tokens
@@ -541,7 +478,6 @@ mod tests {
         assert_eq!(Err(ErrorCode::InsufficientStake), result_a);
 
         pool.vault_amount += 1_200_000;
-        pool.bonded.tokens += 1_200_000;
 
         // at this point user_a has 2_750_000 tokens
         // ..            user_b has 1_650_000 tokens
