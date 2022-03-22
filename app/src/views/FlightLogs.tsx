@@ -13,7 +13,7 @@ export const FlightLogView = () => {
   const { connected } = useWallet();
 
   return (
-    <div className="view-container column-grid" id="flight-logs-view">
+    <div className="view-container justify-start" id="flight-logs-view">
       <div className="neu-container centered" id="flight-log">
         <h1>Flight Logs</h1>
         <table>
@@ -24,7 +24,7 @@ export const FlightLogView = () => {
               <th className="center-text">Action</th>
               <th>Amount</th>
             </tr>
-            <tr className="table-divider"></tr>
+            <tr className="table-divider" />
           </thead>
 
           {connected && (
@@ -64,7 +64,7 @@ export const FlightLogView = () => {
           Load More
         </Button>
       </div>
-      <div className="spacer" />
+      <Divider />
       <FooterLinks />
     </div>
   );

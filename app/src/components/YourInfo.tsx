@@ -309,7 +309,7 @@ export const YourInfo = () => {
         {inDevelopment && <Button onClick={getJetAirdrop}>GET JET</Button>}
         {inDevelopment && <Button onClick={getCouncilAirdrop}>GET COUNCIL TOKEN</Button>}
       </div>
-
+      <Divider />
       <FooterLinks />
     </div>
   );

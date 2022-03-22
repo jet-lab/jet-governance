@@ -1,32 +1,32 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { ResultProgressBar } from "../components/proposal/ResultProgressBar";
-import { Divider, Button, Typography } from "antd";
+import { Button, Divider, Typography } from "antd";
 import { ProposalCard } from "../components/ProposalCard";
 import { VoterList } from "../components/proposal/VoterList";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { VoteModal } from "../components/modals/VoteModal";
 import {
-  useProposal,
-  useTokenOwnerRecords,
-  useVoteRecordsByProposal,
-  useWalletTokenOwnerRecord,
-  useTokenOwnerVoteRecord,
   getVoteCounts,
   getVoteType,
   getVotingDeadline,
   useCountdown,
-  useVoterDisplayData,
-  VoterDisplayData,
-  VoteOption,
   useKeyParam,
-  useLoadGist
+  useLoadGist,
+  useProposal,
+  useTokenOwnerRecords,
+  useTokenOwnerVoteRecord,
+  useVoterDisplayData,
+  useVoteRecordsByProposal,
+  useWalletTokenOwnerRecord,
+  VoteOption,
+  VoterDisplayData
 } from "../hooks";
 import { bnToIntLossy } from "../tools/units";
 import { LABELS } from "../constants";
 import ReactMarkdown from "react-markdown";
 import { voteRecordCsvDownload } from "../actions/voteRecordCsvDownload";
-import { DownloadOutlined, ArrowLeftOutlined } from "@ant-design/icons";
+import { ArrowLeftOutlined, DownloadOutlined } from "@ant-design/icons";
 import { getPubkeyIndex } from "../models/PUBKEYS_INDEX";
 import { useProposalContext } from "../contexts/proposal";
 import { StakeBalance } from "@jet-lab/jet-engine";

@@ -31,8 +31,8 @@ export const AirdropView = () => {
   }));
 
   return (
-    <div className="view-container column-grid" id="airdrop-view">
-      <div className="neu-container centered" id="airdrop">
+    <section className="view-container justify-start">
+      <div className="neu-container" id="airdrop">
         <h1>Claim your airdrop!</h1>
         <p>
           Available airdrops for the connected wallet are listed below. All airdrops must be claimed
@@ -67,15 +67,13 @@ export const AirdropView = () => {
           </span>
         </p>
         <Divider />
-
         {connected &&
           availAirdropsRender?.map(airdrop => (
             <Available airdropInfo={airdrop} key={airdrop.airdropAddress.toString()} />
           ))}
       </div>
-      {/* todo - styling */}
-      <div className="spacer" />
+      <Divider />
       <FooterLinks />
-    </div>
+    </section>
   );
 };
