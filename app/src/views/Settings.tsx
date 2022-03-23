@@ -35,7 +35,7 @@ export function Settings(): JSX.Element {
             <div>
               <Button ghost className="flex-centered small-btn" onClick={() => setConnecting(true)}>
                 <WalletIcon width="17px" />
-                CONNECT
+                Connect
               </Button>
             </div>
           )}

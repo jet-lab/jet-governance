@@ -80,8 +80,8 @@ export function Navbar() {
           >
             <WalletIcon width="20px" />
             {connected
-              ? `${shortenAddress(publicKey ? publicKey.toString() : "")} CONNECTED`
-              : "CONNECT"}
+              ? `${shortenAddress(publicKey ? publicKey.toString() : "")} Connected`
+              : "Connect"}
           </Button>
         </div>
       </nav>
@@ -139,8 +139,8 @@ export function Navbar() {
             >
               <WalletIcon width="20px" />
               {connected
-                ? `${shortenAddress(publicKey ? publicKey.toString() : "")} CONNECTED`
-                : "CONNECT"}
+                ? `${shortenAddress(publicKey ? publicKey.toString() : "")} Connected`
+                : "Connect"}
             </Button>
           </div>
           <div className="drawer-bottom flex-centered column">
