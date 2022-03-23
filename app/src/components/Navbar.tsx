@@ -148,14 +148,14 @@ export function Navbar() {
               <a
                 key={link.title}
                 href={link.url}
-                className="footer-link"
+                className="footer-link footer-link-pad"
                 rel="noopener noreferrer"
                 target="_blank"
               >
                 {link.title}
               </a>
             ))}
-            <DocsLink className="footer-link">Docs</DocsLink>
+            <DocsLink className="footer-link footer-link-pad ">Docs</DocsLink>
             <Switch
               className="secondary-switch"
               onClick={() => toggleDarkTheme()}

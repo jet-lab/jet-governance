@@ -34,6 +34,7 @@ export const AirdropView = () => {
     <section className="view-container justify-start">
       <div className="neu-container flex justify-center align-start column" id="airdrop">
         <h1>Claim your airdrop!</h1>
+        <Divider />
         <p>
           Available airdrops for the connected wallet are listed below. All airdrops must be claimed
           by the receiver within 90 days. After 90 days, any unclaimed claims will be redirected to
