@@ -6,12 +6,12 @@
 
 .vote-btn {
   padding: @spacing-sm @spacing-xl @spacing-sm @spacing-xl !important;
-  background: @grey !important;
+  box-shadow: @neu-shadow-low;
   &:hover {
     box-shadow: @neu-shadow-low;
   }
   &:active {
-    box-shadow: @neu-shadow-low;
+    box-shadow: none !important;
   }
   &.selected {
     box-shadow: @neu-shadow-inset !important;
@@ -24,6 +24,11 @@
       background: none;
     }
   }
+}
+
+.light-theme {
+  background: @grey !important;
+  color: @jet-green !important;
 }
 
 .vote-turnout {

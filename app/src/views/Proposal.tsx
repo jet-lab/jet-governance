@@ -36,6 +36,7 @@ import { ReactComponent as ThumbsDown } from "../images/thumbs_down.svg";
 import { Loader } from "../components/Loader";
 import "./Proposal.less";
 import { useBlockExplorer } from "../contexts/blockExplorer";
+import { useDarkTheme } from "../contexts/darkTheme";
 
 export const ProposalView = () => {
   const proposalAddress = useKeyParam();
@@ -142,6 +143,7 @@ const InnerProposalView = ({
     errorMessage = "Please select an option to submit your vote.";
   }
   const { Title, Text, Paragraph } = Typography;
+  const { darkTheme } = useDarkTheme();
   return (
     <Typography>
       <div className="view-container column-grid" id="proposal-page">
@@ -248,16 +250,20 @@ const InnerProposalView = ({
             <div className={`neu-container flex column`} id="your-vote">
               <Button
                 onClick={() => setVote(VoteOption.Yes)}
-                className={`vote-select vote-btn ${vote === VoteOption.Yes ? "selected" : ""}`}
-                size="large"
+                className={`vote-select ${darkTheme ? "" : "light-theme "}vote-btn ${
+                  vote === VoteOption.Yes ? "selected" : ""
+                }`}
+                type="primary"
               >
                 In favor
                 <ThumbsUp className="mobile-only" />
               </Button>
               <Button
                 onClick={() => setVote(VoteOption.No)}
-                className={`vote-select vote-btn ${vote === VoteOption.No ? "selected" : ""}`}
-                size="large"
+                className={`vote-select ${darkTheme ? "" : "light-theme "}vote-btn ${
+                  vote === VoteOption.No ? "selected" : ""
+                }`}
+                type="primary"
               >
                 Against
                 <ThumbsDown className="mobile-only" />
