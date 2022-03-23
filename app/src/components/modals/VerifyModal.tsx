@@ -8,6 +8,7 @@ import { Auth } from "@jet-lab/jet-engine/lib/auth/auth";
 import CountryPhoneInput, { CountryPhoneInputValue } from "antd-country-phone-input";
 import { DocsLink } from "../docsLink";
 import { ReactComponent as ArrowIcon } from "../../images/arrow_icon.svg";
+import { geoBannedCountries } from "../../models/GEOBANNED_COUNTRIES";
 
 enum Steps {
   Welcome = 0,
@@ -20,7 +21,8 @@ enum Steps {
   UnknownError = 7,
   PhoneInvalid = 8,
   VpnBlocked = 9,
-  InvalidToken = 10
+  InvalidToken = 10,
+  RegionNotSupported = 11
 }
 const API_KEY: string = process.env.REACT_APP_SMS_AUTH_API_KEY!;
 
@@ -37,6 +39,8 @@ export const VerifyModal = ({
   const { wallets, select, connected, disconnect, disconnecting, wallet, publicKey } = useWallet();
   const { connecting, setConnecting } = useConnectWallet();
   const [phoneNumber, setPhoneNumber] = useState<CountryPhoneInputValue>({ short: "US" });
+  const [isGeobanned, setIsGeobanned] = useState(false);
+  const [country, setCountry] = useState("");
   // The ID of the SMS verification session with MessageBird.
   const [verificationId, setVerificationId] = useState<string>();
   // The verification token received from the SMS recipient.
@@ -51,6 +55,45 @@ export const VerifyModal = ({
   }
 
   useEffect(() => {
+    // Get user's IP to determine location/geobanning
+    async function getIP() {
+      const ipKey = process.env.REACT_APP_IP_REGISTRY;
+      let locale: any = null;
+
+      try {
+        const resp = await fetch(`https://api.ipregistry.co/?key=${ipKey}`, {
+          method: "GET",
+          headers: { "Content-Type": "application/json" }
+        });
+
+        locale = await resp.json();
+        const countryCode = locale.location.country.code;
+        geoBannedCountries.forEach(c => {
+          if (c.code === countryCode) {
+            // If country is Ukraine, checks if first two digits
+            // of the postal code further match Crimean postal codes.
+            if (countryCode !== "UA" || isCrimea(locale)) {
+              setIsGeobanned(true);
+              setCountry(c.country);
+            }
+          }
+        });
+        setPhoneNumber({ short: locale.location.country.code });
+      } catch (err) {
+        console.log(err);
+      }
+    }
+
+    // Check to see if user's locale is special case of Crimea
+    const isCrimea = (locale: any) => {
+      // Crimea region code for ipregistry is UA-43
+      return locale.location.region.code === "UA-43";
+    };
+
+    getIP();
+  }, []);
+
+  useEffect(() => {
     function getAuthorizationConfirmed() {
       return (
         publicKey &&
@@ -62,7 +105,9 @@ export const VerifyModal = ({
       return current === step || !connecting;
     }
     if (onStepOrClosed(Steps.ConnectWallet) && connected && !disconnecting && !authAccountLoading) {
-      if (!authAccount || !authAccount.userAuthentication.complete) {
+      if (isGeobanned) {
+        setCurrent(Steps.RegionNotSupported);
+      } else if (!authAccount || !authAccount.userAuthentication.complete) {
         setCurrent(Steps.ConfirmLocation);
         setConnecting(true);
       } else if (authAccount.userAuthentication.allowed) {
@@ -85,6 +130,7 @@ export const VerifyModal = ({
     connecting,
     current,
     disconnecting,
+    isGeobanned,
     publicKey,
     setConnecting
   ]);
@@ -253,13 +299,11 @@ export const VerifyModal = ({
     // Disconnect user and close all modals.
     disconnect();
     setConnecting(false);
-    setCurrent(Steps.Welcome);
   };
 
   const handleAccessGranted = () => {
     setAuthorizationConfirmed(true);
     setConnecting(false);
-    setCurrent(Steps.Welcome);
   };
 
   const steps: PropsWithChildren<ModalProps>[] = [];
@@ -269,6 +313,7 @@ export const VerifyModal = ({
     okButtonProps: {},
     onOk: () => setCurrent(Steps.ConnectWallet),
     onCancel: () => handleDisconnect(),
+    cancelButtonProps: { style: { display: "none " } },
     children: (
       <>
         <p>
@@ -285,6 +330,7 @@ export const VerifyModal = ({
     footer: null,
     title: "Connect wallet",
     onCancel: () => handleDisconnect(),
+    cancelButtonProps: { style: { display: "none " } },
     children: (
       <div className="connect-wallet-modal flex-centered column">
         <span>
@@ -326,12 +372,17 @@ export const VerifyModal = ({
     },
     onOk: () => handlePhoneVerify(),
     onCancel: () => handleDisconnect(),
+    cancelButtonProps: { style: { display: "none " } },
     children: (
       <div className="flex column">
         <p>
           Due to regulatory restrictions, only users in authorized regions are able to access
           JetGovern. For more info, see our{" "}
-          <a href="https://www.jetprotocol.io/terms-of-use" target="_blank" rel="noreferrer">
+          <a
+            href="https://www.jetprotocol.io/legal/terms-of-service"
+            target="_blank"
+            rel="noreferrer"
+          >
             Terms of Use
           </a>
           .
@@ -363,6 +414,7 @@ export const VerifyModal = ({
     okButtonProps: { loading: confirmCodeLoading },
     onOk: () => handleConfirmCode(),
     onCancel: () => handleDisconnect(),
+    cancelButtonProps: { style: { display: "none " } },
     children: (
       <div className="flex column">
         <p>You will receive a secure access code via SMS. Enter the code here to proceed.</p>
@@ -379,12 +431,14 @@ export const VerifyModal = ({
   steps[Steps.AccessDenied] = {
     title: "Access Denied",
     okText: "Okay",
+    cancelText: "Disconnect",
     onOk: () => handleDisconnect(),
     onCancel: () => handleDisconnect(),
+    cancelButtonProps: { style: { display: "none " } },
     children: (
       <p>
-        JetGovern is not available in your area. You will now be disconnected, but can continue to
-        browse while disconnected.
+        JetGovern is not available in your area. Your wallet will now be disconnected, but you may
+        continue to browse proposals while disconnected.
       </p>
     ),
     closable: true
@@ -394,6 +448,7 @@ export const VerifyModal = ({
     okText: "Okay",
     onOk: () => setCurrent(Steps.AccessGranted2),
     onCancel: () => handleAccessGranted(),
+    cancelButtonProps: { style: { display: "none " } },
     children: (
       <div className="flex column">
         <p>
@@ -413,6 +468,7 @@ export const VerifyModal = ({
     okText: "Okay",
     onOk: () => handleAccessGranted(),
     onCancel: () => handleAccessGranted(),
+    cancelButtonProps: { style: { display: "none " } },
     children: (
       <>
         <p>When unstaking from JetGovern, your tokens enter a 29.5-day unbonding period.</p>
@@ -433,6 +489,7 @@ export const VerifyModal = ({
     title: "Please try again",
     okText: "Okay",
     okButtonProps: undefined,
+    cancelButtonProps: { style: { display: "none " } },
     onOk: () => handleDisconnect(),
     onCancel: () => handleDisconnect(),
     children: <p>We have encountered an unknown error, please try again.</p>,
@@ -442,6 +499,7 @@ export const VerifyModal = ({
     title: "Phone number invalid",
     okText: "Okay",
     okButtonProps: undefined,
+    cancelButtonProps: { style: { display: "none " } },
     onOk: () => setCurrent(Steps.ConfirmLocation),
     onCancel: () => handleDisconnect(),
     children: <p>Please check the area code and try entering your phone number again.</p>,
@@ -451,6 +509,7 @@ export const VerifyModal = ({
     title: "VPN detected",
     okText: "Okay",
     okButtonProps: undefined,
+    cancelButtonProps: { style: { display: "none " } },
     onOk: () => setCurrent(Steps.ConfirmLocation),
     onCancel: () => handleDisconnect(),
     children: (
@@ -465,17 +524,49 @@ export const VerifyModal = ({
     title: "Invalid secure access code",
     okText: "Okay",
     okButtonProps: undefined,
+    cancelButtonProps: { style: { display: "none " } },
     onOk: () => setCurrent(Steps.ConfirmLocation),
     onCancel: () => handleDisconnect(),
     children: <p>You have entered an invalid secure access code. Please try again.</p>,
     closable: true
   };
+  steps[Steps.RegionNotSupported] = {
+    title: "Just checking",
+    cancelText: "Disconnect",
+    okButtonProps: { style: { display: "none " } },
+    onOk: () => handleDisconnect(),
+    onCancel: () => handleDisconnect(),
+    children: (
+      <>
+        <p>
+          It looks like you may be trying to access Jet Govern from <b>{country}</b>.
+        </p>
+        <p>
+          Due to regulatory restrictions, Jet Govern is not available to residents of certain
+          countries. For more info, see the{"  "}
+          <a
+            href="https://www.jetprotocol.io/legal/terms-of-service"
+            target="_blank"
+            rel="noreferrer"
+          >
+            Terms of Service
+          </a>
+          .
+        </p>
+        <div className="emphasis">
+          <p>
+            If you think this might be incorrect, please ensure that your VPN is turned off for
+            verification purposes.
+          </p>
+        </div>
+        <p>
+          Your wallet will now be disconnected, but you may continue to browse proposals while
+          disconnected.
+        </p>
+      </>
+    ),
+    closable: true
+  };
 
-  return (
-    <Modal
-      visible={connecting}
-      cancelButtonProps={{ style: { display: "none" } }}
-      {...steps[current]}
-    />
-  );
+  return <Modal visible={connecting} {...steps[current]} />;
 };
