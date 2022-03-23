@@ -165,7 +165,11 @@ impl StakePool {
 /// value for its own shares.
 #[derive(Default, Debug, Copy, Clone, AnchorSerialize, AnchorDeserialize)]
 pub struct SharedTokenPool {
+    /// Number of tokens held by this pool
     tokens: u64,
+
+    /// Number of shares that have been issued to users
+    /// to represent ownership of a portion of the tokens
     shares: u64,
 }
 
