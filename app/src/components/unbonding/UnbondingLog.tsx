@@ -14,7 +14,7 @@ export const UnbondingLog = ({ unbondingAccount }: { unbondingAccount: Unbonding
   const [restakeModalVisible, setRestakeModalVisible] = useState(false);
   const [withdrawModalVisible, setWithdrawModalVisible] = useState(false);
   const [isUnbonded, setIsUnbonded] = useState(false);
-  const { getExplorerUrl } = useBlockExplorer();
+  const { getTxExplorerUrl } = useBlockExplorer();
 
   useEffect(() => {
     const unbondedState = UnbondingAccount.isUnbonded(unbondingAccount);
@@ -27,7 +27,7 @@ export const UnbondingLog = ({ unbondingAccount }: { unbondingAccount: Unbonding
         className="italics"
         onClick={() =>
           unbondingAccount &&
-          window.open(getExplorerUrl(unbondingAccount.address.toBase58()), "_blank")
+          window.open(getTxExplorerUrl(unbondingAccount.address.toBase58()), "_blank")
         }
       >
         {dateFromUnixTimestamp(unbondingAccount?.unbondingAccount.unbondedAt)}
@@ -36,7 +36,7 @@ export const UnbondingLog = ({ unbondingAccount }: { unbondingAccount: Unbonding
         className="italics"
         onClick={() =>
           unbondingAccount &&
-          window.open(getExplorerUrl(unbondingAccount.address.toBase58()), "_blank")
+          window.open(getTxExplorerUrl(unbondingAccount.address.toBase58()), "_blank")
         }
       >
         Unbonding{" "}
@@ -78,7 +78,7 @@ export const UnbondingLog = ({ unbondingAccount }: { unbondingAccount: Unbonding
         className="italics"
         onClick={() =>
           unbondingAccount &&
-          window.open(getExplorerUrl(unbondingAccount.address.toBase58()), "_blank")
+          window.open(getTxExplorerUrl(unbondingAccount.address.toBase58()), "_blank")
         }
       >
         -{toTokens(unbondingAccount?.unbondingAccount.amount.tokenAmount, jetMint)}

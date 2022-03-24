@@ -6,13 +6,14 @@ import { useBlockExplorer } from "../../contexts/blockExplorer";
 
 export const ExplorerLink = (props: {
   address: string | PublicKey;
+  type: "account" | "transaction";
   code?: boolean;
   style?: React.CSSProperties;
   length?: number;
   short?: boolean;
   connection?: Connection;
 }) => {
-  const { getExplorerUrl } = useBlockExplorer();
+  const { getAccountExplorerUrl } = useBlockExplorer();
   const { code, short } = props;
   const address = typeof props.address === "string" ? props.address : props.address?.toBase58();
 
@@ -25,7 +26,7 @@ export const ExplorerLink = (props: {
 
   return (
     <a
-      href={getExplorerUrl(address)}
+      href={getAccountExplorerUrl(address)}
       // eslint-disable-next-line react/jsx-no-target-blank
       target="_blank"
       rel="noreferrer"

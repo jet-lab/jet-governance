@@ -10,7 +10,7 @@ export const FlightLogView = () => {
   const { unbondingAccounts } = useProposalContext();
   const { loadingLogs, logs, searchMoreLogs, noMoreSignatures } = useTransactionLogs();
   const { connected } = useWallet();
-  const { getExplorerUrl } = useBlockExplorer();
+  const { getTxExplorerUrl } = useBlockExplorer();
 
   return (
     <div className="view-container justify-start" id="flight-logs-view">
@@ -43,7 +43,7 @@ export const FlightLogView = () => {
 
             {/* Staking actions and completed unstaking actions */}
             {logs.map(row => (
-              <tr onClick={() => window.open(getExplorerUrl(row.signature), "_blank")}>
+              <tr onClick={() => window.open(getTxExplorerUrl(row.signature), "_blank")}>
                 <td>{row.blockDate}</td>
                 <td>Complete</td>
                 <td className="action">{row.action}</td>

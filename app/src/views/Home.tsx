@@ -6,7 +6,6 @@ import { ReactComponent as Filter } from "../images/filter.svg";
 import { useEffect } from "react";
 import { Typography } from "antd";
 import "./Home.less";
-import { getFirstTwoHundredPubkeys } from "../models/PUBKEYS_INDEX";
 
 export const HomeView = () => {
   /* eslint-disable @typescript-eslint/no-unused-vars */

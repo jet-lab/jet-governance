@@ -1,7 +1,7 @@
 import { InfoCircleFilled, MinusOutlined, PlusOutlined } from "@ant-design/icons";
 import { bnToNumber } from "@jet-lab/jet-engine";
-import { Button, Divider, notification, Tooltip, Typography } from "antd";
-import { Input } from "../components/Input";
+import { Typography, Tooltip, Divider, Button, notification } from "antd";
+import { StakeInput } from "./Input";
 import { useEffect, useMemo, useState } from "react";
 import { jetFaucet } from "../actions/jetFaucet";
 import { useConnectionConfig } from "../contexts";
@@ -252,12 +252,18 @@ export const YourInfo = () => {
                 </div>
               </>
             )}
-            <Input
+            <StakeInput
               type="number"
               token
               value={inputAmount === undefined ? "" : inputAmount}
               disabled={!connected}
-              onChange={(value: number) => setInputAmount(value)}
+              onChange={(value: number) => {
+                if (isNaN(value) || value < 0) {
+                  value = 0;
+                } else {
+                  setInputAmount(value);
+                }
+              }}
               submit={() => handleStake()}
             />
             <Button

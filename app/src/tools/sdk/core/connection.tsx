@@ -16,7 +16,7 @@ export function getUnixTs() {
   return new Date().getTime() / 1000;
 }
 
-export const DEFAULT_TX_TIMEOUT = 31000;
+export const DEFAULT_TX_TIMEOUT = 120000;
 
 /// SendTransaction copied from MNGO https://github.com/blockworks-foundation/governance-ui/blob/52166d0849cce4606e5e363047402ede77a76088/utils/send.tsx#L31
 /// SendTransaction from @oyster/common has reliability issues and randomly returns false positive errors (tx is successful but it still returns an error)
