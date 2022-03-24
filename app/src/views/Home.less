@@ -125,3 +125,25 @@
     padding-bottom: @xl-font-size;
   }
 }
+
+/* Medium devices (tablets, from 840px to 1110px) */
+@media only screen and (max-width: 1110px) {
+  .show-proposals {
+    grid-column: 3 / span 4 !important;
+    #proposal-cards {
+      grid-template-columns: 250px 250px !important;
+      a {
+        margin: 0;
+      }
+    }
+  }
+}
+
+/* Extra small devices (840px and down) */
+@media only screen and (max-width: 840px) {
+  .home {
+    .your-info {
+      display: none;
+    }
+  }
+}
