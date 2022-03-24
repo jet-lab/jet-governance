@@ -81,7 +81,7 @@ export const UnbondingLog = ({ unbondingAccount }: { unbondingAccount: Unbonding
           window.open(getTxExplorerUrl(unbondingAccount.address.toBase58()), "_blank")
         }
       >
-        -{toTokens(unbondingAccount?.unbondingAccount.amount.tokenAmount, jetMint)}
+        -{toTokens(unbondingAccount?.tokens, jetMint)}
       </td>
       <td>
         <i className="fas fa-external-link-alt"></i>
