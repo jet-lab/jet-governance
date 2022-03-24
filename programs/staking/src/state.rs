@@ -7,6 +7,17 @@ use crate::ErrorCode;
 const INIT_TOKEN_SCALE: u64 = 1_000_000_000;
 const INIT_SHARE_SCALE: u64 = 10_000_000_000;
 
+/// Pool of tokens with shared ownership by all shareholders. Tokens by default are
+/// bonded and subject to airdrops (spl token transfer) or dilutions (withdraw_bonded).
+///
+/// Tokens can be unbonded for eventual withdrawal after the unbonding period.
+/// Unbonding tokens are exempt from airdrops. Bonded and unbonding tokens each have
+/// their own sub-pool (SharedTokenPool) with their own separate shares that are
+/// incompatible with the other pool because they have distinct exchange rates.
+/// 
+/// Bonded tokens are eligible to be used to mint voting tokens. Once voting tokens are
+/// minted, the bonded tokens are locked and cannot be unbonded until the voting tokens
+/// are returned.
 #[account]
 #[derive(Default, Debug)]
 pub struct StakePool {
@@ -54,12 +65,20 @@ impl StakePool {
         [&self.seed[..self.seed_len as usize], &self.bump_seed[..]]
     }
 
+    /// Updates the vault total to be consistent with any deposits that came from another
+    /// program. The increase in value is credited as a donation to the bonded pool.
+    ///
+    /// Do not use this for regular bookkeeping of valut_amount for internal transfers,
+    /// within this program because it may break the bonded token totals. vault_amount
+    /// should be independently handled where necessary.
     pub fn update_vault(&mut self, vault_amount: u64) {
         // todo decide how to handle vault_amount < self.vault_amount?
         self.bonded.donate(vault_amount - self.vault_amount);
         self.vault_amount = vault_amount;
     }
 
+    /// Specify the desired number of tokens to deposit and they will be bonded.
+    /// The depositing account is be credited with bonded shares.
     pub fn deposit(&mut self, account: &mut StakeAccount, tokens: u64) -> FullAmount {
         let full_amount = self.bonded.deposit(tokens);
 
@@ -73,6 +92,9 @@ impl StakePool {
         full_amount
     }
 
+    /// Optionally specify a number of tokens to unbond, otherwise unbond all tokens.
+    /// Tokens are moved from the bonded pool to the unbonding pool.
+    /// Bonded shares are redeemed and unbonding shares are issued.
     pub fn unbond(
         &mut self,
         account: &mut StakeAccount,
@@ -104,6 +126,8 @@ impl StakePool {
         Ok(())
     }
 
+    /// Redeems unbonding shares for tokens.
+    /// Caller is responsible for checking that the unbonding period has completed.
     pub fn withdraw_unbonded(
         &mut self,
         account: &mut StakeAccount,
@@ -119,6 +143,8 @@ impl StakePool {
         full_amount
     }
 
+    /// Specially permissioned withdrawal that should only be executed by the stake pool owner.
+    /// Dilutes bonded shares by removing tokens without returning any shares.
     pub fn withdraw_bonded(&mut self, amount: u64) {
         let bonded_withdrawal: u64 = (amount as u128)
             .checked_mul(self.bonded.tokens as u128)
@@ -133,11 +159,15 @@ impl StakePool {
         self.vault_amount = self.vault_amount.checked_sub(amount).unwrap();
     }
 
+    /// Cancel an unbonding account and restore the tokens to the bonded pool.
+    /// Redeems unbonding shares and issues bonded shares.
     pub fn rebond(&mut self, account: &mut StakeAccount, record: &UnbondingAccount) {
         let amount = self.withdraw_unbonded(account, record);
         self.deposit(account, amount.token_amount);
     }
 
+    /// Mints vote tokens for bonded tokens, preventing those bonded tokens from being unbonded
+    /// until the votes are burned.
     pub fn mint_votes(
         &self,
         account: &mut StakeAccount,
@@ -173,6 +203,9 @@ pub struct SharedTokenPool {
     shares: u64,
 }
 
+/// Before moving any tokens or shares into this pool using these methods,
+/// ensure the tokens/shares are available and not allocated in the program
+/// for any other purpose.
 impl SharedTokenPool {
     fn amount(&self) -> FullAmount {
         let (tokens, shares) = match self.tokens {
@@ -188,7 +221,11 @@ impl SharedTokenPool {
         }
     }
 
-    /// Add specified tokens and mint a proportional amount of shares
+    /// Adds specified token amount to the pool, and mints a proportional amount of shares.
+    /// 
+    /// - Before calling this function, ensure the tokens are held in an account owned by this 
+    /// program, and not allocated for any other purpose.
+    /// - After calling this function, allocate the shares to a user that they can redeem later by calling withdraw
     pub fn deposit(&mut self, tokens: u64) -> FullAmount {
         let full_amount = self.amount().with_tokens(Rounding::Down, tokens);
         self.shares = self.shares.checked_add(full_amount.share_amount).unwrap();
@@ -197,7 +234,12 @@ impl SharedTokenPool {
         full_amount
     }
 
-    /// Burn specified shares and remove a proportional amount of tokens
+    /// Burns specified shares and remove a proportional amount of tokens.
+    /// 
+    /// - Before calling this function, ensure the shares being redeemed are being subtracted
+    /// from a balance held by a user
+    /// - After calling this function, allocate the returned token amount to a user in some other way,
+    /// either by depositing to another pool or transferring the actual tokens to their wallet.
     pub fn withdraw(&mut self, shares: u64) -> FullAmount {
         let full_amount = self.amount().with_shares(Rounding::Down, shares);
         self.withdraw_full_amount_impl(&full_amount);
@@ -206,6 +248,12 @@ impl SharedTokenPool {
     }
 
     /// Remove specified tokens and burn a proportional amount of shares
+    /// 
+    /// Same as withdraw() except the parameter specifies the number of desired tokens. 
+    /// 
+    /// !! IMPORTANT !!
+    /// The actual tokens returned may differ slightly from the requested amount, so use
+    /// the returned FullAmount to determine the actual returned amount of tokens
     pub fn withdraw_tokens(&mut self, tokens: u64) -> FullAmount {
         let full_amount = self.amount().with_tokens(Rounding::Up, tokens);
         self.withdraw_full_amount_impl(&full_amount);
@@ -224,7 +272,7 @@ impl SharedTokenPool {
         self.tokens = self.tokens.checked_add(tokens).unwrap();
     }
 
-    /// Remove tokens without burning any shares
+    /// Remove tokens without burning any sharesp
     pub fn dilute(&mut self, tokens: u64) {
         self.tokens = self.tokens.checked_sub(tokens).unwrap();
     }
@@ -236,6 +284,15 @@ pub enum Rounding {
     Down,
 }
 
+/// Used to calculate exchanges between tokens and shares.
+/// 
+/// The struct is initially constructed with the all_* values set to the total supply
+/// of shares and tokens to represent the actual exchange rate. Then, the with_*
+/// methods can be used to calculate the exchange of tokens for shares or vice versa.
+/// These methods return another FullAmount struct that has the *_amount fields
+/// filled in with the requested conversion values of shares and tokens that are
+/// equivalent to each other in value. The resulting struct can continue to be used for
+/// accurate calculations since it retains the original values in the all_* fields.
 #[derive(AnchorSerialize, AnchorDeserialize, Debug, Default, Clone, Copy)]
 pub struct FullAmount {
     /// Desired number of tokens resulting from the latest calculation
@@ -252,6 +309,11 @@ pub struct FullAmount {
 }
 
 impl FullAmount {
+
+    /// Returns a new FullAmount with:
+    /// - the same all_shares and all_tokens values
+    /// - token_amount: input token_amount
+    /// - share_amount: calculated shares equivalent in value to token_amount based on all_* exchange rate.
     pub fn with_tokens(&self, rounding: Rounding, token_amount: u64) -> Self {
         let round_amount = match rounding {
             Rounding::Up if token_amount > 0 => self.all_shares as u128 / 2,
@@ -274,6 +336,10 @@ impl FullAmount {
         }
     }
 
+    /// Returns a new FullAmount with:
+    /// - the same all_shares and all_tokens values
+    /// - share_amount: input share_amount
+    /// - token_amount: calculated tokens equivalent in value to share_amount based on all_* exchange rate.
     pub fn with_shares(&self, rounding: Rounding, share_amount: u64) -> Self {
         let round_amount = match rounding {
             Rounding::Up if share_amount > 0 => self.all_tokens as u128 / 2,
