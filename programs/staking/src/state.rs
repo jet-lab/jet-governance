@@ -14,7 +14,7 @@ const INIT_SHARE_SCALE: u64 = 10_000_000_000;
 /// Unbonding tokens are exempt from airdrops. Bonded and unbonding tokens each have
 /// their own sub-pool (SharedTokenPool) with their own separate shares that are
 /// incompatible with the other pool because they have distinct exchange rates.
-/// 
+///
 /// Bonded tokens are eligible to be used to mint voting tokens. Once voting tokens are
 /// minted, the bonded tokens are locked and cannot be unbonded until the voting tokens
 /// are returned.
@@ -222,8 +222,8 @@ impl SharedTokenPool {
     }
 
     /// Adds specified token amount to the pool, and mints a proportional amount of shares.
-    /// 
-    /// - Before calling this function, ensure the tokens are held in an account owned by this 
+    ///
+    /// - Before calling this function, ensure the tokens are held in an account owned by this
     /// program, and not allocated for any other purpose.
     /// - After calling this function, allocate the shares to a user that they can redeem later by calling withdraw
     pub fn deposit(&mut self, tokens: u64) -> FullAmount {
@@ -235,7 +235,7 @@ impl SharedTokenPool {
     }
 
     /// Burns specified shares and remove a proportional amount of tokens.
-    /// 
+    ///
     /// - Before calling this function, ensure the shares being redeemed are being subtracted
     /// from a balance held by a user
     /// - After calling this function, allocate the returned token amount to a user in some other way,
@@ -248,8 +248,8 @@ impl SharedTokenPool {
     }
 
     /// Remove specified tokens and burn a proportional amount of shares
-    /// 
-    /// Same as withdraw() except the parameter specifies the number of desired tokens. 
+    ///
+    /// Same as withdraw() except the parameter specifies the number of desired tokens.
     pub fn withdraw_tokens(&mut self, tokens: u64) -> FullAmount {
         let full_amount = self.amount().with_tokens(Rounding::Up, tokens);
         self.withdraw_full_amount_impl(&full_amount);
@@ -281,7 +281,7 @@ pub enum Rounding {
 }
 
 /// Used to calculate exchanges between tokens and shares.
-/// 
+///
 /// The struct is initially constructed with the all_* values set to the total supply
 /// of shares and tokens to represent the actual exchange rate. Then, the with_*
 /// methods can be used to calculate the exchange of tokens for shares or vice versa.
