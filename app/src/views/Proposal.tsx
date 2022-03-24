@@ -64,7 +64,8 @@ export const ProposalView = () => {
       proposalsByGovernance={proposalsByGovernance}
     />
   ) : (
-    <Loader />
+    //show dashes while loading
+    <InnerProposalViewLoading />
   );
 };
 
@@ -83,28 +84,43 @@ const InnerProposalView = ({
   stakeBalance: StakeBalance;
   proposalsByGovernance: ProgramAccount<Proposal>[];
 }) => {
-  const [isVoteModalVisible, setIsVoteModalVisible] = useState(false);
-
-  const tokenOwnerRecord = useWalletTokenOwnerRecord(
-    governance.account.realm,
-    proposal.account.governingTokenMint
-  );
-  const voteRecord = useTokenOwnerVoteRecord(proposal.pubkey, tokenOwnerRecord?.pubkey);
+  const { Title, Text, Paragraph } = Typography;
 
   const handleVoteModal = () => {
     setIsVoteModalVisible(true);
   };
 
+  const [isVoteModalVisible, setIsVoteModalVisible] = useState(false);
+  const tokenOwnerRecord = useWalletTokenOwnerRecord(
+    governance.account.realm,
+    proposal.account.governingTokenMint
+  );
+  const voteRecord = useTokenOwnerVoteRecord(proposal.pubkey, tokenOwnerRecord?.pubkey);
   const { connected } = useWallet();
   const { jetMint } = useProposalContext();
-  const { getExplorerUrl } = useBlockExplorer();
+  const { getAccountExplorerUrl } = useBlockExplorer();
+  const { darkTheme } = useDarkTheme();
+  const proposalAddress = useKeyParam();
+  const {
+    loading,
+    failed,
+    msg,
+    content,
+    isUrl: isDescriptionUrl
+  } = useLoadGist(proposal.account.descriptionLink);
+  const { startDate, endDate } = useCountdown(proposal, governance);
+  const addressStr = useMemo(() => proposalAddress.toBase58(), [proposalAddress]);
+  const [vote, setVote] = useState<VoteOption>(VoteOption.Undecided);
+  useEffect(() => {
+    setVote(getVoteType(voteRecord?.account.vote?.voteType));
+  }, [voteRecord]);
 
   // FIXME!
   const isStaked = true;
   const deadlineTimestamp = Date.now() / 1000;
   const deadline = getVotingDeadline(proposal, governance);
   const hasDeadlineLapsed = deadline ? deadlineTimestamp > deadline.toNumber() : false;
-
+  const { yes, no, total } = getVoteCounts(proposal);
   const otherActiveProposals = proposalsByGovernance.filter(p => {
     const deadline = getVotingDeadline(p, governance);
     const hasDeadlineLapsed = deadline ? deadlineTimestamp > deadline.toNumber() : false;
@@ -115,25 +131,6 @@ const InnerProposalView = ({
     );
   });
 
-  const proposalAddress = useKeyParam();
-
-  const [vote, setVote] = useState<VoteOption>(VoteOption.Undecided);
-  useEffect(() => {
-    setVote(getVoteType(voteRecord?.account.vote?.voteType));
-  }, [voteRecord]);
-
-  const addressStr = useMemo(() => proposalAddress.toBase58(), [proposalAddress]);
-  const { yes, no, total } = getVoteCounts(proposal);
-  const { startDate, endDate } = useCountdown(proposal, governance);
-
-  const {
-    loading,
-    failed,
-    msg,
-    content,
-    isUrl: isDescriptionUrl
-  } = useLoadGist(proposal.account.descriptionLink);
-
   let errorMessage = "";
   if (!connected) {
     errorMessage = "Connect your Solana wallet to get started.";
@@ -142,8 +139,7 @@ const InnerProposalView = ({
   } else if (vote === undefined && connected) {
     errorMessage = "Please select an option to submit your vote.";
   }
-  const { Title, Text, Paragraph } = Typography;
-  const { darkTheme } = useDarkTheme();
+
   return (
     <Typography>
       <div className="view-container column-grid" id="proposal-page">
@@ -189,7 +185,7 @@ const InnerProposalView = ({
             <div className="neu-inset details">
               <Text>Proposal ID</Text>
               <Text>
-                <a href={getExplorerUrl(addressStr)} target="_blank" rel="noreferrer">
+                <a href={getAccountExplorerUrl(addressStr)} target="_blank" rel="noreferrer">
                   {addressStr}
                 </a>
               </Text>
@@ -202,10 +198,11 @@ const InnerProposalView = ({
 
           <div className="neu-container flex column">
             <div className="flex">
-              <Title>Vote Turnout</Title>
+              <Title>Vote Results</Title>
               <Text
                 onClick={() => voteRecordCsvDownload(proposal.pubkey, voterDisplayData, jetMint)}
                 id="csv"
+                className="text-btn"
               >
                 Download CSV <DownloadOutlined />
               </Text>
@@ -316,6 +313,85 @@ const InnerProposalView = ({
                 ))
               : "There are no other proposals at this time."}
           </div>
+        </div>
+        <Link to="/" className="mobile-only">
+          <ArrowLeftOutlined />
+          Active Proposals
+        </Link>
+      </div>
+    </Typography>
+  );
+};
+
+//when data is not fully loaded
+const InnerProposalViewLoading = () => {
+  const { Title, Text, Paragraph } = Typography;
+  return (
+    <Typography>
+      <div className="view-container column-grid" id="proposal-page">
+        <Title level={2} className="mobile-only">
+          Proposal detail
+        </Title>
+        <div
+          className={`flex column centered
+        }`}
+        >
+          <div className="description neu-container">
+            <Text>
+              <Link to="/">
+                <ArrowLeftOutlined />
+                Active Proposals
+              </Link>{" "}
+              / Jet Upward Momentum Proposal {"---"}
+            </Text>
+            <Title className="description-title">{"---"}</Title>
+            {"---"}
+            <div className="neu-inset details">
+              <Text>Proposal ID</Text>
+              <Text>{"---"}</Text>
+              <Text>Start date</Text>
+              <Text> {"---"}</Text>
+              <Text>End date</Text>
+              <Text>{"---"}</Text>
+            </div>
+          </div>
+
+          <div className="neu-container flex column">
+            <div className="flex">
+              <Title>Vote Results</Title>
+              <Text>---</Text>
+            </div>
+
+            <div className="flex justify-evenly vote-turnout">
+              <div className="results">---</div>
+
+              <Divider className="mobile-only" />
+
+              <div className="voters">
+                <div className="mobile-only">
+                  <Paragraph>
+                    See additional voter information and download a full CSV on the desktop app.
+                  </Paragraph>
+                </div>
+                <div className={`stakeholders`}>
+                  <span className="voter title" />
+                  <span className="address title">Wallet</span>
+                  <span className="amount title">Stake</span>
+                  <span className="vote title">Vote</span>
+                </div>
+                ---
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="flex column proposal-right">---</div>
+
+        <Divider className={"centered"} />
+
+        <div className={`other-proposals ${"centered"}`}>
+          <h3>Other active proposals</h3>
+          <div className="flex">---</div>
         </div>
         <Link to="/" className="mobile-only">
           <ArrowLeftOutlined />

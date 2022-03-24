@@ -1,19 +1,19 @@
 import { InfoCircleFilled, MinusOutlined, PlusOutlined } from "@ant-design/icons";
 import { bnToNumber } from "@jet-lab/jet-engine";
-import { Typography, Tooltip, Divider, Button, Switch, notification } from "antd";
-import { Input } from "../components/Input";
+import { Typography, Tooltip, Divider, Button, notification } from "antd";
+import { StakeInput } from "./Input";
 import { useEffect, useMemo, useState } from "react";
 import { jetFaucet } from "../actions/jetFaucet";
 import { useConnectionConfig } from "../contexts";
-import { useDarkTheme } from "../contexts/darkTheme";
 import { useProposalContext } from "../contexts/proposal";
 import { useGoverningTokenDepositAmount, useWithdrawVotesAbility } from "../hooks";
 import {
   COUNCIL_FAUCET_DEVNET,
   COUNCIL_TOKEN_MINT,
-  toTokens,
+  fromLamports,
   JET_FAUCET_DEVNET,
-  JET_TOKEN_MINT
+  JET_TOKEN_MINT,
+  toTokens
 } from "../utils";
 import { StakeModal } from "./modals/StakeModal";
 import { UnstakeModal } from "./modals/UnstakeModal";
@@ -29,7 +29,6 @@ export const YourInfo = () => {
   const [showRewards, setShowRewards] = useState(false);
   const [inputAmount, setInputAmount] = useState<number | undefined>();
   const { connected } = useWallet();
-  const { darkTheme, toggleDarkTheme } = useDarkTheme();
   const { inDevelopment } = useConnectionConfig();
   const { claimsCount } = useProposalContext();
   const history = useHistory();
@@ -147,8 +146,20 @@ export const YourInfo = () => {
     openNotification();
   }, [claimsCount, history]);
 
+  const handleRewardsToggle = () => {
+    document.getElementById("show-more-apr")?.classList.toggle("hidden");
+    setShowRewards(!showRewards);
+  };
+
   const isOwnPage = Boolean(useLocation().pathname.includes("your-info"));
   const { Paragraph, Title, Text } = Typography;
+  const walletBalance = jetAccount ? toTokens(jetAccount.info.amount, jetMint) : 0;
+  const preFillJetWithBalance = () => {
+    setInputAmount(jetAccount ? fromLamports(jetAccount.info.amount, jetMint) : 0);
+  };
+  const preFillJetWithStaked = () => {
+    setInputAmount(stakedJet ? fromLamports(stakedJet, jetMint) : 0);
+  };
   return (
     <div className={`your-info ${isOwnPage ? "view-container" : ""}`}>
       <Typography>
@@ -181,43 +192,41 @@ export const YourInfo = () => {
               <Text>
                 {connected ? (
                   showRewards ? (
-                    <MinusOutlined
-                      style={{ marginRight: 0 }}
-                      onClick={() => setShowRewards(!showRewards)}
-                    />
+                    <MinusOutlined style={{ marginRight: 0 }} onClick={handleRewardsToggle} />
                   ) : (
-                    <PlusOutlined
-                      style={{ marginRight: 0 }}
-                      onClick={() => setShowRewards(!showRewards)}
-                    />
+                    <PlusOutlined style={{ marginRight: 0 }} onClick={handleRewardsToggle} />
                   )
                 ) : (
                   `${rewards.apr ?? "-"}%`
                 )}
               </Text>
             </div>
-            {showRewards && (
-              <div id="show-more-apr">
-                <div className="flex justify-between cluster">
-                  <Text className="cluster">Est. Daily Reward</Text>
-                  <Text className="cluster">{rewards.estDailyReward}</Text>
-                </div>
-                <div className="flex justify-between cluster">
-                  <Text className="cluster">Est. Monthly Reward</Text>
-                  <Text className="cluster">{rewards.estMonthlyReward}</Text>
-                </div>
+            <div className={connected ? "hidden" : undefined} id="show-more-apr">
+              <div className="flex justify-between cluster">
+                <Text className="cluster">Est. Daily Reward</Text>
+                <Text className="cluster">{rewards.estDailyReward}</Text>
               </div>
-            )}
+              <div className="flex justify-between cluster">
+                <Text className="cluster">Est. Monthly Reward</Text>
+                <Text className="cluster">{rewards.estMonthlyReward}</Text>
+              </div>
+            </div>
           </div>
           <Divider className="divider-info" />
           <div className="flex column">
             {connected && (
-              <div className="flex justify-between info-legend-item">
+              <div
+                className="flex justify-between info-legend-item info-legend-item-prefill"
+                onClick={preFillJetWithBalance}
+              >
                 <Text>Wallet Balance</Text>
-                <Text>{jetAccount ? toTokens(jetAccount.info.amount, jetMint) : 0}</Text>
+                <Text>{walletBalance}</Text>
               </div>
             )}
-            <div className="flex justify-between info-legend-item">
+            <div
+              className="flex justify-between info-legend-item info-legend-item-prefill"
+              onClick={preFillJetWithStaked}
+            >
               <Text>Staked JET</Text>
               <Text>{toTokens(stakedJet, jetMint)}</Text>
             </div>
@@ -233,22 +242,28 @@ export const YourInfo = () => {
                       <InfoCircleFilled />
                     </Tooltip>
                   </Text>
-                  <Text>{toTokens(unbondingQueue.toNumber(), jetMint)}</Text>
+                  <Text>{toTokens(bnToNumber(unbondingQueue), jetMint)}</Text>
                 </div>
                 <div className="flex justify-between info-legend-item">
                   <Text className="text-gradient bold">Available for Withdrawal</Text>
                   <Text className="text-gradient bold">
-                    {toTokens(unbondingComplete.toNumber(), jetMint)}
+                    {toTokens(bnToNumber(unbondingComplete), jetMint)}
                   </Text>
                 </div>
               </>
             )}
-            <Input
+            <StakeInput
               type="number"
               token
               value={inputAmount === undefined ? "" : inputAmount}
               disabled={!connected}
-              onChange={(value: number) => setInputAmount(value)}
+              onChange={(value: number) => {
+                if (isNaN(value) || value < 0) {
+                  value = 0;
+                } else {
+                  setInputAmount(value);
+                }
+              }}
               submit={() => handleStake()}
             />
             <Button
@@ -293,12 +308,11 @@ export const YourInfo = () => {
             )}
             {!unbondingComplete.isZero() && (
               <Button
-                type="dashed"
-                className="full-width"
+                className="full-width withdraw-btn"
                 onClick={() => handleWithdrawUnstaked()}
                 disabled={!connected}
               >
-                Withdraw all
+                Withdraw balance
               </Button>
             )}
             {withdrawAllModalVisible && (

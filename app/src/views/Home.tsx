@@ -6,7 +6,6 @@ import { ReactComponent as Filter } from "../images/filter.svg";
 import { useEffect } from "react";
 import { Typography } from "antd";
 import "./Home.less";
-import { getFirstTwoHundredPubkeys } from "../models/PUBKEYS_INDEX";
 
 export const HomeView = () => {
   /* eslint-disable @typescript-eslint/no-unused-vars */
@@ -97,15 +96,19 @@ export const HomeView = () => {
           </div>
         </Typography>
         <div id="proposal-cards">
-          {filteredProposalsByGovernance.map(
-            proposal =>
-              governance && (
-                <ProposalCard
-                  proposal={proposal}
-                  governance={governance}
-                  key={proposal.pubkey.toBase58()}
-                />
-              )
+          {!filteredProposalsByGovernance.length ? (
+            <Text>There are no {proposalFilter === "all" ? "" : proposalFilter} proposals.</Text>
+          ) : (
+            filteredProposalsByGovernance.map(
+              proposal =>
+                governance && (
+                  <ProposalCard
+                    proposal={proposal}
+                    governance={governance}
+                    key={proposal.pubkey.toBase58()}
+                  />
+                )
+            )
           )}
         </div>
       </div>
@@ -124,13 +127,7 @@ export const HomeView = () => {
         </span>
         {filteredPastProposals.map(
           proposal =>
-            governance && (
-              <PastProposalCard
-                proposal={proposal}
-                governance={governance}
-                key={proposal.pubkey.toBase58()}
-              />
-            )
+            governance && <PastProposalCard proposal={proposal} key={proposal.pubkey.toBase58()} />
         )}
         <p>That's all for now! Check back soon for new proposals.</p>
       </div>

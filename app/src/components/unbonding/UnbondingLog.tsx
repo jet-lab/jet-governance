@@ -7,7 +7,6 @@ import { useProposalContext } from "../../contexts/proposal";
 import { dateFromUnixTimestamp, toTokens } from "../../utils";
 import { RestakeModal } from "../modals/RestakeModal";
 import { WithdrawModal } from "../modals/WithdrawModal";
-import { ReactComponent as ArrowIcon } from "../../images/arrow_icon.svg";
 
 export const UnbondingLog = ({ unbondingAccount }: { unbondingAccount: UnbondingAccount }) => {
   const { jetMint } = useProposalContext();
@@ -15,7 +14,7 @@ export const UnbondingLog = ({ unbondingAccount }: { unbondingAccount: Unbonding
   const [restakeModalVisible, setRestakeModalVisible] = useState(false);
   const [withdrawModalVisible, setWithdrawModalVisible] = useState(false);
   const [isUnbonded, setIsUnbonded] = useState(false);
-  const { getExplorerUrl } = useBlockExplorer();
+  const { getTxExplorerUrl } = useBlockExplorer();
 
   useEffect(() => {
     const unbondedState = UnbondingAccount.isUnbonded(unbondingAccount);
@@ -28,7 +27,7 @@ export const UnbondingLog = ({ unbondingAccount }: { unbondingAccount: Unbonding
         className="italics"
         onClick={() =>
           unbondingAccount &&
-          window.open(getExplorerUrl(unbondingAccount.address.toBase58()), "_blank")
+          window.open(getTxExplorerUrl(unbondingAccount.address.toBase58()), "_blank")
         }
       >
         {dateFromUnixTimestamp(unbondingAccount?.unbondingAccount.unbondedAt)}
@@ -37,7 +36,7 @@ export const UnbondingLog = ({ unbondingAccount }: { unbondingAccount: Unbonding
         className="italics"
         onClick={() =>
           unbondingAccount &&
-          window.open(getExplorerUrl(unbondingAccount.address.toBase58()), "_blank")
+          window.open(getTxExplorerUrl(unbondingAccount.address.toBase58()), "_blank")
         }
       >
         Unbonding{" "}
@@ -54,7 +53,8 @@ export const UnbondingLog = ({ unbondingAccount }: { unbondingAccount: Unbonding
         </i>{" "}
         <Button
           size="small"
-          type="dashed"
+          type={isUnbonded ? undefined : "dashed"}
+          className={isUnbonded ? "withdraw-btn" : "restake-btn"}
           onClick={() =>
             isUnbonded ? setWithdrawModalVisible(true) : setRestakeModalVisible(true)
           }
@@ -78,13 +78,13 @@ export const UnbondingLog = ({ unbondingAccount }: { unbondingAccount: Unbonding
         className="italics"
         onClick={() =>
           unbondingAccount &&
-          window.open(getExplorerUrl(unbondingAccount.address.toBase58()), "_blank")
+          window.open(getTxExplorerUrl(unbondingAccount.address.toBase58()), "_blank")
         }
       >
-        -{toTokens(unbondingAccount?.unbondingAccount.amount.tokenAmount, jetMint)}
+        -{toTokens(unbondingAccount?.tokens, jetMint)}
       </td>
       <td>
-        <ArrowIcon width="25px" />
+        <i className="fas fa-external-link-alt"></i>
       </td>
     </tr>
   );

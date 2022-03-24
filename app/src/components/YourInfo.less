@@ -22,6 +22,9 @@
 .info-legend-item {
   margin-top: @spacing-xs;
 }
+.info-legend-item-prefill {
+  cursor: pointer;
+}
 .vote-balance {
   padding-bottom: 16px;
   margin-bottom: 15px;
@@ -49,16 +52,19 @@
 }
 
 .cluster {
-  margin: 2px 4px;
+  margin: 2px 0px;
   font-size: @xs-font-size;
 }
 
 .your-info {
   grid-column: 1 / 3;
   grid-row: 1 / 3;
-  height: 85vh;
   display: grid;
   grid-template-rows: auto auto 1fr auto;
+  .full-width.withdraw-btn {
+    max-width: 90%;
+    align-self: center;
+  }
 }
 
 .ant-btn {

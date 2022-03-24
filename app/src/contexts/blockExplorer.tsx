@@ -5,17 +5,20 @@ const blockExplorers: Record<string, Record<string, string>> = {
   solanaExplorer: {
     name: "Solana Explorer",
     img: "img/explorers/solana_explorer.svg",
-    url: "https://explorer.solana.com/tx/"
+    urlTx: "https://explorer.solana.com/tx/",
+    urlAccount: "https://explorer.solana.com/address/"
   },
   solscan: {
     name: "Solscan",
     img: "img/explorers/solscan.svg",
-    url: "https://solscan.io/tx/"
+    urlTx: "https://solscan.io/tx/",
+    urlAccount: "https://solscan.io/account/"
   },
   solanaBeach: {
     name: "Solana Beach",
     img: "img/explorers/solana_beach.svg",
-    url: "https://solanabeach.io/transaction/"
+    urlTx: "https://solanabeach.io/transaction/",
+    urlAccount: "https://solanabeach.io/address/"
   }
 };
 
@@ -32,7 +35,7 @@ const BlockExplorerContext = createContext<BlockExplorer>({
 // Block explorer context provider
 export function BlockExplorerProvider(props: { children: JSX.Element }): JSX.Element {
   const [preferredExplorer, setPreferredExplorer] = useState(
-    localStorage.getItem("jetPreferredExplorer") ?? "solanaExplorer"
+    localStorage.getItem("jetPreferredExplorer") ?? "solscan"
   );
 
   return (
@@ -50,7 +53,8 @@ export function BlockExplorerProvider(props: { children: JSX.Element }): JSX.Ele
 // Block explorer hook
 export const useBlockExplorer = () => {
   const { preferredExplorer, setPreferredExplorer } = useContext(BlockExplorerContext);
-  const baseUrl = blockExplorers[preferredExplorer].url;
+  const baseTxUrl = blockExplorers[preferredExplorer].urlTx;
+  const baseAccountUrl = blockExplorers[preferredExplorer].urlAccount;
   const clusterParam = process.env.REACT_APP_IDL === "devnet" ? "?cluster=devnet" : "";
   return {
     blockExplorers,
@@ -59,6 +63,7 @@ export const useBlockExplorer = () => {
       localStorage.setItem("jetPreferredExplorer", preferredExplorer);
       setPreferredExplorer(preferredExplorer);
     },
-    getExplorerUrl: (txId: string) => baseUrl + txId + clusterParam
+    getTxExplorerUrl: (txId: string) => baseTxUrl + txId + clusterParam,
+    getAccountExplorerUrl: (accountId: string) => baseAccountUrl + accountId + clusterParam
   };
 };

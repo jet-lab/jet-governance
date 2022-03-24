@@ -310,8 +310,12 @@ impl FullAmount {
     /// - token_amount: input token_amount
     /// - share_amount: calculated shares equivalent in value to token_amount based on all_* exchange rate.
     pub fn with_tokens(&self, rounding: Rounding, token_amount: u64) -> Self {
+        // Given x = a / b, we round up by introducing c = (b - 1) and calculating
+        // x = (c + a) / b.
+        // If a % b = 0, c / b = 0, and introduces no rounding.
+        // If a % b > 0, c / b = 1, and rounds up by adding 1 to x.
         let round_amount = match rounding {
-            Rounding::Up if token_amount > 0 => self.all_shares as u128 / 2,
+            Rounding::Up if token_amount > 0 => self.all_tokens as u128 - 1,
             _ => 0,
         };
         let share_amount = (round_amount + (token_amount as u128) * (self.all_shares as u128))
@@ -336,8 +340,12 @@ impl FullAmount {
     /// - share_amount: input share_amount
     /// - token_amount: calculated tokens equivalent in value to share_amount based on all_* exchange rate.
     pub fn with_shares(&self, rounding: Rounding, share_amount: u64) -> Self {
+        // Given x = a / b, we round up by introducing c = (b - 1) and calculating
+        // x = (c + a) / b.
+        // If a % b = 0, c / b = 0, and introduces no rounding.
+        // If a % b > 0, c / b = 1, and rounds up by adding 1 to x.
         let round_amount = match rounding {
-            Rounding::Up if share_amount > 0 => self.all_tokens as u128 / 2,
+            Rounding::Up if share_amount > 0 => self.all_shares as u128 - 1,
             _ => 0,
         };
         let token_amount = (round_amount + (self.all_tokens as u128) * (share_amount as u128))
@@ -539,7 +547,7 @@ mod tests {
 
         // unbonding shares are counted separately and init at 10x the tokens
         assert_eq!(2_000_000, user_b.unbonding_shares);
-        assert_eq!(6_249_997, user_b.bonded_shares);
+        assert_eq!(6_250_000, user_b.bonded_shares);
 
         // increase share value while unbond is waiting
         pool.vault_amount += 2_400_000;
@@ -551,7 +559,7 @@ mod tests {
             .unwrap();
 
         assert_eq!(4_000_000, user_b.unbonding_shares);
-        assert_eq!(5_555_551, user_b.bonded_shares);
+        assert_eq!(5_555_555, user_b.bonded_shares);
 
         // increased share value shouldn't matter
         pool.vault_amount += 2_400_000;
@@ -562,7 +570,7 @@ mod tests {
         pool.withdraw_unbonded(&mut user_b, &unbond_b_0);
 
         assert_eq!(0, user_b.unbonding_shares);
-        assert_eq!(5_555_551, user_b.bonded_shares);
+        assert_eq!(5_555_555, user_b.bonded_shares);
         assert_eq!(7_600_000, pool.vault_amount);
 
         // start unbonding again, then reduce share values
@@ -576,7 +584,7 @@ mod tests {
         let _ = pool.withdraw_unbonded(&mut user_b, &unbond_b_2);
 
         assert_eq!(0, user_b.unbonding_shares);
-        assert_eq!(5_000_000, user_b.bonded_shares);
+        assert_eq!(5_000_004, user_b.bonded_shares);
         assert_eq!(1_938_463, pool.vault_amount);
     }
 
@@ -616,5 +624,65 @@ mod tests {
 
         assert_eq!(Ok(750_000), result_a);
         assert_eq!(Ok(450_000), result_b);
+    }
+
+    #[test]
+    fn check_full_amount_rounding() {
+        let full_amount = FullAmount {
+            token_amount: 0,
+            share_amount: 0,
+            all_shares: 5,
+            all_tokens: 4,
+        };
+
+        let up = full_amount.with_tokens(Rounding::Up, 1);
+        assert_eq!(2, up.share_amount); // 1.25 rounded up
+        assert_eq!(1, up.token_amount);
+
+        let down = full_amount.with_tokens(Rounding::Down, 1);
+        assert_eq!(1, down.share_amount);
+        assert_eq!(1, down.token_amount);
+
+        // Should have the same effect when the share:token ratio is unchanged
+        let full_amount = FullAmount {
+            token_amount: 0,
+            share_amount: 0,
+            all_shares: 10,
+            all_tokens: 8,
+        };
+
+        let up = full_amount.with_tokens(Rounding::Up, 1);
+        assert_eq!(2, up.share_amount); // 1.25 rounded up
+        assert_eq!(1, up.token_amount);
+
+        let down = full_amount.with_tokens(Rounding::Down, 1);
+        assert_eq!(1, down.share_amount);
+        assert_eq!(1, down.token_amount);
+
+        // Should round to 1 digit
+        let up = full_amount.with_tokens(Rounding::Up, 10);
+        assert_eq!(13, up.share_amount); // 12.5 rounded up
+        assert_eq!(10, up.token_amount);
+
+        let down = full_amount.with_tokens(Rounding::Down, 10);
+        assert_eq!(12, down.share_amount);
+        assert_eq!(10, down.token_amount);
+
+        let up = full_amount.with_tokens(Rounding::Up, 10);
+        assert_eq!(13, up.share_amount); // 12.5 rounded up
+        assert_eq!(10, up.token_amount);
+
+        let down = full_amount.with_tokens(Rounding::Down, 10);
+        assert_eq!(12, down.share_amount);
+        assert_eq!(10, down.token_amount);
+
+        // No rounding
+        let up = full_amount.with_tokens(Rounding::Up, 100);
+        assert_eq!(125, up.share_amount); // 125 has no fractions
+        assert_eq!(100, up.token_amount);
+
+        let down = full_amount.with_tokens(Rounding::Down, 100);
+        assert_eq!(125, down.share_amount); // 125 has no fractions
+        assert_eq!(100, down.token_amount);
     }
 }

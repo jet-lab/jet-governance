@@ -37,12 +37,13 @@ export function useBN(number: number | undefined, exponent: number | null | unde
 
 export const getProposalFilters = (
   proposals: ProgramAccount<Proposal>[],
-  proposalFilter: ProposalFilter
+  proposalFilter: ProposalFilter,
+  governance: Governance | undefined
 ) => {
-  if (proposalFilter === "active") {
+  if (proposalFilter === "active" && governance) {
     return proposals.filter(
       p =>
-        !p.account.hasVoteTimeEnded &&
+        !p.account.hasVoteTimeEnded(governance) &&
         p.account.state === ProposalState.Voting &&
         p.account.votingCompletedAt !== null
     );
@@ -61,14 +62,15 @@ export const getProposalFilters = (
 
 export const useProposalFilters = (
   proposals: ProgramAccount<Proposal>[] | undefined,
-  proposalFilter: ProposalFilter
+  proposalFilter: ProposalFilter,
+  governance: Governance | undefined
 ) => {
   return useMemo(() => {
     if (!proposals) {
       return [];
     }
-    return getProposalFilters(proposals, proposalFilter);
-  }, [proposalFilter, proposals]);
+    return getProposalFilters(proposals, proposalFilter, governance);
+  }, [proposalFilter, proposals, governance]);
 };
 
 export function useCountdown(

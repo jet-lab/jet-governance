@@ -46,15 +46,8 @@ export const VoteModal = ({
   const { endDate } = useCountdown(proposal, governance);
   const rpcContext = useRpcContext();
   const { programId, walletPubkey } = useRpcContext();
-  const {
-    stakePool,
-    stakeAccount,
-    stakeBalance,
-    jetMint,
-    programs,
-    refresh,
-    proposalsByGovernance
-  } = useProposalContext();
+  const { stakePool, stakeBalance, jetMint, programs, refresh, proposalsByGovernance } =
+    useProposalContext();
 
   let voteText: string = "";
 

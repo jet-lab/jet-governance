@@ -5,13 +5,12 @@ import { useTransactionLogs } from "../contexts/transactionLogs";
 import { Divider } from "antd";
 import { Loader } from "../components/Loader";
 import { useBlockExplorer } from "../contexts/blockExplorer";
-import { ReactComponent as ArrowIcon } from "../images/arrow_icon.svg";
 
 export const FlightLogView = () => {
   const { unbondingAccounts } = useProposalContext();
   const { loadingLogs, logs, searchMoreLogs, noMoreSignatures } = useTransactionLogs();
   const { connected } = useWallet();
-  const { getExplorerUrl } = useBlockExplorer();
+  const { getTxExplorerUrl } = useBlockExplorer();
 
   return (
     <div className="view-container justify-start" id="flight-logs-view">
@@ -44,13 +43,13 @@ export const FlightLogView = () => {
 
             {/* Staking actions and completed unstaking actions */}
             {logs.map(row => (
-              <tr onClick={() => window.open(getExplorerUrl(row.signature), "_blank")}>
+              <tr onClick={() => window.open(getTxExplorerUrl(row.signature), "_blank")}>
                 <td>{row.blockDate}</td>
                 <td>Complete</td>
                 <td className="action">{row.action}</td>
                 <td>{row.amount}</td>
                 <td>
-                  <ArrowIcon width="25px" />
+                  <i className="fas fa-external-link-alt"></i>
                 </td>
               </tr>
             ))}
@@ -62,7 +61,7 @@ export const FlightLogView = () => {
                   <Loader button />
                 ) : (
                   <span
-                    className={`text-gradient-btn ${
+                    className={`text-btn ${
                       !connected || loadingLogs || noMoreSignatures ? "disabled" : ""
                     }`}
                     onClick={() => {

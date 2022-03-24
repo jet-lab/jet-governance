@@ -153,9 +153,10 @@ export function ProposalProvider({ children = undefined as any }) {
 
       // ----- Airdrops -----
       //TODO: Fetching airdrops does not return a value.
-      // const airdrops = await Airdrop.loadAll(programs.rewards);
+      // const airdrops =
+      //   stakePool &&
+      //   (await Airdrop.loadAll(programs.rewards, stakePool.stakePool.addresses.stakePool));
       const airdrops: Airdrop[] = [];
-
       // ----- Governance -----
       const realm = await getGovernanceAccount(connection, JET_REALM, Realm);
       const governance = await getGovernanceAccount(connection, JET_GOVERNANCE, Governance);
@@ -278,10 +279,19 @@ export function ProposalProvider({ children = undefined as any }) {
   // ----- Governance -----
   const filteredProposalsByGovernance = useProposalFilters(
     stakePool?.proposalsByGovernance,
-    proposalFilter
+    proposalFilter,
+    realm?.governance.account
   );
-  const pastProposals = useProposalFilters(stakePool?.proposalsByGovernance, "inactive");
-  const filteredPastProposals = useProposalFilters(pastProposals, pastProposalFilter);
+  const pastProposals = useProposalFilters(
+    stakePool?.proposalsByGovernance,
+    "inactive",
+    realm?.governance.account
+  );
+  const filteredPastProposals = useProposalFilters(
+    pastProposals,
+    pastProposalFilter,
+    realm?.governance.account
+  );
 
   useStakePoolCompatibleWithRealm(stakePool?.stakePool, realm?.realm);
 

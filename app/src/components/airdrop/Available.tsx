@@ -45,7 +45,7 @@ export const Available = ({ airdropInfo }: { airdropInfo: availAirdropsRender })
           {shortDesc} | {fromLamports(amount, jetMint)} JET
         </strong>
         <br />
-        {finalized ? shortDesc : "You'll just have to wait to find out!"}
+        {finalized ? longDesc : "You'll just have to wait to find out!"}
         <span className="gray airdrop-time">
           {finalized ? getRemainingTime(currentTime, expireAt * 1000) : "?"}
         </span>

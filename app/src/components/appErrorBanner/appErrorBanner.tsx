@@ -1,33 +1,17 @@
-import { Alert, Button, Space, Typography, Collapse } from "antd";
 import { FallbackProps } from "react-error-boundary";
 
-const { Text } = Typography;
-const { Panel } = Collapse;
-
-export function AppErrorBanner({ error, resetErrorBoundary }: FallbackProps) {
+export function AppErrorBanner({ error }: FallbackProps) {
   return (
-    <Alert
-      type="error"
-      banner
-      message={
-        <Space direction="vertical">
-          <Text>Sorry, something went wrong.</Text>
-          <Text type="warning">{error.message}</Text>
-        </Space>
-      }
-      description={
-        <Collapse>
-          <Panel header="error details" key="1">
-            <pre>{error.stack}</pre>
-          </Panel>
-        </Collapse>
-      }
-      closable
-      action={
-        <Button onClick={resetErrorBoundary} size="small">
-          try again
-        </Button>
-      }
-    ></Alert>
+    <div className="error-page flex-centered column">
+      <h1 className="failure-text">Mayday!</h1>
+      <p>Sorry, something went wrong.</p>
+      <img src="img/ui/failed_init.gif" alt="Failure To Init Gif" />
+      <h2 className="failure-text">
+        <code>{error.message}</code>
+      </h2>
+      <div className="error-page-stack">
+        <code>{error.stack}</code>
+      </div>
+    </div>
   );
 }
