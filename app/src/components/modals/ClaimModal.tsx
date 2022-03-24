@@ -7,6 +7,7 @@ import { useProposalContext } from "../../contexts/proposal";
 import { claimAndStake } from "../../actions/claimAndStake";
 import { DocsLink } from "../docsLink";
 import { isSignTransactionError } from "../../utils";
+import { useWallet } from "@solana/wallet-adapter-react";
 
 enum Steps {
   Confirm = 0,
@@ -23,10 +24,11 @@ export const ClaimModal = ({
   airdrop: Airdrop | undefined;
   onClose: () => void;
 }) => {
+  const { publicKey } = useWallet();
   const rpcContext = useRpcContext();
   const [current, setCurrent] = useState<Steps>(Steps.Confirm);
   const [loading, setLoading] = useState(false);
-  const { programs, stakePool, stakeAccount, refresh } = useProposalContext();
+  const { programs, stakePool, stakeAccount, realm, refresh } = useProposalContext();
 
   const handleOk = () => {
     if (!stakeAmount || !airdrop) {
@@ -34,8 +36,16 @@ export const ClaimModal = ({
     }
 
     setLoading(true);
-    if (!!programs && !!airdrop && !!stakePool && !!stakeAccount) {
-      claimAndStake(rpcContext, programs.rewards, airdrop, stakePool, stakeAccount)
+    if (!!programs && !!airdrop && !!stakePool && !!stakeAccount && !!publicKey && !!realm) {
+      claimAndStake(
+        rpcContext,
+        programs.rewards,
+        airdrop,
+        stakePool,
+        stakeAccount,
+        publicKey,
+        realm
+      )
         .then(() => {
           setCurrent(Steps.Success);
         })
