@@ -206,6 +206,7 @@ const InnerProposalView = ({
               <Text
                 onClick={() => voteRecordCsvDownload(proposal.pubkey, voterDisplayData, jetMint)}
                 id="csv"
+                className="text-btn"
               >
                 Download CSV <DownloadOutlined />
               </Text>

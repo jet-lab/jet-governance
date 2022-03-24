@@ -146,6 +146,11 @@ export const YourInfo = () => {
     openNotification();
   }, [claimsCount, history]);
 
+  const handleRewardsToggle = () => {
+    document.getElementById("show-more-apr")?.classList.toggle("hidden");
+    setShowRewards(!showRewards);
+  };
+
   const isOwnPage = Boolean(useLocation().pathname.includes("your-info"));
   const { Paragraph, Title, Text } = Typography;
   const walletBalance = jetAccount ? toTokens(jetAccount.info.amount, jetMint) : 0;
@@ -187,33 +192,25 @@ export const YourInfo = () => {
               <Text>
                 {connected ? (
                   showRewards ? (
-                    <MinusOutlined
-                      style={{ marginRight: 0 }}
-                      onClick={() => setShowRewards(!showRewards)}
-                    />
+                    <MinusOutlined style={{ marginRight: 0 }} onClick={handleRewardsToggle} />
                   ) : (
-                    <PlusOutlined
-                      style={{ marginRight: 0 }}
-                      onClick={() => setShowRewards(!showRewards)}
-                    />
+                    <PlusOutlined style={{ marginRight: 0 }} onClick={handleRewardsToggle} />
                   )
                 ) : (
                   `${rewards.apr ?? "-"}%`
                 )}
               </Text>
             </div>
-            {showRewards && (
-              <div id="show-more-apr">
-                <div className="flex justify-between cluster">
-                  <Text className="cluster">Est. Daily Reward</Text>
-                  <Text className="cluster">{rewards.estDailyReward}</Text>
-                </div>
-                <div className="flex justify-between cluster">
-                  <Text className="cluster">Est. Monthly Reward</Text>
-                  <Text className="cluster">{rewards.estMonthlyReward}</Text>
-                </div>
+            <div className={connected ? "hidden" : undefined} id="show-more-apr">
+              <div className="flex justify-between cluster">
+                <Text className="cluster">Est. Daily Reward</Text>
+                <Text className="cluster">{rewards.estDailyReward}</Text>
               </div>
-            )}
+              <div className="flex justify-between cluster">
+                <Text className="cluster">Est. Monthly Reward</Text>
+                <Text className="cluster">{rewards.estMonthlyReward}</Text>
+              </div>
+            </div>
           </div>
           <Divider className="divider-info" />
           <div className="flex column">
@@ -305,12 +302,11 @@ export const YourInfo = () => {
             )}
             {!unbondingComplete.isZero() && (
               <Button
-                type="dashed"
-                className="full-width"
+                className="full-width withdraw-btn"
                 onClick={() => handleWithdrawUnstaked()}
                 disabled={!connected}
               >
-                Withdraw all
+                Withdraw balance
               </Button>
             )}
             {withdrawAllModalVisible && (

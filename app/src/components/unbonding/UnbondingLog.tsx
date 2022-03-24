@@ -53,7 +53,8 @@ export const UnbondingLog = ({ unbondingAccount }: { unbondingAccount: Unbonding
         </i>{" "}
         <Button
           size="small"
-          type="dashed"
+          type={isUnbonded ? undefined : "dashed"}
+          className={isUnbonded ? "withdraw-btn" : "restake-btn"}
           onClick={() =>
             isUnbonded ? setWithdrawModalVisible(true) : setRestakeModalVisible(true)
           }

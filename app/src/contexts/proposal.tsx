@@ -278,10 +278,19 @@ export function ProposalProvider({ children = undefined as any }) {
   // ----- Governance -----
   const filteredProposalsByGovernance = useProposalFilters(
     stakePool?.proposalsByGovernance,
-    proposalFilter
+    proposalFilter,
+    realm?.governance.account
   );
-  const pastProposals = useProposalFilters(stakePool?.proposalsByGovernance, "inactive");
-  const filteredPastProposals = useProposalFilters(pastProposals, pastProposalFilter);
+  const pastProposals = useProposalFilters(
+    stakePool?.proposalsByGovernance,
+    "inactive",
+    realm?.governance.account
+  );
+  const filteredPastProposals = useProposalFilters(
+    pastProposals,
+    pastProposalFilter,
+    realm?.governance.account
+  );
 
   useStakePoolCompatibleWithRealm(stakePool?.stakePool, realm?.realm);
 

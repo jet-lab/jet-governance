@@ -52,7 +52,7 @@
 }
 
 .cluster {
-  margin: 2px 4px;
+  margin: 2px 0px;
   font-size: @xs-font-size;
 }
 
@@ -61,6 +61,10 @@
   grid-row: 1 / 3;
   display: grid;
   grid-template-rows: auto auto 1fr auto;
+  .full-width.withdraw-btn {
+    max-width: 90%;
+    align-self: center;
+  }
 }
 
 .ant-btn {

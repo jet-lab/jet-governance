@@ -128,13 +128,7 @@ export const HomeView = () => {
         </span>
         {filteredPastProposals.map(
           proposal =>
-            governance && (
-              <PastProposalCard
-                proposal={proposal}
-                governance={governance}
-                key={proposal.pubkey.toBase58()}
-              />
-            )
+            governance && <PastProposalCard proposal={proposal} key={proposal.pubkey.toBase58()} />
         )}
         <p>That's all for now! Check back soon for new proposals.</p>
       </div>
