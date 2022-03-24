@@ -97,15 +97,19 @@ export const HomeView = () => {
           </div>
         </Typography>
         <div id="proposal-cards">
-          {filteredProposalsByGovernance.map(
-            proposal =>
-              governance && (
-                <ProposalCard
-                  proposal={proposal}
-                  governance={governance}
-                  key={proposal.pubkey.toBase58()}
-                />
-              )
+          {!filteredProposalsByGovernance.length ? (
+            <Text>There are no {proposalFilter === "all" ? "" : proposalFilter} proposals.</Text>
+          ) : (
+            filteredProposalsByGovernance.map(
+              proposal =>
+                governance && (
+                  <ProposalCard
+                    proposal={proposal}
+                    governance={governance}
+                    key={proposal.pubkey.toBase58()}
+                  />
+                )
+            )
           )}
         </div>
       </div>

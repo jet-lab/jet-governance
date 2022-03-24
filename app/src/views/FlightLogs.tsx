@@ -5,7 +5,6 @@ import { useTransactionLogs } from "../contexts/transactionLogs";
 import { Divider } from "antd";
 import { Loader } from "../components/Loader";
 import { useBlockExplorer } from "../contexts/blockExplorer";
-import { ReactComponent as ArrowIcon } from "../images/arrow_icon.svg";
 
 export const FlightLogView = () => {
   const { unbondingAccounts } = useProposalContext();
@@ -50,7 +49,7 @@ export const FlightLogView = () => {
                 <td className="action">{row.action}</td>
                 <td>{row.amount}</td>
                 <td>
-                  <ArrowIcon width="25px" />
+                  <i className="fas fa-external-link-alt"></i>
                 </td>
               </tr>
             ))}
@@ -62,7 +61,7 @@ export const FlightLogView = () => {
                   <Loader button />
                 ) : (
                   <span
-                    className={`text-gradient-btn ${
+                    className={`text-btn ${
                       !connected || loadingLogs || noMoreSignatures ? "disabled" : ""
                     }`}
                     onClick={() => {
