@@ -102,7 +102,7 @@ impl StakePool {
         tokens: Option<u64>,
     ) -> Result<(), ErrorCode> {
         let bonded_to_unbond = match tokens {
-            Some(n) => self.bonded.withdraw_tokens(n),
+            Some(n) => self.bonded.withdraw_tokens(n - account.minted_votes),
             None => {
                 let minted_votes = self
                     .bonded
@@ -250,10 +250,6 @@ impl SharedTokenPool {
     /// Remove specified tokens and burn a proportional amount of shares
     /// 
     /// Same as withdraw() except the parameter specifies the number of desired tokens. 
-    /// 
-    /// !! IMPORTANT !!
-    /// The actual tokens returned may differ slightly from the requested amount, so use
-    /// the returned FullAmount to determine the actual returned amount of tokens
     pub fn withdraw_tokens(&mut self, tokens: u64) -> FullAmount {
         let full_amount = self.amount().with_tokens(Rounding::Up, tokens);
         self.withdraw_full_amount_impl(&full_amount);
@@ -309,7 +305,6 @@ pub struct FullAmount {
 }
 
 impl FullAmount {
-
     /// Returns a new FullAmount with:
     /// - the same all_shares and all_tokens values
     /// - token_amount: input token_amount
