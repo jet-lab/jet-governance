@@ -437,7 +437,7 @@ impl StakeAccount {
             .checked_add(amount.token_amount)
             .ok_or(ErrorCode::InvalidAmount)?;
 
-        let minted_vote_amount = amount.with_tokens(Rounding::Down, total_requested_vote_amount);
+        let minted_vote_amount = amount.with_tokens(Rounding::Up, total_requested_vote_amount);
         if initial_minted_amount.share_amount == minted_vote_amount.share_amount {
             msg!("the amount provided is too insignificant to mint new votes for");
             return Ok(0);
