@@ -72,8 +72,8 @@ impl StakePool {
     /// within this program because it may break the bonded token totals. vault_amount
     /// should be independently handled where necessary.
     pub fn update_vault(&mut self, vault_amount: u64) {
-        // todo decide how to handle vault_amount < self.vault_amount?
-        self.bonded.donate(vault_amount - self.vault_amount);
+        self.bonded
+            .donate(vault_amount.checked_sub(self.vault_amount).unwrap());
         self.vault_amount = vault_amount;
     }
 
@@ -102,14 +102,20 @@ impl StakePool {
         tokens: Option<u64>,
     ) -> Result<(), ErrorCode> {
         let bonded_to_unbond = match tokens {
-            Some(n) => self.bonded.withdraw_tokens(n - account.minted_votes),
+            Some(n) => self
+                .bonded
+                .withdraw_tokens(n.checked_sub(account.minted_votes).unwrap()),
             None => {
                 let minted_votes = self
                     .bonded
                     .amount()
                     .with_tokens(Rounding::Up, account.minted_votes);
-                self.bonded
-                    .withdraw(account.bonded_shares - minted_votes.share_amount)
+                self.bonded.withdraw(
+                    account
+                        .bonded_shares
+                        .checked_sub(minted_votes.share_amount)
+                        .unwrap(),
+                )
             }
         };
 
@@ -153,7 +159,7 @@ impl StakePool {
             .unwrap()
             .try_into()
             .unwrap();
-        let unbonding_withdrawal = amount - bonded_withdrawal;
+        let unbonding_withdrawal = amount.checked_sub(bonded_withdrawal).unwrap();
         self.bonded.dilute(bonded_withdrawal);
         self.unbonding.dilute(unbonding_withdrawal);
         self.vault_amount = self.vault_amount.checked_sub(amount).unwrap();
@@ -181,7 +187,10 @@ impl StakePool {
                     .amount()
                     .with_shares(Rounding::Down, account.bonded_shares);
 
-                let unminted = user_amount.token_amount - account.minted_votes;
+                let unminted = user_amount
+                    .token_amount
+                    .checked_sub(account.minted_votes)
+                    .unwrap();
                 user_amount.with_tokens(Rounding::Up, unminted)
             }
         };
