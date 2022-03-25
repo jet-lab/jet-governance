@@ -94,7 +94,7 @@ mod error {
 
     #[error]
     pub enum ErrorCode {
-        RecipientNotFound,
+        RecipientNotFound = 1000,
         AddOutOfOrder,
         AirdropFinal,
         AirdropInsufficientRewardBalance,

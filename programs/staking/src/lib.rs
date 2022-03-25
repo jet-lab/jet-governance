@@ -86,7 +86,7 @@ mod error {
     #[error]
     #[derive(Eq, PartialEq)]
     pub enum ErrorCode {
-        InsufficientStake,
+        InsufficientStake = 1100,
         VotesLocked,
         CollateralLocked,
         NotYetUnbonded,
