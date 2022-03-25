@@ -3,7 +3,7 @@ use std::io::Write;
 use anchor_lang::prelude::*;
 use anchor_spl::token::{Token, TokenAccount};
 
-use crate::state::*;
+use crate::{events, state::*};
 
 #[derive(Debug, AnchorDeserialize, AnchorSerialize)]
 pub struct AirdropCreateParams {
@@ -84,6 +84,11 @@ pub fn airdrop_create_handler(
         .long_desc
         .as_mut()
         .write_all(params.long_desc.as_bytes())?;
+
+    emit!(events::AirdropCreated {
+        airdrop: airdrop.address,
+        params: params,
+    });
 
     Ok(())
 }

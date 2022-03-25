@@ -4,7 +4,7 @@ use anchor_spl::token::Token;
 use jet_staking::cpi::accounts::AddStake;
 use jet_staking::program::JetStaking;
 
-use crate::state::*;
+use crate::{events, state::*};
 use crate::ErrorCode;
 
 #[derive(Accounts)]
@@ -80,6 +80,13 @@ pub fn airdrop_claim_handler(ctx: Context<AirdropClaim>) -> Result<()> {
             .with_signer(&[&airdrop.signer_seeds()]),
         Some(claimed_amount),
     )?;
+
+    emit!(events::AirdropClaimed {
+        airdrop: airdrop.address,
+        recipient: ctx.accounts.recipient.key(),
+        claimed_amount,
+        remaining_amount: airdrop.target_info().reward_total
+    });
 
     Ok(())
 }
