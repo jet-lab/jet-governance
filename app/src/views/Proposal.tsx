@@ -29,14 +29,13 @@ import { voteRecordCsvDownload } from "../actions/voteRecordCsvDownload";
 import { ArrowLeftOutlined, DownloadOutlined } from "@ant-design/icons";
 import { getPubkeyIndex } from "../models/PUBKEYS_INDEX";
 import { useProposalContext } from "../contexts/proposal";
-import { StakeBalance } from "@jet-lab/jet-engine";
+import { bnToNumber, StakeBalance } from "@jet-lab/jet-engine";
 import { Governance, ProgramAccount, Proposal, ProposalState, Realm } from "@solana/spl-governance";
 import { ReactComponent as ThumbsUp } from "../images/thumbs_up.svg";
 import { ReactComponent as ThumbsDown } from "../images/thumbs_down.svg";
 import { Loader } from "../components/Loader";
 import "./Proposal.less";
 import { useBlockExplorer } from "../contexts/blockExplorer";
-import { useDarkTheme } from "../contexts/darkTheme";
 
 export const ProposalView = () => {
   const proposalAddress = useKeyParam();
@@ -99,7 +98,6 @@ const InnerProposalView = ({
   const { connected } = useWallet();
   const { jetMint } = useProposalContext();
   const { getAccountExplorerUrl } = useBlockExplorer();
-  const { darkTheme } = useDarkTheme();
   const proposalAddress = useKeyParam();
   const {
     loading,
@@ -115,7 +113,6 @@ const InnerProposalView = ({
     setVote(getVoteType(voteRecord?.account.vote?.voteType));
   }, [voteRecord]);
 
-  // FIXME!
   const isStaked = true;
   const deadlineTimestamp = Date.now() / 1000;
   const deadline = getVotingDeadline(proposal, governance);

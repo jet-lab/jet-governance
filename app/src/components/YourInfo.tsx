@@ -38,6 +38,7 @@ export const YourInfo = () => {
     walletFetched,
 
     unbondingTotal: { unbondingQueue, unbondingComplete },
+    unbondingAccounts,
     stakeBalance: { stakedJet },
 
     jetAccount,
@@ -160,6 +161,8 @@ export const YourInfo = () => {
   const preFillJetWithStaked = () => {
     setInputAmount(stakedJet ? fromLamports(stakedJet, jetMint) : 0);
   };
+  const withdrawAccountsAvailable =
+    !unbondingComplete.isZero() || (unbondingAccounts && unbondingAccounts.length > 0);
   return (
     <div className={`your-info ${isOwnPage ? "view-container" : ""}`}>
       <Typography>
@@ -306,7 +309,7 @@ export const YourInfo = () => {
                 onClose={() => setUnstakeModalVisible(false)}
               />
             )}
-            {!unbondingComplete.isZero() && (
+            {withdrawAccountsAvailable && (
               <Button
                 className="full-width withdraw-btn"
                 onClick={() => handleWithdrawUnstaked()}

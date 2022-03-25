@@ -43,22 +43,14 @@ export function TransactionsProvider(props: { children: any }) {
 
   // Returns the correct action type string
   // For staking from airdrop or wallet
-  const getActionType = (
-    action: string,
-    wallet: string
-  ): {
-    actionType: string;
-    sign: string;
-  } => {
+  const getActionType = (action: string, wallet: string): string => {
     let actionType;
-    let sign = "+";
     switch (action) {
       case "stake":
         actionType = `Staked from wallet ${shortenAddress(wallet, 4)}`;
         break;
       case "unbond_stake":
         actionType = "Unstaked";
-        sign = "-";
         break;
       case "withdraw_unbonded":
         actionType = "Withdrawn";
@@ -72,7 +64,7 @@ export function TransactionsProvider(props: { children: any }) {
       default:
         actionType = "Staked";
     }
-    return { actionType, sign };
+    return actionType;
   };
 
   // Get transaction details from a signature
@@ -125,12 +117,10 @@ export function TransactionsProvider(props: { children: any }) {
                       log,
                       blockDate: dateFromUnixTimestamp(new BN(log.blockTime)),
                       signature,
-                      action: getActionType(progInst, pre.owner!).actionType,
-                      amount:
-                        getActionType(progInst, pre.owner!).sign +
-                        `${Math.abs(
-                          pre.uiTokenAmount.uiAmount! - post.uiTokenAmount.uiAmount!
-                        ).toFixed(5)}`
+                      action: getActionType(progInst, pre.owner!),
+                      amount: `${Math.abs(
+                        pre.uiTokenAmount.uiAmount! - post.uiTokenAmount.uiAmount!
+                      ).toFixed(2)}`
                     };
 
                     // If we found mint match, add tx to logs

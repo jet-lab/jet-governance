@@ -14,7 +14,7 @@ export const UnbondingLog = ({ unbondingAccount }: { unbondingAccount: Unbonding
   const [restakeModalVisible, setRestakeModalVisible] = useState(false);
   const [withdrawModalVisible, setWithdrawModalVisible] = useState(false);
   const [isUnbonded, setIsUnbonded] = useState(false);
-  const { getTxExplorerUrl } = useBlockExplorer();
+  const { getAccountExplorerUrl } = useBlockExplorer();
 
   useEffect(() => {
     const unbondedState = UnbondingAccount.isUnbonded(unbondingAccount);
@@ -27,7 +27,11 @@ export const UnbondingLog = ({ unbondingAccount }: { unbondingAccount: Unbonding
         className="italics"
         onClick={() =>
           unbondingAccount &&
-          window.open(getTxExplorerUrl(unbondingAccount.address.toBase58()), "_blank")
+          window.open(
+            getAccountExplorerUrl(unbondingAccount.address.toBase58()),
+            "_blank",
+            "noreferrer"
+          )
         }
       >
         {dateFromUnixTimestamp(unbondingAccount?.unbondingAccount.unbondedAt)}
@@ -36,7 +40,11 @@ export const UnbondingLog = ({ unbondingAccount }: { unbondingAccount: Unbonding
         className="italics"
         onClick={() =>
           unbondingAccount &&
-          window.open(getTxExplorerUrl(unbondingAccount.address.toBase58()), "_blank")
+          window.open(
+            getAccountExplorerUrl(unbondingAccount.address.toBase58()),
+            "_blank",
+            "noreferrer"
+          )
         }
       >
         Unbonding{" "}
@@ -78,10 +86,14 @@ export const UnbondingLog = ({ unbondingAccount }: { unbondingAccount: Unbonding
         className="italics"
         onClick={() =>
           unbondingAccount &&
-          window.open(getTxExplorerUrl(unbondingAccount.address.toBase58()), "_blank")
+          window.open(
+            getAccountExplorerUrl(unbondingAccount.address.toBase58()),
+            "_blank",
+            "noreferrer"
+          )
         }
       >
-        -{toTokens(unbondingAccount?.tokens, jetMint)}
+        {toTokens(unbondingAccount?.tokens, jetMint)}
       </td>
       <td>
         <i className="fas fa-external-link-alt"></i>

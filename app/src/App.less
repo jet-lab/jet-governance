@@ -32,7 +32,6 @@ button.inactive {
     margin: 0;
     &:hover {
       // add text gradient on hover
-      // TODO: make sure underline doesn't disappear on hover
       opacity: 1;
       background-image: @gradient;
       background-clip: text;
@@ -286,6 +285,14 @@ p,
   .details {
     font-size: @base-font-size;
     color: @dark-grey;
+  }
+  h1 {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-height: 105px;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
   }
   .ant-card-body {
     display: flex;
@@ -659,6 +666,9 @@ p,
   background: @light-green-1 !important;
   border-radius: @round-radius !important;
   padding: @secondary-btn-padding !important;
+  span {
+    color: inherit !important;
+  }
   &:hover {
     background: @light-green-2 !important;
   }

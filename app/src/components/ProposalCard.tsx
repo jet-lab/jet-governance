@@ -23,20 +23,12 @@ export const ProposalCard = ({
   const { yesPercent, yesAbstainPercent } = getVoteCounts(proposal);
   const { endDateOrCountdown } = useCountdown(proposal, governance);
 
-  const truncateName = () => {
-    let name = proposal.account.name;
-    if (name.length > 50) {
-      name = name.substring(0, 42) + "...";
-    }
-    return name;
-  };
-
   return (
     <Link to={headlineUrl}>
       <Card bordered={false} className={`proposal-card clickable`} style={{}}>
         <div>
           <div className="header">JUMP-{getPubkeyIndex(proposalStr)} </div>
-          <h1>{truncateName()}</h1>
+          <h1>{proposal.account.name}</h1>
         </div>
         <div className="details">
           {!proposal.account.isPreVotingState() && !!endDateOrCountdown ? (
