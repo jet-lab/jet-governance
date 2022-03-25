@@ -1,5 +1,7 @@
 use anchor_lang::prelude::*;
 
+mod events;
+
 declare_id!("JPALXR88jy2fG3miuu4n3o8Jef4K2Cgc3Uypr3Y8RNX");
 
 /// Hardcoded address of the authority that can authenticate users
@@ -72,6 +74,10 @@ pub mod jet_auth {
         auth.complete = false;
         auth.allowed = false;
 
+        emit!(events::CreateAuthAccount {
+            user: auth.owner
+        });
+
         Ok(())
     }
 
@@ -81,6 +87,10 @@ pub mod jet_auth {
 
         auth.complete = true;
         auth.allowed = true;
+
+        emit!(events::Authenticate {
+            user: auth.owner
+        });
 
         Ok(())
     }
