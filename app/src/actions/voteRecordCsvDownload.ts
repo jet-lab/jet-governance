@@ -6,14 +6,14 @@ import { fromLamports } from "../utils/utils";
 /** Downloads vote records in CSV format */
 export function voteRecordCsvDownload(
   itemAddress: PublicKey,
-  votes: VoterDisplayData[],
+  votes: VoterDisplayData[] | undefined,
   mint?: MintInfo
 ) {
   // define the heading for each row of the data
   var csv = "PublicKey,VoteWeight,VoteType\n";
 
   // merge the data with CSV
-  votes.forEach(function (vote) {
+  votes?.forEach(function (vote) {
     csv += [vote.user, fromLamports(vote.voteWeight, mint), vote.voteKind].join(",");
     csv += "\n";
   });

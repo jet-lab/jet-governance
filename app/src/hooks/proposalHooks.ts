@@ -74,12 +74,12 @@ export const useProposalFilters = (
 };
 
 export function useCountdown(
-  proposal: ProgramAccount<Proposal>,
-  governance: ProgramAccount<Governance>
+  proposal: ProgramAccount<Proposal> | undefined,
+  governance: ProgramAccount<Governance> | undefined
 ) {
   const currentTime = useCurrentTime();
 
-  const deadline = getVotingDeadline(proposal, governance);
+  const deadline = proposal && governance ? getVotingDeadline(proposal, governance) : undefined;
 
   const countdownTime = useMemo(() => {
     return deadline ? deadline.toNumber() * 1000 : undefined;
@@ -87,23 +87,23 @@ export function useCountdown(
 
   const startDate = useMemo(
     () =>
-      proposal.account.votingAt
+      proposal?.account.votingAt
         ? dateToString(new Date(proposal.account.votingAt.toNumber() * 1000))
         : undefined,
-    [proposal.account.votingAt]
+    [proposal?.account.votingAt]
   );
   const endDate = useMemo(() => {
-    const deadline = getVotingDeadline(proposal, governance);
+    const deadline = proposal && governance ? getVotingDeadline(proposal, governance) : undefined;
     return deadline ? dateToString(new Date(deadline.toNumber() * 1000)) : undefined;
   }, [proposal, governance]);
 
   let endDateOrCountdown: string | undefined = useMemo(() => {
-    if (!proposal.account.isPreVotingState() && !!countdownTime && !!endDate) {
-      return proposal.account.state === ProposalState.Voting && countdownTime > currentTime
+    if (!proposal?.account.isPreVotingState() && !!countdownTime && !!endDate) {
+      return proposal?.account.state === ProposalState.Voting && countdownTime > currentTime
         ? `${getRemainingTime(currentTime, countdownTime)}`
         : `Ended on: ${endDate}`;
     }
-  }, [countdownTime, currentTime, endDate, proposal.account]);
+  }, [countdownTime, currentTime, endDate, proposal?.account]);
 
   return { startDate, endDate, countdownTime, endDateOrCountdown };
 }

@@ -33,7 +33,6 @@ import { bnToNumber, StakeBalance } from "@jet-lab/jet-engine";
 import { Governance, ProgramAccount, Proposal, ProposalState, Realm } from "@solana/spl-governance";
 import { ReactComponent as ThumbsUp } from "../images/thumbs_up.svg";
 import { ReactComponent as ThumbsDown } from "../images/thumbs_down.svg";
-import { Loader } from "../components/Loader";
 import "./Proposal.less";
 import { useBlockExplorer } from "../contexts/blockExplorer";
 
@@ -53,7 +52,7 @@ export const ProposalView = () => {
 
   const { allHasVoted } = useVoterDisplayData(voteRecords, tokenOwnerRecords);
 
-  return proposal && realm && governance && proposalsByGovernance ? (
+  return (
     <InnerProposalView
       proposal={proposal}
       realm={realm}
@@ -62,10 +61,54 @@ export const ProposalView = () => {
       stakeBalance={stakeBalance}
       proposalsByGovernance={proposalsByGovernance}
     />
-  ) : (
-    //show dashes while loading
-    <InnerProposalViewLoading />
   );
+};
+
+const RenderContent = ({
+  proposal,
+  loading,
+  failed,
+  msg,
+  content,
+  isUrl
+}: {
+  proposal: ProgramAccount<Proposal> | undefined;
+  loading: boolean;
+  failed: boolean | undefined;
+  msg: string | undefined;
+  content: string | undefined;
+  isUrl: boolean;
+}) => {
+  const { Paragraph } = Typography;
+
+  if (isUrl) {
+    if (failed) {
+      return (
+        //when fetching fails
+        <Paragraph className="description-text">
+          {LABELS.DESCRIPTION}:{" "}
+          <a href={proposal?.account.descriptionLink} target="_blank" rel="noopener noreferrer">
+            {msg ? msg : LABELS.NO_LOAD}
+          </a>
+        </Paragraph>
+      );
+    } else {
+      //when there's description
+      return (
+        <ReactMarkdown
+          className="description-text"
+          children={content ? content : "&mdash; &mdash; &mdash; "}
+        />
+      );
+    }
+  } else {
+    //When there's no description at all
+    return (
+      <Paragraph className="description-text">
+        {content ? content : "- - - No Proposal Description - - -"}
+      </Paragraph>
+    );
+  }
 };
 
 const InnerProposalView = ({
@@ -76,50 +119,52 @@ const InnerProposalView = ({
   stakeBalance,
   proposalsByGovernance
 }: {
-  proposal: ProgramAccount<Proposal>;
-  realm: ProgramAccount<Realm>;
-  governance: ProgramAccount<Governance>;
-  voterDisplayData: VoterDisplayData[];
-  stakeBalance: StakeBalance;
-  proposalsByGovernance: ProgramAccount<Proposal>[];
+  proposal: ProgramAccount<Proposal> | undefined;
+  realm: ProgramAccount<Realm> | undefined;
+  governance: ProgramAccount<Governance> | undefined;
+  voterDisplayData: VoterDisplayData[] | undefined;
+  stakeBalance: StakeBalance | undefined;
+  proposalsByGovernance: ProgramAccount<Proposal>[] | undefined;
 }) => {
-  const { Title, Text, Paragraph } = Typography;
+  const loaded = !!(proposal && realm && governance && proposalsByGovernance);
 
+  const { Title, Text, Paragraph } = Typography;
   const handleVoteModal = () => {
     setIsVoteModalVisible(true);
   };
 
   const [isVoteModalVisible, setIsVoteModalVisible] = useState(false);
   const tokenOwnerRecord = useWalletTokenOwnerRecord(
-    governance.account.realm,
-    proposal.account.governingTokenMint
+    governance?.account.realm,
+    proposal?.account.governingTokenMint
   );
-  const voteRecord = useTokenOwnerVoteRecord(proposal.pubkey, tokenOwnerRecord?.pubkey);
+  const voteRecord = useTokenOwnerVoteRecord(proposal?.pubkey, tokenOwnerRecord?.pubkey);
   const { connected } = useWallet();
   const { jetMint } = useProposalContext();
   const { getAccountExplorerUrl } = useBlockExplorer();
   const proposalAddress = useKeyParam();
-  const {
-    loading,
-    failed,
-    msg,
-    content,
-    isUrl: isDescriptionUrl
-  } = useLoadGist(proposal.account.descriptionLink);
   const { startDate, endDate } = useCountdown(proposal, governance);
+
+  //if !loaded then use placeholder data
+  const gistInfo = useLoadGist(proposal?.account.descriptionLink);
+
   const addressStr = useMemo(() => proposalAddress.toBase58(), [proposalAddress]);
   const [vote, setVote] = useState<VoteOption>(VoteOption.Undecided);
   useEffect(() => {
     setVote(getVoteType(voteRecord?.account.vote?.voteType));
   }, [voteRecord]);
 
-  const isStaked = true;
+  const isStaked = stakeBalance && stakeBalance.stakedJet && !stakeBalance.stakedJet.isZero();
+
   const deadlineTimestamp = Date.now() / 1000;
-  const deadline = getVotingDeadline(proposal, governance);
+  const deadline = proposal && governance ? getVotingDeadline(proposal, governance) : undefined;
   const hasDeadlineLapsed = deadline ? deadlineTimestamp > deadline.toNumber() : false;
-  const { yes, no, total } = getVoteCounts(proposal);
-  const otherActiveProposals = proposalsByGovernance.filter(p => {
-    const deadline = getVotingDeadline(p, governance);
+  const voteCounts = proposal ? getVoteCounts(proposal) : undefined;
+  const otherActiveProposals = proposalsByGovernance?.filter(p => {
+    if (!proposal) {
+      return undefined;
+    }
+    const deadline = proposal && governance ? getVotingDeadline(p, governance) : undefined;
     const hasDeadlineLapsed = deadline ? deadlineTimestamp > deadline.toNumber() : false;
     return (
       !p.pubkey.equals(proposal.pubkey) &&
@@ -145,45 +190,40 @@ const InnerProposalView = ({
         </Title>
         <div
           className={`flex column ${
-            proposal.account.state === ProposalState.Voting && !hasDeadlineLapsed
+            loaded && proposal.account.state === ProposalState.Voting && !hasDeadlineLapsed
               ? "proposal-left"
               : "centered"
           }`}
         >
+          {/* Proposal Card Detail */}
           <div className="description neu-container">
             <Text>
               <Link to="/">
                 <ArrowLeftOutlined />
                 Active Proposals
               </Link>{" "}
-              / Jet Upward Momentum Proposal {getPubkeyIndex(addressStr)}
+              / Jet Upward Momentum Proposal {addressStr ? getPubkeyIndex(addressStr) : "---"}
             </Text>
-            <Title className="description-title">{proposal.account.name}</Title>
-            {loading ? (
-              <Loader />
-            ) : isDescriptionUrl ? (
-              failed ? (
-                <Paragraph className="description-text">
-                  {LABELS.DESCRIPTION}:{" "}
-                  <a
-                    href={proposal.account.descriptionLink}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    {msg ? msg : LABELS.NO_LOAD}
-                  </a>
-                </Paragraph>
-              ) : (
-                <ReactMarkdown className="description-text" children={content} />
-              )
-            ) : (
-              <Paragraph className="description-text">{content}</Paragraph>
+
+            {/* Proposal Title */}
+            <Title className="description-title">{loaded ? proposal.account.name : "---"}</Title>
+
+            {/* Main Proposal Content */}
+            {gistInfo && (
+              <RenderContent
+                {...{
+                  proposal,
+                  ...gistInfo
+                }}
+              />
             )}
+
+            {/* Proposal Address and Dates */}
             <div className="neu-inset details">
               <Text>Proposal ID</Text>
               <Text>
                 <a href={getAccountExplorerUrl(addressStr)} target="_blank" rel="noreferrer">
-                  {addressStr}
+                  {loaded ? addressStr : "---"}
                 </a>
               </Text>
               <Text>Start date</Text>
@@ -193,29 +233,33 @@ const InnerProposalView = ({
             </div>
           </div>
 
+          {/* Proposal Results */}
           <div className="neu-container flex column">
             <div className="flex">
               <Title>Vote Results</Title>
               <Text
-                onClick={() => voteRecordCsvDownload(proposal.pubkey, voterDisplayData, jetMint)}
+                onClick={() => {
+                  if (loaded && voterDisplayData) {
+                    voteRecordCsvDownload(proposal.pubkey, voterDisplayData, jetMint);
+                  }
+                }}
                 id="csv"
                 className="text-btn"
               >
                 Download CSV <DownloadOutlined />
               </Text>
             </div>
-
             <div className="flex justify-evenly vote-turnout">
               <div className="results">
                 <ResultProgressBar
                   type="Approve"
-                  amount={bnToIntLossy(yes)}
-                  total={bnToIntLossy(total)}
+                  amount={bnToIntLossy(voteCounts?.yes)}
+                  total={bnToIntLossy(voteCounts?.total)}
                 />
                 <ResultProgressBar
                   type="Reject"
-                  amount={bnToIntLossy(no)}
-                  total={bnToIntLossy(total)}
+                  amount={bnToIntLossy(voteCounts?.no)}
+                  total={bnToIntLossy(voteCounts?.total)}
                 />
               </div>
 
@@ -239,8 +283,9 @@ const InnerProposalView = ({
           </div>
         </div>
 
+        {/* If voting is in progress */}
         <div className="flex column proposal-right">
-          {!(proposal.account.state !== ProposalState.Voting || hasDeadlineLapsed) && (
+          {!(proposal?.account.state !== ProposalState.Voting || hasDeadlineLapsed) && (
             <div className={`neu-container flex column`} id="your-vote">
               <Button
                 disabled={
@@ -273,7 +318,7 @@ const InnerProposalView = ({
               >
                 Vote
               </Button>
-              {isVoteModalVisible && (
+              {stakeBalance && loaded && isVoteModalVisible && (
                 <VoteModal
                   vote={vote}
                   onClose={() => setIsVoteModalVisible(false)}
@@ -291,18 +336,22 @@ const InnerProposalView = ({
 
         <Divider
           className={
-            proposal.account.state === ProposalState.Voting && !hasDeadlineLapsed ? "" : "centered"
+            loaded && proposal.account.state === ProposalState.Voting && !hasDeadlineLapsed
+              ? ""
+              : "centered"
           }
         />
 
         <div
           className={`other-proposals ${
-            proposal.account.state === ProposalState.Voting && !hasDeadlineLapsed ? "" : "centered"
+            loaded && proposal.account.state === ProposalState.Voting && !hasDeadlineLapsed
+              ? ""
+              : "centered"
           }`}
         >
           <h3>Other active proposals</h3>
           <div className="flex">
-            {otherActiveProposals.length > 0
+            {otherActiveProposals && loaded && otherActiveProposals.length > 0
               ? otherActiveProposals.map(proposal => (
                   <ProposalCard
                     proposal={proposal}
@@ -312,85 +361,6 @@ const InnerProposalView = ({
                 ))
               : "There are no other proposals at this time."}
           </div>
-        </div>
-        <Link to="/" className="mobile-only">
-          <ArrowLeftOutlined />
-          Active Proposals
-        </Link>
-      </div>
-    </Typography>
-  );
-};
-
-//when data is not fully loaded
-const InnerProposalViewLoading = () => {
-  const { Title, Text, Paragraph } = Typography;
-  return (
-    <Typography>
-      <div className="view-container column-grid" id="proposal-page">
-        <Title level={2} className="mobile-only">
-          Proposal detail
-        </Title>
-        <div
-          className={`flex column centered
-        }`}
-        >
-          <div className="description neu-container">
-            <Text>
-              <Link to="/">
-                <ArrowLeftOutlined />
-                Active Proposals
-              </Link>{" "}
-              / Jet Upward Momentum Proposal {"---"}
-            </Text>
-            <Title className="description-title">{"---"}</Title>
-            {"---"}
-            <div className="neu-inset details">
-              <Text>Proposal ID</Text>
-              <Text>{"---"}</Text>
-              <Text>Start date</Text>
-              <Text> {"---"}</Text>
-              <Text>End date</Text>
-              <Text>{"---"}</Text>
-            </div>
-          </div>
-
-          <div className="neu-container flex column">
-            <div className="flex">
-              <Title>Vote Results</Title>
-              <Text>---</Text>
-            </div>
-
-            <div className="flex justify-evenly vote-turnout">
-              <div className="results">---</div>
-
-              <Divider className="mobile-only" />
-
-              <div className="voters">
-                <div className="mobile-only">
-                  <Paragraph>
-                    See additional voter information and download a full CSV on the desktop app.
-                  </Paragraph>
-                </div>
-                <div className={`stakeholders`}>
-                  <span className="voter title" />
-                  <span className="address title">Wallet</span>
-                  <span className="amount title">Stake</span>
-                  <span className="vote title">Vote</span>
-                </div>
-                ---
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="flex column proposal-right">---</div>
-
-        <Divider className={"centered"} />
-
-        <div className={`other-proposals ${"centered"}`}>
-          <h3>Other active proposals</h3>
-          <div className="flex">---</div>
         </div>
         <Link to="/" className="mobile-only">
           <ArrowLeftOutlined />

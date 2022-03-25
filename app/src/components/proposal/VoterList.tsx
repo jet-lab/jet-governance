@@ -6,7 +6,7 @@ import { ProgramAccount, VoteRecord } from "@solana/spl-governance";
 import { getVoterDisplayData, VoterDisplayData } from "../../hooks";
 
 export const VoterList = (props: {
-  voteRecords: VoterDisplayData[];
+  voteRecords: VoterDisplayData[] | undefined;
   userVoteRecord?: ProgramAccount<VoteRecord>;
 }) => {
   const [page, setPage] = useState(1);
@@ -14,6 +14,9 @@ export const VoterList = (props: {
   const count = 5;
 
   const list = useMemo(() => {
+    if (!props.voteRecords) {
+      return;
+    }
     return props.voteRecords.slice(0, count * page);
   }, [props.voteRecords, page]);
 
@@ -34,7 +37,7 @@ export const VoterList = (props: {
         marginTop: 12,
         height: 32,
         lineHeight: "32px",
-        visibility: count * page < list.length ? "visible" : "collapse"
+        visibility: list && count * page < list.length ? "visible" : "collapse"
       }}
     >
       <Button onClick={onLoadMore}>Load more</Button>
