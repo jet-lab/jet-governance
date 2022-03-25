@@ -77,9 +77,7 @@ pub mod jet_auth {
         auth.complete = false;
         auth.allowed = false;
 
-        emit!(events::CreateAuthAccount {
-            user: auth.owner
-        });
+        emit!(events::CreateAuthAccount { user: auth.owner });
 
         Ok(())
     }
@@ -91,9 +89,7 @@ pub mod jet_auth {
         auth.complete = true;
         auth.allowed = true;
 
-        emit!(events::Authenticate {
-            user: auth.owner
-        });
+        emit!(events::Authenticate { user: auth.owner });
 
         Ok(())
     }

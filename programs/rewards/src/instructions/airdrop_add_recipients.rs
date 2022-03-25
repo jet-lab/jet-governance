@@ -38,10 +38,7 @@ pub fn airdrop_add_recipients_handler(
 
     airdrop.add_recipients(
         params.start_index,
-        params
-            .recipients
-            .iter()
-            .map(|r| (r.recipient, r.amount)),
+        params.recipients.iter().map(|r| (r.recipient, r.amount)),
     )?;
 
     let info = airdrop.target_info();

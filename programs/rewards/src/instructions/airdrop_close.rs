@@ -1,8 +1,8 @@
 use anchor_lang::prelude::*;
 use anchor_spl::token::{self, CloseAccount, Token, TokenAccount, Transfer};
 
-use crate::{events, state::*};
 use crate::ErrorCode;
+use crate::{events, state::*};
 
 #[derive(Accounts)]
 pub struct AirdropClose<'info> {
