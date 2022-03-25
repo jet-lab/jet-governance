@@ -1,7 +1,7 @@
 use anchor_lang::prelude::*;
 use anchor_spl::token::{self, CloseAccount, Token, TokenAccount, Transfer};
 
-use crate::state::*;
+use crate::{events, state::*};
 use crate::ErrorCode;
 
 #[derive(Accounts)]
@@ -77,6 +77,10 @@ pub fn airdrop_close_handler(ctx: Context<AirdropClose>) -> ProgramResult {
             .close_context()
             .with_signer(&[&airdrop.signer_seeds()]),
     )?;
+
+    emit!(events::AirdropClosed {
+        airdrop: airdrop.address
+    });
 
     Ok(())
 }
