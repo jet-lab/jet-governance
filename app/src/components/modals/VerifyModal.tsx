@@ -315,14 +315,14 @@ export const VerifyModal = ({
     onCancel: () => handleDisconnect(),
     cancelButtonProps: { style: { display: "none " } },
     children: (
-      <>
+      <div className="flex column">
         <p>
           Welcome to Jet Govern—the governance app for Jet Protocol. Here, you earn rewards and help
           pilot the direction of Jet Protocol by staking your JET into the app.
         </p>
 
         <p>To start voting, connect your wallet and deposit some JET today!</p>
-      </>
+      </div>
     ),
     closable: false
   };
@@ -470,7 +470,7 @@ export const VerifyModal = ({
     onCancel: () => handleAccessGranted(),
     cancelButtonProps: { style: { display: "none " } },
     children: (
-      <>
+      <div className="flex column">
         <p>When unstaking from JetGovern, your tokens enter a 29.5-day unbonding period.</p>
         <p>During the unbonding period, you will not earn any rewards.</p>
         <p>
@@ -481,7 +481,7 @@ export const VerifyModal = ({
           To make sure your vote counts, only unstake once a vote has completed! For more
           information check out our <DocsLink>docs</DocsLink>.
         </p>
-      </>
+      </div>
     ),
     closable: true
   };
@@ -537,7 +537,7 @@ export const VerifyModal = ({
     onOk: () => handleDisconnect(),
     onCancel: () => handleDisconnect(),
     children: (
-      <>
+      <div className="flex column">
         <p>
           It looks like you may be trying to access Jet Govern from <b>{country}</b>.
         </p>
@@ -553,17 +553,17 @@ export const VerifyModal = ({
           </a>
           .
         </p>
+        <p>
+          Your wallet will now be disconnected, but you may continue to browse proposals while
+          disconnected.
+        </p>
         <div className="emphasis">
           <p>
             If you think this might be incorrect, please ensure that your VPN is turned off for
             verification purposes.
           </p>
         </div>
-        <p>
-          Your wallet will now be disconnected, but you may continue to browse proposals while
-          disconnected.
-        </p>
-      </>
+      </div>
     ),
     closable: true
   };

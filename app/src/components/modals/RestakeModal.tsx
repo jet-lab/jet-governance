@@ -78,12 +78,12 @@ export const RestakeModal = ({
     closable: true,
     cancelButtonProps: { style: { display: "none " } },
     children: (
-      <>
+      <div className="flex column">
         <p>
           You've restaked {Intl.NumberFormat("us-US").format(stakeAmount)} JET into JetGovern and
           can begin voting on active proposals immediately.
         </p>
-      </>
+      </div>
     )
   };
   steps[Steps.Error] = {

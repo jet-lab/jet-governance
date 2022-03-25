@@ -99,7 +99,7 @@ export const ClaimModal = ({
     closable: false,
     cancelButtonProps: { style: { display: "none " } },
     children: (
-      <>
+      <div className="flex column">
         <p>
           You've claimed and staked <b>{stakeAmount} JET</b>.
         </p>
@@ -108,7 +108,7 @@ export const ClaimModal = ({
           Head on back to the <Link to="/">dashboard page</Link> to see your staked balance and vote
           on active proposals!
         </p>
-      </>
+      </div>
     )
   };
   steps[Steps.Error] = {
