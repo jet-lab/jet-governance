@@ -7,28 +7,21 @@
 .vote-btn {
   padding: @spacing-sm @spacing-xl @spacing-sm @spacing-xl !important;
   box-shadow: @neu-shadow-low;
-  &:hover {
-    box-shadow: @neu-shadow-low;
-  }
+  background: @white !important;
   &:active {
-    box-shadow: none !important;
-  }
-  &.selected {
     box-shadow: @neu-shadow-inset !important;
   }
-  &.no-border {
-    &:before {
-      background: none;
-    }
-    &:after {
-      background: none;
+  &.selected {
+    box-shadow: @neu-shadow-inset-low !important;
+    background: @grey !important;
+  }
+  &[disabled] {
+    cursor: not-allowed;
+    opacity: @disabled-opacity;
+    &:active {
+      box-shadow: @neu-shadow-low !important;
     }
   }
-}
-
-.light-theme {
-  background: @grey !important;
-  color: @jet-green !important;
 }
 
 .vote-turnout {

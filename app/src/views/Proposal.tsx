@@ -246,31 +246,33 @@ const InnerProposalView = ({
           {!(proposal.account.state !== ProposalState.Voting || hasDeadlineLapsed) && (
             <div className={`neu-container flex column`} id="your-vote">
               <Button
-                onClick={() => setVote(VoteOption.Yes)}
-                className={`vote-select ${darkTheme ? "" : "light-theme "}vote-btn ${
-                  vote === VoteOption.Yes ? "selected" : ""
-                }`}
-                type="primary"
-              >
-                In favor
-                <ThumbsUp className="mobile-only" />
-              </Button>
-              <Button
-                onClick={() => setVote(VoteOption.No)}
-                className={`vote-select ${darkTheme ? "" : "light-theme "}vote-btn ${
-                  vote === VoteOption.No ? "selected" : ""
-                }`}
-                type="primary"
-              >
-                Against
-                <ThumbsDown className="mobile-only" />
-              </Button>
-              <Button
-                type="primary"
-                onClick={() => handleVoteModal()}
                 disabled={
                   (connected && !isStaked) || (connected && vote === undefined) || !connected
                 }
+                onClick={() => setVote(VoteOption.Yes)}
+                className={`vote-select vote-btn ${vote === VoteOption.Yes ? "selected" : ""}`}
+                type="primary"
+              >
+                <span className="text-gradient">In favor</span>
+                <ThumbsUp className="mobile-only" />
+              </Button>
+              <Button
+                disabled={
+                  (connected && !isStaked) || (connected && vote === undefined) || !connected
+                }
+                onClick={() => setVote(VoteOption.No)}
+                className={`vote-select vote-btn ${vote === VoteOption.No ? "selected" : ""}`}
+                type="primary"
+              >
+                <span className="text-gradient">Against</span>
+                <ThumbsDown className="mobile-only" />
+              </Button>
+              <Button
+                disabled={
+                  (connected && !isStaked) || (connected && vote === undefined) || !connected
+                }
+                type="primary"
+                onClick={() => handleVoteModal()}
               >
                 Vote
               </Button>
