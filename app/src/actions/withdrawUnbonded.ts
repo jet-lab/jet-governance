@@ -43,14 +43,17 @@ export const withdrawAllUnbonded = async (
   );
 
   for (let i = 0; i < unbondingAccounts.length; i++) {
-    await UnbondingAccount.withWithdrawUnbonded(
-      ix,
-      unbondingAccounts[i],
-      stakeAccount,
-      stakePool,
-      tokenReceiver,
-      provider.wallet.publicKey
-    );
+    const unbondedState = UnbondingAccount.isUnbonded(unbondingAccounts[i]);
+    if (unbondedState) {
+      await UnbondingAccount.withWithdrawUnbonded(
+        ix,
+        unbondingAccounts[i],
+        stakeAccount,
+        stakePool,
+        tokenReceiver,
+        provider.wallet.publicKey
+      );
+    }
   }
 
   await sendTransactionWithNotifications(connection, wallet, ix, [], "JET has been withdrawn");
