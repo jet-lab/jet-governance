@@ -1,7 +1,7 @@
 use anchor_lang::prelude::*;
 
 use crate::{
-    state::DistributionKind, AirdropCreateParams, AirdropRecipientParam, AwardCreateParams,
+    state::DistributionKind, AirdropCreateParams, AirdropRecipientParam, AwardCreateParams, DistributionCreateParams,
 };
 
 #[event]
@@ -56,6 +56,33 @@ pub struct AwardReleased {
     /// The amount released in this instruction.
     pub amount_released: u64,
 
+    /// The total amount this award intends to release by its end time.
+    pub target_amount: u64,
+
+    /// The total amount this award has released so far, including amount_released.
+    pub total_distributed: u64,
+}
+
+#[event]
+pub struct AwardClosed {
+    pub award: Pubkey,
+}
+
+#[event]
+pub struct DistributionCreated {
+    pub distribution: Pubkey,
+    pub token_mint: Pubkey,
+    pub params: DistributionCreateParams,
+    pub distribution_kind: DistributionKind,
+}
+
+#[event]
+pub struct DistributionReleased {
+    pub distribution: Pubkey,
+
+    /// The amount released in this instruction.
+    pub amount_released: u64,
+
     /// The total amount this distribution intends to release by its end time.
     pub target_amount: u64,
 
@@ -64,6 +91,6 @@ pub struct AwardReleased {
 }
 
 #[event]
-pub struct AwardClosed {
-    pub award: Pubkey,
+pub struct DistributionClosed {
+    pub distribution: Pubkey,
 }

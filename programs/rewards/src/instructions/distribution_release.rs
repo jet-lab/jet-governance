@@ -1,7 +1,7 @@
 use anchor_lang::prelude::*;
 use anchor_spl::token::{self, Token, Transfer};
 
-use crate::state::*;
+use crate::{state::*, events};
 
 #[derive(Accounts)]
 pub struct DistributionRelease<'info> {
@@ -50,6 +50,13 @@ pub fn distribution_release_handler(ctx: Context<DistributionRelease>) -> Result
             .with_signer(&[&distribution.signer_seeds()]),
         to_distribute,
     )?;
+
+    emit!(events::DistributionReleased {
+        distribution: distribution.key(),
+        amount_released: to_distribute,
+        target_amount: distribution.target_amount,
+        total_distributed: distribution.distributed,
+    });
 
     Ok(())
 }
