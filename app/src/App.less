@@ -193,7 +193,7 @@ nav {
   background-image: none;
   border-radius: 2px;
   transition: all 0.3s;
-  display: flex;
+  display: flex !important;
   align-items: center;
   box-shadow: @neu-shadow-inset;
   &::before {
@@ -206,6 +206,9 @@ nav {
     background: transparent;
     &.ant-input {
       padding: 0 10px 0 10px;
+    }
+    &:focus {
+      box-shadow: none;
     }
   }
   .ant-input-prefix {
@@ -220,6 +223,10 @@ nav {
         line-height: 30px;
         transition: all 0.3s;
       }
+    }
+    .ant-select-arrow{
+      transform: translate(-130%, -50%);
+      z-index: -1;
     }
   }
   .ant-select-selection-search {
