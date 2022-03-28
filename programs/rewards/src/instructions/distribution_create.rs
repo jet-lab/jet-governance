@@ -3,7 +3,7 @@ use std::io::Write;
 use anchor_lang::prelude::*;
 use anchor_spl::token::{self, Token, TokenAccount, Transfer};
 
-use crate::{state::*, events};
+use crate::{events, state::*};
 
 #[derive(AnchorDeserialize, AnchorSerialize)]
 pub struct DistributionCreateParams {
