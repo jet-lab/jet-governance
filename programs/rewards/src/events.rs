@@ -5,9 +5,6 @@ use crate::{
     DistributionCreateParams,
 };
 
-// TODO Maybe add recipients to Award and Distribution
-// TODO Maybe explode the "params"
-
 #[event]
 pub struct AirdropCreated {
     pub airdrop: Pubkey,
