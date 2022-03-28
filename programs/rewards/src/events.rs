@@ -1,6 +1,8 @@
 use anchor_lang::prelude::*;
 
-use crate::instructions::{AirdropCreateParams, AirdropRecipientParam};
+use crate::{
+    state::DistributionKind, AirdropCreateParams, AirdropRecipientParam, AwardCreateParams,
+};
 
 #[event]
 pub struct AirdropCreated {
@@ -37,4 +39,31 @@ pub struct AirdropClaimed {
 #[event]
 pub struct AirdropClosed {
     pub airdrop: Pubkey,
+}
+
+#[event]
+pub struct AwardCreated {
+    pub award: Pubkey,
+    pub token_mint: Pubkey,
+    pub params: AwardCreateParams,
+    pub distribution_kind: DistributionKind,
+}
+
+#[event]
+pub struct AwardReleased {
+    pub award: Pubkey,
+
+    /// The amount released in this instruction.
+    pub amount_released: u64,
+
+    /// The total amount this distribution intends to release by its end time.
+    pub target_amount: u64,
+
+    /// The total amount this distribution has released so far, including amount_released.
+    pub total_distributed: u64,
+}
+
+#[event]
+pub struct AwardClosed {
+    pub award: Pubkey,
 }

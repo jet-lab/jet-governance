@@ -1,6 +1,7 @@
 use anchor_lang::prelude::*;
 use anchor_spl::token::{self, CloseAccount, Token, TokenAccount};
 
+use crate::events;
 use crate::state::*;
 use crate::ErrorCode;
 
@@ -54,6 +55,10 @@ pub fn award_close_handler(ctx: Context<AwardClose>) -> ProgramResult {
             .close_vault_context()
             .with_signer(&[&award.signer_seeds()]),
     )?;
+
+    emit!(events::AwardClosed {
+        award: award.key()
+    });
 
     Ok(())
 }

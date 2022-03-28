@@ -52,7 +52,7 @@ impl std::ops::DerefMut for Distribution {
     }
 }
 
-#[derive(AnchorDeserialize, AnchorSerialize, Clone)]
+#[derive(AnchorDeserialize, AnchorSerialize, Clone, Copy)]
 pub enum DistributionKind {
     Linear,
 }
