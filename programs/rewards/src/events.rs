@@ -5,6 +5,7 @@ use crate::instructions::{AirdropCreateParams, AirdropRecipientParam};
 #[event]
 pub struct AirdropCreated {
     pub airdrop: Pubkey,
+    pub token_mint: Pubkey,
     pub params: AirdropCreateParams,
 }
 
