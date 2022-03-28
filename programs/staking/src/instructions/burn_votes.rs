@@ -65,10 +65,14 @@ pub fn burn_votes_handler(ctx: Context<BurnVotes>, amount: Option<u64>) -> Resul
         token_amount,
     )?;
     
+    let stake_account = &ctx.accounts.stake_account;
+
+
     emit!( BurnVotesEvent {
         owner: ctx.accounts.owner.key(),
         stake_pool: stake_pool.key(), 
         vote_amount: token_amount,
+        stake_account: stake_account.key(),
     });
 
     Ok(())

@@ -62,6 +62,7 @@ pub fn unbond_stake_handler(
     emit!(UnbondStakeEvent { 
             owner: ctx.accounts.owner.key(),
             stake_pool: stake_pool.key(),
+            stake_account: stake_account.key(),
             amount_unbonded: amount,
             bonded_pool_tokens: stake_pool.shares_bonded,
             unbonding_pool_tokens: stake_pool.tokens_unbonding,

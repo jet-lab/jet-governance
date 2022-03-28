@@ -36,9 +36,9 @@ pub struct AddStakeEvent {
     pub bonded_owner_shares: u64, 
     pub minted_owner_votes: u64, 
     pub minted_owner_collateral: u64, 
-    pub unbonding_owner_shares: u64
+    pub unbonding_owner_shares: u64,
 
-    // pub stake_account: Pubkey,
+    pub stake_account: Pubkey,
     // pub stake_pool_vault: Pubkey,
     // pub payer_token_account: Pubkey,
 }
@@ -46,8 +46,8 @@ pub struct AddStakeEvent {
 #[event]
 pub struct UnbondStakeEvent {
     pub owner: Pubkey, 
-    // pub stake_account: Pubkey, 
     pub stake_pool: Pubkey, 
+    pub stake_account: Pubkey, 
     // pub stake_pool_vault: Pubkey, 
     // pub unbonding_account: Pubkey, 
     pub amount_unbonded: Option<u64>,
@@ -68,7 +68,7 @@ pub struct UnbondStakeEvent {
 pub struct CancelUnbondEvent {
     pub owner: Pubkey,
     pub stake_pool: Pubkey,
-
+    pub stake_account: Pubkey,
     // Stake Pool Amounts
     pub bonded_pool_tokens: u64,
     pub unbonding_pool_tokens: u64,
@@ -86,6 +86,8 @@ pub struct WithdrawUnbondedEvent {
     pub owner: Pubkey,
     pub token_receiver: Pubkey,
     pub stake_pool: Pubkey,
+    pub stake_account: Pubkey,
+
 
     // Stake Pool Amounts
     pub bonded_pool_tokens: u64,
@@ -115,6 +117,7 @@ pub struct WithdrawBondedEvent {
 pub struct MintVotesEvent {
     pub owner: Pubkey, 
     pub stake_pool: Pubkey, 
+    pub stake_account: Pubkey,
     pub governance_realm: Pubkey, 
     pub governance_vault: Pubkey, 
     pub votes_minted: u64,
@@ -125,7 +128,7 @@ pub struct BurnVotesEvent {
     pub owner: Pubkey,
     pub stake_pool: Pubkey,
     pub vote_amount: u64,
-
+    pub stake_account: Pubkey,
 }
 
 #[event]

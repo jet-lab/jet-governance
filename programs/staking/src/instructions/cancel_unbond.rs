@@ -44,6 +44,7 @@ pub fn cancel_unbond_handler(ctx: Context<CancelUnbond>) -> Result<()> {
     emit!( CancelUnbondEvent {
         owner: ctx.accounts.owner.key(),
         stake_pool: stake_pool.key(),
+        stake_account: stake_account.key(),
         bonded_pool_tokens: stake_pool.shares_bonded,
         unbonding_pool_tokens: stake_pool.tokens_unbonding,
         vault_pool_amount: stake_pool.vault_amount, 

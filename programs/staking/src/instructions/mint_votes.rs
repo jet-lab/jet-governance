@@ -118,10 +118,12 @@ pub fn mint_votes_handler(ctx: Context<MintVotes>, amount: Option<u64>) -> Resul
     )?;
 
     ctx.accounts.deposit_gov_tokens(mint_amount)?;
-    
+    let stake_account = &ctx.accounts.stake_account;
+
     emit!(MintVotesEvent {
         owner: ctx.accounts.owner.key(),
         stake_pool: stake_pool.key(), 
+        stake_account: stake_account.key(),
         governance_realm: ctx.accounts.governance_realm.key(), 
         governance_vault: ctx.accounts.governance_vault.key(),
         votes_minted: mint_amount, 
