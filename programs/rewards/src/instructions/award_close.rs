@@ -56,9 +56,7 @@ pub fn award_close_handler(ctx: Context<AwardClose>) -> ProgramResult {
             .with_signer(&[&award.signer_seeds()]),
     )?;
 
-    emit!(events::AwardClosed {
-        award: award.key()
-    });
+    emit!(events::AwardClosed { award: award.key() });
 
     Ok(())
 }
