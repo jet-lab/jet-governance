@@ -1,7 +1,7 @@
 use anchor_lang::prelude::*;
 use anchor_spl::token::Token;
 
-use crate::state::*;
+use crate::{state::*, events};
 use jet_staking::cpi::accounts::AddStake;
 use jet_staking::program::JetStaking;
 
@@ -66,6 +66,13 @@ pub fn award_release_handler(ctx: Context<AwardRelease>) -> Result<()> {
             .with_signer(&[&award.signer_seeds()]),
         Some(to_distribute),
     )?;
+
+    emit!(events::AwardReleased {
+        award: award.key(),
+        amount_released: to_distribute,
+        target_amount: award.target_amount,
+        total_distributed: award.distributed,
+    });
 
     Ok(())
 }
