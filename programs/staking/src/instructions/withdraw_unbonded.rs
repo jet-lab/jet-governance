@@ -79,19 +79,22 @@ pub fn withdraw_unbonded_handler(ctx: Context<WithdrawUnbonded>) -> ProgramResul
             .with_signer(&[&stake_pool.signer_seeds()]),
         unbond_amount.token_amount,
     )?;
-    
-    // emit!(WithdrawUnbondedEvent {
-    //     owner: ctx.accounts.owner.key(),
-    //     token_receiver: ctx.accounts.token_receiver.key(),
-    //     stake_pool: stake_pool.key(),
-    //     bonded_pool_tokens: stake_pool.shares_bonded,
-    //     unbonding_pool_tokens: stake_pool.tokens_unbonding,
-    //     vault_pool_amount: stake_pool.vault_amount, 
-    //     bonded_owner_shares: stake_account.shares,
-    //     minted_owner_votes: stake_account.minted_votes, 
-    //     minted_owner_collateral: stake_account.minted_collateral,
-    //     unbonding_owner_shares: stake_account.unbonding
-    // });
+
+    let stake_account = &ctx.accounts.stake_account;
+
+    emit!(WithdrawUnbondedEvent {
+        owner: ctx.accounts.owner.key(),
+        token_receiver: ctx.accounts.token_receiver.key(),
+        stake_pool: stake_pool.key(),
+        stake_account: stake_account.key(),
+        bonded_pool_tokens: stake_pool.shares_bonded,
+        unbonding_pool_tokens: stake_pool.tokens_unbonding,
+        vault_pool_amount: stake_pool.vault_amount, 
+        bonded_owner_shares: stake_account.shares,
+        minted_owner_votes: stake_account.minted_votes, 
+        minted_owner_collateral: stake_account.minted_collateral,
+        unbonding_owner_shares: stake_account.unbonding
+    });
 
     Ok(())
 }

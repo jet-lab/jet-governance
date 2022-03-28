@@ -55,20 +55,25 @@ pub fn add_stake_handler(ctx: Context<AddStake>, amount: Option<u64>) -> Program
     };
 
     let full_amount = stake_pool.deposit(stake_account, token_amount);
+
     token::transfer(ctx.accounts.transfer_context(), full_amount.token_amount)?;
+    let stake_pool = &ctx.accounts.stake_pool;
+    let stake_account =  &ctx.accounts.stake_account;
     
-    // emit!(AddStakeEvent {
-    //     stake_pool: stake_pool.key(),
-    //     payer: ctx.accounts.payer.key(),
-    //     amount: token_amount,
-    //     bonded_pool_tokens: stake_pool.shares_bonded,
-    //     unbonding_pool_tokens: stake_pool.tokens_unbonding,
-    //     vault_pool_amount: stake_pool.vault_amount, 
-    //     bonded_owner_shares: stake_account.shares,
-    //     minted_owner_votes: stake_account.minted_votes, 
-    //     minted_owner_collateral: stake_account.minted_collateral,
-    //     unbonding_owner_shares: stake_account.unbonding
-    // });
+    emit!(AddStakeEvent {
+        stake_pool: stake_pool.key(),
+        stake_account: stake_account.key(),
+        payer: ctx.accounts.payer.key(),
+        amount: token_amount,
+        bonded_pool_tokens: stake_pool.shares_bonded,
+        unbonding_pool_tokens: stake_pool.tokens_unbonding,
+        vault_pool_amount: stake_pool.vault_amount, 
+        bonded_owner_shares: stake_account.shares,
+        minted_owner_votes: stake_account.minted_votes, 
+        minted_owner_collateral: stake_account.minted_collateral,
+        unbonding_owner_shares: stake_account.unbonding
+        
+    });
     
     Ok(())
 }

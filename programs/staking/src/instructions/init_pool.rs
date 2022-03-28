@@ -96,14 +96,14 @@ pub fn init_pool_handler(
     stake_pool.unbond_period = config.unbond_period as i64;
 
     emit!(InitPoolEvent {
-    stake_pool: stake_pool.key(),
-    unbond_period_config: stake_pool.unbond_period, 
-    payer: ctx.accounts.payer.key(),
-    authority: ctx.accounts.authority.key(),
-    token_mint: stake_pool.token_mint,
-    stake_pool_vote_mint: stake_pool.stake_vote_mint,
-    stake_pool_collateral_mint: ctx.accounts.stake_collateral_mint.key(),
-    stake_pool_vault: stake_pool.stake_pool_vault 
+        stake_pool: stake_pool.key(),
+        unbond_period_config: stake_pool.unbond_period, 
+        payer: ctx.accounts.payer.key(),
+        authority: ctx.accounts.authority.key(),
+        token_mint: stake_pool.token_mint,
+        stake_pool_vote_mint: stake_pool.stake_vote_mint,
+        stake_pool_collateral_mint: ctx.accounts.stake_collateral_mint.key(),
+        stake_pool_vault: stake_pool.stake_pool_vault 
     });
 
     Ok(())
