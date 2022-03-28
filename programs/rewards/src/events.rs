@@ -1,8 +1,12 @@
 use anchor_lang::prelude::*;
 
 use crate::{
-    state::DistributionKind, AirdropCreateParams, AirdropRecipientParam, AwardCreateParams, DistributionCreateParams,
+    state::DistributionKind, AirdropCreateParams, AirdropRecipientParam, AwardCreateParams,
+    DistributionCreateParams,
 };
+
+// TODO Maybe add recipients to Award and Distribution
+// TODO Maybe explode the "params"
 
 #[event]
 pub struct AirdropCreated {
