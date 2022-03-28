@@ -1,6 +1,7 @@
 use anchor_lang::prelude::*;
 use anchor_spl::token::{self, CloseAccount, Token, TokenAccount};
 
+use crate::events;
 use crate::state::*;
 use crate::ErrorCode;
 
@@ -54,6 +55,10 @@ pub fn distribution_close_handler(ctx: Context<DistributionClose>) -> ProgramRes
             .close_vault_context()
             .with_signer(&[&distribution.signer_seeds()]),
     )?;
+
+    emit!(events::DistributionClosed {
+        distribution: distribution.key(),
+    });
 
     Ok(())
 }
