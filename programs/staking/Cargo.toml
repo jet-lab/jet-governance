@@ -1,0 +1,24 @@
+[package]
+name = "jet-proto-staking"
+version = "1.0.0"
+description = "Created with Anchor"
+edition = "2018"
+
+[lib]
+crate-type = ["cdylib", "lib"]
+name = "jet_staking"
+path = "src/lib.rs"
+
+[features]
+no-entrypoint = []
+no-idl = []
+cpi = ["no-entrypoint"]
+default = []
+
+[dependencies]
+anchor-lang = "0.21.0"
+anchor-spl = "0.21.0"
+solana-program = "1.9"
+
+jet-proto-auth = { path = "../auth", features = ["cpi"] }
+spl-governance = { version = "2", features = ["no-entrypoint"] }

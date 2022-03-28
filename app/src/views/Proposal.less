@@ -1,0 +1,213 @@
+@import "~@jet-lab/jet-antd/lib/jet-antd.less";
+
+.view-container {
+  z-index: 0;
+}
+
+.vote-btn {
+  padding: @spacing-sm @spacing-xl @spacing-sm @spacing-xl !important;
+  box-shadow: @neu-shadow-low;
+  background: @white !important;
+  &:active {
+    box-shadow: @neu-shadow-inset !important;
+  }
+  &.selected {
+    box-shadow: @neu-shadow-inset-low !important;
+    background: @grey !important;
+  }
+  &[disabled] {
+    cursor: not-allowed;
+    opacity: @disabled-opacity;
+    &:active {
+      box-shadow: @neu-shadow-low !important;
+    }
+  }
+}
+
+.vote-turnout {
+  margin-bottom: 39px;
+  .results {
+    margin: 15px 20px 37px 0;
+    flex-grow: 1;
+    .amount {
+      margin-left: 20px;
+      font-size: @sm-font-size !important;
+    }
+  }
+  .voters {
+    flex-grow: 1;
+  }
+
+  /* Overrides for jet-antd >> stakeholders  */
+  .ant-list-item {
+    border-bottom: none;
+    padding: 0;
+  }
+  .ant-list {
+    padding: 0;
+    box-shadow: none;
+    button {
+      background: @white;
+      span {
+        opacity: 1;
+        background-image: linear-gradient(135deg, #3d9e83 25%, #278db6 85%);
+        background-clip: text;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+      &:active {
+        box-shadow: none;
+      }
+    }
+  }
+  .your-vote {
+    border-radius: 30px;
+    box-shadow: @neu-shadow-inset;
+    margin-bottom: -10px;
+  }
+  .stakeholders {
+    display: flex;
+    line-height: @base-font-size;
+    letter-spacing: 0.05em;
+    width: 100%;
+    padding-top: 3px;
+    padding-bottom: 3px;
+    .voter {
+      color: @dark-grey;
+      text-transform: uppercase;
+      width: 25%;
+      text-align: left;
+      font-size: @xs-font-size !important;
+      padding-left: 10px;
+    }
+    .address {
+      width: 25%;
+      text-align: left;
+      overflow-x: auto;
+      font-size: @sm-font-size !important;
+    }
+    .amount {
+      width: 25%;
+      text-align: left;
+      margin-right: 21px;
+      font-size: @sm-font-size !important;
+    }
+    .vote {
+      width: 25%;
+      text-align: left;
+      text-transform: uppercase;
+      font-size: @sm-font-size !important;
+    }
+    .title {
+      font-size: @xs-font-size !important;
+      text-transform: uppercase;
+    }
+  }
+}
+
+/* Medium devices (tablets, from 840px to 1110px) */
+@media only screen and (max-width: 1110px) {
+  #proposal-page {
+    .stakeholders {
+      justify-content: space-between;
+      span {
+        width: 33%;
+      }
+      span.voter:first-child {
+        display: none !important;
+      }
+      span.address {
+        padding-left: 10px;
+        width: 33%;
+      }
+      .ant-list-items {
+        box-shadow: none !important;
+      }
+    }
+    .proposal-left {
+      grid-column: 1 / 5;
+    }
+    .proposal-right {
+      grid-column: 5 / 7;
+    }
+    .other-proposals,
+    .ant-divider-horizontal {
+      grid-column: 1 / 7;
+    }
+  }
+}
+
+/* Extra small devices (840px and down) */
+@media only screen and (max-width: 840px) {
+  #proposal-page {
+    flex-direction: column;
+
+    .proposal-left,
+    .centered {
+      .description #details {
+        grid-template-columns: 80px 1fr;
+      }
+      .vote-turnout {
+        flex-direction: column;
+      }
+      .proposal-right {
+        position: fixed;
+        bottom: 0;
+        width: 85%;
+        left: 7.5%;
+        z-index: 100;
+
+        &::after {
+          content: "";
+          display: block;
+          background: linear-gradient(180deg, var(--light-shadow) 0%, rgba(229, 235, 244, 0) 100%);
+          transform: rotate(-180deg);
+          height: 30px;
+          width: 150%;
+        }
+
+        #your-vote {
+          flex-direction: row;
+          justify-content: space-between;
+          height: 60px;
+          padding: @spacing-md @spacing-xl;
+          background: @gradient;
+
+          .ant-btn.ant-btn-lg {
+            box-shadow: @drop-shadow;
+            height: 60px;
+            width: 60px;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+
+            &.ant-btn-primary {
+              box-shadow: none;
+              border: 1px solid @white;
+              background: transparent;
+            }
+          }
+
+          .vote-select {
+            background: @white;
+
+            span {
+              font-size: 6px !important;
+              letter-spacing: 0;
+              padding: @spacing-xs 0;
+            }
+          }
+        }
+      }
+      .ant-divider,
+      .other-proposals {
+        display: none;
+      }
+    }
+    .ant-list-items {
+      box-shadow: none !important;
+    }
+  }
+}

@@ -1,0 +1,82 @@
+@import "~@jet-lab/jet-antd/lib/jet-antd.less";
+
+.title-info {
+  font-size: @sm-font-size;
+  line-height: 18px;
+}
+
+.divider-info {
+  background: #444444;
+  box-shadow: none;
+  height: 1px;
+  margin-top: 16px;
+  margin-bottom: 16px;
+}
+
+.box-info {
+  padding: 15px 16px;
+  mix-blend-mode: normal;
+  box-shadow: @neu-shadow-inset;
+  border-radius: @border-radius;
+}
+.info-legend-item {
+  margin-top: @spacing-xs;
+}
+.info-legend-item-prefill {
+  cursor: pointer;
+}
+.vote-balance {
+  padding-bottom: 16px;
+  margin-bottom: 15px;
+  padding-top: 23px;
+  line-height: 35px;
+  font-size: 68px;
+}
+.action-btn-info {
+  padding: 7px 20px;
+  font-size: @sm-font-size;
+  margin: 3px 0 3px 0;
+}
+
+.wallet-overview {
+  width: 100%;
+}
+
+.staking-info {
+  color: @black;
+}
+
+.current-staking-apr {
+  font-weight: 500;
+  margin-bottom: 0;
+}
+
+.cluster {
+  margin: 2px 0px;
+  font-size: @xs-font-size;
+}
+
+.your-info {
+  grid-column: 1 / 3;
+  grid-row: 1 / 3;
+  display: grid;
+  grid-template-rows: auto auto 1fr auto;
+  .full-width.withdraw-btn {
+    max-width: 90%;
+    align-self: center;
+  }
+}
+
+.ant-btn {
+  margin: @spacing-xs 0 !important;
+}
+
+.airdrops i {
+  margin: @spacing-md @spacing-sm 0 @spacing-sm;
+  opacity: @disabled-opacity;
+  cursor: pointer;
+
+  &:hover {
+    opacity: 1;
+  }
+}
