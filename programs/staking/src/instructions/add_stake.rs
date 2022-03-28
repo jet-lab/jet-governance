@@ -2,6 +2,7 @@ use anchor_lang::prelude::*;
 use anchor_spl::token::{self, Token, TokenAccount, Transfer};
 
 use crate::state::*;
+use crate::events::AddStakeEvent;
 
 #[derive(Accounts)]
 pub struct AddStake<'info> {
@@ -44,6 +45,7 @@ impl<'info> AddStake<'info> {
 pub fn add_stake_handler(ctx: Context<AddStake>, amount: Option<u64>) -> Result<()> {
     let stake_pool = &mut ctx.accounts.stake_pool;
     let stake_account = &mut ctx.accounts.stake_account;
+    
 
     stake_pool.update_vault(ctx.accounts.stake_pool_vault.amount);
 
@@ -54,6 +56,19 @@ pub fn add_stake_handler(ctx: Context<AddStake>, amount: Option<u64>) -> Result<
 
     let full_amount = stake_pool.deposit(stake_account, token_amount);
     token::transfer(ctx.accounts.transfer_context(), full_amount.token_amount)?;
-
+    
+    // emit!(AddStakeEvent {
+    //     stake_pool: stake_pool.key(),
+    //     payer: ctx.accounts.payer.key(),
+    //     amount: token_amount,
+    //     bonded_pool_tokens: stake_pool.shares_bonded,
+    //     unbonding_pool_tokens: stake_pool.tokens_unbonding,
+    //     vault_pool_amount: stake_pool.vault_amount, 
+    //     bonded_owner_shares: stake_account.shares,
+    //     minted_owner_votes: stake_account.minted_votes, 
+    //     minted_owner_collateral: stake_account.minted_collateral,
+    //     unbonding_owner_shares: stake_account.unbonding
+    // });
+    
     Ok(())
 }

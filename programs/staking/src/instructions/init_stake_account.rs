@@ -2,6 +2,7 @@ use anchor_lang::prelude::*;
 
 use crate::state::*;
 use jet_auth::UserAuthentication;
+use crate::events::InitStakeAccountEvent;
 
 #[derive(Accounts)]
 pub struct InitStakeAccount<'info> {
@@ -42,6 +43,13 @@ pub fn init_stake_account_handler(ctx: Context<InitStakeAccount>) -> Result<()> 
 
     account.owner = *ctx.accounts.owner.key;
     account.stake_pool = ctx.accounts.stake_pool.key();
+    
+    emit!(InitStakeAccountEvent {
+        auth: ctx.accounts.auth.key(),
+        stake_pool: ctx.accounts.stake_pool.key(),
+        owner: ctx.accounts.owner.key(),
+        stake_account: ctx.accounts.stake_account.key(),
+    });
 
     Ok(())
 }

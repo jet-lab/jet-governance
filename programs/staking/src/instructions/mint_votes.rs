@@ -3,6 +3,7 @@ use anchor_lang::solana_program::program::invoke;
 use anchor_spl::token::{self, MintTo, Token, TokenAccount};
 
 use crate::{state::*, SplGovernance};
+use crate::events::MintVotesEvent;
 
 #[derive(Accounts)]
 pub struct MintVotes<'info> {
@@ -117,6 +118,14 @@ pub fn mint_votes_handler(ctx: Context<MintVotes>, amount: Option<u64>) -> Resul
     )?;
 
     ctx.accounts.deposit_gov_tokens(mint_amount)?;
+    
+    emit!(MintVotesEvent {
+        owner: ctx.accounts.owner.key(),
+        stake_pool: stake_pool.key(), 
+        governance_realm: ctx.accounts.governance_realm.key(), 
+        governance_vault: ctx.accounts.governance_vault.key(),
+        votes_minted: mint_amount, 
+    });
 
     Ok(())
 }

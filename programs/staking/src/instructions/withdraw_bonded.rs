@@ -3,6 +3,7 @@ use anchor_spl::token;
 use anchor_spl::token::Token;
 use anchor_spl::token::TokenAccount;
 use anchor_spl::token::Transfer;
+use crate::events::WithdrawBondedEvent;
 
 use crate::state::*;
 
@@ -55,6 +56,15 @@ pub fn withdraw_bonded_handler(ctx: Context<WithdrawBonded>, amount: u64) -> Res
             .with_signer(&[&stake_pool.signer_seeds()]),
         amount,
     )?;
+    
+    emit!(WithdrawBondedEvent {
+        token_receiver: ctx.accounts.token_receiver.key(),
+        stake_pool: stake_pool.key(),
+        amount: amount, 
+        bonded_pool_tokens: stake_pool.shares_bonded,
+        unbonding_pool_tokens: stake_pool.tokens_unbonding,
+        vault_pool_amount: stake_pool.vault_amount, 
+    });
 
     Ok(())
 }

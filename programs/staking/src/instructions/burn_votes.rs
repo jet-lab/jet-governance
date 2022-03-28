@@ -2,6 +2,7 @@ use anchor_lang::prelude::*;
 use anchor_spl::token::{self, Burn, Token};
 
 use crate::state::*;
+use crate::events::BurnVotesEvent;
 
 #[derive(Accounts)]
 pub struct BurnVotes<'info> {
@@ -63,6 +64,12 @@ pub fn burn_votes_handler(ctx: Context<BurnVotes>, amount: Option<u64>) -> Resul
             .with_signer(&[&stake_pool.signer_seeds()]),
         token_amount,
     )?;
+    
+    emit!( BurnVotesEvent {
+        owner: ctx.accounts.owner.key(),
+        stake_pool: stake_pool.key(), 
+        vote_amount: token_amount,
+    });
 
     Ok(())
 }
