@@ -5,6 +5,7 @@ declare_id!("JPLockxtkngHkaQT5AuRYow3HyUv5qWzmhwsCPd653n");
 
 mod instructions;
 pub mod state;
+pub mod events;
 
 use instructions::*;
 
