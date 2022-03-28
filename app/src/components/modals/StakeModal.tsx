@@ -75,7 +75,7 @@ export const StakeModal = ({
         </p>
         <p>
           Remember: To unstake your tokens, there will be a 29.5-day unbonding period. For more
-          information, please <DocsLink>read the docs</DocsLink>.
+          information, please <DocsLink className="text-gradient-btn">read the docs</DocsLink>.
         </p>
       </div>
     )

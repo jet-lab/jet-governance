@@ -480,7 +480,7 @@ export const VerifyModal = ({
         </p>
         <p>
           To make sure your vote counts, only unstake once a vote has completed! For more
-          information check out our <DocsLink>docs</DocsLink>.
+          information check out our <DocsLink className="text-gradient-btn">docs</DocsLink>.
         </p>
       </div>
     ),
