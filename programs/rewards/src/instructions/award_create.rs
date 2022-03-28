@@ -107,7 +107,7 @@ pub fn award_create_handler(ctx: Context<AwardCreate>, params: AwardCreateParams
     award.end_at = params.end_at;
     award.kind = DistributionKind::Linear;
 
-    let award= &ctx.accounts.award;
+    let award = &ctx.accounts.award;
 
     token::transfer(ctx.accounts.transfer_context(), params.amount)?;
 

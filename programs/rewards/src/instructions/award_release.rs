@@ -1,7 +1,7 @@
 use anchor_lang::prelude::*;
 use anchor_spl::token::Token;
 
-use crate::{state::*, events};
+use crate::{events, state::*};
 use jet_staking::cpi::accounts::AddStake;
 use jet_staking::program::JetStaking;
 
