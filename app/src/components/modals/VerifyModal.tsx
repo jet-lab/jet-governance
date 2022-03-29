@@ -459,7 +459,7 @@ export const VerifyModal = ({
     okButtonProps: { disabled: !disclaimerChecked },
     onOk: () => handleAcceptTerms(),
     cancelButtonProps: { style: { display: "none " } },
-    onCancel: () => handleDisconnect(),
+    onCancel: () => null,
     children: (
       <div className="flex column">
         <p>
@@ -491,7 +491,7 @@ export const VerifyModal = ({
         </p>
       </div>
     ),
-    closable: true
+    closable: false
   };
   steps[Steps.AccessGranted1] = {
     title: "Stake JET to earn and vote!",
