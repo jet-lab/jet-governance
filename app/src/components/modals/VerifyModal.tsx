@@ -117,18 +117,15 @@ export const VerifyModal = ({
           setCurrent(Steps.RegionNotSupported);
         } else {
           setCurrent(Steps.ConfirmLocation);
-          setConnecting(true);
         }
       } else if (authAccount.userAuthentication.allowed) {
         if (getAuthorizationConfirmed() && getAgreedToTerms()) {
           setConnecting(false);
         } else {
           setCurrent(Steps.AgreeToTerms);
-          setConnecting(true);
         }
       } else if (!authAccount.userAuthentication.allowed) {
         setCurrent(Steps.AccessDenied);
-        setConnecting(true);
       }
     }
   }, [
@@ -313,6 +310,11 @@ export const VerifyModal = ({
     setConnecting(false);
   };
 
+  const handleAcceptTerms = () => {
+    localStorage.setItem("jetGovernTermsAccepted", "true");
+    setCurrent(Steps.AccessGranted1);
+  };
+
   const steps: PropsWithChildren<ModalProps>[] = [];
   steps[Steps.Welcome] = {
     title: "Stake your JET to earn rewards and start voting today!",
@@ -387,8 +389,9 @@ export const VerifyModal = ({
           JetGovern. For more info, see our{" "}
           <a
             href="https://www.jetprotocol.io/legal/terms-of-service"
+            className="text-gradient-btn"
             target="_blank"
-            rel="noreferrer"
+            rel="noopener noreferrer"
           >
             Terms of Use
           </a>
@@ -454,10 +457,7 @@ export const VerifyModal = ({
     title: "Warning",
     okText: "Accept",
     okButtonProps: { disabled: !disclaimerChecked },
-    onOk: () => {
-      localStorage.setItem("jetGovernTermsAccepted", "true");
-      setCurrent(Steps.AccessGranted1);
-    },
+    onOk: () => handleAcceptTerms(),
     cancelButtonProps: { style: { display: "none " } },
     onCancel: () => handleDisconnect(),
     children: (
