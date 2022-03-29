@@ -9,6 +9,7 @@ import CountryPhoneInput, { CountryPhoneInputValue } from "antd-country-phone-in
 import { DocsLink } from "../docsLink";
 import { ReactComponent as ArrowIcon } from "../../images/arrow_icon.svg";
 import { geoBannedCountries } from "../../models/GEOBANNED_COUNTRIES";
+import { filterSort } from "../../utils";
 
 enum Steps {
   Welcome = 0,
@@ -399,10 +400,10 @@ export const VerifyModal = ({
           transaction.
         </p>
         <CountryPhoneInput
-
           placeholder={"Phone number"}
           value={phoneNumber}
           onChange={(e: CountryPhoneInputValue) => handleInputPhoneNumber(e)}
+          selectProps={{ filterSort }}
           onKeyPress={(e: any) => enterKeyPhoneVerify(e)}
           type={"number"}
         />
