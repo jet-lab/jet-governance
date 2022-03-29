@@ -1,5 +1,5 @@
 use anchor_lang::prelude::*;
-use anchor_spl::token::Token;
+use anchor_spl::token::{Token, TokenAccount};
 
 use crate::{events, state::*};
 use jet_staking::cpi::accounts::AddStake;
@@ -15,7 +15,7 @@ pub struct AwardRelease<'info> {
 
     /// The account storing the tokens to be distributed
     #[account(mut)]
-    pub vault: AccountInfo<'info>,
+    pub vault: Account<'info, TokenAccount>,
 
     /// The account to transfer the distributed tokens to
     #[account(mut)]
@@ -67,7 +67,9 @@ pub fn award_release_handler(ctx: Context<AwardRelease>) -> ProgramResult {
         award: award.key(),
         amount_released: to_distribute,
         target_amount: award.target_amount,
-        total_distributed: award.distributed,
+        total_released: award.distributed,
+
+        vault_balance: ctx.accounts.vault.amount,
     });
 
     Ok(())

@@ -72,7 +72,21 @@ pub struct AwardReleased {
     pub target_amount: u64,
 
     /// The total amount this award has released so far, including amount_released.
-    pub total_distributed: u64,
+    pub total_released: u64,
+
+    /// The balance of tokens in the vault serving the award.
+    pub vault_balance: u64,
+}
+
+#[event]
+pub struct AwardRevoked {
+    pub award: Pubkey,
+
+    pub unreleased_amount: u64,
+    pub total_released: u64,
+
+    /// The amount of tokens transferred out of the award vault.
+    pub vault_amount: u64,
 }
 
 #[event]
