@@ -48,7 +48,8 @@ pub struct AirdropClaimed {
 pub struct AirdropClosed {
     pub airdrop: Pubkey,
 
-    pub vault_balance: u64,
+    /// The amount of tokens transferred out of the award vault.
+    pub vault_amount: u64,
 }
 
 // AWARDS
@@ -68,13 +69,10 @@ pub struct AwardReleased {
     /// The amount released in this instruction.
     pub amount_released: u64,
 
-    /// The total amount this award intends to release by its end time.
-    pub target_amount: u64,
-
     /// The total amount this award has released so far, including amount_released.
     pub total_released: u64,
 
-    /// The balance of tokens in the vault serving the award.
+    /// The final balance of tokens in the vault serving the award.
     pub vault_balance: u64,
 }
 
@@ -99,6 +97,7 @@ pub struct AwardClosed {
 #[event]
 pub struct DistributionCreated {
     pub distribution: Pubkey,
+    pub authority: Pubkey,
     pub token_mint: Pubkey,
     pub params: DistributionCreateParams,
     pub distribution_kind: DistributionKind,
@@ -111,11 +110,11 @@ pub struct DistributionReleased {
     /// The amount released in this instruction.
     pub amount_released: u64,
 
-    /// The total amount this distribution intends to release by its end time.
-    pub target_amount: u64,
-
     /// The total amount this distribution has released so far, including amount_released.
     pub total_distributed: u64,
+
+    /// The final balance of tokens in the vault serving the distribution. 
+    pub vault_balance: u64,
 }
 
 #[event]

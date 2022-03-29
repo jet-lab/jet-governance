@@ -66,7 +66,6 @@ pub fn award_release_handler(ctx: Context<AwardRelease>) -> ProgramResult {
     emit!(events::AwardReleased {
         award: award.key(),
         amount_released: to_distribute,
-        target_amount: award.target_amount,
         total_released: award.distributed,
 
         vault_balance: ctx.accounts.vault.amount,

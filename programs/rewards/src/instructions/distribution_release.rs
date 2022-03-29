@@ -1,5 +1,5 @@
 use anchor_lang::prelude::*;
-use anchor_spl::token::{self, Token, Transfer};
+use anchor_spl::token::{self, Token, Transfer, TokenAccount};
 
 use crate::{events, state::*};
 
@@ -13,7 +13,7 @@ pub struct DistributionRelease<'info> {
 
     /// The account storing the tokens to be distributed
     #[account(mut)]
-    pub vault: AccountInfo<'info>,
+    pub vault: Account<'info, TokenAccount>,
 
     /// The account to transfer the distributed tokens to
     #[account(mut)]
@@ -52,8 +52,8 @@ pub fn distribution_release_handler(ctx: Context<DistributionRelease>) -> Progra
     emit!(events::DistributionReleased {
         distribution: distribution.key(),
         amount_released: to_distribute,
-        target_amount: distribution.target_amount,
         total_distributed: distribution.distributed,
+        vault_balance: ctx.accounts.vault.amount,
     });
 
     Ok(())
