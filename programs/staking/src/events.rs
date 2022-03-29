@@ -1,116 +1,82 @@
 use anchor_lang::prelude::*;
 
+use crate::{instructions::PoolConfig, state::{FullAmount, SharedTokenPool, StakePool, StakeAccount}};
+
 #[event]
-pub struct InitPoolEvent {
-    pub payer: Pubkey,
-    pub authority: Pubkey,
+pub struct StakePoolCreated {
     pub stake_pool: Pubkey,
-    pub stake_pool_vote_mint: Pubkey,
-    pub stake_pool_collateral_mint: Pubkey,
-    pub stake_pool_vault: Pubkey,
-    pub unbond_period_config: i64, 
+    pub authority: Pubkey,
+    pub seed: String,
     pub token_mint: Pubkey,
+    pub config: PoolConfig,
 }
 
 #[event]
-pub struct InitStakeAccountEvent {
-    pub auth: Pubkey,
+pub struct StakeAccountCreated {
     pub stake_pool: Pubkey,
     pub stake_account: Pubkey,
     pub owner: Pubkey,
 }
 
-
 #[event]
-pub struct AddStakeEvent {
+pub struct StakeAdded {
     pub stake_pool: Pubkey,
-    pub amount: u64, 
-    pub payer: Pubkey,
-
-    // Stake Pool Amounts
-    pub bonded_pool_tokens: u64,
-    pub unbonding_pool_tokens: u64,
-    pub vault_pool_amount: u64,
-
-    // Stake Account Amounts
-    pub bonded_owner_shares: u64, 
-    pub minted_owner_votes: u64, 
-    pub minted_owner_collateral: u64, 
-    pub unbonding_owner_shares: u64,
-
     pub stake_account: Pubkey,
-    // pub stake_pool_vault: Pubkey,
-    // pub payer_token_account: Pubkey,
+    pub owner: Pubkey,
+    pub depositor: Pubkey,
+
+    pub staked_amount: FullAmount,
+
+    pub pool_note: StakePoolNote,
+    pub account_note: StakeAccountNote,
 }
 
 #[event]
-pub struct UnbondStakeEvent {
-    pub owner: Pubkey, 
+pub struct StakeUnbonded {
     pub stake_pool: Pubkey, 
     pub stake_account: Pubkey, 
-    // pub stake_pool_vault: Pubkey, 
-    // pub unbonding_account: Pubkey, 
-    pub amount_unbonded: Option<u64>,
+    pub unbonding_account: Pubkey, 
+    pub owner: Pubkey, 
 
-    // Stake Pool Amounts
-    pub bonded_pool_tokens: u64,
-    pub unbonding_pool_tokens: u64,
-    pub vault_pool_amount: u64,
+    pub unbonded_amount: FullAmount,
+    pub unbonded_at: i64,
 
-    // Stake Account Amounts
-    pub bonded_owner_shares: u64, 
-    pub minted_owner_votes: u64, 
-    pub minted_owner_collateral: u64, 
-    pub unbonding_owner_shares: u64
+    pub pool_note: StakePoolNote,
+    pub account_note: StakeAccountNote,
 }
 
 #[event]
-pub struct CancelUnbondEvent {
-    pub owner: Pubkey,
+pub struct UnbondCancelled {
     pub stake_pool: Pubkey,
     pub stake_account: Pubkey,
-    // Stake Pool Amounts
-    pub bonded_pool_tokens: u64,
-    pub unbonding_pool_tokens: u64,
-    pub vault_pool_amount: u64,
+    pub unbonding_account: Pubkey, 
+    pub owner: Pubkey,
 
-    // Stake Account Amounts
-    pub bonded_owner_shares: u64, 
-    pub minted_owner_votes: u64, 
-    pub minted_owner_collateral: u64, 
-    pub unbonding_owner_shares: u64
+    pub cancelled_amount: FullAmount,
+
+    pub pool_note: StakePoolNote,
+    pub account_note: StakeAccountNote,
 }
 
 #[event]
-pub struct WithdrawUnbondedEvent {
-    pub owner: Pubkey,
-    pub token_receiver: Pubkey,
+pub struct UnbondedWithdrawn {
     pub stake_pool: Pubkey,
     pub stake_account: Pubkey,
+    pub owner: Pubkey,
 
+    pub withdrawn_amount: FullAmount,
 
-    // Stake Pool Amounts
-    pub bonded_pool_tokens: u64,
-    pub unbonding_pool_tokens: u64,
-    pub vault_pool_amount: u64,
-
-    // Stake Account Amounts
-    pub bonded_owner_shares: u64, 
-    pub minted_owner_votes: u64, 
-    pub minted_owner_collateral: u64, 
-    pub unbonding_owner_shares: u64
+    pub pool_note: StakePoolNote,
+    pub account_note: StakeAccountNote,
 }
 
 #[event]
-pub struct WithdrawBondedEvent {
+pub struct BondedWithdrawn {
     pub stake_pool: Pubkey,
-    pub token_receiver: Pubkey,
-    pub amount: u64, 
 
-    // Stake Pool Amounts
-    pub bonded_pool_tokens: u64,
-    pub unbonding_pool_tokens: u64,
-    pub vault_pool_amount: u64,
+    pub withdrawn_amount: u64,
+
+    pub pool_note: StakePoolNote,
 }
 
 #[event]
@@ -137,9 +103,48 @@ pub struct CloseStakeAccountEvent {
     pub stake_account: Pubkey
 }
 
+#[derive(AnchorSerialize, AnchorDeserialize)]
+pub struct StakePoolNote {
+    pub vault_amount: u64,
+    pub bonded: SharedTokenPool,
+    pub unbonding: SharedTokenPool,
+}
 
+#[derive(AnchorSerialize, AnchorDeserialize)]
+pub struct StakeAccountNote {
+    bonded_shares: u64,
+    minted_votes: u64,
+    minted_collateral: u64,
+    unbonding_shares: u64,
+}
 
+pub trait Note {
+    type Output;
 
+    fn note(&self) -> Self::Output;
+}
 
+impl Note for StakePool {
+    type Output = StakePoolNote;
 
+    fn note(&self) -> Self::Output {
+        StakePoolNote {
+            vault_amount: self.vault_amount,
+            bonded: self.bonded,
+            unbonding: self.unbonding
+        }
+    }
+}
 
+impl Note for StakeAccount {
+    type Output = StakeAccountNote;
+
+    fn note(&self) -> Self::Output {
+        StakeAccountNote {
+            bonded_shares: self.bonded_shares,
+            minted_votes: self.minted_votes,
+            minted_collateral: self.minted_collateral,
+            unbonding_shares: self.unbonding_shares,
+        }
+    }
+}
