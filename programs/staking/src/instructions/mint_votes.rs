@@ -2,7 +2,7 @@ use anchor_lang::prelude::*;
 use anchor_spl::token::{self, MintTo, Token, TokenAccount};
 use solana_program::program::invoke;
 
-use crate::events::MintVotesEvent;
+use crate::events::{Note, VotesMinted};
 use crate::{state::*, SplGovernance};
 
 #[derive(Accounts)]
@@ -31,7 +31,7 @@ pub struct MintVotes<'info> {
 
     /// A temporary token account for storing vote tokens
     #[account(mut)]
-    pub voter_token_account: AccountInfo<'info>,
+    pub voter_token_account: Box<Account<'info, TokenAccount>>,
 
     /// The governance realm to deposit votes into
     pub governance_realm: UncheckedAccount<'info>,
@@ -69,7 +69,7 @@ impl<'info> MintVotes<'info> {
         let ix = spl_governance::instruction::deposit_governing_tokens(
             &SplGovernance::id(),
             self.governance_realm.key,
-            self.voter_token_account.key,
+            &self.voter_token_account.key(),
             self.owner.key,
             self.owner.key,
             self.payer.key,
@@ -101,26 +101,31 @@ pub fn mint_votes_handler(ctx: Context<MintVotes>, amount: Option<u64>) -> Progr
     let stake_account = &mut ctx.accounts.stake_account;
 
     stake_pool.update_vault(ctx.accounts.stake_pool_vault.amount);
-    let mint_amount = stake_pool.mint_votes(stake_account, amount)?;
+    let minted_amount = stake_pool.mint_votes(stake_account, amount)?;
     let stake_pool = &ctx.accounts.stake_pool;
 
     token::mint_to(
         ctx.accounts
             .mint_context()
             .with_signer(&[&stake_pool.signer_seeds()]),
-        mint_amount,
+        minted_amount,
     )?;
 
-    ctx.accounts.deposit_gov_tokens(mint_amount)?;
+    ctx.accounts.deposit_gov_tokens(minted_amount)?;
     let stake_account = &ctx.accounts.stake_account;
 
-    emit!(MintVotesEvent {
-        owner: ctx.accounts.owner.key(),
+    emit!(VotesMinted {
         stake_pool: stake_pool.key(),
         stake_account: stake_account.key(),
+        owner: ctx.accounts.owner.key(),
+
+        minted_amount,
+
+        pool_note: stake_pool.note(),
+        account_note: stake_account.note(),
+
         governance_realm: ctx.accounts.governance_realm.key(),
-        governance_vault: ctx.accounts.governance_vault.key(),
-        votes_minted: mint_amount,
+        voter_account_balance: ctx.accounts.voter_token_account.amount,
     });
 
     Ok(())

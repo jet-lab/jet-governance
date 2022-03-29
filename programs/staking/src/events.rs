@@ -83,27 +83,38 @@ pub struct BondedWithdrawn {
 }
 
 #[event]
-pub struct MintVotesEvent {
-    pub owner: Pubkey,
+pub struct VotesMinted {
     pub stake_pool: Pubkey,
     pub stake_account: Pubkey,
+    pub owner: Pubkey,
+
+    pub minted_amount: u64,
+
+    pub pool_note: StakePoolNote,
+    pub account_note: StakeAccountNote,
+
     pub governance_realm: Pubkey,
-    pub governance_vault: Pubkey,
-    pub votes_minted: u64,
+    pub voter_account_balance: u64,
 }
 
 #[event]
-pub struct BurnVotesEvent {
-    pub owner: Pubkey,
+pub struct VotesBurned {
     pub stake_pool: Pubkey,
-    pub vote_amount: u64,
     pub stake_account: Pubkey,
+    pub owner: Pubkey,
+
+    pub burned_amount: u64,
+
+    pub pool_note: StakePoolNote,
+    pub account_note: StakeAccountNote,
+
+    pub voter_account_balance: u64,
 }
 
 #[event]
-pub struct CloseStakeAccountEvent {
-    pub owner: Pubkey,
+pub struct StakeAccountClosed {
     pub stake_account: Pubkey,
+    pub owner: Pubkey,
 }
 
 #[derive(AnchorSerialize, AnchorDeserialize)]
