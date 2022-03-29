@@ -162,16 +162,6 @@ impl StakePool {
         let amount = self.withdraw_unbonded(account, record);
         self.deposit(account, amount.token_amount);
     }
-
-    /// Mints vote tokens for bonded shares, preventing those bonded shares from being unbonded
-    /// until the votes are burned.
-    pub fn mint_votes(
-        &self,
-        account: &mut StakeAccount,
-        amount: Option<u64>,
-    ) -> Result<u64, ErrorCode> {
-        account.mint_votes(amount)
-    }
 }
 
 /// Primitive that represents a pool of tokens with ownership of a portion
@@ -431,6 +421,8 @@ impl StakeAccount {
         self.unbonding_shares = self.unbonding_shares.checked_sub(shares).unwrap();
     }
 
+    /// Mints vote tokens for bonded shares, preventing those bonded shares from being unbonded
+    /// until the votes are burned.
     pub fn mint_votes(&mut self, amount: Option<u64>) -> Result<u64, ErrorCode> {
         let desired_vote_amount = match amount {
             Some(desired_vote_amount) => desired_vote_amount,
@@ -613,13 +605,13 @@ mod tests {
         // at this point user_a has 2_000_000 tokens
         // ..            user_b has 1_200_000 tokens
 
-        let result_a = pool.mint_votes(&mut user_a, Some(2_000_000));
-        let result_b = pool.mint_votes(&mut user_b, None);
+        let result_a = user_a.mint_votes(Some(2_000_000));
+        let result_b = user_b.mint_votes(None);
 
         assert_eq!(Ok(2_000_000), result_a);
-        assert_eq!(Ok(1_200_000), result_b);
+        assert_eq!(Ok(7_500_000), result_b);
 
-        let result_a = pool.mint_votes(&mut user_a, Some(20));
+        let result_a = user_a.mint_votes(Some(12_500_000));
 
         assert_eq!(Err(ErrorCode::InsufficientStake), result_a);
 
@@ -629,11 +621,11 @@ mod tests {
         // at this point user_a has 2_750_000 tokens
         // ..            user_b has 1_650_000 tokens
 
-        let result_a = pool.mint_votes(&mut user_a, Some(750_000));
-        let result_b = pool.mint_votes(&mut user_b, Some(450_000));
+        let result_a = user_a.mint_votes(Some(750_000));
+        let result_b = user_b.mint_votes(Some(450_000));
 
         assert_eq!(Ok(750_000), result_a);
-        assert_eq!(Ok(450_000), result_b);
+        assert_eq!(Err(ErrorCode::InsufficientStake), result_b);
     }
 
     #[test]

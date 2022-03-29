@@ -100,7 +100,7 @@ pub fn mint_votes_handler(ctx: Context<MintVotes>, amount: Option<u64>) -> Progr
     let stake_account = &mut ctx.accounts.stake_account;
 
     stake_pool.update_vault(ctx.accounts.stake_pool_vault.amount);
-    let mint_amount = stake_pool.mint_votes(stake_account, amount)?;
+    let mint_amount = stake_account.mint_votes(amount)?;
     let stake_pool = &ctx.accounts.stake_pool;
 
     token::mint_to(
