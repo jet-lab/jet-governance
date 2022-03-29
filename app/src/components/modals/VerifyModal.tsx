@@ -68,6 +68,7 @@ export const VerifyModal = ({
         });
 
         locale = await resp.json();
+        console.log(JSON.stringify(locale, undefined, 2));
         const countryCode = locale.location.country.code;
         geoBannedCountries.forEach(c => {
           if (c.code === countryCode) {

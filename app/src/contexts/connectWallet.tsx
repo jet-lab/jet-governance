@@ -43,7 +43,8 @@ export const ConnectWalletProvider = (props: { children: any }) => {
     let success = true;
     try {
       await createUserAuth(rpcContext, authProgram, publicKey, publicKey);
-    } catch (ex) {
+    } catch (err) {
+      console.log(err);
       success = false;
     }
     return success;
