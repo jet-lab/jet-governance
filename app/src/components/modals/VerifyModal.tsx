@@ -38,7 +38,7 @@ export const VerifyModal = ({
   const [current, setCurrent] = useState<Steps>(Steps.Welcome);
   const { wallets, select, connected, disconnect, disconnecting, wallet, publicKey } = useWallet();
   const { connecting, setConnecting } = useConnectWallet();
-  const [phoneNumber, setPhoneNumber] = useState<CountryPhoneInputValue>({ short: "US" });
+  const [phoneNumber, setPhoneNumber] = useState<CountryPhoneInputValue>({ short: "CH" });
   const [isGeobanned, setIsGeobanned] = useState(false);
   const [country, setCountry] = useState("");
   // The ID of the SMS verification session with MessageBird.
@@ -399,6 +399,7 @@ export const VerifyModal = ({
           transaction.
         </p>
         <CountryPhoneInput
+
           placeholder={"Phone number"}
           value={phoneNumber}
           onChange={(e: CountryPhoneInputValue) => handleInputPhoneNumber(e)}

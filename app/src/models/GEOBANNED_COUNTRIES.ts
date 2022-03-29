@@ -12,7 +12,7 @@ export const geoBannedCountries = [
     code: "CU"
   },
   {
-    country: "the Democratic Republic of Congo",
+    country: "Congo, Democratic Republic of the",
     code: "CD"
   },
   {
@@ -36,7 +36,7 @@ export const geoBannedCountries = [
     code: "SD"
   },
   {
-    country: "Syria",
+    country: "Syrian Arab Republic",
     code: "SY"
   },
   {
@@ -44,11 +44,11 @@ export const geoBannedCountries = [
     code: "TJ"
   },
   {
-    country: "the United States",
+    country: "United States of America",
     code: "US"
   },
   {
-    country: "Venezuela",
+    country: "Venezuela (Bolivarian Republic of)",
     code: "VE"
   }
 ];

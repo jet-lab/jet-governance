@@ -3,6 +3,7 @@ import { MintInfo } from "@solana/spl-token";
 import { PublicKey } from "@solana/web3.js";
 import BN from "bn.js";
 import { bnToNumber } from "@jet-lab/jet-engine";
+import { geoBannedCountries } from "../models/GEOBANNED_COUNTRIES";
 
 export function useLocalStorageState(key: string, defaultState?: string) {
   const [state, setState] = useState(() => {
@@ -151,3 +152,24 @@ export const dateToString = (date: Date) => {
   const localTime = date.toLocaleTimeString();
   return `${day} ${months[month]} ${year}, ${localTime}`;
 };
+
+// ---------
+interface CountryCodeInfo {
+  country: string;
+  code: string;
+}
+
+const getGeoBannedCountriesArr = (geoBannedCountries: CountryCodeInfo[]) => {
+  return geoBannedCountries.map(country => country.country);
+};
+
+export const geoBannedCountriesArr = getGeoBannedCountriesArr(geoBannedCountries);
+// --------
+// function for country code
+// check locale & banned list
+// if not on banned list : display locale
+// display swiss ch
+
+// TODO - wip sort out the country list by number
+// function to sort country code
+// .sort((a,b)=>a-b)
