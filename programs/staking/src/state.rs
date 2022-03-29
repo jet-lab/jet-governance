@@ -47,10 +47,6 @@ pub struct StakePool {
     /// The amount of tokens stored by the pool's vault
     pub vault_amount: u64,
 
-    /// A token to identify when unbond conversions are invalidated due to
-    /// a withdraw of bonded tokens.
-    pub unbond_change_index: u64,
-
     /// Tokens that are currently bonded,
     /// and the distinctly valued shares that represent stake in bonded tokens
     pub bonded: SharedTokenPool,
@@ -127,7 +123,6 @@ impl StakePool {
         account.unbond(bonded_to_unbond, unbonding_shares)?;
 
         record.shares = unbonding_shares;
-        record.unbond_change_index = self.unbond_change_index;
 
         Ok(())
     }
@@ -487,9 +482,6 @@ pub struct UnbondingAccount {
 
     /// The time after which the staked amount can be withdrawn
     pub unbonded_at: i64,
-
-    /// The unbonding index at the time the request was made
-    pub unbond_change_index: u64,
 }
 
 #[cfg(test)]
