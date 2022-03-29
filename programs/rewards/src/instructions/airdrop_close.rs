@@ -81,7 +81,9 @@ pub fn airdrop_close_handler(ctx: Context<AirdropClose>) -> Result<()> {
     )?;
 
     emit!(events::AirdropClosed {
-        airdrop: airdrop.address
+        airdrop: airdrop.address,
+
+        vault_balance: ctx.accounts.reward_vault.amount,
     });
 
     Ok(())

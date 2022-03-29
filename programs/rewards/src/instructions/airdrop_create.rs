@@ -87,6 +87,7 @@ pub fn airdrop_create_handler(
 
     emit!(events::AirdropCreated {
         airdrop: airdrop.address,
+        authority: ctx.accounts.authority.key(),
         token_mint: ctx.accounts.token_mint.key(),
         params,
     });

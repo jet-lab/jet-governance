@@ -5,9 +5,12 @@ use crate::{
     DistributionCreateParams,
 };
 
+// AIRDROPS
+
 #[event]
 pub struct AirdropCreated {
     pub airdrop: Pubkey,
+    pub authority: Pubkey,
     pub token_mint: Pubkey,
     pub params: AirdropCreateParams,
 }
@@ -27,6 +30,8 @@ pub struct AirdropFinalized {
     pub airdrop: Pubkey,
     pub reward_total: u64,
     pub recipients_total: u64,
+
+    pub vault_balance: u64,
 }
 
 #[event]
@@ -35,12 +40,18 @@ pub struct AirdropClaimed {
     pub recipient: Pubkey,
     pub claimed_amount: u64,
     pub remaining_amount: u64,
+
+    pub vault_balance: u64,
 }
 
 #[event]
 pub struct AirdropClosed {
     pub airdrop: Pubkey,
+
+    pub vault_balance: u64,
 }
+
+// AWARDS
 
 #[event]
 pub struct AwardCreated {
@@ -68,6 +79,8 @@ pub struct AwardReleased {
 pub struct AwardClosed {
     pub award: Pubkey,
 }
+
+// DISTRIBUTION
 
 #[event]
 pub struct DistributionCreated {

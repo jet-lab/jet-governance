@@ -1,5 +1,5 @@
 use anchor_lang::prelude::*;
-use anchor_spl::token::Token;
+use anchor_spl::token::{Token, TokenAccount};
 
 use jet_staking::cpi::accounts::AddStake;
 use jet_staking::program::JetStaking;
@@ -18,7 +18,7 @@ pub struct AirdropClaim<'info> {
     /// The token account to claim the rewarded tokens from
     /// CHECK:
     #[account(mut)]
-    pub reward_vault: AccountInfo<'info>,
+    pub reward_vault: Account<'info, TokenAccount>,
 
     /// The address entitled to the airdrop, which must sign to claim
     pub recipient: Signer<'info>,
@@ -85,7 +85,9 @@ pub fn airdrop_claim_handler(ctx: Context<AirdropClaim>) -> Result<()> {
         airdrop: airdrop.address,
         recipient: ctx.accounts.recipient.key(),
         claimed_amount,
-        remaining_amount: airdrop.target_info().reward_total
+        remaining_amount: airdrop.target_info().reward_total,
+
+        vault_balance: ctx.accounts.reward_vault.amount,
     });
 
     Ok(())
