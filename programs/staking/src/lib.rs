@@ -3,9 +3,9 @@ use anchor_lang::solana_program::pubkey;
 
 declare_id!("JPLockxtkngHkaQT5AuRYow3HyUv5qWzmhwsCPd653n");
 
+pub mod events;
 mod instructions;
 pub mod state;
-pub mod events;
 
 use instructions::*;
 

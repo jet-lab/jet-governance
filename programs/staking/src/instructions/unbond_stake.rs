@@ -1,8 +1,8 @@
 use anchor_lang::prelude::*;
 use anchor_spl::token::TokenAccount;
 
+use crate::events::{Note, StakeUnbonded};
 use crate::state::*;
-use crate::events::{StakeUnbonded, Note};
 
 #[derive(Accounts)]
 #[instruction(seed: u32)]
@@ -55,8 +55,8 @@ pub fn unbond_stake_handler(
 
     stake_pool.update_vault(ctx.accounts.stake_pool_vault.amount);
     let unbonded_amount = stake_pool.unbond(stake_account, unbonding_account, amount)?;
-   
-    emit!(StakeUnbonded { 
+
+    emit!(StakeUnbonded {
         stake_pool: stake_pool.key(),
         stake_account: stake_account.key(),
         unbonding_account: unbonding_account.key(),
@@ -68,6 +68,6 @@ pub fn unbond_stake_handler(
         pool_note: stake_pool.note(),
         account_note: stake_account.note(),
     });
-    
+
     Ok(())
 }

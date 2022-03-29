@@ -1,8 +1,8 @@
 use anchor_lang::prelude::*;
 use anchor_spl::token::{self, Token, TokenAccount, Transfer};
 
+use crate::events::{Note, StakeAdded};
 use crate::state::*;
-use crate::events::{StakeAdded, Note};
 
 #[derive(Accounts)]
 pub struct AddStake<'info> {
@@ -45,7 +45,6 @@ impl<'info> AddStake<'info> {
 pub fn add_stake_handler(ctx: Context<AddStake>, amount: Option<u64>) -> ProgramResult {
     let stake_pool = &mut ctx.accounts.stake_pool;
     let stake_account = &mut ctx.accounts.stake_account;
-    
 
     stake_pool.update_vault(ctx.accounts.stake_pool_vault.amount);
 
@@ -58,8 +57,8 @@ pub fn add_stake_handler(ctx: Context<AddStake>, amount: Option<u64>) -> Program
 
     token::transfer(ctx.accounts.transfer_context(), full_amount.token_amount)?;
     let stake_pool = &ctx.accounts.stake_pool;
-    let stake_account =  &ctx.accounts.stake_account;
-    
+    let stake_account = &ctx.accounts.stake_account;
+
     emit!(StakeAdded {
         stake_pool: stake_pool.key(),
         stake_account: stake_account.key(),
@@ -71,6 +70,6 @@ pub fn add_stake_handler(ctx: Context<AddStake>, amount: Option<u64>) -> Program
         pool_note: stake_pool.note(),
         account_note: stake_account.note(),
     });
-    
+
     Ok(())
 }

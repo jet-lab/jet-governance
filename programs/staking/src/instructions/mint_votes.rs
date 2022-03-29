@@ -2,8 +2,8 @@ use anchor_lang::prelude::*;
 use anchor_spl::token::{self, MintTo, Token, TokenAccount};
 use solana_program::program::invoke;
 
-use crate::{state::*, SplGovernance};
 use crate::events::MintVotesEvent;
+use crate::{state::*, SplGovernance};
 
 #[derive(Accounts)]
 pub struct MintVotes<'info> {
@@ -116,11 +116,11 @@ pub fn mint_votes_handler(ctx: Context<MintVotes>, amount: Option<u64>) -> Progr
 
     emit!(MintVotesEvent {
         owner: ctx.accounts.owner.key(),
-        stake_pool: stake_pool.key(), 
+        stake_pool: stake_pool.key(),
         stake_account: stake_account.key(),
-        governance_realm: ctx.accounts.governance_realm.key(), 
+        governance_realm: ctx.accounts.governance_realm.key(),
         governance_vault: ctx.accounts.governance_vault.key(),
-        votes_minted: mint_amount, 
+        votes_minted: mint_amount,
     });
 
     Ok(())

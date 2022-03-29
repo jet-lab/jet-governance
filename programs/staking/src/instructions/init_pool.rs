@@ -4,8 +4,8 @@ use anchor_lang::prelude::*;
 use anchor_spl::token::TokenAccount;
 use anchor_spl::token::{Mint, Token};
 
-use crate::state::*;
 use crate::events::StakePoolCreated;
+use crate::state::*;
 
 #[derive(AnchorSerialize, AnchorDeserialize)]
 pub struct PoolConfig {

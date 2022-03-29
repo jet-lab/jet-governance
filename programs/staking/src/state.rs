@@ -167,11 +167,7 @@ impl StakePool {
 
     /// Cancel an unbonding account and restore the tokens to the bonded pool.
     /// Redeems unbonding shares and issues bonded shares.
-    pub fn rebond(
-        &mut self,
-        account: &mut StakeAccount,
-        record: &UnbondingAccount
-    ) -> FullAmount {
+    pub fn rebond(&mut self, account: &mut StakeAccount, record: &UnbondingAccount) -> FullAmount {
         let amount = self.withdraw_unbonded(account, record);
         self.deposit(account, amount.token_amount);
 

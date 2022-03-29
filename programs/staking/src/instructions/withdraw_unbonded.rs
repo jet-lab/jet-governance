@@ -5,9 +5,9 @@ use anchor_spl::token::TokenAccount;
 use anchor_spl::token::Transfer;
 
 use crate::events::Note;
+use crate::events::UnbondedWithdrawn;
 use crate::state::*;
 use crate::ErrorCode;
-use crate::events::UnbondedWithdrawn;
 
 #[derive(Accounts)]
 pub struct WithdrawUnbonded<'info> {
