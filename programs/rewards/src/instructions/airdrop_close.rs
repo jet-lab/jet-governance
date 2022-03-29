@@ -20,10 +20,12 @@ pub struct AirdropClose<'info> {
     pub authority: Signer<'info>,
 
     /// The account to received the rent recovered
+    /// CHECK:
     #[account(mut)]
     pub receiver: UncheckedAccount<'info>,
 
     /// The account to receive any remaining tokens in the vault
+    /// CHECK:
     #[account(mut)]
     pub token_receiver: UncheckedAccount<'info>,
 
@@ -54,7 +56,7 @@ impl<'info> AirdropClose<'info> {
     }
 }
 
-pub fn airdrop_close_handler(ctx: Context<AirdropClose>) -> ProgramResult {
+pub fn airdrop_close_handler(ctx: Context<AirdropClose>) -> Result<()> {
     let airdrop = ctx.accounts.airdrop.load()?;
     let clock = Clock::get()?;
 

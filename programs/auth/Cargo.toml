@@ -18,4 +18,4 @@ default = []
 enforce-authority = []
 
 [dependencies]
-anchor-lang = "0.21.0"
+anchor-lang = { git = "https://github.com/jet-lab/anchor", branch = "master" }

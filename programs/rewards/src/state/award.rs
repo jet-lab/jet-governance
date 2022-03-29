@@ -28,6 +28,10 @@ pub struct Award {
 }
 
 impl Award {
+    pub fn space() -> usize {
+        32 + 30 + 1 + 1 + 32 + 32 + TokenDistribution::space()
+    }
+
     pub fn signer_seeds(&self) -> [&[u8]; 4] {
         [
             b"award".as_ref(),

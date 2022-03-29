@@ -96,7 +96,7 @@ impl StakePool {
         account: &mut StakeAccount,
         record: &mut UnbondingAccount,
         tokens: Option<u64>,
-    ) -> Result<(), ErrorCode> {
+    ) -> Result<()> {
         let bonded_to_unbond = match tokens {
             Some(n) => self
                 .bonded
@@ -169,11 +169,7 @@ impl StakePool {
 
     /// Mints vote tokens for bonded tokens, preventing those bonded tokens from being unbonded
     /// until the votes are burned.
-    pub fn mint_votes(
-        &self,
-        account: &mut StakeAccount,
-        amount: Option<u64>,
-    ) -> Result<u64, ErrorCode> {
+    pub fn mint_votes(&self, account: &mut StakeAccount, amount: Option<u64>) -> Result<u64> {
         let full_amount = match amount {
             Some(token_amount) => self.bonded.amount().with_tokens(Rounding::Up, token_amount),
             None => {
@@ -415,9 +411,9 @@ impl StakeAccount {
         self.deposit(bonded_shares);
     }
 
-    pub fn unbond(&mut self, bonded: FullAmount, unbonding_shares: u64) -> Result<(), ErrorCode> {
+    pub fn unbond(&mut self, bonded: FullAmount, unbonding_shares: u64) -> Result<()> {
         if self.bonded_shares < bonded.share_amount {
-            return Err(ErrorCode::InsufficientStake);
+            return Err(ErrorCode::InsufficientStake.into());
         }
 
         self.bonded_shares = self.bonded_shares.checked_sub(bonded.share_amount).unwrap();
@@ -425,11 +421,11 @@ impl StakeAccount {
 
         let minted_vote_amount = bonded.with_tokens(Rounding::Up, self.minted_votes);
         if minted_vote_amount.share_amount > self.bonded_shares {
-            return Err(ErrorCode::VotesLocked);
+            return Err(ErrorCode::VotesLocked.into());
         }
 
         if self.minted_collateral > self.bonded_shares {
-            return Err(ErrorCode::CollateralLocked);
+            return Err(ErrorCode::CollateralLocked.into());
         }
 
         Ok(())
@@ -439,7 +435,7 @@ impl StakeAccount {
         self.unbonding_shares = self.unbonding_shares.checked_sub(shares).unwrap();
     }
 
-    pub fn mint_votes(&mut self, amount: &FullAmount) -> Result<u64, ErrorCode> {
+    pub fn mint_votes(&mut self, amount: &FullAmount) -> Result<u64> {
         let initial_minted_amount = amount.with_tokens(Rounding::Down, self.minted_votes);
         let total_requested_vote_amount = self
             .minted_votes
@@ -458,7 +454,7 @@ impl StakeAccount {
                 minted_vote_amount.share_amount,
                 self.bonded_shares
             );
-            return Err(ErrorCode::InsufficientStake);
+            return Err(ErrorCode::InsufficientStake.into());
         }
 
         self.minted_votes = total_requested_vote_amount;
@@ -621,12 +617,17 @@ mod tests {
         let result_a = pool.mint_votes(&mut user_a, Some(2_000_000));
         let result_b = pool.mint_votes(&mut user_b, None);
 
-        assert_eq!(Ok(2_000_000), result_a);
-        assert_eq!(Ok(1_200_000), result_b);
+        assert_eq!(2_000_000, result_a.unwrap());
+        assert_eq!(1_200_000, result_b.unwrap());
 
         let result_a = pool.mint_votes(&mut user_a, Some(20));
 
-        assert_eq!(Err(ErrorCode::InsufficientStake), result_a);
+        if let anchor_lang::error::Error::AnchorError(result_a_err) = result_a.unwrap_err() {
+            assert_eq!(
+                ErrorCode::InsufficientStake as u32,
+                result_a_err.error_code_number
+            );
+        }
 
         pool.vault_amount += 1_200_000;
         pool.bonded.tokens += 1_200_000;
@@ -637,8 +638,8 @@ mod tests {
         let result_a = pool.mint_votes(&mut user_a, Some(750_000));
         let result_b = pool.mint_votes(&mut user_b, Some(450_000));
 
-        assert_eq!(Ok(750_000), result_a);
-        assert_eq!(Ok(450_000), result_b);
+        assert_eq!(750_000, result_a.unwrap());
+        assert_eq!(450_000, result_b.unwrap());
     }
 
     #[test]

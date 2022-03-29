@@ -41,7 +41,7 @@ impl<'info> AddStake<'info> {
 }
 
 /// handler handler
-pub fn add_stake_handler(ctx: Context<AddStake>, amount: Option<u64>) -> ProgramResult {
+pub fn add_stake_handler(ctx: Context<AddStake>, amount: Option<u64>) -> Result<()> {
     let stake_pool = &mut ctx.accounts.stake_pool;
     let stake_account = &mut ctx.accounts.stake_account;
 
