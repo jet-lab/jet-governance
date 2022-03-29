@@ -1,7 +1,7 @@
 use anchor_lang::prelude::*;
-use anchor_spl::token::{self, Burn, Token};
+use anchor_spl::token::{self, Burn, Token, TokenAccount};
 
-use crate::events::BurnVotesEvent;
+use crate::events::{Note, VotesBurned};
 use crate::state::*;
 
 #[derive(Accounts)]
@@ -27,7 +27,7 @@ pub struct BurnVotes<'info> {
     /// The token account to burn the vote tokens from
     /// CHECK:
     #[account(mut)]
-    pub voter_token_account: AccountInfo<'info>,
+    pub voter_token_account: Box<Account<'info, TokenAccount>>,
 
     /// The signer for the vote token account
     pub voter: Signer<'info>,
@@ -52,26 +52,32 @@ pub fn burn_votes_handler(ctx: Context<BurnVotes>, amount: Option<u64>) -> Resul
     let stake_pool = &ctx.accounts.stake_pool;
     let stake_account = &mut ctx.accounts.stake_account;
 
-    let token_amount = match amount {
+    let burned_amount = match amount {
         Some(n) => n,
-        None => token::accessor::amount(&ctx.accounts.voter_token_account)?,
+        None => token::accessor::amount(&ctx.accounts.voter_token_account.to_account_info())?,
     };
-    stake_account.burn_votes(token_amount);
+    stake_account.burn_votes(burned_amount);
 
     token::burn(
         ctx.accounts
             .burn_context()
             .with_signer(&[&stake_pool.signer_seeds()]),
-        token_amount,
+        burned_amount,
     )?;
 
     let stake_account = &ctx.accounts.stake_account;
 
-    emit!(BurnVotesEvent {
-        owner: ctx.accounts.owner.key(),
+    emit!(VotesBurned {
         stake_pool: stake_pool.key(),
-        vote_amount: token_amount,
         stake_account: stake_account.key(),
+        owner: ctx.accounts.owner.key(),
+
+        burned_amount,
+
+        pool_note: stake_pool.note(),
+        account_note: stake_account.note(),
+
+        voter_account_balance: ctx.accounts.voter_token_account.amount,
     });
 
     Ok(())
