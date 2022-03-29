@@ -1,5 +1,5 @@
 import { useWallet } from "@solana/wallet-adapter-react";
-import { Modal, Input, ModalProps } from "antd";
+import { Modal, Input, ModalProps, Checkbox } from "antd";
 import { PropsWithChildren, useEffect, useState } from "react";
 import { useConnectWallet } from "../../contexts/connectWallet";
 import axios from "axios";
@@ -16,13 +16,14 @@ enum Steps {
   ConfirmLocation = 2,
   EnterSMSCode = 3,
   AccessDenied = 4,
-  AccessGranted1 = 5,
-  AccessGranted2 = 6,
-  UnknownError = 7,
-  PhoneInvalid = 8,
-  VpnBlocked = 9,
-  InvalidToken = 10,
-  RegionNotSupported = 11
+  AgreeToTerms = 5,
+  AccessGranted1 = 6,
+  AccessGranted2 = 7,
+  UnknownError = 8,
+  PhoneInvalid = 9,
+  VpnBlocked = 10,
+  InvalidToken = 11,
+  RegionNotSupported = 12
 }
 const API_KEY: string = process.env.REACT_APP_SMS_AUTH_API_KEY!;
 
@@ -36,10 +37,11 @@ export const VerifyModal = ({
   createAuthAccount: () => Promise<boolean>;
 }) => {
   const [current, setCurrent] = useState<Steps>(Steps.Welcome);
-  const { wallets, select, connected, disconnect, disconnecting, wallet, publicKey } = useWallet();
+  const { wallets, select, disconnect, disconnecting, wallet, publicKey } = useWallet();
   const { connecting, setConnecting } = useConnectWallet();
   const [phoneNumber, setPhoneNumber] = useState<CountryPhoneInputValue>({ short: "US" });
   const [isGeobanned, setIsGeobanned] = useState(false);
+  const [disclaimerChecked, setDisclaimerChecked] = useState(false);
   const [country, setCountry] = useState("");
   // The ID of the SMS verification session with MessageBird.
   const [verificationId, setVerificationId] = useState<string>();
@@ -101,6 +103,11 @@ export const VerifyModal = ({
           true
       );
     }
+    function getAgreedToTerms() {
+      return (
+        publicKey && JSON.parse(localStorage.getItem(`jetGovernTermsAccepted`) ?? "false") === true
+      );
+    }
     function onStepOrClosed(step: Steps) {
       return current === step || !connecting;
     }
@@ -113,11 +120,10 @@ export const VerifyModal = ({
           setConnecting(true);
         }
       } else if (authAccount.userAuthentication.allowed) {
-        if (getAuthorizationConfirmed()) {
+        if (getAuthorizationConfirmed() && getAgreedToTerms()) {
           setConnecting(false);
-          setCurrent(Steps.Welcome);
         } else {
-          setCurrent(Steps.AccessGranted1);
+          setCurrent(Steps.AgreeToTerms);
           setConnecting(true);
         }
       } else if (!authAccount.userAuthentication.allowed) {
@@ -444,6 +450,49 @@ export const VerifyModal = ({
     ),
     closable: true
   };
+  steps[Steps.AgreeToTerms] = {
+    title: "Warning",
+    okText: "Accept",
+    okButtonProps: { disabled: !disclaimerChecked },
+    onOk: () => {
+      localStorage.setItem("jetGovernTermsAccepted", "true");
+      setCurrent(Steps.AccessGranted1);
+    },
+    cancelButtonProps: { style: { display: "none " } },
+    onCancel: () => handleDisconnect(),
+    children: (
+      <div className="flex column">
+        <p>
+          You are about to enter Jet Govern. Do not proceed if you do not understand and accept the
+          Terms of Service, and potential for financial loss.
+        </p>
+        <p>
+          <a
+            href="https://www.jetprotocol.io/legal/terms-of-service"
+            target="_blank"
+            className="padding-right"
+            rel="noopener noreferrer"
+          >
+            <span className="text-gradient-btn">Terms of Service</span>
+          </a>
+          <a
+            href="https://www.jetprotocol.io/legal/privacy-policy"
+            target="_blank"
+            className="padding-right"
+            rel="noopener noreferrer"
+          >
+            <span className="text-gradient-btn">Privacy Policy</span>
+          </a>
+        </p>
+        <p>
+          <Checkbox onChange={e => setDisclaimerChecked(e.target.checked)}>
+            I understand the Terms of Service, Privacy Policy, Cookie Policy and accept the risks.
+          </Checkbox>
+        </p>
+      </div>
+    ),
+    closable: true
+  };
   steps[Steps.AccessGranted1] = {
     title: "Stake JET to earn and vote!",
     okText: "Okay",
@@ -548,6 +597,7 @@ export const VerifyModal = ({
           <a
             href="https://www.jetprotocol.io/legal/terms-of-service"
             target="_blank"
+            className="text-gradient-btn"
             rel="noreferrer"
           >
             Terms of Service
