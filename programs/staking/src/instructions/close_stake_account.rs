@@ -1,7 +1,7 @@
 use anchor_lang::prelude::*;
 
-use crate::state::*;
 use crate::events::CloseStakeAccountEvent;
+use crate::state::*;
 
 #[derive(Accounts)]
 pub struct CloseStakeAccount<'info> {
@@ -29,7 +29,7 @@ pub fn close_stake_account_handler(ctx: Context<CloseStakeAccount>) -> Result<()
     assert!(stake_account.unbonding_shares == 0);
 
     // assert!(stake_account.unbonding_shares == 0);
-    emit!( CloseStakeAccountEvent {
+    emit!(CloseStakeAccountEvent {
         owner: ctx.accounts.owner.key(),
         stake_account: stake_account.key(),
     });

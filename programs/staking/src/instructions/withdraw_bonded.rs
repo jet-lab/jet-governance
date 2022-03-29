@@ -1,10 +1,10 @@
+use crate::events::BondedWithdrawn;
+use crate::events::Note;
 use anchor_lang::prelude::*;
 use anchor_spl::token;
 use anchor_spl::token::Token;
 use anchor_spl::token::TokenAccount;
 use anchor_spl::token::Transfer;
-use crate::events::Note;
-use crate::events::BondedWithdrawn;
 
 use crate::state::*;
 
@@ -57,7 +57,7 @@ pub fn withdraw_bonded_handler(ctx: Context<WithdrawBonded>, amount: u64) -> Res
             .with_signer(&[&stake_pool.signer_seeds()]),
         amount,
     )?;
-    
+
     emit!(BondedWithdrawn {
         stake_pool: stake_pool.key(),
 

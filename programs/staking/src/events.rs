@@ -1,6 +1,9 @@
 use anchor_lang::prelude::*;
 
-use crate::{instructions::PoolConfig, state::{FullAmount, SharedTokenPool, StakePool, StakeAccount}};
+use crate::{
+    instructions::PoolConfig,
+    state::{FullAmount, SharedTokenPool, StakeAccount, StakePool},
+};
 
 #[event]
 pub struct StakePoolCreated {
@@ -33,10 +36,10 @@ pub struct StakeAdded {
 
 #[event]
 pub struct StakeUnbonded {
-    pub stake_pool: Pubkey, 
-    pub stake_account: Pubkey, 
-    pub unbonding_account: Pubkey, 
-    pub owner: Pubkey, 
+    pub stake_pool: Pubkey,
+    pub stake_account: Pubkey,
+    pub unbonding_account: Pubkey,
+    pub owner: Pubkey,
 
     pub unbonded_amount: FullAmount,
     pub unbonded_at: i64,
@@ -49,7 +52,7 @@ pub struct StakeUnbonded {
 pub struct UnbondCancelled {
     pub stake_pool: Pubkey,
     pub stake_account: Pubkey,
-    pub unbonding_account: Pubkey, 
+    pub unbonding_account: Pubkey,
     pub owner: Pubkey,
 
     pub cancelled_amount: FullAmount,
@@ -81,11 +84,11 @@ pub struct BondedWithdrawn {
 
 #[event]
 pub struct MintVotesEvent {
-    pub owner: Pubkey, 
-    pub stake_pool: Pubkey, 
+    pub owner: Pubkey,
+    pub stake_pool: Pubkey,
     pub stake_account: Pubkey,
-    pub governance_realm: Pubkey, 
-    pub governance_vault: Pubkey, 
+    pub governance_realm: Pubkey,
+    pub governance_vault: Pubkey,
     pub votes_minted: u64,
 }
 
@@ -100,7 +103,7 @@ pub struct BurnVotesEvent {
 #[event]
 pub struct CloseStakeAccountEvent {
     pub owner: Pubkey,
-    pub stake_account: Pubkey
+    pub stake_account: Pubkey,
 }
 
 #[derive(AnchorSerialize, AnchorDeserialize)]
@@ -131,7 +134,7 @@ impl Note for StakePool {
         StakePoolNote {
             vault_amount: self.vault_amount,
             bonded: self.bonded,
-            unbonding: self.unbonding
+            unbonding: self.unbonding,
         }
     }
 }
