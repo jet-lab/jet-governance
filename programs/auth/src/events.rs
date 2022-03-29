@@ -1,11 +1,11 @@
 use anchor_lang::prelude::*;
 
 #[event]
-pub struct CreateAuthAccount {
+pub struct AuthAccountCreated {
     pub user: Pubkey,
 }
 
 #[event]
-pub struct Authenticate {
+pub struct Authenticated {
     pub user: Pubkey,
 }
