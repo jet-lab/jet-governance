@@ -59,6 +59,7 @@ impl<'info> AirdropClose<'info> {
 pub fn airdrop_close_handler(ctx: Context<AirdropClose>) -> Result<()> {
     let airdrop = ctx.accounts.airdrop.load()?;
     let clock = Clock::get()?;
+    let vault_amount = ctx.accounts.reward_vault.amount;
 
     if airdrop.expire_at > clock.unix_timestamp {
         msg!("airdrop not expired");
@@ -70,7 +71,7 @@ pub fn airdrop_close_handler(ctx: Context<AirdropClose>) -> Result<()> {
         ctx.accounts
             .transfer_remaining_context()
             .with_signer(&[&airdrop.signer_seeds()]),
-        ctx.accounts.reward_vault.amount,
+        vault_amount,
     )?;
 
     // close out the vault to recover rent
@@ -83,7 +84,7 @@ pub fn airdrop_close_handler(ctx: Context<AirdropClose>) -> Result<()> {
     emit!(events::AirdropClosed {
         airdrop: airdrop.address,
 
-        vault_balance: ctx.accounts.reward_vault.amount,
+        vault_amount,
     });
 
     Ok(())
