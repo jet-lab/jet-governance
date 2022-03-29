@@ -113,7 +113,7 @@ pub struct DistributionReleased {
     /// The total amount this distribution has released so far, including amount_released.
     pub total_distributed: u64,
 
-    /// The final balance of tokens in the vault serving the distribution. 
+    /// The final balance of tokens in the vault serving the distribution.
     pub vault_balance: u64,
 }
 
