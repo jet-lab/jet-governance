@@ -9,6 +9,7 @@ import CountryPhoneInput, { CountryPhoneInputValue } from "antd-country-phone-in
 import { DocsLink } from "../docsLink";
 import { ReactComponent as ArrowIcon } from "../../images/arrow_icon.svg";
 import { geoBannedCountries } from "../../models/GEOBANNED_COUNTRIES";
+import { filterSort } from "../../utils";
 
 enum Steps {
   Welcome = 0,
@@ -38,7 +39,7 @@ export const VerifyModal = ({
   const [current, setCurrent] = useState<Steps>(Steps.Welcome);
   const { wallets, select, connected, disconnect, disconnecting, wallet, publicKey } = useWallet();
   const { connecting, setConnecting } = useConnectWallet();
-  const [phoneNumber, setPhoneNumber] = useState<CountryPhoneInputValue>({ short: "US" });
+  const [phoneNumber, setPhoneNumber] = useState<CountryPhoneInputValue>({ short: "CH" });
   const [isGeobanned, setIsGeobanned] = useState(false);
   const [country, setCountry] = useState("");
   // The ID of the SMS verification session with MessageBird.
@@ -367,7 +368,7 @@ export const VerifyModal = ({
   };
   steps[Steps.ConfirmLocation] = {
     title: "Confirm location",
-    okText: "Okay",
+    okText: "Send SMS",
     okButtonProps: {
       disabled: authAccountLoading || phoneNumber.phone === undefined
     },
@@ -402,6 +403,7 @@ export const VerifyModal = ({
           placeholder={"Phone number"}
           value={phoneNumber}
           onChange={(e: CountryPhoneInputValue) => handleInputPhoneNumber(e)}
+          selectProps={{ filterSort }}
           onKeyPress={(e: any) => enterKeyPhoneVerify(e)}
           type={"number"}
         />
@@ -411,7 +413,7 @@ export const VerifyModal = ({
   };
   steps[Steps.EnterSMSCode] = {
     title: "Enter your secure access code",
-    okText: "Okay",
+    okText: "Submit",
     okButtonProps: { loading: confirmCodeLoading },
     onOk: () => handleConfirmCode(),
     onCancel: () => handleDisconnect(),
@@ -431,7 +433,7 @@ export const VerifyModal = ({
   };
   steps[Steps.AccessDenied] = {
     title: "Access Denied",
-    okText: "Okay",
+    okText: "Disconnect",
     cancelText: "Disconnect",
     onOk: () => handleDisconnect(),
     onCancel: () => handleDisconnect(),
