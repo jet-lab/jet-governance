@@ -45,6 +45,15 @@ code {
 .ant-progress-success-bg {
   border-radius: 0 !important;
 }
+.ant-btn .ant-btn-loading-icon {
+  padding-right: @spacing-sm;
+  .anticon svg {
+    animation: loadingCircle 1s infinite linear;
+    path {
+      fill: @white !important;
+    }
+  }
+}
 /* Styles between these lines should be included at the next version of the jet-antd library */
 
 /* App-specific styling */
