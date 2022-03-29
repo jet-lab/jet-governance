@@ -110,10 +110,6 @@ export const rescindAndUnstake = async (
     stakeAccount,
     wallet.publicKey!,
     unbondingSeed,
-    // Hack to get unbond stake working
-    // FIXME: When unbond max unminted is merged, do not pass in any amount
-    // https://github.com/jet-lab/jet-governance/pull/128
-    amount.sub(new BN(100))
   );
 
   const relinquishAndWithdrawTx = new Transaction().add(...relinquishAndWithdrawIx);
