@@ -109,7 +109,7 @@ export const rescindAndUnstake = async (
     stakePool,
     stakeAccount,
     wallet.publicKey!,
-    unbondingSeed,
+    unbondingSeed
   );
 
   const relinquishAndWithdrawTx = new Transaction().add(...relinquishAndWithdrawIx);

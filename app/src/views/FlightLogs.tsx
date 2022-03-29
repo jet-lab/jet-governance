@@ -35,9 +35,11 @@ export const FlightLogView = () => {
             ))}
 
             {unbondingAccounts && unbondingAccounts?.length > 0 && logs.length > 0 && (
-              <td colSpan={4}>
-                <Divider />
-              </td>
+              <tr className="desktop">
+                <td colSpan={5}>
+                  <Divider />
+                </td>
+              </tr>
             )}
 
             {/* Staking actions and completed unstaking actions */}

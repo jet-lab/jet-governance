@@ -709,6 +709,9 @@ p,
     font-size: 16px !important;
     letter-spacing: 2px;
   }
+  .desktop {
+    display: none;
+  }
   .proposal-card.ant-card .header {
     font-size: @base-font-size !important;
   }
@@ -809,9 +812,6 @@ p,
     nav {
       width: calc(100% - (@spacing-sm * 2));
       padding: 0 @spacing-sm;
-      &.desktop {
-        display: none;
-      }
       &.mobile {
         display: flex;
         .account img {
