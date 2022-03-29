@@ -20,6 +20,7 @@ import { ProposalProvider } from "./contexts/proposal";
 import { ConfigProvider } from "antd-country-phone-input";
 import en from "world_countries_lists/data/en/world.json";
 import { BlockExplorerProvider } from "./contexts/blockExplorer";
+import { geoBannedCountriesArr } from "./utils";
 
 const queryClient = new QueryClient();
 
@@ -36,7 +37,10 @@ export function Routes() {
               <BlockExplorerProvider>
                 <GovernanceProvider>
                   <WalletProvider>
-                    <ConfigProvider locale={en}>
+                    <ConfigProvider
+                      locale={en}
+                      areaFilter={area => !geoBannedCountriesArr.includes(area.name!)}
+                    >
                       <ConnectWalletProvider>
                         <ProposalProvider>
                           <TransactionsProvider>
