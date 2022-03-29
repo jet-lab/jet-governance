@@ -368,7 +368,7 @@ export const VerifyModal = ({
   };
   steps[Steps.ConfirmLocation] = {
     title: "Confirm location",
-    okText: "Okay",
+    okText: "Send SMS",
     okButtonProps: {
       disabled: authAccountLoading || phoneNumber.phone === undefined
     },
@@ -413,7 +413,7 @@ export const VerifyModal = ({
   };
   steps[Steps.EnterSMSCode] = {
     title: "Enter your secure access code",
-    okText: "Okay",
+    okText: "Submit",
     okButtonProps: { loading: confirmCodeLoading },
     onOk: () => handleConfirmCode(),
     onCancel: () => handleDisconnect(),
@@ -433,7 +433,7 @@ export const VerifyModal = ({
   };
   steps[Steps.AccessDenied] = {
     title: "Access Denied",
-    okText: "Okay",
+    okText: "Disconnect",
     cancelText: "Disconnect",
     onOk: () => handleDisconnect(),
     onCancel: () => handleDisconnect(),
