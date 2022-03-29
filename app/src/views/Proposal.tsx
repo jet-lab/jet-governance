@@ -342,15 +342,17 @@ const InnerProposalView = ({
         >
           <h1>Other Proposals</h1>
           <div className="flex">
-            {otherActiveProposals && loaded && otherActiveProposals.length > 0
-              ? otherActiveProposals.map(proposal => (
-                  <ProposalCard
-                    proposal={proposal}
-                    governance={governance}
-                    key={proposal.pubkey.toBase58()}
-                  />
-                ))
-              : "There are no other proposals at this time."}
+            {otherActiveProposals && loaded && otherActiveProposals.length > 0 ? (
+              otherActiveProposals.map(proposal => (
+                <ProposalCard
+                  proposal={proposal}
+                  governance={governance}
+                  key={proposal.pubkey.toBase58()}
+                />
+              ))
+            ) : (
+              <span>There are no other proposals at this time.</span>
+            )}
           </div>
         </div>
         <Link to="/" className="mobile-only">

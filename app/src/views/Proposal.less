@@ -64,6 +64,8 @@
     border-radius: 30px;
     box-shadow: @neu-shadow-inset;
     margin-bottom: -10px;
+    padding-top: @spacing-sm !important;
+    padding-bottom: @spacing-sm !important;
   }
   .stakeholders {
     display: flex;
@@ -78,7 +80,7 @@
       width: 25%;
       text-align: left;
       font-size: @xs-font-size !important;
-      padding-left: 10px;
+      padding-left: 20px;
     }
     .address {
       width: 25%;
@@ -103,6 +105,10 @@
       text-transform: uppercase;
     }
   }
+}
+
+.ant-empty-img-simple, .ant-empty-description {
+  display: none;
 }
 
 /* Medium devices (tablets, from 840px to 1110px) */
@@ -170,7 +176,6 @@
           flex-direction: row;
           justify-content: space-between;
           height: 60px;
-          padding: @spacing-md @spacing-xl;
           background: @gradient;
 
           .ant-btn.ant-btn-lg {
