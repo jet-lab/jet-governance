@@ -117,7 +117,7 @@ pub fn distribution_create_handler(
     emit!(events::DistributionCreated {
         distribution: distribution.key(),
         token_mint: ctx.accounts.token_mint.key(),
-        params: params,
+        params,
         distribution_kind: distribution.kind,
     });
 

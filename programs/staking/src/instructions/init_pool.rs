@@ -100,7 +100,7 @@ pub fn init_pool_handler(ctx: Context<InitPool>, seed: String, config: PoolConfi
         authority: ctx.accounts.authority.key(),
         seed,
         token_mint: stake_pool.token_mint,
-        config: config,
+        config,
     });
 
     Ok(())
