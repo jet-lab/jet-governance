@@ -96,7 +96,7 @@ impl StakePool {
         account: &mut StakeAccount,
         record: &mut UnbondingAccount,
         tokens: Option<u64>,
-    ) -> Result<()> {
+    ) -> Result<FullAmount> {
         let bonded_to_unbond = match tokens {
             Some(n) => self.bonded.withdraw_tokens(n),
             None => self.bonded.withdraw(
@@ -115,7 +115,7 @@ impl StakePool {
 
         record.shares = unbonding_shares;
 
-        Ok(())
+        Ok(bonded_to_unbond)
     }
 
     /// Redeems unbonding shares for tokens.
@@ -153,9 +153,15 @@ impl StakePool {
 
     /// Cancel an unbonding account and restore the tokens to the bonded pool.
     /// Redeems unbonding shares and issues bonded shares.
-    pub fn rebond(&mut self, account: &mut StakeAccount, record: &UnbondingAccount) {
+    pub fn rebond(
+        &mut self,
+        account: &mut StakeAccount,
+        record: &UnbondingAccount
+    ) -> FullAmount {
         let amount = self.withdraw_unbonded(account, record);
         self.deposit(account, amount.token_amount);
+
+        amount
     }
 }
 

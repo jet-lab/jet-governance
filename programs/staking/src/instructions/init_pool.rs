@@ -5,7 +5,7 @@ use anchor_spl::token::TokenAccount;
 use anchor_spl::token::{Mint, Token};
 
 use crate::state::*;
-use crate::events::InitPoolEvent;
+use crate::events::StakePoolCreated;
 
 #[derive(AnchorSerialize, AnchorDeserialize)]
 pub struct PoolConfig {
@@ -95,15 +95,12 @@ pub fn init_pool_handler(ctx: Context<InitPool>, seed: String, config: PoolConfi
 
     stake_pool.unbond_period = config.unbond_period as i64;
 
-    emit!(InitPoolEvent {
+    emit!(StakePoolCreated {
         stake_pool: stake_pool.key(),
-        unbond_period_config: stake_pool.unbond_period, 
-        payer: ctx.accounts.payer.key(),
         authority: ctx.accounts.authority.key(),
+        seed,
         token_mint: stake_pool.token_mint,
-        stake_pool_vote_mint: stake_pool.stake_vote_mint,
-        stake_pool_collateral_mint: ctx.accounts.stake_collateral_mint.key(),
-        stake_pool_vault: stake_pool.stake_pool_vault 
+        config: config,
     });
 
     Ok(())
