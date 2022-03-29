@@ -8,7 +8,6 @@
   --dark-white: @dark-white;
   @disabled-opacity: 0.6;
   --gradient: @gradient;
-  @md-font-size: 14px;
   --mobile-round-radius: 15px;
   @keyframes rotate {
     100% {
@@ -707,7 +706,11 @@ p,
     font-size: 20px !important;
   }
   h2 {
-    font-size: @sm-font-size;
+    font-size: 16px !important;
+    letter-spacing: 2px;
+  }
+  .proposal-card.ant-card .header {
+    font-size: @base-font-size !important;
   }
   #csv {
     display: none !important;
