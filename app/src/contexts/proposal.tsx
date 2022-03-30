@@ -20,7 +20,7 @@ import {
   useStakingCompatibleWithRealm as useStakePoolCompatibleWithRealm
 } from "../hooks/proposalHooks";
 import { useWallet } from "@solana/wallet-adapter-react";
-import { AssociatedToken } from "@jet-lab/jet-engine/lib/common";
+import { AssociatedToken, JetMint } from "@jet-lab/jet-engine/lib/common";
 import { useConnection } from "./connection";
 import { useProvider } from "../hooks/apiHooks";
 import {
@@ -67,8 +67,8 @@ interface ProposalContextState {
   availableAirdrop?: Airdrop[];
 
   jetAccount?: AssociatedToken;
-  jetMint?: Mint;
-  voteMint?: Mint;
+  jetMint?: JetMint;
+  voteMint?: JetMint;
 
   realm?: ProgramAccount<Realm>;
   governance?: ProgramAccount<Governance>;

@@ -6,6 +6,7 @@ import { useRpcContext } from "../../hooks/useRpcContext";
 import { dateToString } from "../../utils";
 import { bnToNumber } from "@jet-lab/jet-engine";
 import { isSignTransactionError } from "../../utils";
+import { BN } from "@project-serum/anchor";
 
 enum Steps {
   Confirm = 0,
@@ -65,7 +66,7 @@ export const UnstakeModal = ({
       return;
     }
 
-    const unstakeAmount = new u64(amount * 10 ** voteMint.decimals);
+    const unstakeAmount = new BN(amount * 10 ** voteMint.decimals);
     setLoading(true);
     rescindAndUnstake(
       rpcContext,

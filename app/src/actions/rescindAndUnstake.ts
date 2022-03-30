@@ -1,5 +1,6 @@
 import {
   AssociatedToken,
+  bnToNumber,
   StakeAccount,
   StakeIdl,
   StakePool,

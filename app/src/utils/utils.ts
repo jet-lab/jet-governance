@@ -5,6 +5,7 @@ import { bnToNumber } from "@jet-lab/jet-engine";
 import { geoBannedCountries } from "../models/GEOBANNED_COUNTRIES";
 import { SelectProps } from "antd";
 import { Mint } from "@solana/spl-token";
+import { JetMint } from "@jet-lab/jet-engine/lib/common";
 
 export function useLocalStorageState(key: string, defaultState?: string) {
   const [state, setState] = useState(() => {
@@ -43,7 +44,7 @@ export function shortenAddress(address: PublicKey | string, chars = 4): string {
   return `${address.slice(0, chars)}...${address.slice(-chars)}`;
 }
 
-export function fromLamports(account?: number | BN, mint?: Mint, rate: number = 1.0): number {
+export function fromLamports(account?: number | BN, mint?: JetMint, rate: number = 1.0): number {
   if (!account || !mint) {
     return 0;
   }
@@ -54,7 +55,7 @@ export function fromLamports(account?: number | BN, mint?: Mint, rate: number = 
   return (amount / precision) * rate;
 }
 
-export const toTokens = (amount: BN | number | undefined, mint?: Mint) => {
+export const toTokens = (amount: BN | number | undefined, mint?: JetMint) => {
   return fromLamports(amount, mint).toLocaleString(undefined, {
     maximumFractionDigits: 0
   });
