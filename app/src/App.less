@@ -516,30 +516,6 @@ p,
   }
 }
 
-.mobile-only {
-  display: none !important;
-}
-
-/* Medium devices (tablets, from 840px to 1110px) */
-@media only screen and (max-width: 1110px) {
-  .column-grid {
-    grid-template-columns: repeat(6, 110px);
-    justify-content: center;
-    .centered {
-      grid-column: 2 / 6 !important;
-    }
-  }
-  #show-proposals {
-    grid-column: 3 / span 4 !important;
-    #proposal-cards {
-      grid-template-columns: 250px 250px !important;
-      a {
-        margin: 0;
-      }
-    }
-  }
-}
-
 // Navbar
 .navbar-container nav button {
   margin-left: @spacing-lg !important;
@@ -703,10 +679,55 @@ p,
   }
 }
 
+.mobile-only {
+  display: none !important;
+}
+.mobile-message {
+  display: none !important;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: calc(100vh - @nav-height);
+  background: @white;
+
+  i {
+    color: @warning;
+    font-size: @header-font-size;
+  }
+  p {
+    width: 95%;
+    max-width: 600px;
+  }
+}
+
+/* Medium devices (tablets, from 840px to 1110px) */
+@media only screen and (max-width: 1110px) {
+  .column-grid {
+    grid-template-columns: repeat(6, 110px);
+    justify-content: center;
+    .centered {
+      grid-column: 2 / 6 !important;
+    }
+  }
+  #show-proposals {
+    grid-column: 3 / span 4 !important;
+    #proposal-cards {
+      grid-template-columns: 250px 250px !important;
+      a {
+        margin: 0;
+      }
+    }
+  }
+}
+
 /* Extra small devices (840px and down) */
 @media only screen and (max-width: 840px) {
   .mobile-only {
     display: inline !important;
+  }
+  .mobile-message {
+    display: flex !important;
   }
   p,
   ul,

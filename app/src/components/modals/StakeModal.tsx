@@ -11,8 +11,7 @@ import { isSignTransactionError } from "../../utils";
 
 enum Steps {
   Confirm = 0,
-  Success = 1,
-  Error = 2
+  Error = 1
 }
 
 export const StakeModal = ({
@@ -41,7 +40,7 @@ export const StakeModal = ({
     setLoading(true);
     addStake(rpcContext, stakePool, realm, publicKey, stakeLamports, jetMint)
       .then(() => {
-        setCurrent(Steps.Success);
+        onClose();
       })
       .catch((err: any) => {
         if (isSignTransactionError(err)) {
@@ -78,20 +77,6 @@ export const StakeModal = ({
           information, please <DocsLink>read the docs</DocsLink>.
         </p>
       </div>
-    )
-  };
-  steps[Steps.Success] = {
-    title: `All set!`,
-    okText: "Okay",
-    onOk: () => onClose(),
-    onCancel: () => onClose(),
-    closable: true,
-    cancelButtonProps: { style: { display: "none" } },
-    content: (
-      <p>
-        You've staked {amount && Intl.NumberFormat("us-US").format(amount)} JET into JetGovern and
-        can begin using to vote on active proposals immediately.
-      </p>
     )
   };
   steps[Steps.Error] = {
