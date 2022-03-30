@@ -3,13 +3,15 @@ import { Modal, Input, ModalProps, Checkbox } from "antd";
 import { PropsWithChildren, useEffect, useState } from "react";
 import { useConnectWallet } from "../../contexts/connectWallet";
 import axios from "axios";
-import { useConnectionConfig } from "../../contexts";
+import { useConnection, useConnectionConfig } from "../../contexts";
 import { Auth } from "@jet-lab/jet-engine/lib/auth/auth";
 import CountryPhoneInput, { CountryPhoneInputValue } from "antd-country-phone-input";
 import { DocsLink } from "../docsLink";
 import { ReactComponent as ArrowIcon } from "../../images/arrow_icon.svg";
 import { geoBannedCountries } from "../../models/GEOBANNED_COUNTRIES";
 import { filterSort } from "../../utils";
+import { createUserAuth } from "../../actions/createUserAuth";
+import { useProvider, useRpcContext } from "../../hooks";
 
 enum Steps {
   Welcome = 0,
@@ -28,18 +30,17 @@ enum Steps {
 }
 const API_KEY: string = process.env.REACT_APP_SMS_AUTH_API_KEY!;
 
-export const VerifyModal = ({
-  authAccount,
-  authAccountLoading,
-  createAuthAccount
-}: {
-  authAccount: Auth | undefined;
-  authAccountLoading: boolean;
-  createAuthAccount: () => Promise<boolean>;
-}) => {
+export const VerifyModal = () => {
   const [current, setCurrent] = useState<Steps>(Steps.Welcome);
   const { wallets, select, disconnect, disconnecting, wallet, publicKey } = useWallet();
   const { connecting, setConnecting } = useConnectWallet();
+  const rpcContext = useRpcContext();
+
+  const connection = useConnection();
+  const provider = useProvider(connection, wallet);
+  const authProgram = Auth.useAuthProgram(provider);
+  const { authAccount, loading: authAccountLoading } = Auth.useAuthAccount(authProgram, publicKey);
+
   const [phoneNumber, setPhoneNumber] = useState<CountryPhoneInputValue>({ short: "CH" });
   const [isGeobanned, setIsGeobanned] = useState(false);
   const [disclaimerChecked, setDisclaimerChecked] = useState(false);
@@ -70,7 +71,6 @@ export const VerifyModal = ({
         });
 
         locale = await resp.json();
-        console.log(JSON.stringify(locale, undefined, 2));
         const countryCode = locale.location.country.code;
         geoBannedCountries.forEach(c => {
           if (c.code === countryCode) {
@@ -151,12 +151,28 @@ export const VerifyModal = ({
     }
   };
 
-  const handlePhoneVerify = async () => {
-    if (authAccountLoading) {
-      return;
+  const createAuthAccount = async () => {
+    if (authAccountLoading || !authProgram || !publicKey) {
+      return false;
     }
 
-    if (!(await createAuthAccount())) {
+    // If the auth account is created, do not create it again
+    if (authAccount) {
+      return true;
+    }
+
+    try {
+      await createUserAuth(rpcContext, authProgram, publicKey, publicKey);
+      return true;
+    } catch (err) {
+      console.error(err);
+      setCurrent(Steps.UnknownError);
+      return false;
+    }
+  };
+
+  const handlePhoneVerify = async () => {
+    if ((await createAuthAccount()) === false) {
       return;
     }
 
