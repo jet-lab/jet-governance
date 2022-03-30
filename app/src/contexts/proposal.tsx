@@ -5,12 +5,12 @@ import {
   StakeAccount,
   StakeBalance,
   StakeClient,
+  StakeIdl,
   StakePool,
   UnbondingAccount
 } from "@jet-lab/jet-engine";
 import { BN, Program } from "@project-serum/anchor";
 import React, { useState, useContext, useMemo } from "react";
-import { MintInfo } from "@solana/spl-token";
 import { JET_REALM, JET_GOVERNANCE } from "../utils";
 import {
   useAirdropsByWallet,
@@ -40,6 +40,8 @@ import { UnbondingAmount } from "@jet-lab/jet-engine/lib/staking/unbondingAccoun
 import { useQuery, useQueryClient } from "react-query";
 import { useRpcContext } from "../hooks";
 import { useConnectionConfig } from ".";
+import { RewardsIdl } from "@jet-lab/jet-engine/lib/rewards";
+import { Mint } from "@solana/spl-token";
 
 export type ProposalFilter = "active" | "inactive" | "passed" | "rejected" | "all";
 
@@ -65,8 +67,8 @@ interface ProposalContextState {
   availableAirdrop?: Airdrop[];
 
   jetAccount?: AssociatedToken;
-  jetMint?: MintInfo;
-  voteMint?: MintInfo;
+  jetMint?: Mint;
+  voteMint?: Mint;
 
   realm?: ProgramAccount<Realm>;
   governance?: ProgramAccount<Governance>;
@@ -77,8 +79,8 @@ interface ProposalContextState {
   filteredPastProposals: ProgramAccount<Proposal>[];
 
   programs?: {
-    stake: Program;
-    rewards: Program;
+    stake: Program<StakeIdl>;
+    rewards: Program<RewardsIdl>;
   };
 }
 
@@ -121,8 +123,8 @@ export function ProposalProvider({ children = undefined as any }) {
   const queryClient = useQueryClient();
 
   const { data: idl } = useQuery(["idl"], async () => {
-    const stake = await Program.fetchIdl(StakeClient.PROGRAM_ID, provider);
-    const rewards = await Program.fetchIdl(RewardsClient.PROGRAM_ID, provider);
+    const stake = await Program.fetchIdl<StakeIdl>(StakeClient.PROGRAM_ID, provider);
+    const rewards = await Program.fetchIdl<RewardsIdl>(RewardsClient.PROGRAM_ID, provider);
     if (!stake || !rewards) {
       throw new Error("idl does not exist");
     }

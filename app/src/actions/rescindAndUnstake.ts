@@ -1,4 +1,10 @@
-import { AssociatedToken, StakeAccount, StakePool, UnbondingAccount } from "@jet-lab/jet-engine";
+import {
+  AssociatedToken,
+  StakeAccount,
+  StakeIdl,
+  StakePool,
+  UnbondingAccount
+} from "@jet-lab/jet-engine";
 import { BN, Program, Provider } from "@project-serum/anchor";
 import {
   Governance,
@@ -20,7 +26,6 @@ import {
 
 export const rescindAndUnstake = async (
   { programId, programVersion, wallet, walletPubkey, connection }: RpcContext,
-  stakeProgram: Program,
   stakePool: StakePool,
   stakeAccount: StakeAccount,
   governance: ProgramAccount<Governance>,

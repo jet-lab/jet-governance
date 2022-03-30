@@ -1,9 +1,9 @@
 import { useState, useMemo } from "react";
 import { List, Button, Skeleton } from "antd";
 import { Stakeholders } from "./Stakeholders";
-import { bnToIntLossy } from "../../tools/units";
 import { ProgramAccount, VoteRecord } from "@solana/spl-governance";
 import { getVoterDisplayData, VoterDisplayData } from "../../hooks";
+import { bnToNumber } from "@jet-lab/jet-engine";
 
 export const VoterList = (props: {
   voteRecords: VoterDisplayData[] | undefined;
@@ -49,7 +49,7 @@ export const VoterList = (props: {
       {userVote && (
         <Stakeholders
           type={userVote.voteKind}
-          amount={bnToIntLossy(userVote.voteWeight)}
+          amount={bnToNumber(userVote.voteWeight)}
           user={userVote.user}
           thisUser={true}
         />
@@ -65,7 +65,7 @@ export const VoterList = (props: {
               <Skeleton avatar title={false} loading={false} active>
                 <Stakeholders
                   type={item.voteKind}
-                  amount={bnToIntLossy(item.voteWeight)}
+                  amount={bnToNumber(item.voteWeight)}
                   user={item.user}
                 />
               </Skeleton>

@@ -3,10 +3,11 @@ import { Program, Provider } from "@project-serum/anchor";
 import { ProgramAccount, Realm, RpcContext } from "@solana/spl-governance";
 import { sendTransactionWithNotifications } from "../tools/transactions";
 import { Keypair, PublicKey, TransactionInstruction } from "@solana/web3.js";
+import { RewardsIdl } from "@jet-lab/jet-engine/lib/rewards";
 
 export const claimAndStake = async (
   { connection, wallet }: RpcContext,
-  rewardsProgram: Program,
+  rewardsProgram: Program<RewardsIdl>,
   airdrop: Airdrop,
   stakePool: StakePool,
   stakeAccount: StakeAccount,
