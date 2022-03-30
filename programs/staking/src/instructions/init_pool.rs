@@ -23,17 +23,21 @@ pub struct InitPool<'info> {
 
     /// The address allowed to sign for changes to the pool,
     /// and management of the token balance.
+    /// CHECK:
     pub authority: UncheckedAccount<'info>,
 
     /// The mint for the tokens being staked into the pool.
     pub token_mint: Account<'info, Mint>,
 
     /// The new pool being created
-    #[account(init,
-              seeds = [seed.as_bytes()],
-              bump,
-              payer = payer)]
-    pub stake_pool: Account<'info, StakePool>,
+    #[account(
+        init,
+        payer = payer,
+        seeds = [seed.as_bytes()],
+        bump,
+        space = 8 + std::mem::size_of::<StakePool>(),
+    )]
+    pub stake_pool: Box<Account<'info, StakePool>>,
 
     /// The mint to issue derived voting tokens
     #[account(init,
@@ -76,11 +80,7 @@ pub struct InitPool<'info> {
     pub rent: Sysvar<'info, Rent>,
 }
 
-pub fn init_pool_handler(
-    ctx: Context<InitPool>,
-    seed: String,
-    config: PoolConfig,
-) -> ProgramResult {
+pub fn init_pool_handler(ctx: Context<InitPool>, seed: String, config: PoolConfig) -> Result<()> {
     let stake_pool = &mut ctx.accounts.stake_pool;
 
     stake_pool.authority = ctx.accounts.authority.key();

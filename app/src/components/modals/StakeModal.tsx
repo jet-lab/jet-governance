@@ -96,7 +96,7 @@ export const StakeModal = ({
   };
   steps[Steps.Error] = {
     title: `Error.`,
-    okText: "I understand",
+    okText: "Okay",
     onOk: () => onClose(),
     onCancel: () => onClose(),
     content: <p>We have encountered an unknown error.</p>,

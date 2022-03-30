@@ -18,10 +18,12 @@ pub struct AwardRevoke<'info> {
     pub vault: Account<'info, TokenAccount>,
 
     /// The account to receive the rent
+    /// CHECK:
     #[account(mut)]
     pub receiver: UncheckedAccount<'info>,
 
     /// The account to receive any remaining tokens
+    /// CHECK:
     #[account(mut)]
     pub token_receiver: UncheckedAccount<'info>,
 
@@ -55,7 +57,7 @@ impl<'info> AwardRevoke<'info> {
     }
 }
 
-pub fn award_revoke_handler(ctx: Context<AwardRevoke>) -> ProgramResult {
+pub fn award_revoke_handler(ctx: Context<AwardRevoke>) -> Result<()> {
     let award = &ctx.accounts.award;
 
     token::transfer(

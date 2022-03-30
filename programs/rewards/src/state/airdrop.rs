@@ -44,15 +44,15 @@ impl Airdrop {
         &mut self,
         start_idx: u64,
         to_add: impl Iterator<Item = (Pubkey, u64)>,
-    ) -> Result<(), ErrorCode> {
+    ) -> Result<()> {
         let target = self.target_info_mut();
 
         if target.recipients_total != start_idx {
-            return Err(ErrorCode::AddOutOfOrder);
+            return Err(ErrorCode::AddOutOfOrder.into());
         }
 
         if target.finalized > 0 {
-            return Err(ErrorCode::AirdropFinal);
+            return Err(ErrorCode::AirdropFinal.into());
         }
 
         for (recipient, amount) in to_add {
@@ -71,7 +71,7 @@ impl Airdrop {
         let is_sorted = range.windows(2).all(|i| i[0].recipient <= i[1].recipient);
 
         if !is_sorted {
-            return Err(ErrorCode::RecipientsNotSorted);
+            return Err(ErrorCode::RecipientsNotSorted.into());
         }
 
         Ok(())
@@ -81,23 +81,23 @@ impl Airdrop {
         self.target_info().get_recipient(recipient).is_ok()
     }
 
-    pub fn finalize(&mut self, vault_balance: u64) -> Result<(), ErrorCode> {
+    pub fn finalize(&mut self, vault_balance: u64) -> Result<()> {
         let target = self.target_info_mut();
 
         if vault_balance < target.reward_total {
-            return Err(ErrorCode::AirdropInsufficientRewardBalance);
+            return Err(ErrorCode::AirdropInsufficientRewardBalance.into());
         }
 
         target.finalized = 1;
         Ok(())
     }
 
-    pub fn claim(&mut self, recipient: &Pubkey) -> Result<u64, ErrorCode> {
+    pub fn claim(&mut self, recipient: &Pubkey) -> Result<u64> {
         let target = self.target_info_mut();
 
         if target.finalized != 1 {
             msg!("cannot claim from an unfinalized airdrop");
-            return Err(ErrorCode::AirdropNotFinal);
+            return Err(ErrorCode::AirdropNotFinal.into());
         }
 
         let entry = target.get_recipient_mut(recipient)?;
@@ -145,7 +145,7 @@ pub struct AirdropTargetInfo {
 }
 
 impl AirdropTargetInfo {
-    fn get_recipient_mut(&mut self, recipient: &Pubkey) -> Result<&mut AirdropTarget, ErrorCode> {
+    fn get_recipient_mut(&mut self, recipient: &Pubkey) -> Result<&mut AirdropTarget> {
         let recipients = &mut self.recipients[..self.recipients_total as usize];
 
         let found = recipients
@@ -155,7 +155,7 @@ impl AirdropTargetInfo {
         Ok(&mut recipients[found])
     }
 
-    fn get_recipient(&self, recipient: &Pubkey) -> Result<&AirdropTarget, ErrorCode> {
+    fn get_recipient(&self, recipient: &Pubkey) -> Result<&AirdropTarget> {
         let recipients = &self.recipients[..self.recipients_total as usize];
 
         let found = recipients

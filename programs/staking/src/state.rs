@@ -47,10 +47,6 @@ pub struct StakePool {
     /// The amount of tokens stored by the pool's vault
     pub vault_amount: u64,
 
-    /// A token to identify when unbond conversions are invalidated due to
-    /// a withdraw of bonded tokens.
-    pub unbond_change_index: u64,
-
     /// Tokens that are currently bonded,
     /// and the distinctly valued shares that represent stake in bonded tokens
     pub bonded: SharedTokenPool,
@@ -100,7 +96,7 @@ impl StakePool {
         account: &mut StakeAccount,
         record: &mut UnbondingAccount,
         tokens: Option<u64>,
-    ) -> Result<(), ErrorCode> {
+    ) -> Result<()> {
         let bonded_to_unbond = match tokens {
             Some(n) => self.bonded.withdraw_tokens(n),
             None => self.bonded.withdraw(
@@ -118,7 +114,6 @@ impl StakePool {
         account.unbond(bonded_to_unbond.share_amount, unbonding_shares)?;
 
         record.shares = unbonding_shares;
-        record.unbond_change_index = self.unbond_change_index;
 
         Ok(())
     }
@@ -390,9 +385,9 @@ impl StakeAccount {
         &mut self,
         bonded_shares_to_burn: u64,
         unbonding_shares_to_award: u64,
-    ) -> Result<(), ErrorCode> {
+    ) -> Result<()> {
         if self.bonded_shares < bonded_shares_to_burn {
-            return Err(ErrorCode::InsufficientStake);
+            return err!(ErrorCode::InsufficientStake);
         }
 
         let new_bonded_shares_total = self
@@ -401,11 +396,11 @@ impl StakeAccount {
             .unwrap();
 
         if self.minted_votes > new_bonded_shares_total {
-            return Err(ErrorCode::VotesLocked);
+            return err!(ErrorCode::VotesLocked);
         }
 
         if self.minted_collateral > new_bonded_shares_total {
-            return Err(ErrorCode::CollateralLocked);
+            return err!(ErrorCode::CollateralLocked);
         }
 
         self.bonded_shares = new_bonded_shares_total;
@@ -423,7 +418,7 @@ impl StakeAccount {
 
     /// Mints vote tokens for bonded shares, preventing those bonded shares from being unbonded
     /// until the votes are burned.
-    pub fn mint_votes(&mut self, amount: Option<u64>) -> Result<u64, ErrorCode> {
+    pub fn mint_votes(&mut self, amount: Option<u64>) -> Result<u64> {
         let desired_vote_amount = match amount {
             Some(desired_vote_amount) => desired_vote_amount,
             None => self.bonded_shares.checked_sub(self.minted_votes).unwrap(),
@@ -442,7 +437,7 @@ impl StakeAccount {
                 new_votes_total,
                 self.bonded_shares
             );
-            return Err(ErrorCode::InsufficientStake);
+            return Err(ErrorCode::InsufficientStake.into());
         }
         self.minted_votes = new_votes_total;
 
@@ -466,9 +461,6 @@ pub struct UnbondingAccount {
 
     /// The time after which the staked amount can be withdrawn
     pub unbonded_at: i64,
-
-    /// The unbonding index at the time the request was made
-    pub unbond_change_index: u64,
 }
 
 #[cfg(test)]
@@ -608,12 +600,17 @@ mod tests {
         let result_a = user_a.mint_votes(Some(2_000_000));
         let result_b = user_b.mint_votes(None);
 
-        assert_eq!(Ok(2_000_000), result_a);
-        assert_eq!(Ok(7_500_000), result_b);
+        assert_eq!(2_000_000, result_a.unwrap());
+        assert_eq!(7_500_000, result_b.unwrap());
 
         let result_a = user_a.mint_votes(Some(12_500_000));
 
-        assert_eq!(Err(ErrorCode::InsufficientStake), result_a);
+        if let anchor_lang::error::Error::AnchorError(result_a_err) = result_a.unwrap_err() {
+            assert_eq!(
+                ErrorCode::InsufficientStake as u32,
+                result_a_err.error_code_number
+            );
+        }
 
         pool.vault_amount += 1_200_000;
         pool.bonded.tokens += 1_200_000;
@@ -624,8 +621,17 @@ mod tests {
         let result_a = user_a.mint_votes(Some(750_000));
         let result_b = user_b.mint_votes(Some(450_000));
 
-        assert_eq!(Ok(750_000), result_a);
-        assert_eq!(Err(ErrorCode::InsufficientStake), result_b);
+        assert_eq!(750_000, result_a.unwrap());
+        assert_err(ErrorCode::InsufficientStake, result_b);
+    }
+
+    fn assert_err<T: std::fmt::Debug>(expected: ErrorCode, actual: Result<T>) {
+        if let anchor_lang::error::Error::AnchorError(actual) = actual.unwrap_err() {
+            assert_eq!(
+                expected as u32,
+                actual.error_code_number
+            );
+        }
     }
 
     #[test]

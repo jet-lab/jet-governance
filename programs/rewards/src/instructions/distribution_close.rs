@@ -18,6 +18,7 @@ pub struct DistributionClose<'info> {
     pub vault: Account<'info, TokenAccount>,
 
     /// The account to receive the rent
+    /// CHECK:
     #[account(mut)]
     pub receiver: UncheckedAccount<'info>,
 
@@ -40,7 +41,7 @@ impl<'info> DistributionClose<'info> {
     }
 }
 
-pub fn distribution_close_handler(ctx: Context<DistributionClose>) -> ProgramResult {
+pub fn distribution_close_handler(ctx: Context<DistributionClose>) -> Result<()> {
     let distribution = &ctx.accounts.distribution;
     let clock = Clock::get()?;
 

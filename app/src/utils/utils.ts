@@ -3,6 +3,8 @@ import { MintInfo } from "@solana/spl-token";
 import { PublicKey } from "@solana/web3.js";
 import BN from "bn.js";
 import { bnToNumber } from "@jet-lab/jet-engine";
+import { geoBannedCountries } from "../models/GEOBANNED_COUNTRIES";
+import { SelectProps } from "antd";
 
 export function useLocalStorageState(key: string, defaultState?: string) {
   const [state, setState] = useState(() => {
@@ -151,3 +153,27 @@ export const dateToString = (date: Date) => {
   const localTime = date.toLocaleTimeString();
   return `${day} ${months[month]} ${year}, ${localTime}`;
 };
+
+// --------- Country Code Info ---------
+interface CountryCodeInfo {
+  country: string;
+  code: string;
+}
+
+const getGeoBannedCountriesArr = (geoBannedCountries: CountryCodeInfo[]) => {
+  return geoBannedCountries.map(country => country.country);
+};
+
+export const geoBannedCountriesArr = getGeoBannedCountriesArr(geoBannedCountries);
+
+const getLastNumber = (str: string) => {
+  const arr = str.split(" ");
+  return Number(arr[arr.length - 1]);
+};
+
+export const filterSort: SelectProps["filterSort"] = (a, b) => {
+  const keyA = getLastNumber(a.key);
+  const keyB = getLastNumber(b.key);
+  return keyA - keyB;
+};
+// --------- End Country Code Info ---------

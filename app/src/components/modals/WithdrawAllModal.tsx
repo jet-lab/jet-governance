@@ -68,7 +68,7 @@ export const WithdrawAllModal = ({ onClose }: { onClose: () => void }) => {
   };
   steps[Steps.Success] = {
     title: `All set!`,
-    okText: "I understand",
+    okText: "Okay",
     onOk: () => onClose(),
     onCancel: () => onClose(),
     closable: true,
@@ -77,7 +77,7 @@ export const WithdrawAllModal = ({ onClose }: { onClose: () => void }) => {
   };
   steps[Steps.Error] = {
     title: "Error",
-    okText: "I understand",
+    okText: "Okay",
     onOk: () => onClose(),
     onCancel: () => onClose(),
     closable: true,

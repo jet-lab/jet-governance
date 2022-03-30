@@ -12,13 +12,14 @@ pub struct AirdropFinalize<'info> {
     pub airdrop: AccountLoader<'info, Airdrop>,
 
     /// The token account holding the reward tokens to be distributed
+    /// CHECK:
     pub reward_vault: AccountInfo<'info>,
 
     /// The authority to make changes to the airdrop, which must sign
     pub authority: Signer<'info>,
 }
 
-pub fn airdrop_finalize_handler(ctx: Context<AirdropFinalize>) -> ProgramResult {
+pub fn airdrop_finalize_handler(ctx: Context<AirdropFinalize>) -> Result<()> {
     let mut airdrop = ctx.accounts.airdrop.load_mut()?;
     let vault_balance = token::accessor::amount(&ctx.accounts.reward_vault)?;
 
