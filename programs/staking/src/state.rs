@@ -627,10 +627,7 @@ mod tests {
 
     fn assert_err<T: std::fmt::Debug>(expected: ErrorCode, actual: Result<T>) {
         if let anchor_lang::error::Error::AnchorError(actual) = actual.unwrap_err() {
-            assert_eq!(
-                expected as u32,
-                actual.error_code_number
-            );
+            assert_eq!(expected as u32, actual.error_code_number);
         }
     }
 
