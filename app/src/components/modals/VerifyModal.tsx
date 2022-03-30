@@ -488,14 +488,15 @@ export const VerifyModal = () => {
         <p>
           <Checkbox
             id="terms-privacy-check"
+            className="terms-privacy-check"
             onChange={e => setDisclaimerChecked(e.target.checked)}
           />
-          <label htmlFor="terms-privacy-check">
+          <label htmlFor="terms-privacy-check" className="terms-privacy-legend">
             I understand the{" "}
             <a
               href="https://www.jetprotocol.io/legal/terms-of-service"
               target="_blank"
-              className="padding-right text-gradient-btn"
+              className="text-gradient-btn"
               rel="noopener noreferrer"
             >
               Terms of Service
@@ -504,7 +505,7 @@ export const VerifyModal = () => {
             <a
               href="https://www.jetprotocol.io/legal/privacy-policy"
               target="_blank"
-              className="padding-right text-gradient-btn"
+              className="text-gradient-btn"
               rel="noopener noreferrer"
             >
               Privacy Policy
