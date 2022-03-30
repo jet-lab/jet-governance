@@ -152,8 +152,6 @@ export function ProposalProvider({ children = undefined as any }) {
       );
 
       // ----- Airdrops -----
-      // const airdrops = await Airdrop.loadAll(programs.rewards);
-
       // ----- Governance -----
       const realm = await getGovernanceAccount(connection, JET_REALM, Realm);
       const governance = await getGovernanceAccount(connection, JET_GOVERNANCE, Governance);
