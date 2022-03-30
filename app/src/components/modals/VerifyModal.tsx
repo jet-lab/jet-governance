@@ -470,18 +470,18 @@ export const VerifyModal = ({
           <a
             href="https://www.jetprotocol.io/legal/terms-of-service"
             target="_blank"
-            className="padding-right"
+            className="padding-right text-gradient-btn"
             rel="noopener noreferrer"
           >
-            <span className="text-gradient-btn">Terms of Service</span>
+            Terms of Service
           </a>
           <a
             href="https://www.jetprotocol.io/legal/privacy-policy"
             target="_blank"
-            className="padding-right"
+            className="padding-right text-gradient-btn"
             rel="noopener noreferrer"
           >
-            <span className="text-gradient-btn">Privacy Policy</span>
+            Privacy Policy
           </a>
         </p>
         <p>
@@ -529,7 +529,7 @@ export const VerifyModal = ({
         </p>
         <p>
           To make sure your vote counts, only unstake once a vote has completed! For more
-          information check out our <DocsLink className="text-gradient-btn">docs</DocsLink>.
+          information check out our <DocsLink>docs</DocsLink>.
         </p>
       </div>
     ),
