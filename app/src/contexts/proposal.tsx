@@ -152,14 +152,14 @@ export function ProposalProvider({ children = undefined as any }) {
       );
 
       // ----- Airdrops -----
-      const airdrops = await Airdrop.loadAll(programs.rewards);
+      // const airdrops = await Airdrop.loadAll(programs.rewards);
+
       // ----- Governance -----
       const realm = await getGovernanceAccount(connection, JET_REALM, Realm);
       const governance = await getGovernanceAccount(connection, JET_GOVERNANCE, Governance);
 
       return {
         distributions,
-        airdrops,
         realm,
         governance
       };
@@ -186,6 +186,10 @@ export function ProposalProvider({ children = undefined as any }) {
       );
       // ----- Staking -----
       const stakePool = await StakePool.load(programs.stake, StakePool.CANONICAL_SEED);
+      // ----- Airdrops -----
+      const airdrops =
+        stakePool && (await Airdrop.loadAll(programs.rewards, stakePool.addresses.stakePool));
+      console.log(airdrops);
 
       // ----- Mints -----
       const jetMint = await AssociatedToken.loadMint(connection, stakePool.stakePool.tokenMint);
@@ -194,7 +198,7 @@ export function ProposalProvider({ children = undefined as any }) {
         stakePool.stakePool.stakeVoteMint
       );
 
-      return { proposalsByGovernance, stakePool, jetMint, voteMint };
+      return { proposalsByGovernance, stakePool, airdrops, jetMint, voteMint };
     },
     { enabled: !!programs }
   );
@@ -268,7 +272,7 @@ export function ProposalProvider({ children = undefined as any }) {
   );
 
   // ----- Airdrops -----
-  const airdropsByWallet = useAirdropsByWallet(realm?.airdrops, walletAddress);
+  const airdropsByWallet = useAirdropsByWallet(stakePool?.airdrops, walletAddress);
   const claimsCount = useClaimsCount(airdropsByWallet, walletAddress);
   const availableAirdrop = useAvailableAirdrop(airdropsByWallet, walletAddress);
 
