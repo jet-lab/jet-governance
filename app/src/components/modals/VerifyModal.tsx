@@ -169,7 +169,7 @@ export const VerifyModal = () => {
   };
 
   const handlePhoneVerify = async () => {
-    if (await createAuthAccount() === false) {
+    if ((await createAuthAccount()) === false) {
       return;
     }
 
