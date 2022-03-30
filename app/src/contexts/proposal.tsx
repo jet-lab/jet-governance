@@ -152,11 +152,7 @@ export function ProposalProvider({ children = undefined as any }) {
       );
 
       // ----- Airdrops -----
-      //TODO: Fetching airdrops does not return a value.
-      // const airdrops =
-      //   stakePool &&
-      //   (await Airdrop.loadAll(programs.rewards, stakePool.stakePool.addresses.stakePool));
-      const airdrops: Airdrop[] = [];
+      const airdrops = await Airdrop.loadAll(programs.rewards);
       // ----- Governance -----
       const realm = await getGovernanceAccount(connection, JET_REALM, Realm);
       const governance = await getGovernanceAccount(connection, JET_GOVERNANCE, Governance);
