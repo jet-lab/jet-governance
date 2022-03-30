@@ -18,6 +18,7 @@ pub struct WithdrawBonded<'info> {
     pub stake_pool: Account<'info, StakePool>,
 
     /// The receiver for the withdrawn tokens
+    /// CHECK:
     #[account(mut)]
     pub token_receiver: UncheckedAccount<'info>,
 
@@ -41,7 +42,7 @@ impl<'info> WithdrawBonded<'info> {
     }
 }
 
-pub fn withdraw_bonded_handler(ctx: Context<WithdrawBonded>, amount: u64) -> ProgramResult {
+pub fn withdraw_bonded_handler(ctx: Context<WithdrawBonded>, amount: u64) -> Result<()> {
     let stake_pool = &mut ctx.accounts.stake_pool;
 
     stake_pool.update_vault(ctx.accounts.stake_pool_vault.amount);

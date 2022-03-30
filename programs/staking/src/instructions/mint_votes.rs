@@ -1,6 +1,6 @@
 use anchor_lang::prelude::*;
+use anchor_lang::solana_program::program::invoke;
 use anchor_spl::token::{self, MintTo, Token, TokenAccount};
-use solana_program::program::invoke;
 
 use crate::{state::*, SplGovernance};
 
@@ -19,6 +19,7 @@ pub struct MintVotes<'info> {
     pub stake_pool_vault: Box<Account<'info, TokenAccount>>,
 
     /// The stake pool's voter mint
+    /// CHECK:
     #[account(mut)]
     pub stake_vote_mint: AccountInfo<'info>,
 
@@ -29,17 +30,21 @@ pub struct MintVotes<'info> {
     pub stake_account: Box<Account<'info, StakeAccount>>,
 
     /// A temporary token account for storing vote tokens
+    /// CHECK:
     #[account(mut)]
     pub voter_token_account: AccountInfo<'info>,
 
     /// The governance realm to deposit votes into
+    /// CHECK:
     pub governance_realm: UncheckedAccount<'info>,
 
     /// The account holding governance tokens deposited into the realm
+    /// CHECK:
     #[account(mut)]
     pub governance_vault: UncheckedAccount<'info>,
 
     /// The Token Owner Record for the owner of this account
+    /// CHECK:
     #[account(mut)]
     pub governance_owner_record: UncheckedAccount<'info>,
 
@@ -64,7 +69,7 @@ impl<'info> MintVotes<'info> {
         )
     }
 
-    fn deposit_gov_tokens(&self, amount: u64) -> ProgramResult {
+    fn deposit_gov_tokens(&self, amount: u64) -> Result<()> {
         let ix = spl_governance::instruction::deposit_governing_tokens(
             &SplGovernance::id(),
             self.governance_realm.key,
@@ -92,15 +97,16 @@ impl<'info> MintVotes<'info> {
                 self.governance_program.to_account_info(),
             ],
         )
+        .map_err(Into::into)
     }
 }
 
-pub fn mint_votes_handler(ctx: Context<MintVotes>, amount: Option<u64>) -> ProgramResult {
+pub fn mint_votes_handler(ctx: Context<MintVotes>, amount: Option<u64>) -> Result<()> {
     let stake_pool = &mut ctx.accounts.stake_pool;
     let stake_account = &mut ctx.accounts.stake_account;
 
     stake_pool.update_vault(ctx.accounts.stake_pool_vault.amount);
-    let mint_amount = stake_pool.mint_votes(stake_account, amount)?;
+    let mint_amount = stake_account.mint_votes(amount)?;
     let stake_pool = &ctx.accounts.stake_pool;
 
     token::mint_to(

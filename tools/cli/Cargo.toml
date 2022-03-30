@@ -5,11 +5,11 @@ edition = "2018"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 [dependencies]
-anchor-client = "0.21.0"
-anchor-lang = "0.21.0"
-anchor-spl = "0.21.0"
-jet-proto-rewards = { path = "../../programs/rewards", features = ["cpi"] }
-jet-proto-staking = { path = "../../programs/staking", features = ["cpi"] }
+anchor-client = { git = "https://github.com/jet-lab/anchor", branch = "master" }
+anchor-lang = { git = "https://github.com/jet-lab/anchor", branch = "master" }
+anchor-spl = { git = "https://github.com/jet-lab/anchor", branch = "master" }
+jet-proto-rewards = { path = "../../programs/rewards", features = ["no-entrypoint"] }
+jet-proto-staking = { path = "../../programs/staking", features = ["no-entrypoint"] }
 structopt = "0.3"
 anyhow = "1.0"
 serde = { version = "1.0", features = ["derive"] }
