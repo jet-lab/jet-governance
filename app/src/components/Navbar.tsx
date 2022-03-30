@@ -155,7 +155,9 @@ export function Navbar() {
                 {link.title}
               </a>
             ))}
-            <DocsLink className="footer-link footer-link-pad ">Docs</DocsLink>
+            <DocsLink className="footer-link footer-link-pad" noGradient>
+              Docs
+            </DocsLink>
             <Switch
               className="secondary-switch"
               onClick={() => toggleDarkTheme()}

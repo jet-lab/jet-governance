@@ -10,12 +10,6 @@ export const AirdropView = () => {
   const { connected, publicKey } = useWallet();
   const { airdropsByWallet } = useProposalContext();
 
-  const [showGlossaryModal, setShowGlossaryModal] = useState(false);
-
-  const toggleGlossaryModal = () => {
-    setShowGlossaryModal(!showGlossaryModal);
-  };
-
   const availAirdropsRender = airdropsByWallet?.map(airdrop => ({
     airdrop,
     finalized: !airdrop.targetInfo.finalized.isZero(),
@@ -52,6 +46,7 @@ export const AirdropView = () => {
               href="https://medium.com/jetprotocol/jet-staking-and-the-jetdrop-two-more-steps-towards-jet-governance-84d8de26be4a"
               target="_blank"
               rel="noreferrer"
+              className="text-gradient-btn"
             >
               blog announcement
             </a>
@@ -61,18 +56,15 @@ export const AirdropView = () => {
             <DocsLink>docs</DocsLink>
           </u>{" "}
           and{" "}
-          <span
-            onClick={toggleGlossaryModal}
-            style={{ textDecoration: "underline", cursor: "pointer" }}
+          <a
+            href="https://docs.jetprotocol.io/jet-protocol/terms-and-definitions#jetgovern-definitions"
+            target="_blank"
+            rel="noreferrer"
+            className="text-gradient-btn"
           >
-            <a
-              href="https://docs.jetprotocol.io/jet-protocol/terms-and-definitions#jetgovern-definitions"
-              about="_blank"
-              rel="noreferrer"
-            >
-              glossary.
-            </a>
-          </span>
+            glossary
+          </a>
+          .
         </p>
         <Divider />
         {connected &&

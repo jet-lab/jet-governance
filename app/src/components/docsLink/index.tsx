@@ -1,10 +1,19 @@
-export const DocsLink = ({ children, className }: { children: any; className?: any }) => {
+export const DocsLink = ({
+  children,
+  className,
+  noGradient
+}: {
+  children: any;
+  className?: any;
+  noGradient?: boolean;
+}) => {
+  const classNames = noGradient ? className : "text-gradient-btn " + className;
   return (
     <a
       href="https://docs.jetprotocol.io/jet-protocol/protocol/jet-staking"
       target="_blank"
       rel="noreferrer"
-      className={className}
+      className={classNames}
     >
       {children}
     </a>

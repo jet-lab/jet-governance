@@ -8,7 +8,6 @@
   --dark-white: @dark-white;
   @disabled-opacity: 0.6;
   --gradient: @gradient;
-  @md-font-size: 14px;
   --mobile-round-radius: 15px;
   @keyframes rotate {
     100% {
@@ -27,18 +26,6 @@ button.inactive {
 }
 
 .ant-modal-content {
-  a {
-    text-decoration: underline;
-    margin: 0;
-    &:hover {
-      // add text gradient on hover
-      opacity: 1;
-      background-image: @gradient;
-      background-clip: text;
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-  }
   p {
     margin: 10px auto;
   }
@@ -57,6 +44,15 @@ code {
 .ant-progress-bg,
 .ant-progress-success-bg {
   border-radius: 0 !important;
+}
+.ant-btn .ant-btn-loading-icon {
+  padding-right: @spacing-sm;
+  .anticon svg {
+    animation: loadingCircle 1s infinite linear;
+    path {
+      fill: @white !important;
+    }
+  }
 }
 /* Styles between these lines should be included at the next version of the jet-antd library */
 
@@ -134,6 +130,9 @@ nav {
 }
 .connect-wallet-modal p {
   margin: unset;
+}
+.padding-right {
+  padding-right: @spacing-sm;
 }
 .ant-modal-content div.emphasis {
   -webkit-box-sizing: border-box;
@@ -727,7 +726,14 @@ p,
     font-size: 20px !important;
   }
   h2 {
-    font-size: @sm-font-size;
+    font-size: 16px !important;
+    letter-spacing: 2px;
+  }
+  .desktop {
+    display: none;
+  }
+  .proposal-card.ant-card .header {
+    font-size: @base-font-size !important;
   }
   #csv {
     display: none !important;
@@ -826,9 +832,6 @@ p,
     nav {
       width: calc(100% - (@spacing-sm * 2));
       padding: 0 @spacing-sm;
-      &.desktop {
-        display: none;
-      }
       &.mobile {
         display: flex;
         .account img {
