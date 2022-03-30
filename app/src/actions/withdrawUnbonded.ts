@@ -37,7 +37,6 @@ export const withdrawAllUnbonded = async (
 ) => {
   let ix: TransactionInstruction[] = [];
   const allTxs = [];
-  let signers: Keypair[] = [];
   const provider = new Provider(connection, wallet as any, Provider.defaultOptions());
 
   const tokenReceiver = await AssociatedToken.withCreate(
@@ -61,7 +60,7 @@ export const withdrawAllUnbonded = async (
       const unboundTx = new Transaction().add(...[ix[i]]);
       allTxs.push({
         tx: unboundTx,
-        signers
+        signers: []
       });
     }
   }
