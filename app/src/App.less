@@ -417,12 +417,14 @@ p,
   }
   .avail-list {
     padding: 10px 0;
+    width: 100%;
   }
   .avail-info {
     width: 85%;
   }
   .claim-button {
-    width: 15%;
+    max-height: 2*@lg-font-size;
+    align-self: flex-end;
   }
   .announced {
     filter: blur(2px);
@@ -443,9 +445,6 @@ p,
 }
 .gray {
   color: @dark-grey;
-}
-.airdrop-time {
-  margin: 0 @spacing-xs;
 }
 
 // Flight Logs
@@ -788,9 +787,6 @@ p,
             padding: @spacing-sm 0;
           }
         }
-      }
-      .claim-button {
-        width: 100% !important;
       }
     }
   }
