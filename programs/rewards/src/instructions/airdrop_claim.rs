@@ -16,6 +16,7 @@ pub struct AirdropClaim<'info> {
     pub airdrop: AccountLoader<'info, Airdrop>,
 
     /// The token account to claim the rewarded tokens from
+    /// CHECK:
     #[account(mut)]
     pub reward_vault: AccountInfo<'info>,
 
@@ -23,18 +24,22 @@ pub struct AirdropClaim<'info> {
     pub recipient: Signer<'info>,
 
     /// The address to receive rent recovered from the claim account
+    /// CHECK:
     #[account(mut)]
     pub receiver: UncheckedAccount<'info>,
 
     /// The stake pool to deposit stake into
+    /// CHECK:
     #[account(mut)]
     pub stake_pool: AccountInfo<'info>,
 
     /// The stake pool token vault
+    /// CHECK:
     #[account(mut)]
     pub stake_pool_vault: UncheckedAccount<'info>,
 
     /// The account to own the stake being deposited
+    /// CHECK:
     #[account(mut)]
     pub stake_account: AccountInfo<'info>,
 
@@ -58,7 +63,7 @@ impl<'info> AirdropClaim<'info> {
     }
 }
 
-pub fn airdrop_claim_handler(ctx: Context<AirdropClaim>) -> ProgramResult {
+pub fn airdrop_claim_handler(ctx: Context<AirdropClaim>) -> Result<()> {
     let mut airdrop = ctx.accounts.airdrop.load_mut()?;
     let clock = Clock::get()?;
 

@@ -8,6 +8,7 @@ pub struct CloseStakeAccount<'info> {
     pub owner: Signer<'info>,
 
     /// The receiver for the rent recovered
+    /// CHECK:
     #[account(mut)]
     pub closer: UncheckedAccount<'info>,
 
@@ -18,7 +19,7 @@ pub struct CloseStakeAccount<'info> {
     pub stake_account: Account<'info, StakeAccount>,
 }
 
-pub fn close_stake_account_handler(ctx: Context<CloseStakeAccount>) -> ProgramResult {
+pub fn close_stake_account_handler(ctx: Context<CloseStakeAccount>) -> Result<()> {
     let stake_account = &ctx.accounts.stake_account;
 
     assert!(stake_account.bonded_shares == 0);

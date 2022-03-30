@@ -1,5 +1,6 @@
 import * as anchor from "@project-serum/anchor";
 import { Program } from "@project-serum/anchor";
+import NodeWallet from "@project-serum/anchor/dist/cjs/nodewallet";
 import {
   Keypair,
   PublicKey,
@@ -16,15 +17,17 @@ import {
   getTokenHoldingAddress,
   getTokenOwnerRecordAddress
 } from "@solana/spl-governance";
+import { assert } from "chai";
 import { JetRewards } from "../target/types/jet_rewards";
 import { JetStaking } from "../target/types/jet_staking";
 import { JetAuth } from "../target/types/jet_auth";
-import { assert } from "chai";
 
 const GOVERNANCE_ID = new PublicKey("JPGovTiAUgyqirerBbXXmfyt3SkHVEcpSAPjRCCSHVx");
 const RewardsProgram = anchor.workspace.JetRewards as Program<JetRewards>;
 const StakingProgram = anchor.workspace.JetStaking as Program<JetStaking>;
 const AuthProgram = anchor.workspace.JetAuth as Program<JetAuth>;
+
+const getErrorCode = (e: any): number => (e as anchor.AnchorError).error.errorCode.number;
 
 interface StakePoolBumpSeeds {
   stakePool: number;
@@ -268,7 +271,7 @@ describe("airdrop-staking", () => {
 
       assert.ok(false);
     } catch (e) {
-      assert.equal(e.code, 7005);
+      assert.equal(getErrorCode(e), 7005);
     }
   });
 
@@ -703,7 +706,7 @@ describe("airdrop-staking", () => {
       });
       assert.ok(false);
     } catch (e) {
-      assert.equal(e.code, 7100);
+      assert.equal(getErrorCode(e), 7100);
     }
   });
 

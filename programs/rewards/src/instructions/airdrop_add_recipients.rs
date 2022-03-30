@@ -30,7 +30,7 @@ pub struct AirdropAddRecipients<'info> {
 pub fn airdrop_add_recipients_handler(
     ctx: Context<AirdropAddRecipients>,
     params: AirdropAddRecipientsParams,
-) -> ProgramResult {
+) -> Result<()> {
     let mut airdrop = ctx.accounts.airdrop.load_mut()?;
 
     airdrop.add_recipients(
