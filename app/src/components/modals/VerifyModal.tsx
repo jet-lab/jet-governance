@@ -510,7 +510,16 @@ export const VerifyModal = () => {
             >
               Privacy Policy
             </a>
-            , and Cookie Policy. I am aware of and accept the risks of using new technology.
+            , and{" "}
+            <a
+              href="https://www.jetprotocol.io/legal/cookie-policy"
+              target="_blank"
+              className="text-gradient-btn"
+              rel="noopener noreferrer"
+            >
+              Cookie Policy
+            </a>
+            . I am aware of and accept the risks of using new technology.
           </label>
         </p>
       </div>
