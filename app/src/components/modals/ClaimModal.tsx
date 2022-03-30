@@ -11,8 +11,7 @@ import { useWallet } from "@solana/wallet-adapter-react";
 
 enum Steps {
   Confirm = 0,
-  Success = 1,
-  Error = 2
+  Error = 1
 }
 
 export const ClaimModal = ({
@@ -46,9 +45,6 @@ export const ClaimModal = ({
         publicKey,
         realm
       )
-        .then(() => {
-          setCurrent(Steps.Success);
-        })
         .catch(err => {
           if (isSignTransactionError(err)) {
             onClose();
@@ -86,27 +82,6 @@ export const ClaimModal = ({
           You may unstake at anytime, but before the tokens can be withdrawn to your wallet, there
           is a 29.5-day unbonding period. Please <DocsLink>read the docs</DocsLink> for more
           information.
-        </p>
-      </div>
-    )
-  };
-
-  steps[Steps.Success] = {
-    title: "Congratulations and welcome aboard!",
-    okText: "Okay",
-    onOk: () => onClose(),
-    onCancel: () => onClose(),
-    closable: false,
-    cancelButtonProps: { style: { display: "none " } },
-    children: (
-      <div className="flex column">
-        <p>
-          You've claimed and staked <b>{stakeAmount} JET</b>.
-        </p>
-
-        <p>
-          Head on back to the <Link to="/">dashboard page</Link> to see your staked balance and vote
-          on active proposals!
         </p>
       </div>
     )

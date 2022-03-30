@@ -8,9 +8,8 @@ import { isSignTransactionError, toTokens } from "../../utils";
 
 enum Steps {
   Confirm = 0,
-  Success = 1,
-  Error = 2,
-  NothingToWithdraw = 3
+  Error = 1,
+  NothingToWithdraw = 2
 }
 
 export const WithdrawAllModal = ({ onClose }: { onClose: () => void }) => {
@@ -33,9 +32,6 @@ export const WithdrawAllModal = ({ onClose }: { onClose: () => void }) => {
     }
     setLoading(true);
     withdrawAllUnbonded(rpcContext, unbondingAccounts, stakeAccount, stakePool)
-      .then(() => {
-        setCurrent(Steps.Success);
-      })
       .catch(err => {
         if (isSignTransactionError(err)) {
           onClose();
@@ -65,15 +61,6 @@ export const WithdrawAllModal = ({ onClose }: { onClose: () => void }) => {
         <p>Withdrawn governance tokens will not be able to vote on proposals.</p>
       </div>
     )
-  };
-  steps[Steps.Success] = {
-    title: `All set!`,
-    okText: "Okay",
-    onOk: () => onClose(),
-    onCancel: () => onClose(),
-    closable: true,
-    cancelButtonProps: { style: { display: "none " } },
-    children: <p>You've withdrawn {stakeAmount} JET from JetGovern.</p>
   };
   steps[Steps.Error] = {
     title: "Error",
