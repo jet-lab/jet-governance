@@ -264,7 +264,7 @@ const InnerProposalView = ({
                 <div className={`stakeholders`}>
                   <span className="voter title" />
                   <span className="address title">Wallet</span>
-                  <span className="amount title">Stake</span>
+                  <span className="amount title">Vote Weight</span>
                   <span className="vote title">Vote</span>
                 </div>
                 <VoterList voteRecords={voterDisplayData} userVoteRecord={voteRecord} />

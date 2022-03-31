@@ -10,7 +10,7 @@ export function voteRecordCsvDownload(
   mint?: JetMint
 ) {
   // define the heading for each row of the data
-  var csv = "PublicKey,VoteWeight,VoteType\n";
+  var csv = "Public Key,Vote Weight,Vote\n";
 
   // merge the data with CSV
   votes?.forEach(function (vote) {
