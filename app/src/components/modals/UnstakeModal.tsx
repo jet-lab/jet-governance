@@ -10,8 +10,7 @@ import { isSignTransactionError } from "../../utils";
 
 enum Steps {
   Confirm = 0,
-  Success = 1,
-  Error = 2
+  Error = 1
 }
 
 export const UnstakeModal = ({
@@ -80,8 +79,8 @@ export const UnstakeModal = ({
       .then(() => {
         setLoading(false);
         setDisplayUnbondDate();
-        setCurrent(Steps.Success);
         resetInput();
+        onClose();
       })
       .catch(err => {
         if (isSignTransactionError(err)) {
@@ -131,22 +130,6 @@ export const UnstakeModal = ({
             Logs page at any point during the unbonding period.
           </p>
         </div>
-      </div>
-    )
-  };
-  steps[Steps.Success] = {
-    title: `All set!`,
-    okText: "Okay",
-    onOk: () => onClose(),
-    onCancel: () => onClose(),
-    closable: true,
-    cancelButtonProps: { style: { display: "none" } },
-    content: (
-      <div className="flex column">
-        <p>
-          You've unstaked {amount && Intl.NumberFormat("us-US").format(amount)} JET from JetGovern.
-        </p>
-        <p>Your 29.5-day unbonding period will complete on {unbondDate}.</p>
       </div>
     )
   };
