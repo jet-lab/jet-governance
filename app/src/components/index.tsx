@@ -1,7 +1,7 @@
 export { Available } from "./airdrop/Available";
 export { AppErrorBanner } from "./appErrorBanner";
 export { DocsLink } from "./docsLink";
-export { ExplorerLink } from "./explorerLink";
+export { ExplorerLink } from "./ExplorerLink";
 export { UnbondingLog } from "./unbonding/UnbondingLog";
 export { AppLayout } from "./Layout";
 export { Loader } from "./Loader";
