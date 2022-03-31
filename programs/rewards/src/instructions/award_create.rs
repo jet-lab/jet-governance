@@ -30,14 +30,16 @@ pub struct AwardCreateParams {
 #[instruction(params: AwardCreateParams)]
 pub struct AwardCreate<'info> {
     /// The award being created
-    #[account(init,
-              seeds = [
-                  b"award".as_ref(),
-                  params.stake_account.as_ref(),
-                  params.seed.as_bytes(),
-              ],
-              bump,
-              payer = payer_rent
+    #[account(
+        init,
+        payer = payer_rent,
+        seeds = [
+            b"award".as_ref(),
+            params.stake_account.as_ref(),
+            params.seed.as_bytes(),
+        ],
+        bump,
+        space = 8 + Award::space(),
     )]
     pub award: Account<'info, Award>,
 
@@ -55,9 +57,11 @@ pub struct AwardCreate<'info> {
     pub vault: Account<'info, TokenAccount>,
 
     /// The address of the mint for the token being awarded
+    /// CHECK:
     pub token_mint: UncheckedAccount<'info>,
 
     /// The source account for the tokens to be awarded
+    /// CHECK:
     #[account(mut)]
     pub token_source: UncheckedAccount<'info>,
 
@@ -86,7 +90,7 @@ impl<'info> AwardCreate<'info> {
     }
 }
 
-pub fn award_create_handler(ctx: Context<AwardCreate>, params: AwardCreateParams) -> ProgramResult {
+pub fn award_create_handler(ctx: Context<AwardCreate>, params: AwardCreateParams) -> Result<()> {
     let award = &mut ctx.accounts.award;
 
     award.authority = params.authority;

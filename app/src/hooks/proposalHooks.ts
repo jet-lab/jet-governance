@@ -16,7 +16,6 @@ import BN from "bn.js";
 import { useEffect, useMemo, useState } from "react";
 import { ZERO } from "../constants";
 import { ProposalFilter } from "../contexts/proposal";
-import { bnToIntLossy } from "../tools/units";
 import { dateToString, getRemainingTime, toTokens } from "../utils";
 import { useGovernanceAccounts } from "./accountHooks";
 import { useRpcContext } from "./useRpcContext";
@@ -297,10 +296,10 @@ export function getVoteCounts(proposal: ProgramAccount<Proposal>) {
   const abstain = new BN(0); // FIXME: multiple choice votes
 
   const total = yes.add(no).add(abstain);
-  const yesPercent = total.isZero() ? 0 : (bnToIntLossy(yes) / bnToIntLossy(total)) * 100;
+  const yesPercent = total.isZero() ? 0 : (bnToNumber(yes) / bnToNumber(total)) * 100;
   const yesAbstainPercent = total.isZero()
     ? 0
-    : (bnToIntLossy(abstain.add(yes)) / bnToIntLossy(total)) * 100;
+    : (bnToNumber(abstain.add(yes)) / bnToNumber(total)) * 100;
   return { yes, no, abstain, total, yesPercent: yesPercent, yesAbstainPercent };
 }
 

@@ -10,6 +10,7 @@ pub struct CancelUnbond<'info> {
     pub owner: Signer<'info>,
 
     /// The rent receiver
+    /// CHECK:
     pub receiver: AccountInfo<'info>,
 
     /// The account owning the stake to be rebonded
@@ -32,7 +33,7 @@ pub struct CancelUnbond<'info> {
     pub unbonding_account: Account<'info, UnbondingAccount>,
 }
 
-pub fn cancel_unbond_handler(ctx: Context<CancelUnbond>) -> ProgramResult {
+pub fn cancel_unbond_handler(ctx: Context<CancelUnbond>) -> Result<()> {
     let stake_pool = &mut ctx.accounts.stake_pool;
     let stake_account = &mut ctx.accounts.stake_account;
     let unbonding_account = &mut ctx.accounts.unbonding_account;

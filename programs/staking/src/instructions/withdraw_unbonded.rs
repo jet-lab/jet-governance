@@ -15,10 +15,12 @@ pub struct WithdrawUnbonded<'info> {
     pub owner: Signer<'info>,
 
     /// The receiver for the recovered rent
+    /// CHECK:
     #[account(mut)]
     pub closer: UncheckedAccount<'info>,
 
     /// The receiver for the withdrawn tokens
+    /// CHECK:
     #[account(mut)]
     pub token_receiver: UncheckedAccount<'info>,
 
@@ -58,7 +60,7 @@ impl<'info> WithdrawUnbonded<'info> {
     }
 }
 
-pub fn withdraw_unbonded_handler(ctx: Context<WithdrawUnbonded>) -> ProgramResult {
+pub fn withdraw_unbonded_handler(ctx: Context<WithdrawUnbonded>) -> Result<()> {
     let stake_pool = &mut ctx.accounts.stake_pool;
     let stake_account = &mut ctx.accounts.stake_account;
     let unbonding_account = &mut ctx.accounts.unbonding_account;

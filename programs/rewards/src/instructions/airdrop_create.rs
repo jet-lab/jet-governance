@@ -31,6 +31,7 @@ pub struct AirdropCreate<'info> {
     pub airdrop: AccountLoader<'info, Airdrop>,
 
     /// The address that will have authority over the airdrop
+    /// CHECK:
     pub authority: UncheckedAccount<'info>,
 
     /// The account to store the tokens to be distributed
@@ -51,6 +52,7 @@ pub struct AirdropCreate<'info> {
     pub payer: Signer<'info>,
 
     /// The reward token's mint
+    /// CHECK:
     pub token_mint: UncheckedAccount<'info>,
 
     pub token_program: Program<'info, Token>,
@@ -61,7 +63,7 @@ pub struct AirdropCreate<'info> {
 pub fn airdrop_create_handler(
     ctx: Context<AirdropCreate>,
     params: AirdropCreateParams,
-) -> ProgramResult {
+) -> Result<()> {
     let mut airdrop = ctx.accounts.airdrop.load_init()?;
 
     airdrop.address = ctx.accounts.airdrop.key();

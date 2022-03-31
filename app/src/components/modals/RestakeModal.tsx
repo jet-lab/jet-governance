@@ -8,8 +8,7 @@ import { useProposalContext } from "../../contexts/proposal";
 
 enum Steps {
   Confirm = 0,
-  Success = 1,
-  Error = 2
+  Error = 1
 }
 
 export const RestakeModal = ({
@@ -34,7 +33,7 @@ export const RestakeModal = ({
     setLoading(true);
     restake(rpcContext, unbondingAccount, stakeAccount, stakePool, realm)
       .then(() => {
-        setCurrent(Steps.Success);
+        onClose();
       })
       .catch(err => {
         if (isSignTransactionError(err)) {
@@ -70,25 +69,9 @@ export const RestakeModal = ({
       </div>
     )
   };
-  steps[Steps.Success] = {
-    title: `All set!`,
-    okText: "I understand",
-    onOk: () => onClose(),
-    onCancel: () => onClose(),
-    closable: true,
-    cancelButtonProps: { style: { display: "none " } },
-    children: (
-      <div className="flex column">
-        <p>
-          You've restaked {Intl.NumberFormat("us-US").format(stakeAmount)} JET into JetGovern and
-          can begin voting on active proposals immediately.
-        </p>
-      </div>
-    )
-  };
   steps[Steps.Error] = {
     title: "Error",
-    okText: "I understand",
+    okText: "Okay",
     onOk: () => onClose(),
     onCancel: () => onClose(),
     closable: true,

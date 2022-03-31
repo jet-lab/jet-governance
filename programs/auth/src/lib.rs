@@ -14,7 +14,6 @@ mod authority {
 }
 
 #[account]
-#[derive(Default)]
 pub struct UserAuthentication {
     /// The relevant user address
     pub owner: Pubkey,
@@ -38,10 +37,13 @@ pub struct CreateUserAuthentication<'info> {
     payer: Signer<'info>,
 
     /// The authentication account to be created
-    #[account(init,
-              seeds = [user.key().as_ref()],
-              bump,
-              payer = payer)]
+    #[account(
+        init,
+        payer = payer,
+        seeds = [user.key().as_ref()],
+        bump,
+        space = 8 + std::mem::size_of::<UserAuthentication>(),
+    )]
     auth: Account<'info, UserAuthentication>,
 
     system_program: Program<'info, System>,
@@ -58,6 +60,7 @@ pub struct Authenticate<'info> {
     #[cfg(feature = "enforce-authority")]
     authority: Signer<'info>,
 
+    /// CHECK: only allowed if the enforce-authority feature is disabled
     #[cfg(not(feature = "enforce-authority"))]
     authority: UncheckedAccount<'info>,
 }
@@ -68,7 +71,7 @@ pub mod jet_auth {
 
     /// Create a new account that can be used to identify that a
     /// wallet/address is properly authenticated to perform protected actions.
-    pub fn create_user_auth(ctx: Context<CreateUserAuthentication>) -> ProgramResult {
+    pub fn create_user_auth(ctx: Context<CreateUserAuthentication>) -> Result<()> {
         let auth = &mut ctx.accounts.auth;
 
         auth.owner = ctx.accounts.user.key();
@@ -81,7 +84,7 @@ pub mod jet_auth {
     }
 
     /// Authenticate a user address
-    pub fn authenticate(ctx: Context<Authenticate>) -> ProgramResult {
+    pub fn authenticate(ctx: Context<Authenticate>) -> Result<()> {
         let auth = &mut ctx.accounts.auth;
 
         auth.complete = true;

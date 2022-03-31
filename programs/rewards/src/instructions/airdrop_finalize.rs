@@ -18,7 +18,7 @@ pub struct AirdropFinalize<'info> {
     pub authority: Signer<'info>,
 }
 
-pub fn airdrop_finalize_handler(ctx: Context<AirdropFinalize>) -> ProgramResult {
+pub fn airdrop_finalize_handler(ctx: Context<AirdropFinalize>) -> Result<()> {
     let mut airdrop = ctx.accounts.airdrop.load_mut()?;
     let vault_balance = token::accessor::amount(&ctx.accounts.reward_vault.to_account_info())?;
 

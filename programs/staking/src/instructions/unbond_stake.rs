@@ -28,13 +28,16 @@ pub struct UnbondStake<'info> {
     pub stake_pool_vault: Account<'info, TokenAccount>,
 
     /// The account to record this unbonding request
-    #[account(init,
-              seeds = [
-                  stake_account.key().as_ref(),
-                  seed.to_le_bytes().as_ref()
-              ],
-              bump,
-              payer = payer)]
+    #[account(
+        init,
+        payer = payer,
+        seeds = [
+            stake_account.key().as_ref(),
+            seed.to_le_bytes().as_ref()
+        ],
+        bump,
+        space = 8 + std::mem::size_of::<UnbondingAccount>(),
+    )]
     pub unbonding_account: Account<'info, UnbondingAccount>,
 
     pub system_program: Program<'info, System>,
@@ -44,7 +47,7 @@ pub fn unbond_stake_handler(
     ctx: Context<UnbondStake>,
     _seed: u32,
     amount: Option<u64>,
-) -> ProgramResult {
+) -> Result<()> {
     let stake_pool = &mut ctx.accounts.stake_pool;
     let stake_account = &mut ctx.accounts.stake_account;
     let unbonding_account = &mut ctx.accounts.unbonding_account;

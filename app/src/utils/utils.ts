@@ -1,8 +1,11 @@
 import { useCallback, useState } from "react";
-import { MintInfo } from "@solana/spl-token";
 import { PublicKey } from "@solana/web3.js";
 import BN from "bn.js";
 import { bnToNumber } from "@jet-lab/jet-engine";
+import { geoBannedCountries } from "../models/GEOBANNED_COUNTRIES";
+import { SelectProps } from "antd";
+import { Mint } from "@solana/spl-token";
+import { JetMint } from "@jet-lab/jet-engine/lib/common";
 
 export function useLocalStorageState(key: string, defaultState?: string) {
   const [state, setState] = useState(() => {
@@ -41,7 +44,7 @@ export function shortenAddress(address: PublicKey | string, chars = 4): string {
   return `${address.slice(0, chars)}...${address.slice(-chars)}`;
 }
 
-export function fromLamports(account?: number | BN, mint?: MintInfo, rate: number = 1.0): number {
+export function fromLamports(account?: number | BN, mint?: JetMint, rate: number = 1.0): number {
   if (!account || !mint) {
     return 0;
   }
@@ -52,7 +55,7 @@ export function fromLamports(account?: number | BN, mint?: MintInfo, rate: numbe
   return (amount / precision) * rate;
 }
 
-export const toTokens = (amount: BN | number | undefined, mint?: MintInfo) => {
+export const toTokens = (amount: BN | number | undefined, mint?: JetMint) => {
   return fromLamports(amount, mint).toLocaleString(undefined, {
     maximumFractionDigits: 0
   });
@@ -151,3 +154,27 @@ export const dateToString = (date: Date) => {
   const localTime = date.toLocaleTimeString();
   return `${day} ${months[month]} ${year}, ${localTime}`;
 };
+
+// --------- Country Code Info ---------
+interface CountryCodeInfo {
+  country: string;
+  code: string;
+}
+
+const getGeoBannedCountriesArr = (geoBannedCountries: CountryCodeInfo[]) => {
+  return geoBannedCountries.map(country => country.country);
+};
+
+export const geoBannedCountriesArr = getGeoBannedCountriesArr(geoBannedCountries);
+
+const getLastNumber = (str: string) => {
+  const arr = str.split(" ");
+  return Number(arr[arr.length - 1]);
+};
+
+export const filterSort: SelectProps["filterSort"] = (a, b) => {
+  const keyA = getLastNumber(a.key);
+  const keyB = getLastNumber(b.key);
+  return keyA - keyB;
+};
+// --------- End Country Code Info ---------

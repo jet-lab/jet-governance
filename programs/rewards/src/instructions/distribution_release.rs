@@ -12,10 +12,12 @@ pub struct DistributionRelease<'info> {
     pub distribution: Account<'info, Distribution>,
 
     /// The account storing the tokens to be distributed
+    /// CHECK:
     #[account(mut)]
     pub vault: Account<'info, TokenAccount>,
 
     /// The account to transfer the distributed tokens to
+    /// CHECK:
     #[account(mut)]
     pub target_account: AccountInfo<'info>,
 
@@ -35,7 +37,7 @@ impl<'info> DistributionRelease<'info> {
     }
 }
 
-pub fn distribution_release_handler(ctx: Context<DistributionRelease>) -> ProgramResult {
+pub fn distribution_release_handler(ctx: Context<DistributionRelease>) -> Result<()> {
     let distribution = &mut ctx.accounts.distribution;
     let clock = Clock::get()?;
 

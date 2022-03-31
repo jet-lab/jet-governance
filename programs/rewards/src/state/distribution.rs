@@ -29,6 +29,10 @@ pub struct Distribution {
 }
 
 impl Distribution {
+    pub fn space() -> usize {
+        32 * 3 + 30 + 1 + 1 + 32 + TokenDistribution::space()
+    }
+
     pub fn signer_seeds(&self) -> [&[u8]; 3] {
         [
             b"distribution".as_ref(),
@@ -82,6 +86,10 @@ pub struct TokenDistribution {
 }
 
 impl TokenDistribution {
+    pub fn space() -> usize {
+        8 * 4 + 1
+    }
+
     pub fn distribute(&mut self, timestamp: u64) -> u64 {
         let distributed = self.distributed;
         self.distributed = self.distributed_amount(timestamp);

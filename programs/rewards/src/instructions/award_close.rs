@@ -19,6 +19,7 @@ pub struct AwardClose<'info> {
     pub vault: Account<'info, TokenAccount>,
 
     /// The account to receive the rent
+    /// CHECK:
     #[account(mut)]
     pub receiver: UncheckedAccount<'info>,
 
@@ -41,7 +42,7 @@ impl<'info> AwardClose<'info> {
     }
 }
 
-pub fn award_close_handler(ctx: Context<AwardClose>) -> ProgramResult {
+pub fn award_close_handler(ctx: Context<AwardClose>) -> Result<()> {
     let award = &ctx.accounts.award;
     let clock = Clock::get()?;
 

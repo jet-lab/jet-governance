@@ -5,12 +5,12 @@ import {
   StakeAccount,
   StakeBalance,
   StakeClient,
+  StakeIdl,
   StakePool,
   UnbondingAccount
 } from "@jet-lab/jet-engine";
 import { BN, Program } from "@project-serum/anchor";
 import React, { useState, useContext, useMemo } from "react";
-import { MintInfo } from "@solana/spl-token";
 import { JET_REALM, JET_GOVERNANCE } from "../utils";
 import {
   useAirdropsByWallet,
@@ -20,7 +20,7 @@ import {
   useStakingCompatibleWithRealm as useStakePoolCompatibleWithRealm
 } from "../hooks/proposalHooks";
 import { useWallet } from "@solana/wallet-adapter-react";
-import { AssociatedToken } from "@jet-lab/jet-engine/lib/common";
+import { AssociatedToken, JetMint } from "@jet-lab/jet-engine/lib/common";
 import { useConnection } from "./connection";
 import { useProvider } from "../hooks/apiHooks";
 import {
@@ -40,6 +40,8 @@ import { UnbondingAmount } from "@jet-lab/jet-engine/lib/staking/unbondingAccoun
 import { useQuery, useQueryClient } from "react-query";
 import { useRpcContext } from "../hooks";
 import { useConnectionConfig } from ".";
+import { RewardsIdl } from "@jet-lab/jet-engine/lib/rewards";
+import { Mint } from "@solana/spl-token";
 
 export type ProposalFilter = "active" | "inactive" | "passed" | "rejected" | "all";
 
@@ -65,8 +67,8 @@ interface ProposalContextState {
   availableAirdrop?: Airdrop[];
 
   jetAccount?: AssociatedToken;
-  jetMint?: MintInfo;
-  voteMint?: MintInfo;
+  jetMint?: JetMint;
+  voteMint?: JetMint;
 
   realm?: ProgramAccount<Realm>;
   governance?: ProgramAccount<Governance>;
@@ -77,8 +79,8 @@ interface ProposalContextState {
   filteredPastProposals: ProgramAccount<Proposal>[];
 
   programs?: {
-    stake: Program;
-    rewards: Program;
+    stake: Program<StakeIdl>;
+    rewards: Program<RewardsIdl>;
   };
 }
 
@@ -121,8 +123,8 @@ export function ProposalProvider({ children = undefined as any }) {
   const queryClient = useQueryClient();
 
   const { data: idl } = useQuery(["idl"], async () => {
-    const stake = await Program.fetchIdl(StakeClient.PROGRAM_ID, provider);
-    const rewards = await Program.fetchIdl(RewardsClient.PROGRAM_ID, provider);
+    const stake = await Program.fetchIdl<StakeIdl>(StakeClient.PROGRAM_ID, provider);
+    const rewards = await Program.fetchIdl<RewardsIdl>(RewardsClient.PROGRAM_ID, provider);
     if (!stake || !rewards) {
       throw new Error("idl does not exist");
     }
@@ -152,18 +154,12 @@ export function ProposalProvider({ children = undefined as any }) {
       );
 
       // ----- Airdrops -----
-      //TODO: Fetching airdrops does not return a value.
-      // const airdrops =
-      //   stakePool &&
-      //   (await Airdrop.loadAll(programs.rewards, stakePool.stakePool.addresses.stakePool));
-      const airdrops: Airdrop[] = [];
       // ----- Governance -----
       const realm = await getGovernanceAccount(connection, JET_REALM, Realm);
       const governance = await getGovernanceAccount(connection, JET_GOVERNANCE, Governance);
 
       return {
         distributions,
-        airdrops,
         realm,
         governance
       };
@@ -190,6 +186,10 @@ export function ProposalProvider({ children = undefined as any }) {
       );
       // ----- Staking -----
       const stakePool = await StakePool.load(programs.stake, StakePool.CANONICAL_SEED);
+      // ----- Airdrops -----
+      const airdrops =
+        stakePool && (await Airdrop.loadAll(programs.rewards, stakePool.addresses.stakePool));
+      console.log(airdrops);
 
       // ----- Mints -----
       const jetMint = await AssociatedToken.loadMint(connection, stakePool.stakePool.tokenMint);
@@ -198,7 +198,7 @@ export function ProposalProvider({ children = undefined as any }) {
         stakePool.stakePool.stakeVoteMint
       );
 
-      return { proposalsByGovernance, stakePool, jetMint, voteMint };
+      return { proposalsByGovernance, stakePool, airdrops, jetMint, voteMint };
     },
     { enabled: !!programs }
   );
@@ -272,7 +272,7 @@ export function ProposalProvider({ children = undefined as any }) {
   );
 
   // ----- Airdrops -----
-  const airdropsByWallet = useAirdropsByWallet(realm?.airdrops, walletAddress);
+  const airdropsByWallet = useAirdropsByWallet(stakePool?.airdrops, walletAddress);
   const claimsCount = useClaimsCount(airdropsByWallet, walletAddress);
   const availableAirdrop = useAvailableAirdrop(airdropsByWallet, walletAddress);
 

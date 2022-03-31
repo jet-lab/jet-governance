@@ -14,6 +14,7 @@ pub struct BurnVotes<'info> {
     pub stake_pool: Account<'info, StakePool>,
 
     /// The stake pool's voter mint
+    /// CHECK:
     #[account(mut)]
     pub stake_vote_mint: AccountInfo<'info>,
 
@@ -24,6 +25,7 @@ pub struct BurnVotes<'info> {
     pub stake_account: Account<'info, StakeAccount>,
 
     /// The token account to burn the vote tokens from
+    /// CHECK:
     #[account(mut)]
     pub voter_token_account: Box<Account<'info, TokenAccount>>,
 
@@ -46,7 +48,7 @@ impl<'info> BurnVotes<'info> {
     }
 }
 
-pub fn burn_votes_handler(ctx: Context<BurnVotes>, amount: Option<u64>) -> ProgramResult {
+pub fn burn_votes_handler(ctx: Context<BurnVotes>, amount: Option<u64>) -> Result<()> {
     let stake_pool = &ctx.accounts.stake_pool;
     let stake_account = &mut ctx.accounts.stake_account;
 

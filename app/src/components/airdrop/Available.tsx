@@ -36,36 +36,38 @@ export const Available = ({ airdropInfo }: { airdropInfo: availAirdropsRender })
   const expired = expireAt * 1000 < currentTime;
 
   return (
-    <div
-      className={`flex justify-between align-center avail-list  ${finalized ? "" : "announced"}`}
-      key={key}
-    >
-      <span className="avail-info">
-        <strong>
-          {shortDesc} | {fromLamports(amount, jetMint)} JET
-        </strong>
-        <br />
-        {finalized ? longDesc : "You'll just have to wait to find out!"}
-        <span className="gray airdrop-time">
-          {finalized ? getRemainingTime(currentTime, expireAt * 1000) : "?"}
-        </span>
-      </span>
+    <>
+      {!expired && (
+        <div className={`flex avail-list ${finalized ? "" : "announced"}`} key={key}>
+          <span className="avail-info">
+            <strong>
+              {shortDesc} | {fromLamports(amount, jetMint)} JET
+            </strong>
+            <br />
+            {finalized ? longDesc : "You'll just have to wait to find out!"}
+            <br />
+            <span className="gray">
+              {finalized ? getRemainingTime(currentTime, expireAt * 1000) : "?"}
+            </span>
+          </span>
 
-      <Button
-        type="primary"
-        className="claim-button"
-        onClick={() => setShowModal(true)}
-        disabled={claimed || expired || !finalized}
-      >
-        {claimed ? <CheckOutlined /> : "claim"}
-      </Button>
-      {showModal && (
-        <ClaimModal
-          stakeAmount={fromLamports(amount, jetMint)}
-          airdrop={airdrop}
-          onClose={() => setShowModal(false)}
-        />
+          <Button
+            type="primary"
+            className="claim-button"
+            onClick={() => setShowModal(true)}
+            disabled={claimed || !finalized}
+          >
+            {claimed ? <CheckOutlined /> : "claim"}
+          </Button>
+          {showModal && (
+            <ClaimModal
+              stakeAmount={fromLamports(amount, jetMint)}
+              airdrop={airdrop}
+              onClose={() => setShowModal(false)}
+            />
+          )}
+        </div>
       )}
-    </div>
+    </>
   );
 };

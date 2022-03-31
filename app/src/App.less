@@ -8,7 +8,6 @@
   --dark-white: @dark-white;
   @disabled-opacity: 0.6;
   --gradient: @gradient;
-  @md-font-size: 14px;
   --mobile-round-radius: 15px;
   @keyframes rotate {
     100% {
@@ -27,18 +26,6 @@ button.inactive {
 }
 
 .ant-modal-content {
-  a {
-    text-decoration: underline;
-    margin: 0;
-    &:hover {
-      // add text gradient on hover
-      opacity: 1;
-      background-image: @gradient;
-      background-clip: text;
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-  }
   p {
     margin: 10px auto;
   }
@@ -57,6 +44,15 @@ code {
 .ant-progress-bg,
 .ant-progress-success-bg {
   border-radius: 0 !important;
+}
+.ant-btn .ant-btn-loading-icon {
+  padding-right: @spacing-sm;
+  .anticon svg {
+    animation: loadingCircle 1s infinite linear;
+    path {
+      fill: @white !important;
+    }
+  }
 }
 /* Styles between these lines should be included at the next version of the jet-antd library */
 
@@ -135,6 +131,9 @@ nav {
 .connect-wallet-modal p {
   margin: unset;
 }
+.padding-right {
+  padding-right: @spacing-sm;
+}
 .ant-modal-content div.emphasis {
   -webkit-box-sizing: border-box;
   border-radius: @border-radius;
@@ -193,7 +192,7 @@ nav {
   background-image: none;
   border-radius: 2px;
   transition: all 0.3s;
-  display: flex;
+  display: flex !important;
   align-items: center;
   box-shadow: @neu-shadow-inset;
   &::before {
@@ -206,6 +205,9 @@ nav {
     background: transparent;
     &.ant-input {
       padding: 0 10px 0 10px;
+    }
+    &:focus {
+      box-shadow: none;
     }
   }
   .ant-input-prefix {
@@ -220,6 +222,10 @@ nav {
         line-height: 30px;
         transition: all 0.3s;
       }
+    }
+    .ant-select-arrow {
+      transform: translate(-130%, -50%);
+      z-index: -1;
     }
   }
   .ant-select-selection-search {
@@ -266,6 +272,7 @@ nav {
 }
 .ant-select-dropdown .rc-virtual-list {
   z-index: 1001;
+  width: 60%;
 }
 /* Proposal card component */
 span,
@@ -410,12 +417,14 @@ p,
   }
   .avail-list {
     padding: 10px 0;
+    width: 100%;
   }
   .avail-info {
     width: 85%;
   }
   .claim-button {
-    width: 15%;
+    max-height: 2 * @lg-font-size;
+    align-self: flex-end;
   }
   .announced {
     filter: blur(2px);
@@ -436,9 +445,6 @@ p,
 }
 .gray {
   color: @dark-grey;
-}
-.airdrop-time {
-  margin: 0 @spacing-xs;
 }
 
 // Flight Logs
@@ -504,30 +510,6 @@ p,
       span {
         font-size: @base-font-size;
         color: @jet-green;
-      }
-    }
-  }
-}
-
-.mobile-only {
-  display: none !important;
-}
-
-/* Medium devices (tablets, from 840px to 1110px) */
-@media only screen and (max-width: 1110px) {
-  .column-grid {
-    grid-template-columns: repeat(6, 110px);
-    justify-content: center;
-    .centered {
-      grid-column: 2 / 6 !important;
-    }
-  }
-  #show-proposals {
-    grid-column: 3 / span 4 !important;
-    #proposal-cards {
-      grid-template-columns: 250px 250px !important;
-      a {
-        margin: 0;
       }
     }
   }
@@ -650,6 +632,10 @@ p,
   }
 }
 
+#rc_select_0_list + .rc-virtual-list {
+  width: 100%;
+}
+
 /* Withdraw and restake buttons */
 .withdraw-btn {
   background: @light-green-1 !important;
@@ -696,10 +682,55 @@ p,
   }
 }
 
+.mobile-only {
+  display: none !important;
+}
+.mobile-message {
+  display: none !important;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: calc(100vh - @nav-height);
+  background: @white;
+
+  i {
+    color: @warning;
+    font-size: @header-font-size;
+  }
+  p {
+    width: 95%;
+    max-width: 600px;
+  }
+}
+
+/* Medium devices (tablets, from 840px to 1110px) */
+@media only screen and (max-width: 1110px) {
+  .column-grid {
+    grid-template-columns: repeat(6, 110px);
+    justify-content: center;
+    .centered {
+      grid-column: 2 / 6 !important;
+    }
+  }
+  #show-proposals {
+    grid-column: 3 / span 4 !important;
+    #proposal-cards {
+      grid-template-columns: 250px 250px !important;
+      a {
+        margin: 0;
+      }
+    }
+  }
+}
+
 /* Extra small devices (840px and down) */
 @media only screen and (max-width: 840px) {
   .mobile-only {
     display: inline !important;
+  }
+  .mobile-message {
+    display: flex !important;
   }
   p,
   ul,
@@ -719,7 +750,14 @@ p,
     font-size: 20px !important;
   }
   h2 {
-    font-size: @sm-font-size;
+    font-size: 16px !important;
+    letter-spacing: 2px;
+  }
+  .desktop {
+    display: none;
+  }
+  .proposal-card.ant-card .header {
+    font-size: @base-font-size !important;
   }
   #csv {
     display: none !important;
@@ -775,9 +813,6 @@ p,
           }
         }
       }
-      .claim-button {
-        width: 100% !important;
-      }
     }
   }
   #flight-logs-view {
@@ -818,9 +853,6 @@ p,
     nav {
       width: calc(100% - (@spacing-sm * 2));
       padding: 0 @spacing-sm;
-      &.desktop {
-        display: none;
-      }
       &.mobile {
         display: flex;
         .account img {

@@ -1,4 +1,11 @@
-import { AssociatedToken, StakeAccount, StakePool, UnbondingAccount } from "@jet-lab/jet-engine";
+import {
+  AssociatedToken,
+  bnToNumber,
+  StakeAccount,
+  StakeIdl,
+  StakePool,
+  UnbondingAccount
+} from "@jet-lab/jet-engine";
 import { BN, Program, Provider } from "@project-serum/anchor";
 import {
   Governance,
@@ -20,7 +27,6 @@ import {
 
 export const rescindAndUnstake = async (
   { programId, programVersion, wallet, walletPubkey, connection }: RpcContext,
-  stakeProgram: Program,
   stakePool: StakePool,
   stakeAccount: StakeAccount,
   governance: ProgramAccount<Governance>,
@@ -109,11 +115,7 @@ export const rescindAndUnstake = async (
     stakePool,
     stakeAccount,
     wallet.publicKey!,
-    unbondingSeed,
-    // Hack to get unbond stake working
-    // FIXME: When unbond max unminted is merged, do not pass in any amount
-    // https://github.com/jet-lab/jet-governance/pull/128
-    amount.sub(new BN(100))
+    unbondingSeed
   );
 
   const relinquishAndWithdrawTx = new Transaction().add(...relinquishAndWithdrawIx);

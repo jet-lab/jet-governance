@@ -5,7 +5,7 @@ import { ProgramAccount, Realm, RpcContext } from "@solana/spl-governance";
 import { sendTransactionWithNotifications } from "../tools/transactions";
 import { AssociatedToken, StakeAccount, StakePool } from "@jet-lab/jet-engine";
 import { fromLamports } from "../utils";
-import { MintInfo } from "@solana/spl-token";
+import { JetMint } from "@jet-lab/jet-engine/lib/common";
 
 export const addStake = async (
   { connection, wallet, programId, programVersion, walletPubkey }: RpcContext,
@@ -13,7 +13,7 @@ export const addStake = async (
   realm: ProgramAccount<Realm>,
   owner: PublicKey,
   amount: BN,
-  jetMint: MintInfo | undefined
+  jetMint: JetMint | undefined
 ) => {
   let instructions: TransactionInstruction[] = [];
   let signers: Keypair[] = [];

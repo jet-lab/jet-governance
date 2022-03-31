@@ -20,9 +20,8 @@ import { VoteOnOtherProposal } from "../proposal/VoteOnOtherProposal";
 
 enum Steps {
   Confirm = 0,
-  VoteSuccess = 1,
-  NoVoteError = 2,
-  UnknownError = 3
+  NoVoteError = 1,
+  UnknownError = 2
 }
 
 export const VoteModal = ({
@@ -94,7 +93,7 @@ export const VoteModal = ({
         voteRecord ? voteRecord!.pubkey : undefined
       )
         .then(() => {
-          setCurrent(Steps.VoteSuccess);
+          onClose();
         })
         .catch(err => {
           if (isSignTransactionError(err)) {
@@ -135,36 +134,6 @@ export const VoteModal = ({
     ),
     closable: true,
     cancelButtonProps: undefined
-  };
-  steps[Steps.VoteSuccess] = {
-    title: `All set`,
-    okText: "Okay",
-    onOk: () => onClose(),
-    onCancel: () => onClose(),
-    content: (
-      <div className="flex column">
-        <p>
-          You've successfully voted <strong>{voteText}</strong> JUMP-
-          {getPubkeyIndex(proposal.pubkey.toBase58())}: {proposal.account.name}.
-        </p>
-        {otherActiveProposals && otherActiveProposals.length > 0 && (
-          <>
-            <h2 className="text-gradient" style={{ marginLeft: 0 }}>
-              Vote on other proposals:
-            </h2>
-            {otherActiveProposals.map(otherProposal => (
-              <VoteOnOtherProposal
-                proposal={otherProposal}
-                governance={governance}
-                onClose={onClose}
-              />
-            ))}
-          </>
-        )}
-      </div>
-    ),
-    closable: true,
-    cancelButtonProps: { style: { display: "none " } }
   };
   steps[Steps.NoVoteError] = {
     title: "Set a vote!",

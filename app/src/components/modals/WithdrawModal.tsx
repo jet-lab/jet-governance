@@ -8,8 +8,7 @@ import { useProposalContext } from "../../contexts/proposal";
 
 enum Steps {
   Confirm = 0,
-  Success = 1,
-  Error = 2
+  Error = 1
 }
 
 export const WithdrawModal = ({
@@ -34,7 +33,7 @@ export const WithdrawModal = ({
     setLoading(true);
     withdrawUnbonded(rpcContext, unbondingAccount, stakeAccount, stakePool)
       .then(() => {
-        setCurrent(Steps.Success);
+        onClose();
       })
       .catch(err => {
         if (isSignTransactionError(err)) {
@@ -65,20 +64,9 @@ export const WithdrawModal = ({
       </div>
     )
   };
-  steps[Steps.Success] = {
-    title: `All set!`,
-    okText: "I understand",
-    onOk: () => onClose(),
-    onCancel: () => onClose(),
-    closable: true,
-    cancelButtonProps: { style: { display: "none " } },
-    children: (
-      <p>You've withdrawn {Intl.NumberFormat("us-US").format(stakeAmount)} JET from JetGovern.</p>
-    )
-  };
   steps[Steps.Error] = {
     title: "Error",
-    okText: "I understand",
+    okText: "Okay",
     onOk: () => onClose(),
     onCancel: () => onClose(),
     closable: true,
