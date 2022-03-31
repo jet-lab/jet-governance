@@ -1,11 +1,12 @@
 import { Provider } from "@project-serum/anchor";
 import { AssociatedToken, StakeAccount, StakePool, UnbondingAccount } from "@jet-lab/jet-engine";
 import { RpcContext } from "@solana/spl-governance";
-import { Keypair, Transaction, TransactionInstruction } from "@solana/web3.js";
+import { Transaction, TransactionInstruction } from "@solana/web3.js";
 import {
   sendAllTransactionsWithNotifications,
   sendTransactionWithNotifications
 } from "../tools/transactions";
+import { SendTxRequest } from "@project-serum/anchor/dist/cjs/provider";
 
 export const withdrawUnbonded = async (
   { connection, wallet, walletPubkey }: RpcContext,
@@ -36,7 +37,7 @@ export const withdrawAllUnbonded = async (
   stakePool: StakePool
 ) => {
   let ix: TransactionInstruction[] = [];
-  const allTxs = [];
+  const allTxs: SendTxRequest[] = [];
   const provider = new Provider(connection, wallet as any, Provider.defaultOptions());
 
   const tokenReceiver = await AssociatedToken.withCreate(
@@ -45,10 +46,15 @@ export const withdrawAllUnbonded = async (
     stakeAccount.stakeAccount.owner,
     stakePool.stakePool.tokenMint
   );
+  allTxs.push({
+    tx: new Transaction().add(...ix),
+    signers: []
+  });
 
   for (let i = 0; i < unbondingAccounts.length; i++) {
     const unbondedState = UnbondingAccount.isUnbonded(unbondingAccounts[i]);
     if (unbondedState) {
+      ix = [];
       await UnbondingAccount.withWithdrawUnbonded(
         ix,
         unbondingAccounts[i],
@@ -57,7 +63,7 @@ export const withdrawAllUnbonded = async (
         tokenReceiver,
         provider.wallet.publicKey
       );
-      const unboundTx = new Transaction().add(...[ix[i]]);
+      const unboundTx = new Transaction().add(...ix);
       allTxs.push({
         tx: unboundTx,
         signers: []
