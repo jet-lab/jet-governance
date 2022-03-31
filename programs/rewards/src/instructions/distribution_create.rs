@@ -3,7 +3,7 @@ use std::io::Write;
 use anchor_lang::prelude::*;
 use anchor_spl::token::{self, Token, TokenAccount, Transfer};
 
-use crate::state::*;
+use crate::{events, state::*};
 
 #[derive(AnchorDeserialize, AnchorSerialize)]
 pub struct DistributionCreateParams {
@@ -110,7 +110,17 @@ pub fn distribution_create_handler(
     distribution.end_at = params.end_at;
     distribution.kind = DistributionKind::Linear;
 
+    let distribution = &ctx.accounts.distribution;
+
     token::transfer(ctx.accounts.transfer_context(), params.amount)?;
+
+    emit!(events::DistributionCreated {
+        distribution: distribution.key(),
+        authority: distribution.authority,
+        token_mint: ctx.accounts.token_mint.key(),
+        params,
+        distribution_kind: distribution.kind,
+    });
 
     Ok(())
 }

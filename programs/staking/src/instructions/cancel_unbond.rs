@@ -1,6 +1,7 @@
 use anchor_lang::prelude::*;
 use anchor_spl::token::TokenAccount;
 
+use crate::events::{Note, UnbondCancelled};
 use crate::state::*;
 
 #[derive(Accounts)]
@@ -38,7 +39,19 @@ pub fn cancel_unbond_handler(ctx: Context<CancelUnbond>) -> Result<()> {
     let unbonding_account = &mut ctx.accounts.unbonding_account;
 
     stake_pool.update_vault(ctx.accounts.stake_pool_vault.amount);
-    stake_pool.rebond(stake_account, unbonding_account);
+    let cancelled_amount = stake_pool.rebond(stake_account, unbonding_account);
+
+    emit!(UnbondCancelled {
+        stake_pool: stake_pool.key(),
+        stake_account: stake_account.key(),
+        unbonding_account: unbonding_account.key(),
+        owner: ctx.accounts.owner.key(),
+
+        cancelled_amount,
+
+        pool_note: stake_pool.note(),
+        account_note: stake_account.note(),
+    });
 
     Ok(())
 }
