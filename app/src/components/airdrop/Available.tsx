@@ -36,17 +36,15 @@ export const Available = ({ airdropInfo }: { airdropInfo: availAirdropsRender })
   const expired = expireAt * 1000 < currentTime;
 
   return (
-    <div
-      className={`flex justify-between align-center avail-list  ${finalized ? "" : "announced"}`}
-      key={key}
-    >
+    <div className={`flex avail-list ${finalized ? "" : "announced"}`} key={key}>
       <span className="avail-info">
         <strong>
           {shortDesc} | {fromLamports(amount, jetMint)} JET
         </strong>
         <br />
         {finalized ? longDesc : "You'll just have to wait to find out!"}
-        <span className="gray airdrop-time">
+        <br />
+        <span className="gray">
           {finalized ? getRemainingTime(currentTime, expireAt * 1000) : "?"}
         </span>
       </span>
