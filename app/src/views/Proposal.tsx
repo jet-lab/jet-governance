@@ -22,14 +22,13 @@ import {
   VoteOption,
   VoterDisplayData
 } from "../hooks";
-import { bnToIntLossy } from "../tools/units";
 import { LABELS } from "../constants";
 import ReactMarkdown from "react-markdown";
 import { voteRecordCsvDownload } from "../actions/voteRecordCsvDownload";
 import { ArrowLeftOutlined, DownloadOutlined } from "@ant-design/icons";
 import { getPubkeyIndex } from "../models/PUBKEYS_INDEX";
 import { useProposalContext } from "../contexts/proposal";
-import { StakeBalance } from "@jet-lab/jet-engine";
+import { bnToNumber, StakeBalance } from "@jet-lab/jet-engine";
 import { Governance, ProgramAccount, Proposal, ProposalState, Realm } from "@solana/spl-governance";
 import { ReactComponent as ThumbsUp } from "../images/thumbs_up.svg";
 import { ReactComponent as ThumbsDown } from "../images/thumbs_down.svg";
@@ -244,13 +243,13 @@ const InnerProposalView = ({
               <div className="results">
                 <ResultProgressBar
                   type="Approve"
-                  amount={bnToIntLossy(voteCounts?.yes)}
-                  total={bnToIntLossy(voteCounts?.total)}
+                  amount={bnToNumber(voteCounts?.yes)}
+                  total={bnToNumber(voteCounts?.total)}
                 />
                 <ResultProgressBar
                   type="Reject"
-                  amount={bnToIntLossy(voteCounts?.no)}
-                  total={bnToIntLossy(voteCounts?.total)}
+                  amount={bnToNumber(voteCounts?.no)}
+                  total={bnToNumber(voteCounts?.total)}
                 />
               </div>
 

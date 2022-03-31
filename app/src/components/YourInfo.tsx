@@ -223,7 +223,7 @@ export const YourInfo = () => {
                 onClick={preFillJetWithBalance}
               >
                 <Text>Wallet Balance</Text>
-                <Text>{walletBalance}</Text>
+                <Text className="text-btn">{walletBalance}</Text>
               </div>
             )}
             <div
@@ -231,7 +231,7 @@ export const YourInfo = () => {
               onClick={preFillJetWithStaked}
             >
               <Text>Staked JET</Text>
-              <Text>{toTokens(stakedJet, jetMint)}</Text>
+              <Text className="text-btn">{toTokens(stakedJet, jetMint)}</Text>
             </div>
             {connected && (
               <>

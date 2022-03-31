@@ -678,7 +678,7 @@ describe("airdrop-staking", () => {
 
     const updatedVault = await voteToken.getAccountInfo(govVault);
 
-    assert.equal(updatedVault.amount.toNumber(), 10_000_000_000);
+    assert.equal(updatedVault.amount.toNumber(), 45_652_173_913);
   });
 
   it("user cannot mint extra votes", async () => {
