@@ -1,7 +1,6 @@
 import { Divider } from "antd";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { useProposalContext } from "../contexts/proposal";
-import { useState } from "react";
 import { Available } from "../components/airdrop/Available";
 import { bnToNumber } from "@jet-lab/jet-engine";
 import { DocsLink } from "../components/docsLink";
