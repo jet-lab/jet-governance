@@ -72,7 +72,9 @@ export const abbreviateNumber = (number: number, precision: number) => {
     scaled = number / scale;
   }
 
-  return scaled.toFixed(precision) + suffix;
+  return number < 100000
+    ? new Intl.NumberFormat().format(Math.floor(number))
+    : scaled.toFixed(precision) + suffix;
 };
 
 export const formatUSD = new Intl.NumberFormat("en-US", {
