@@ -1,11 +1,11 @@
-import { useState, useEffect } from "react";
-import { Button } from "antd";
-import { CheckOutlined } from "@ant-design/icons";
-import { ClaimModal } from "../modals/ClaimModal";
-import { fromLamports, getRemainingTime } from "../../utils";
 import { Airdrop } from "@jet-lab/jet-engine";
 import { PublicKey } from "@solana/web3.js";
-import { useProposalContext } from "../../contexts/proposal";
+import { Button } from "antd";
+import { useState, useEffect } from "react";
+import { CheckOutlined } from "@ant-design/icons";
+import { ClaimModal } from "../modals";
+import { useProposalContext } from "../../contexts";
+import { fromLamports, getRemainingTime } from "../../utils";
 
 interface availAirdropsRender {
   airdrop: Airdrop;

@@ -1,5 +1,5 @@
 import { createContext, useContext, useState } from "react";
-import { VerifyModal } from "../components/modals/VerifyModal";
+import { VerifyModal } from "../components/modals";
 
 // Connecting wallet context
 interface ConnectWallet {

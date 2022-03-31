@@ -1,13 +1,12 @@
+import { Airdrop } from "@jet-lab/jet-engine";
+import { useWallet } from "@solana/wallet-adapter-react";
 import { Modal, ModalProps } from "antd";
 import { PropsWithChildren, useState } from "react";
-import { Link } from "react-router-dom";
-import { Airdrop } from "@jet-lab/jet-engine";
-import { useRpcContext } from "../../hooks/useRpcContext";
-import { useProposalContext } from "../../contexts/proposal";
-import { claimAndStake } from "../../actions/claimAndStake";
 import { DocsLink } from "../docsLink";
+import { claimAndStake } from "../../actions/claimAndStake";
+import { useRpcContext } from "../../hooks";
+import { useProposalContext } from "../../contexts";
 import { isSignTransactionError } from "../../utils";
-import { useWallet } from "@solana/wallet-adapter-react";
 
 enum Steps {
   Confirm = 0,

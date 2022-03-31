@@ -1,14 +1,12 @@
-import { Provider } from "@project-serum/anchor";
-import { Keypair, PublicKey, TransactionInstruction } from "@solana/web3.js";
-import BN from "bn.js";
+import { AssociatedToken, JetMint, StakeAccount, StakePool } from "@jet-lab/jet-engine";
+import { BN, Provider } from "@project-serum/anchor";
 import { ProgramAccount, Realm, RpcContext } from "@solana/spl-governance";
+import { Keypair, PublicKey, TransactionInstruction } from "@solana/web3.js";
 import { sendTransactionWithNotifications } from "../tools/transactions";
-import { AssociatedToken, StakeAccount, StakePool } from "@jet-lab/jet-engine";
 import { fromLamports } from "../utils";
-import { JetMint } from "@jet-lab/jet-engine/lib/common";
 
 export const addStake = async (
-  { connection, wallet, programId, programVersion, walletPubkey }: RpcContext,
+  { connection, wallet }: RpcContext,
   stakePool: StakePool,
   realm: ProgramAccount<Realm>,
   owner: PublicKey,

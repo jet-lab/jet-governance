@@ -1,7 +1,7 @@
+import { bnToBigInt } from "@jet-lab/jet-engine";
 import { createApproveInstruction, createRevokeInstruction } from "@solana/spl-token";
 import { Keypair, PublicKey, TransactionInstruction } from "@solana/web3.js";
 import BN from "bn.js";
-import { bnToBigInt } from "@jet-lab/jet-engine";
 
 export function withApprove(
   instructions: TransactionInstruction[],

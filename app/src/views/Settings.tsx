@@ -1,12 +1,10 @@
 import { useWallet } from "@solana/wallet-adapter-react";
-import { useDarkTheme } from "../contexts/darkTheme";
-import { useBlockExplorer } from "../contexts/blockExplorer";
 import { Button, Select, Switch, Divider } from "antd";
+import { useBlockExplorer, useConnectWallet, useDarkTheme } from "../contexts";
 import { ReactComponent as WalletIcon } from "../images/wallet_icon.svg";
 import { shortenAddress } from "../utils";
-import { useConnectWallet } from "../contexts/connectWallet";
 
-export function Settings(): JSX.Element {
+export function SettingsView(): JSX.Element {
   const { setConnecting } = useConnectWallet();
   const { darkTheme, toggleDarkTheme } = useDarkTheme();
   const { blockExplorers, preferredExplorer, changePreferredExplorer } = useBlockExplorer();

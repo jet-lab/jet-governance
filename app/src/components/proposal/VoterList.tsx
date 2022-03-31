@@ -1,9 +1,9 @@
-import { useState, useMemo } from "react";
-import { List, Button, Skeleton } from "antd";
-import { Stakeholders } from "./Stakeholders";
-import { ProgramAccount, VoteRecord } from "@solana/spl-governance";
-import { getVoterDisplayData, VoterDisplayData } from "../../hooks";
 import { bnToNumber } from "@jet-lab/jet-engine";
+import { ProgramAccount, VoteRecord } from "@solana/spl-governance";
+import { List, Button, Skeleton } from "antd";
+import { useState, useMemo } from "react";
+import { Stakeholders } from "./Stakeholders";
+import { getVoterDisplayData, VoterDisplayData } from "../../hooks";
 
 export const VoterList = (props: {
   voteRecords: VoterDisplayData[] | undefined;

@@ -1,9 +1,8 @@
-import { Divider } from "antd";
-import { useWallet } from "@solana/wallet-adapter-react";
-import { useProposalContext } from "../contexts/proposal";
-import { Available } from "../components/airdrop/Available";
 import { bnToNumber } from "@jet-lab/jet-engine";
-import { DocsLink } from "../components/docsLink";
+import { useWallet } from "@solana/wallet-adapter-react";
+import { Divider } from "antd";
+import { Available, DocsLink } from "../components";
+import { useProposalContext } from "../contexts";
 
 export const AirdropView = () => {
   const { connected, publicKey } = useWallet();

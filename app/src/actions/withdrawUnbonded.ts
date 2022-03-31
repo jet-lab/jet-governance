@@ -1,5 +1,5 @@
-import { Provider } from "@project-serum/anchor";
 import { AssociatedToken, StakeAccount, StakePool, UnbondingAccount } from "@jet-lab/jet-engine";
+import { Provider } from "@project-serum/anchor";
 import { RpcContext } from "@solana/spl-governance";
 import { Transaction, TransactionInstruction } from "@solana/web3.js";
 import {
@@ -9,7 +9,7 @@ import {
 import { SendTxRequest } from "@project-serum/anchor/dist/cjs/provider";
 
 export const withdrawUnbonded = async (
-  { connection, wallet, walletPubkey }: RpcContext,
+  { connection, wallet }: RpcContext,
   unbondingAccount: UnbondingAccount,
   stakeAccount: StakeAccount,
   stakePool: StakePool

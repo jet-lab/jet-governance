@@ -1,9 +1,5 @@
+import { ProgramAccount, Proposal, RpcContext, withRelinquishVote } from "@solana/spl-governance";
 import { Keypair, PublicKey, Transaction, TransactionInstruction } from "@solana/web3.js";
-
-import { Proposal } from "@solana/spl-governance";
-import { RpcContext } from "@solana/spl-governance";
-import { ProgramAccount } from "@solana/spl-governance";
-import { withRelinquishVote } from "@solana/spl-governance";
 import { sendTransactionWithNotifications } from "../tools/transactions";
 
 export const relinquishVote = async (

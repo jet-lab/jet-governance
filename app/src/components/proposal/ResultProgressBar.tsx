@@ -1,7 +1,7 @@
-import { useState, useMemo } from "react";
 import { Progress } from "antd";
+import { useState, useMemo } from "react";
+import { useProposalContext } from "../../contexts";
 import { abbreviateNumber, fromLamports } from "../../utils";
-import { useProposalContext } from "../../contexts/proposal";
 
 export const ResultProgressBar = ({
   type,

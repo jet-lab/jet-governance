@@ -1,14 +1,14 @@
-import { JetMint } from "@jet-lab/jet-engine/lib/common";
+import { JetMint } from "@jet-lab/jet-engine";
 import { PublicKey } from "@solana/web3.js";
-import { VoterDisplayData } from "../hooks/proposalHooks";
-import { fromLamports } from "../utils/utils";
+import { VoterDisplayData } from "../hooks";
+import { fromLamports } from "../utils";
 
 /** Downloads vote records in CSV format */
-export function voteRecordCsvDownload(
+export const voteRecordCsvDownload = (
   itemAddress: PublicKey,
   votes: VoterDisplayData[],
   mint?: JetMint
-) {
+) => {
   // define the heading for each row of the data
   var csv = "PublicKey,VoteWeight,VoteType\n";
 
@@ -26,4 +26,4 @@ export function voteRecordCsvDownload(
   hiddenElement.download = `JetGovern_${itemAddress.toBase58()}_Votes.csv`;
   hiddenElement.click();
   hiddenElement.remove();
-}
+};

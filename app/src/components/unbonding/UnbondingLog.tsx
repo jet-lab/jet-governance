@@ -2,11 +2,9 @@ import { InfoCircleFilled } from "@ant-design/icons";
 import { UnbondingAccount } from "@jet-lab/jet-engine";
 import { Button, Tooltip } from "antd";
 import { useEffect, useState } from "react";
-import { useBlockExplorer } from "../../contexts/blockExplorer";
-import { useProposalContext } from "../../contexts/proposal";
+import { useBlockExplorer, useProposalContext } from "../../contexts";
+import { RestakeModal, WithdrawModal } from "../modals";
 import { dateFromUnixTimestamp, toTokens } from "../../utils";
-import { RestakeModal } from "../modals/RestakeModal";
-import { WithdrawModal } from "../modals/WithdrawModal";
 
 export const UnbondingLog = ({ unbondingAccount }: { unbondingAccount: UnbondingAccount }) => {
   const { jetMint } = useProposalContext();

@@ -1,27 +1,22 @@
-import { HashRouter, Route, Switch } from "react-router-dom";
-import GovernanceProvider from "./contexts/GovernanceContext";
-
-import { ErrorBoundary } from "react-error-boundary";
-import { QueryClient, QueryClientProvider } from "react-query";
-import { AppErrorBanner } from "./components/appErrorBanner/appErrorBanner";
-import { HomeView } from "./views/Home";
-import { FlightLogView } from "./views/FlightLogs";
-import { AirdropView } from "./views/Airdrop";
-import { ProposalView } from "./views/Proposal";
-import { Settings } from "./views/Settings";
-import { YourInfo } from "./components/YourInfo";
-import { MobileMessage } from "./components/MobileMessage";
-import { DarkThemeProvider } from "./contexts/darkTheme";
-import { ConnectWalletProvider } from "./contexts/connectWallet";
-import { TransactionsProvider } from "./contexts/transactionLogs";
-import { AppLayout } from "./components/Layout";
-import { ConnectionProvider, WalletProvider } from "./contexts";
-import { ScrollToTop } from "./contexts/scrollToTop";
-import { ProposalProvider } from "./contexts/proposal";
 import { ConfigProvider } from "antd-country-phone-input";
 import en from "world_countries_lists/data/en/world.json";
-import { BlockExplorerProvider } from "./contexts/blockExplorer";
+import { ErrorBoundary } from "react-error-boundary";
+import { QueryClient, QueryClientProvider } from "react-query";
+import { HashRouter, Route, Switch } from "react-router-dom";
+import { AppErrorBanner, AppLayout, MobileMessage, YourInfo } from "./components";
+import {
+  BlockExplorerProvider,
+  ConnectionProvider,
+  ConnectWalletProvider,
+  DarkThemeProvider,
+  GovernanceProvider,
+  ProposalProvider,
+  ScrollToTop,
+  TransactionsProvider,
+  WalletProvider
+} from "./contexts";
 import { geoBannedCountriesArr } from "./utils";
+import { AirdropView, FlightLogView, HomeView, ProposalView, SettingsView } from "./views";
 
 const queryClient = new QueryClient();
 
@@ -53,7 +48,7 @@ export function Routes() {
                                   <Route path={"/proposal/:key"} children={<ProposalView />} />
                                   <Route exact path="/claims" children={<AirdropView />} />
                                   <Route exact path="/flight-logs" children={<FlightLogView />} />
-                                  <Route exact path="/settings" children={<Settings />} />
+                                  <Route exact path="/settings" children={<SettingsView />} />
                                   <MobileMessage />
                                 </ScrollToTop>
                               </Switch>

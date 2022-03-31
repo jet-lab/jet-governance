@@ -1,10 +1,10 @@
+import { Governance, ProgramAccount, Proposal, ProposalState } from "@solana/spl-governance";
+import { Card, Progress } from "antd";
 import { useMemo } from "react";
 import { Link } from "react-router-dom";
-import { Card, Progress } from "antd";
-import { getProposalUrl } from "../tools/routeTools";
-import { getVoteCounts, useCountdown } from "../hooks/proposalHooks";
+import { getVoteCounts, useCountdown } from "../hooks";
 import { getPubkeyIndex } from "../models/PUBKEYS_INDEX";
-import { Governance, ProgramAccount, Proposal, ProposalState } from "@solana/spl-governance";
+import { getProposalUrl } from "../tools/routeTools";
 
 export const ProposalCard = ({
   proposal,

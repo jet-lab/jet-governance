@@ -1,10 +1,10 @@
-import { PropsWithChildren, useState } from "react";
-import { Modal, ModalProps } from "antd";
-import { restake } from "../../actions/restake";
-import { useRpcContext } from "../../hooks/useRpcContext";
 import { UnbondingAccount } from "@jet-lab/jet-engine";
+import { Modal, ModalProps } from "antd";
+import { PropsWithChildren, useState } from "react";
+import { restake } from "../../actions/restake";
+import { useProposalContext } from "../../contexts";
+import { useRpcContext } from "../../hooks";
 import { fromLamports, isSignTransactionError } from "../../utils";
-import { useProposalContext } from "../../contexts/proposal";
 
 enum Steps {
   Confirm = 0,

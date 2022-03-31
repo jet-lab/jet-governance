@@ -1,8 +1,11 @@
-import { getGovernanceProgramVersion, ProgramAccount } from "@solana/spl-governance";
-import { RpcContext } from "@solana/spl-governance";
+import {
+  getGovernanceProgramVersion,
+  ProgramAccount,
+  Proposal,
+  RpcContext,
+  withFinalizeVote
+} from "@solana/spl-governance";
 import { Keypair, PublicKey, TransactionInstruction } from "@solana/web3.js";
-import { Proposal } from "@solana/spl-governance";
-import { withFinalizeVote } from "@solana/spl-governance";
 import { sendTransactionWithNotifications } from "../tools/transactions";
 
 export const finalizeVote = async (
