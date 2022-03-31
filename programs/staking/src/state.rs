@@ -492,7 +492,7 @@ mod tests {
         // attempt to withdraw all 186 shares for user B, expect 27 units
         let mut unbond_b_0 = UnbondingAccount::default();
         pool.unbond(&mut user_b, &mut unbond_b_0, None).unwrap();
-        pool.withdraw_unbonded(&mut user_b, &mut unbond_b_0);
+        pool.withdraw_unbonded(&mut user_b, &unbond_b_0);
 
         assert_eq!(1_501, pool.vault_amount);
         assert_eq!(10_000, pool.bonded.shares);
@@ -510,7 +510,7 @@ mod tests {
         // attempt to withdraw all tokens for user B, expect 1 less token
         let mut unbond_b_1 = UnbondingAccount::default();
         pool.unbond(&mut user_b, &mut unbond_b_1, None).unwrap();
-        pool.withdraw_unbonded(&mut user_b, &mut unbond_b_1);
+        pool.withdraw_unbonded(&mut user_b, &unbond_b_1);
 
         assert_eq!(15_011, pool.vault_amount);
         assert_eq!(10_000, pool.bonded.shares);
