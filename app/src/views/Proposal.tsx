@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { ResultProgressBar } from "../components/proposal/ResultProgressBar";
-import { Button, Divider, Tooltip, Typography } from "antd";
+import { Button, Divider, Popover, Tooltip, Typography } from "antd";
 import { ProposalCard } from "../components/ProposalCard";
 import { VoterList } from "../components/proposal/VoterList";
 import { useWallet } from "@solana/wallet-adapter-react";
@@ -132,6 +132,7 @@ const InnerProposalView = ({
   };
 
   const [isVoteModalVisible, setIsVoteModalVisible] = useState(false);
+  const [popoverVisible, setPopoverVisible] = useState(false);
   const tokenOwnerRecord = useWalletTokenOwnerRecord(
     governance?.account.realm,
     proposal?.account.governingTokenMint
@@ -265,7 +266,7 @@ const InnerProposalView = ({
                 <div className={`stakeholders`}>
                   <span className="voter title" />
                   <span className="address title">Wallet</span>
-                  <span className="amount title">Vote Weight</span>
+                  <span className="amount title">Staked JET</span>
                   <span className="vote title">Vote</span>
                 </div>
                 <VoterList voteRecords={voterDisplayData} userVoteRecord={voteRecord} />
@@ -275,13 +276,24 @@ const InnerProposalView = ({
             <div>
               <span>
                 Votes per JET{" "}
-                <Tooltip
-                  title="Votes per JET is used to track the amount of voting power each account has. The downloadable CSV tracks both values."
-                  placement="topLeft"
-                  overlayClassName="no-arrow"
+                <Popover
+                  content={
+                    <div className="flex column">
+                      <p>
+                        Votes per JET is used to track the amount of voting power each account has.
+                        The downloadable CSV tracks both values.
+                      </p>
+                      <span className="link-btn" onClick={() => setPopoverVisible(false)}>
+                        Close
+                      </span>
+                    </div>
+                  }
+                  title="Votes per JET"
+                  visible={popoverVisible}
+                  trigger="click"
                 >
-                  <InfoCircleFilled />
-                </Tooltip>{" "}
+                  <InfoCircleFilled onClick={() => setPopoverVisible(true)} />
+                </Popover>{" "}
                 = {bnToNumber(sharesToTokens(undefined, stakePool).conversion)}
               </span>
             </div>
