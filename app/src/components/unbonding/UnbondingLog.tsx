@@ -40,7 +40,10 @@ export const UnbondingLog = ({ unbondingAccount }: { unbondingAccount: Unbonding
   return (
     <tr>
       <td className="italics" onClick={getUnbondingAccountExplorerUrl}>
-        {!!stakePool && dateFromUnixTimestamp(unbondingAccount?.unbondingAccount.unbondedAt.sub(stakePool.stakePool.unbondPeriod))}
+        {!!stakePool &&
+          dateFromUnixTimestamp(
+            unbondingAccount?.unbondingAccount.unbondedAt.sub(stakePool.stakePool.unbondPeriod)
+          )}
       </td>
       <td className="italics tooltip" onClick={getUnbondingAccountExplorerUrl}>
         {isUnbonded ? "Unbonded" : "Unbonding"}
