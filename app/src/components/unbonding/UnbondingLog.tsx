@@ -11,7 +11,7 @@ import { useCurrentTime } from "../../hooks";
 import { ONE_DAY } from "../../constants";
 
 export const UnbondingLog = ({ unbondingAccount }: { unbondingAccount: UnbondingAccount }) => {
-  const { jetMint } = useProposalContext();
+  const { jetMint, stakePool } = useProposalContext();
 
   const [restakeModalVisible, setRestakeModalVisible] = useState(false);
   const [withdrawModalVisible, setWithdrawModalVisible] = useState(false);
@@ -40,7 +40,7 @@ export const UnbondingLog = ({ unbondingAccount }: { unbondingAccount: Unbonding
   return (
     <tr>
       <td className="italics" onClick={getUnbondingAccountExplorerUrl}>
-        {dateFromUnixTimestamp(unbondingAccount?.unbondingAccount.unbondedAt)}
+        {!!stakePool && dateFromUnixTimestamp(unbondingAccount?.unbondingAccount.unbondedAt.sub(stakePool.stakePool.unbondPeriod))}
       </td>
       <td className="italics tooltip" onClick={getUnbondingAccountExplorerUrl}>
         {isUnbonded ? "Unbonded" : "Unbonding"}
