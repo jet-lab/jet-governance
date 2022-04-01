@@ -24,7 +24,7 @@ export const UnbondingLog = ({ unbondingAccount }: { unbondingAccount: Unbonding
   return (
     <tr>
       <td
-        className="italics"
+        className="italics-text"
         onClick={() =>
           unbondingAccount &&
           window.open(
@@ -37,7 +37,7 @@ export const UnbondingLog = ({ unbondingAccount }: { unbondingAccount: Unbonding
         {dateFromUnixTimestamp(unbondingAccount?.unbondingAccount.unbondedAt)}
       </td>
       <td
-        className="italics"
+        className="italics-text"
         onClick={() =>
           unbondingAccount &&
           window.open(
@@ -55,8 +55,8 @@ export const UnbondingLog = ({ unbondingAccount }: { unbondingAccount: Unbonding
           <InfoCircleFilled />
         </Tooltip>
       </td>
-      <td className="action italics">
-        <i className="italics">
+      <td className="action italics-text">
+        <i className="italics-text">
           Unstake complete on {dateFromUnixTimestamp(unbondingAccount.unbondingAccount.unbondedAt)}
         </i>{" "}
         <Button
@@ -83,7 +83,7 @@ export const UnbondingLog = ({ unbondingAccount }: { unbondingAccount: Unbonding
         )}
       </td>
       <td
-        className="italics"
+        className="italics-text"
         onClick={() =>
           unbondingAccount &&
           window.open(
