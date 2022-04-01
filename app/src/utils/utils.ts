@@ -1,10 +1,9 @@
 import { useCallback, useState } from "react";
 import { PublicKey } from "@solana/web3.js";
 import BN from "bn.js";
-import { bnToNumber } from "@jet-lab/jet-engine";
+import { bnToNumber, StakePool } from "@jet-lab/jet-engine";
 import { geoBannedCountries } from "../models/GEOBANNED_COUNTRIES";
 import { SelectProps } from "antd";
-import { Mint } from "@solana/spl-token";
 import { JetMint } from "@jet-lab/jet-engine/lib/common";
 
 export function useLocalStorageState(key: string, defaultState?: string) {
@@ -155,6 +154,23 @@ export const dateToString = (date: Date) => {
   const year = date.getFullYear();
   const localTime = date.toLocaleTimeString();
   return `${day} ${months[month]} ${year}, ${localTime}`;
+};
+
+export const sharesToTokens = (
+  shares: BN | undefined,
+  stakePool: StakePool | undefined
+): { tokens: BN; conversion: BN } => {
+  let tokens = new BN(0);
+  let conversion = new BN(0);
+  if (!stakePool) {
+    return { tokens, conversion };
+  }
+  conversion = stakePool?.stakePool.bonded.shares.div(stakePool?.stakePool.bonded.tokens);
+  if (!shares) {
+    return { tokens, conversion };
+  }
+  tokens = shares.mul(stakePool?.stakePool.bonded.tokens).div(stakePool?.stakePool.bonded.shares);
+  return { tokens, conversion };
 };
 
 // --------- Country Code Info ---------

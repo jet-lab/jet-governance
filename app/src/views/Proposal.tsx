@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { ResultProgressBar } from "../components/proposal/ResultProgressBar";
-import { Button, Divider, Typography } from "antd";
+import { Button, Divider, Tooltip, Typography } from "antd";
 import { ProposalCard } from "../components/ProposalCard";
 import { VoterList } from "../components/proposal/VoterList";
 import { useWallet } from "@solana/wallet-adapter-react";
@@ -25,7 +25,7 @@ import {
 import { LABELS } from "../constants";
 import ReactMarkdown from "react-markdown";
 import { voteRecordCsvDownload } from "../actions/voteRecordCsvDownload";
-import { ArrowLeftOutlined, DownloadOutlined } from "@ant-design/icons";
+import { ArrowLeftOutlined, DownloadOutlined, InfoCircleFilled } from "@ant-design/icons";
 import { getPubkeyIndex } from "../models/PUBKEYS_INDEX";
 import { useProposalContext } from "../contexts/proposal";
 import { bnToNumber, StakeBalance } from "@jet-lab/jet-engine";
@@ -34,6 +34,7 @@ import { ReactComponent as ThumbsUp } from "../images/thumbs_up.svg";
 import { ReactComponent as ThumbsDown } from "../images/thumbs_down.svg";
 import "./Proposal.less";
 import { useBlockExplorer } from "../contexts/blockExplorer";
+import { sharesToTokens } from "../utils";
 
 export const ProposalView = () => {
   const proposalAddress = useKeyParam();
@@ -137,7 +138,7 @@ const InnerProposalView = ({
   );
   const voteRecord = useTokenOwnerVoteRecord(proposal?.pubkey, tokenOwnerRecord?.pubkey);
   const { connected } = useWallet();
-  const { jetMint } = useProposalContext();
+  const { jetMint, stakePool } = useProposalContext();
   const { getAccountExplorerUrl } = useBlockExplorer();
   const proposalAddress = useKeyParam();
   const { startDate, endDate } = useCountdown(proposal, governance);
@@ -229,8 +230,8 @@ const InnerProposalView = ({
               <Title>Vote Results</Title>
               <Text
                 onClick={() => {
-                  if (loaded && voterDisplayData) {
-                    voteRecordCsvDownload(proposal.pubkey, voterDisplayData, jetMint);
+                  if (loaded && voterDisplayData && stakePool) {
+                    voteRecordCsvDownload(proposal.pubkey, voterDisplayData, stakePool, jetMint);
                   }
                 }}
                 id="csv"
@@ -243,12 +244,12 @@ const InnerProposalView = ({
               <div className="results">
                 <ResultProgressBar
                   type="Approve"
-                  amount={bnToNumber(voteCounts?.yes)}
+                  amount={bnToNumber(sharesToTokens(voteCounts?.yes, stakePool).tokens)}
                   total={bnToNumber(voteCounts?.total)}
                 />
                 <ResultProgressBar
                   type="Reject"
-                  amount={bnToNumber(voteCounts?.no)}
+                  amount={bnToNumber(sharesToTokens(voteCounts?.no, stakePool).tokens)}
                   total={bnToNumber(voteCounts?.total)}
                 />
               </div>
@@ -269,6 +270,20 @@ const InnerProposalView = ({
                 </div>
                 <VoterList voteRecords={voterDisplayData} userVoteRecord={voteRecord} />
               </div>
+            </div>
+
+            <div>
+              <span>
+                Votes per JET{" "}
+                <Tooltip
+                  title="Votes per JET is used to track the amount of voting power each account has. The downloadable CSV tracks both values."
+                  placement="topLeft"
+                  overlayClassName="no-arrow"
+                >
+                  <InfoCircleFilled />
+                </Tooltip>{" "}
+                = {bnToNumber(sharesToTokens(undefined, stakePool).conversion)}
+              </span>
             </div>
           </div>
         </div>

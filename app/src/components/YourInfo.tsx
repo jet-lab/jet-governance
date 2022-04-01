@@ -13,6 +13,7 @@ import {
   fromLamports,
   JET_FAUCET_DEVNET,
   JET_TOKEN_MINT,
+  sharesToTokens,
   toTokens
 } from "../utils";
 import { StakeModal } from "./modals/StakeModal";
@@ -48,11 +49,10 @@ export const YourInfo = () => {
 
     realm,
     tokenOwnerRecord,
+    stakePool,
 
     programs
   } = useProposalContext();
-
-  const votes = useGoverningTokenDepositAmount();
   const withdrawVotesAbility = useWithdrawVotesAbility(tokenOwnerRecord);
   /* eslint-enable @typescript-eslint/no-unused-vars */
 
@@ -185,7 +185,7 @@ export const YourInfo = () => {
             className="text-gradient vote-balance info-legend-item info-legend-item-prefill"
             onClick={preFillJetWithStaked}
           >
-            {toTokens(stakedJet, jetMint)}
+            {toTokens(sharesToTokens(stakedJet, stakePool).tokens, jetMint)}
           </Paragraph>
           <div className="wallet-overview flex justify-between column">
             <div className="flex justify-between">
