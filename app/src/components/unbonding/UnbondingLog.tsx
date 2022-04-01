@@ -28,34 +28,24 @@ export const UnbondingLog = ({ unbondingAccount }: { unbondingAccount: Unbonding
     !isUnbonded &&
     bnToNumber(unbondingAccount.unbondingAccount.unbondedAt) * 1000 - currentTime < ONE_DAY;
 
+  const getUnbondingAccountExplorerUrl = () => {
+    unbondingAccount &&
+      window.open(
+        getAccountExplorerUrl(unbondingAccount.address.toBase58()),
+        "_blank",
+        "noreferrer"
+      );
+  };
+
   return (
     <tr>
-      <td
-        className="italics"
-        onClick={() =>
-          unbondingAccount &&
-          window.open(
-            getAccountExplorerUrl(unbondingAccount.address.toBase58()),
-            "_blank",
-            "noreferrer"
-          )
-        }
-      >
+      <td className="italics" onClick={getUnbondingAccountExplorerUrl}>
         {dateFromUnixTimestamp(unbondingAccount?.unbondingAccount.unbondedAt)}
       </td>
-      <td
-        className="italics"
-        onClick={() =>
-          unbondingAccount &&
-          window.open(
-            getAccountExplorerUrl(unbondingAccount.address.toBase58()),
-            "_blank",
-            "noreferrer"
-          )
-        }
-      >
-        {isUnbonded ? "Unbonded" : "Unbonding"}
-        {!isUnbonded && (
+      <td className="italics tooltip" onClick={getUnbondingAccountExplorerUrl}>
+        {/* TODO toggle */}
+        {!isUnbonded ? "Unbonded" : "Unbonding"}
+        {isUnbonded && (
           <Tooltip
             title="Unstaking transactions require a 29.5-day unbonding period. before withdrawal to your wallet is enabled. Status will show as 'unbonding' until this period completes."
             mouseEnterDelay={0.1}
@@ -66,12 +56,13 @@ export const UnbondingLog = ({ unbondingAccount }: { unbondingAccount: Unbonding
       </td>
 
       <td className="action italics">
-        <i>
-          
-          {oneDayCountdown
+        <i onClick={getUnbondingAccountExplorerUrl}>
+          {/* TODO toggle */}
+          {!oneDayCountdown
             ? `Unstake complete in ${getRemainingTime(
                 currentTime,
-                bnToNumber(unbondingAccount.unbondingAccount.unbondedAt) * 1000
+                // bnToNumber(unbondingAccount.unbondingAccount.unbondedAt) * 1000
+                1648859588 * 1000
               )}`
             : `Unstake complete on 
             ${dateFromUnixTimestamp(unbondingAccount.unbondingAccount.unbondedAt)}`}
@@ -84,7 +75,8 @@ export const UnbondingLog = ({ unbondingAccount }: { unbondingAccount: Unbonding
             isUnbonded ? setWithdrawModalVisible(true) : setRestakeModalVisible(true)
           }
         >
-          {isUnbonded ? "Withdraw" : "Restake"}
+          {/* TODO toggle */}
+          {!isUnbonded ? "Withdraw" : "Restake"}
         </Button>
         {restakeModalVisible && (
           <RestakeModal
@@ -99,20 +91,10 @@ export const UnbondingLog = ({ unbondingAccount }: { unbondingAccount: Unbonding
           />
         )}
       </td>
-      <td
-        className="italics"
-        onClick={() =>
-          unbondingAccount &&
-          window.open(
-            getAccountExplorerUrl(unbondingAccount.address.toBase58()),
-            "_blank",
-            "noreferrer"
-          )
-        }
-      >
+      <td className="italics" onClick={getUnbondingAccountExplorerUrl}>
         {toTokens(unbondingAccount?.tokens, jetMint)}
       </td>
-      <td>
+      <td onClick={getUnbondingAccountExplorerUrl}>
         <i className="fas fa-external-link-alt"></i>
       </td>
     </tr>

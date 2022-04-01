@@ -479,21 +479,24 @@ p,
         padding-bottom: @spacing-xs;
         flex: 1;
         &.action {
-          flex:4
+          flex: 4;
         }
       }
       td {
         flex: 1;
         display: flex;
         align-items: center;
+        &.tooltip {
+          justify-content: space-between;
+        }
         &.action {
-        flex: 4;
-        flex-flow: row nowrap;
-        justify-content: space-between;
+          flex: 4;
+          flex-flow: row nowrap;
+          justify-content: space-between;
           button {
-            margin-right: @spacing-xl !important
+            margin-right: @spacing-xl !important;
           }
-        &.load-more{
+          &.load-more {
             justify-content: center;
           }
         }
