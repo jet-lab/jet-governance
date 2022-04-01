@@ -21,6 +21,7 @@ import { WithdrawAllModal } from "./modals/WithdrawAllModal";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { useHistory, useLocation } from "react-router";
 import "./YourInfo.less";
+import BN from "bn.js";
 
 export const YourInfo = () => {
   const [stakeModalVisible, setStakeModalVisible] = useState(false);
@@ -171,7 +172,7 @@ export const YourInfo = () => {
         </Title>
         <div className="box-info">
           <Text>
-            Votes{" "}
+            Staked JET{" "}
             <Tooltip
               title="For each JET token staked, you may cast 1 vote in JetGovern."
               placement="topLeft"
@@ -180,7 +181,12 @@ export const YourInfo = () => {
               <InfoCircleFilled />
             </Tooltip>
           </Text>
-          <Paragraph className="text-gradient vote-balance">{votes}</Paragraph>
+          <Paragraph
+            className="text-gradient vote-balance info-legend-item info-legend-item-prefill"
+            onClick={preFillJetWithStaked}
+          >
+            {toTokens(stakedJet, jetMint)}
+          </Paragraph>
           <div className="wallet-overview flex justify-between column">
             <div className="flex justify-between">
               <Text className="staking-info current-staking-apr">
@@ -226,13 +232,6 @@ export const YourInfo = () => {
                 <Text className="text-btn">{walletBalance}</Text>
               </div>
             )}
-            <div
-              className="flex justify-between info-legend-item info-legend-item-prefill"
-              onClick={preFillJetWithStaked}
-            >
-              <Text>Staked JET</Text>
-              <Text className="text-btn">{toTokens(stakedJet, jetMint)}</Text>
-            </div>
             {connected && (
               <>
                 <div className="flex justify-between info-legend-item">

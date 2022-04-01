@@ -63,7 +63,7 @@ export const toTokens = (amount: BN | number | undefined, mint?: JetMint) => {
 
 var SI_SYMBOL = ["", "k", "M", "G", "T", "P", "E"];
 
-export const abbreviateNumber = (number: number, precision: number) => {
+export const abbreviateNumber = (number: number) => {
   let tier = (Math.log10(number) / 3) | 0;
   let scaled = number;
   let suffix = SI_SYMBOL[tier];
@@ -73,8 +73,8 @@ export const abbreviateNumber = (number: number, precision: number) => {
   }
 
   return number < 100000
-    ? new Intl.NumberFormat().format(Math.floor(number))
-    : scaled.toFixed(precision) + suffix;
+    ? new Intl.NumberFormat().format(Number(number.toFixed(2)))
+    : scaled.toFixed(2) + suffix;
 };
 
 export const formatUSD = new Intl.NumberFormat("en-US", {

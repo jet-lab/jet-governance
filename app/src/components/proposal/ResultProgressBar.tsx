@@ -33,7 +33,7 @@ export const ResultProgressBar = ({
       <strong>
         {percent.toFixed(0)}% {vote.toUpperCase()}
       </strong>
-      <span className="amount">{abbreviateNumber(fromLamports(amount, jetMint), 2)} JET</span>
+      <span className="amount">{abbreviateNumber(fromLamports(amount, jetMint))} JET</span>
       <Progress size="small" percent={percent} showInfo={false} strokeColor={color} />
     </span>
   );
