@@ -43,9 +43,8 @@ export const UnbondingLog = ({ unbondingAccount }: { unbondingAccount: Unbonding
         {dateFromUnixTimestamp(unbondingAccount?.unbondingAccount.unbondedAt)}
       </td>
       <td className="italics tooltip" onClick={getUnbondingAccountExplorerUrl}>
-        {/* TODO toggle */}
-        {!isUnbonded ? "Unbonded" : "Unbonding"}
-        {isUnbonded && (
+        {isUnbonded ? "Unbonded" : "Unbonding"}
+        {!isUnbonded && (
           <Tooltip
             title="Unstaking transactions require a 29.5-day unbonding period. before withdrawal to your wallet is enabled. Status will show as 'unbonding' until this period completes."
             mouseEnterDelay={0.1}
@@ -57,8 +56,7 @@ export const UnbondingLog = ({ unbondingAccount }: { unbondingAccount: Unbonding
 
       <td className="action italics">
         <i onClick={getUnbondingAccountExplorerUrl}>
-          {/* TODO toggle */}
-          {!oneDayCountdown
+          {oneDayCountdown
             ? `Unstake complete in ${getRemainingTime(
                 currentTime,
                 // bnToNumber(unbondingAccount.unbondingAccount.unbondedAt) * 1000
@@ -75,8 +73,7 @@ export const UnbondingLog = ({ unbondingAccount }: { unbondingAccount: Unbonding
             isUnbonded ? setWithdrawModalVisible(true) : setRestakeModalVisible(true)
           }
         >
-          {/* TODO toggle */}
-          {!isUnbonded ? "Withdraw" : "Restake"}
+          {isUnbonded ? "Withdraw" : "Restake"}
         </Button>
         {restakeModalVisible && (
           <RestakeModal
