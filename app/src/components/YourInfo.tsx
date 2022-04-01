@@ -159,7 +159,9 @@ export const YourInfo = () => {
     setInputAmount(jetAccount ? fromLamports(jetAccount.info.amount, jetMint) : 0);
   };
   const preFillJetWithStaked = () => {
-    setInputAmount(stakedJet ? fromLamports(stakedJet, jetMint) : 0);
+    setInputAmount(
+      stakedJet ? fromLamports(sharesToTokens(stakedJet, stakePool).tokens, jetMint) : 0
+    );
   };
   const withdrawAccountsAvailable =
     !unbondingComplete.isZero() || (unbondingAccounts && unbondingAccounts.length > 0);
