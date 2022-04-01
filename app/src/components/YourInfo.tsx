@@ -6,7 +6,7 @@ import { useEffect, useMemo, useState } from "react";
 import { jetFaucet } from "../actions/jetFaucet";
 import { useConnectionConfig } from "../contexts";
 import { useProposalContext } from "../contexts/proposal";
-import { useGoverningTokenDepositAmount, useWithdrawVotesAbility } from "../hooks";
+import { useWithdrawVotesAbility } from "../hooks";
 import {
   COUNCIL_FAUCET_DEVNET,
   COUNCIL_TOKEN_MINT,
@@ -22,7 +22,6 @@ import { WithdrawAllModal } from "./modals/WithdrawAllModal";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { useHistory, useLocation } from "react-router";
 import "./YourInfo.less";
-import BN from "bn.js";
 
 export const YourInfo = () => {
   const [stakeModalVisible, setStakeModalVisible] = useState(false);

@@ -16,7 +16,12 @@ export function voteRecordCsvDownload(
 
   // merge the data with CSV
   votes?.forEach(function (vote) {
-    csv += [vote.user, fromLamports(sharesToTokens(vote.voteWeight, stakePool).tokens, mint), fromLamports(vote.voteWeight, mint), vote.voteKind].join(",");
+    csv += [
+      vote.user,
+      fromLamports(sharesToTokens(vote.voteWeight, stakePool).tokens, mint),
+      fromLamports(vote.voteWeight, mint),
+      vote.voteKind
+    ].join(",");
     csv += "\n";
   });
 

@@ -56,7 +56,7 @@ export function fromLamports(account?: number | BN, mint?: JetMint, rate: number
 
 export const toTokens = (amount: BN | number | undefined, mint?: JetMint) => {
   return fromLamports(amount, mint).toLocaleString(undefined, {
-    maximumFractionDigits: 0
+    maximumFractionDigits: 2
   });
 };
 
