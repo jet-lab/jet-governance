@@ -59,8 +59,7 @@ export const UnbondingLog = ({ unbondingAccount }: { unbondingAccount: Unbonding
           {oneDayCountdown
             ? `Unstake complete in ${getRemainingTime(
                 currentTime,
-                // bnToNumber(unbondingAccount.unbondingAccount.unbondedAt) * 1000
-                1648859588 * 1000
+                bnToNumber(unbondingAccount.unbondingAccount.unbondedAt) * 1000
               )}`
             : `Unstake complete on 
             ${dateFromUnixTimestamp(unbondingAccount.unbondingAccount.unbondedAt)}`}
