@@ -92,6 +92,12 @@ mod error {
     }
 }
 
+pub mod spl_governance {
+    use super::declare_id;
+
+    declare_id!("JPGovTiAUgyqirerBbXXmfyt3SkHVEcpSAPjRCCSHVx");
+}
+
 #[derive(Copy, Clone)]
 pub struct SplGovernance;
 
