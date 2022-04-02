@@ -2,7 +2,7 @@ import { InfoCircleFilled, MinusOutlined, PlusOutlined } from "@ant-design/icons
 import { bnToNumber } from "@jet-lab/jet-engine";
 import { Typography, Tooltip, Divider, Button, notification } from "antd";
 import { StakeInput } from "./Input";
-import { useEffect, useMemo, useState } from "react";
+import { FC, useEffect, useMemo, useState } from "react";
 import { jetFaucet } from "../actions/jetFaucet";
 import { useConnectionConfig } from "../contexts";
 import { useProposalContext } from "../contexts/proposal";
@@ -22,6 +22,44 @@ import { useWallet } from "@solana/wallet-adapter-react";
 import { useHistory, useLocation } from "react-router";
 import "./YourInfo.less";
 
+const VotesBalance: FC<{ votes: string }> = ({ votes }) => {
+  const { Paragraph } = Typography;
+  const getFontResizeClass = (lengthChars: number) => {
+    const resizeCharTypes = {
+      moreThan7: "resize-font-size-more-than-7-char",
+      moreThan9: "resize-font-size-more-than-9-char",
+      moreThan13: "resize-font-size-more-than-13-char",
+      moreThan16: "resize-font-size-more-than-16-char",
+      moreThan22: "resize-font-size-more-than-22-char",
+      moreThan30: "resize-font-size-more-than-30-char"
+    };
+    if (lengthChars > 30) {
+      return resizeCharTypes.moreThan30;
+    }
+    if (lengthChars > 22) {
+      return resizeCharTypes.moreThan22;
+    }
+    if (lengthChars > 16) {
+      return resizeCharTypes.moreThan16;
+    }
+    if (lengthChars > 12) {
+      return resizeCharTypes.moreThan13;
+    }
+    if (lengthChars > 8) {
+      return resizeCharTypes.moreThan9;
+    }
+    if (lengthChars > 6) {
+      return resizeCharTypes.moreThan7;
+    }
+    return "";
+  };
+  return (
+    <Paragraph className={`text-gradient vote-balance ${getFontResizeClass(votes.length)}`}>
+      {votes}
+    </Paragraph>
+  );
+};
+
 export const YourInfo = () => {
   const [stakeModalVisible, setStakeModalVisible] = useState(false);
   const [unstakeModalVisible, setUnstakeModalVisible] = useState(false);
@@ -32,29 +70,21 @@ export const YourInfo = () => {
   const { inDevelopment } = useConnectionConfig();
   const { claimsCount } = useProposalContext();
   const history = useHistory();
-
   const {
     refresh,
     walletFetched,
-
     unbondingTotal: { unbondingQueue, unbondingComplete },
     unbondingAccounts,
     stakeBalance: { stakedJet },
-
     jetAccount,
     jetMint,
     stakingYield,
-
     realm,
     tokenOwnerRecord,
-
     programs
   } = useProposalContext();
-
-  const votes = useGoverningTokenDepositAmount();
+  const votes: string = useGoverningTokenDepositAmount();
   const withdrawVotesAbility = useWithdrawVotesAbility(tokenOwnerRecord);
-  /* eslint-enable @typescript-eslint/no-unused-vars */
-
   const rewards = useMemo(() => {
     return {
       apr: stakingYield ? (stakingYield.apr * 100).toFixed(0) : undefined,
@@ -73,9 +103,7 @@ export const YourInfo = () => {
     }
     const balance = bnToNumber(jetAccount.info.amount) / 10 ** jetMint.decimals;
     const stakable = Math.min(inputAmount, balance);
-
     setInputAmount(stakable);
-
     if (stakable === 0) {
       return;
     }
@@ -89,13 +117,10 @@ export const YourInfo = () => {
     const balance =
       bnToNumber(tokenOwnerRecord.account.governingTokenDepositAmount) / 10 ** jetMint.decimals;
     const stakable = Math.min(inputAmount, balance);
-
     setInputAmount(stakable);
-
     if (stakable === 0) {
       return;
     }
-
     setUnstakeModalVisible(true);
   };
 
@@ -103,7 +128,9 @@ export const YourInfo = () => {
     setWithdrawAllModalVisible(true);
   };
 
-  // Devnet only: airdrop JET tokens
+  /**
+   * Devnet only: airdrop JET tokens
+   */
   const getJetAirdrop = async () => {
     try {
       if (programs) {
@@ -114,7 +141,10 @@ export const YourInfo = () => {
       refresh();
     }
   };
-  // Devnet only: airdrop Council tokens
+
+  /**
+   * Devnet only: airdrop Council tokens
+   */
   const getCouncilAirdrop = async () => {
     try {
       if (programs) {
@@ -153,7 +183,7 @@ export const YourInfo = () => {
   };
 
   const isOwnPage = Boolean(useLocation().pathname.includes("your-info"));
-  const { Paragraph, Title, Text } = Typography;
+  const { Title, Text } = Typography;
   const walletBalance = jetAccount ? toTokens(jetAccount.info.amount, jetMint) : 0;
   const preFillJetWithBalance = () => {
     setInputAmount(jetAccount ? fromLamports(jetAccount.info.amount, jetMint) : 0);
@@ -180,7 +210,7 @@ export const YourInfo = () => {
               <InfoCircleFilled />
             </Tooltip>
           </Text>
-          <Paragraph className="text-gradient vote-balance">{votes}</Paragraph>
+          <VotesBalance votes={votes} />
           <div className="wallet-overview flex justify-between column">
             <div className="flex justify-between">
               <Text className="staking-info current-staking-apr">
@@ -328,12 +358,12 @@ export const YourInfo = () => {
                 onClick={getJetAirdrop}
                 className="clickable-icon text-gradient fas fa-parachute-box"
                 title="Airdrop Jet"
-              ></i>
+              />
               <i
                 onClick={getCouncilAirdrop}
                 className="clickable-icon text-gradient fas fa-crown"
                 title="Airdrop Council"
-              ></i>
+              />
             </div>
           )}
         </div>
