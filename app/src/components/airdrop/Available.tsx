@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Button } from "antd";
 import { CheckOutlined } from "@ant-design/icons";
 import { ClaimModal } from "../modals/ClaimModal";
@@ -6,6 +6,7 @@ import { fromLamports, getRemainingTime } from "../../utils";
 import { Airdrop } from "@jet-lab/jet-engine";
 import { PublicKey } from "@solana/web3.js";
 import { useProposalContext } from "../../contexts/proposal";
+import { useCurrentTime } from "../../hooks";
 
 interface availAirdropsRender {
   airdrop: Airdrop;
@@ -20,17 +21,9 @@ interface availAirdropsRender {
 export const Available = ({ airdropInfo }: { airdropInfo: availAirdropsRender }) => {
   const { airdrop, finalized, shortDesc, longDesc, expireAt, amount } = airdropInfo;
   const [showModal, setShowModal] = useState(false);
-  const [currentTime, setCurrentTime] = useState(Date.now());
   const key = airdrop.airdropAddress.toString();
   const { jetMint } = useProposalContext();
-
-  // Update current time every second
-  useEffect(() => {
-    const secondInterval = setInterval(() => {
-      setCurrentTime(Date.now());
-    }, 1000);
-    return () => clearInterval(secondInterval);
-  });
+  const currentTime = useCurrentTime();
 
   const claimed = amount === 0;
   const expired = expireAt * 1000 < currentTime;
@@ -47,7 +40,7 @@ export const Available = ({ airdropInfo }: { airdropInfo: availAirdropsRender })
             {finalized ? longDesc : "You'll just have to wait to find out!"}
             <br />
             <span className="gray">
-              {finalized ? getRemainingTime(currentTime, expireAt * 1000) : "?"}
+              {finalized ? `Ends in ${getRemainingTime(currentTime, expireAt * 1000)}` : "?"}
             </span>
           </span>
 

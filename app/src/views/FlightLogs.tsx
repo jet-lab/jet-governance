@@ -21,7 +21,7 @@ export const FlightLogView = () => {
             <tr>
               <th>Date</th>
               <th>Status</th>
-              <th>Action</th>
+              <th className="action">Action</th>
               <th>Amount</th>
               <th>{/* Empty column for arrow */}</th>
             </tr>
@@ -44,7 +44,10 @@ export const FlightLogView = () => {
 
             {/* Staking actions and completed unstaking actions */}
             {logs.map(row => (
-              <tr onClick={() => window.open(getTxExplorerUrl(row.signature), "_blank")}>
+              <tr
+                key={row.signature}
+                onClick={() => window.open(getTxExplorerUrl(row.signature), "_blank")}
+              >
                 <td>{row.blockDate}</td>
                 <td>Complete</td>
                 <td className="action">{row.action}</td>
