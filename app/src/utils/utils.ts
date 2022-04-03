@@ -55,6 +55,9 @@ export function fromLamports(account?: number | BN, mint?: JetMint, rate: number
 }
 
 export const toTokens = (amount: BN | number | undefined, mint?: JetMint) => {
+  if (amount === new BN(0) || amount === 0) {
+    return 0;
+  }
   return fromLamports(amount, mint).toLocaleString(undefined, {
     maximumFractionDigits: 1
   });
@@ -162,14 +165,38 @@ export const sharesToTokens = (
 ): { tokens: BN; conversion: BN } => {
   let tokens = new BN(0);
   let conversion = new BN(0);
-  if (!stakePool) {
+  if (
+    !stakePool ||
+    stakePool?.stakePool.bonded.shares === new BN(0) ||
+    stakePool?.stakePool.bonded.tokens === new BN(0)
+  ) {
     return { tokens, conversion };
   }
-  conversion = stakePool?.stakePool.bonded.shares.div(stakePool?.stakePool.bonded.tokens);
+  // conversion = stakePool?.stakePool.bonded.shares.div(stakePool?.stakePool.bonded.tokens);
   if (!shares) {
     return { tokens, conversion };
   }
-  tokens = shares.mul(stakePool?.stakePool.bonded.tokens).div(stakePool?.stakePool.bonded.shares);
+
+  // tokens = shares.mul(stakePool?.stakePool.bonded.tokens).div(stakePool?.stakePool.bonded.shares);
+  return { tokens, conversion };
+};
+
+export const sharesToTokensUnbonded = (
+  shares: BN | undefined,
+  stakePool: StakePool | undefined
+): { tokens: BN; conversion: BN } => {
+  let tokens = new BN(0);
+  let conversion = new BN(0);
+  if (!stakePool) {
+    return { tokens, conversion };
+  }
+  conversion = stakePool?.stakePool.unbonding.shares.div(stakePool?.stakePool.unbonding.tokens);
+  if (!shares) {
+    return { tokens, conversion };
+  }
+  tokens = shares
+    .mul(stakePool?.stakePool.unbonding.tokens)
+    .div(stakePool?.stakePool.unbonding.shares);
   return { tokens, conversion };
 };
 

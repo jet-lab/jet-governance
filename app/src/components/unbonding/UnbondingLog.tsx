@@ -4,12 +4,12 @@ import { Button, Tooltip } from "antd";
 import { useEffect, useState } from "react";
 import { useBlockExplorer } from "../../contexts/blockExplorer";
 import { useProposalContext } from "../../contexts/proposal";
-import { dateFromUnixTimestamp, toTokens } from "../../utils";
+import { dateFromUnixTimestamp, sharesToTokensUnbonded, toTokens } from "../../utils";
 import { RestakeModal } from "../modals/RestakeModal";
 import { WithdrawModal } from "../modals/WithdrawModal";
 
 export const UnbondingLog = ({ unbondingAccount }: { unbondingAccount: UnbondingAccount }) => {
-  const { jetMint } = useProposalContext();
+  const { jetMint, stakePool } = useProposalContext();
 
   const [restakeModalVisible, setRestakeModalVisible] = useState(false);
   const [withdrawModalVisible, setWithdrawModalVisible] = useState(false);
@@ -93,7 +93,7 @@ export const UnbondingLog = ({ unbondingAccount }: { unbondingAccount: Unbonding
           )
         }
       >
-        {toTokens(unbondingAccount?.tokens, jetMint)}
+        {toTokens(sharesToTokensUnbonded(unbondingAccount?.shares, stakePool).tokens, jetMint)}
       </td>
       <td>
         <i className="fas fa-external-link-alt"></i>
