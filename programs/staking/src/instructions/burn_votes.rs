@@ -48,12 +48,16 @@ impl<'info> BurnVotes<'info> {
     }
 }
 
-pub fn burn_votes_handler(ctx: Context<BurnVotes>, amount: Option<u64>) -> Result<()> {
+pub fn burn_votes_handler(ctx: Context<BurnVotes>, token_amount: Option<u64>) -> Result<()> {
     let stake_pool = &ctx.accounts.stake_pool;
     let stake_account = &mut ctx.accounts.stake_account;
 
-    let burned_amount = match amount {
-        Some(n) => n,
+    let burned_amount = match token_amount {
+        // If the amount of tokens is specified, convert it to number of shares
+        Some(n) => {
+            let token_pool = stake_pool.bonded.amount();
+            token_pool.with_tokens(Rounding::Up, n).share_amount
+        }
         None => token::accessor::amount(&ctx.accounts.voter_token_account.to_account_info())?,
     };
     stake_account.burn_votes(burned_amount);

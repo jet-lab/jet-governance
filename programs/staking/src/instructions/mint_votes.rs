@@ -102,12 +102,19 @@ impl<'info> MintVotes<'info> {
     }
 }
 
-pub fn mint_votes_handler(ctx: Context<MintVotes>, amount: Option<u64>) -> Result<()> {
+pub fn mint_votes_handler(ctx: Context<MintVotes>, token_amount: Option<u64>) -> Result<()> {
     let stake_pool = &mut ctx.accounts.stake_pool;
     let stake_account = &mut ctx.accounts.stake_account;
 
     stake_pool.update_vault(ctx.accounts.stake_pool_vault.amount);
-    let minted_amount = stake_account.mint_votes(amount)?;
+    let share_amount = token_amount.map(|token_amount| {
+        // Convert token amounts to share amount
+        let token_pool = stake_pool.bonded.amount();
+        token_pool
+            .with_tokens(Rounding::Down, token_amount)
+            .share_amount
+    });
+    let minted_amount = stake_account.mint_votes(share_amount)?;
     let stake_pool = &ctx.accounts.stake_pool;
 
     token::mint_to(

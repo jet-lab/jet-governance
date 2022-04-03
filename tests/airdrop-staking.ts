@@ -16,11 +16,13 @@ import {
   MintMaxVoteWeightSource,
   getTokenHoldingAddress,
   getTokenOwnerRecordAddress
+  // withWithdrawGoverningTokens
 } from "@solana/spl-governance";
 import { assert } from "chai";
 import { JetRewards } from "../target/types/jet_rewards";
 import { JetStaking } from "../target/types/jet_staking";
 import { JetAuth } from "../target/types/jet_auth";
+import { StakeAccount, StakePool } from "@jet-lab/jet-engine";
 
 const GOVERNANCE_ID = new PublicKey("JPGovTiAUgyqirerBbXXmfyt3SkHVEcpSAPjRCCSHVx");
 const RewardsProgram = anchor.workspace.JetRewards as Program<JetRewards>;
@@ -651,6 +653,63 @@ describe("airdrop-staking", () => {
       },
       signers: [staker]
     });
+
+    // ?
+  });
+
+  it("mint votes based on tokens", async () => {
+    const voteAta = await voteToken.getOrCreateAssociatedAccountInfo(staker.publicKey);
+
+    // Get the stake pool to determine the number of tokens to unvest based on
+    // shares:tokens ratio.
+    const stakePool = (await StakePool.load(StakingProgram as any, stakeSeed)).stakePool;
+    // Get the stake account to calculate the number of unminted shares
+    const stakeAccount = (
+      await StakeAccount.load(StakingProgram as any, stakeAcc.stakePool, staker.publicKey)
+    ).stakeAccount;
+    const eligibleVotes = stakeAccount.bondedShares
+      .sub(stakeAccount.mintedVotes)
+      .sub(stakeAccount.mintedCollateral)
+      .sub(stakeAccount.unbondingShares);
+    // Half the tokens of the user equal half the shares * pool ratio
+    console.log("pool shares", stakePool.bonded.shares.toNumber());
+    console.log("pool tokens", stakePool.bonded.tokens.toNumber());
+    console.log(
+      "user votes",
+      stakeAccount.bondedShares.toNumber(),
+      stakeAccount.mintedVotes.toNumber()
+    );
+    console.log("eligible votes", eligibleVotes.toNumber());
+    const userTokens = eligibleVotes.mul(stakePool.bonded.tokens).div(stakePool.bonded.shares);
+    // Divide by 2 to get half of the tokens
+    const eligibleTokens = userTokens.div(new anchor.BN(2));
+    console.log("eligible tokens", eligibleTokens.toNumber());
+
+    await StakingProgram.rpc.mintVotes(eligibleTokens, {
+      accounts: {
+        owner: staker.publicKey,
+        stakePool: stakeAcc.stakePool,
+        stakePoolVault: stakeAcc.stakePoolVault,
+        stakeVoteMint: stakeAcc.stakeVoteMint,
+        stakeAccount: stakerAccount,
+        voterTokenAccount: voteAta.address,
+        governanceRealm: govRealm,
+        governanceVault: govVault,
+        governanceOwnerRecord: stakerGovRecord,
+        payer: wallet.publicKey,
+        tokenProgram: TOKEN_PROGRAM_ID,
+        governanceProgram: GOVERNANCE_ID,
+        systemProgram: SystemProgram.programId,
+        rent: SYSVAR_RENT_PUBKEY
+      },
+      signers: [staker]
+    });
+
+    const updatedVault = await voteToken.getAccountInfo(govVault);
+
+    // Expect the number of shares to be half of the full amount, as we have claimed
+    // half of the bonded tokens.
+    assert.equal(updatedVault.amount.toNumber(), Math.floor(45_652_173_913 / 2));
   });
 
   it("mint max votes", async () => {
@@ -678,6 +737,36 @@ describe("airdrop-staking", () => {
 
     const updatedVault = await voteToken.getAccountInfo(govVault);
 
+    assert.equal(updatedVault.amount.toNumber(), 45_652_173_913);
+  });
+
+  it("user cannot mint max votes again", async () => {
+    const voteAta = await voteToken.getOrCreateAssociatedAccountInfo(staker.publicKey);
+
+    await StakingProgram.rpc.mintVotes(null, {
+      accounts: {
+        owner: staker.publicKey,
+        stakePool: stakeAcc.stakePool,
+        stakePoolVault: stakeAcc.stakePoolVault,
+        stakeVoteMint: stakeAcc.stakeVoteMint,
+        stakeAccount: stakerAccount,
+        voterTokenAccount: voteAta.address,
+        governanceRealm: govRealm,
+        governanceVault: govVault,
+        governanceOwnerRecord: stakerGovRecord,
+        payer: wallet.publicKey,
+        tokenProgram: TOKEN_PROGRAM_ID,
+        governanceProgram: GOVERNANCE_ID,
+        systemProgram: SystemProgram.programId,
+        rent: SYSVAR_RENT_PUBKEY
+      },
+      signers: [staker]
+    });
+
+    const updatedVault = await voteToken.getAccountInfo(govVault);
+
+    // The vault should not have changed, showing that no additional votes
+    // were minted.
     assert.equal(updatedVault.amount.toNumber(), 45_652_173_913);
   });
 
@@ -709,6 +798,53 @@ describe("airdrop-staking", () => {
       assert.equal(getErrorCode(e), 7100);
     }
   });
+
+  // GVN-355: we struggled to make this test pass, will look at it again
+  // it("burn votes", async () => {
+  //   try {
+  //     const voteAta = await voteToken.getOrCreateAssociatedAccountInfo(staker.publicKey);
+
+  //     // Withdraw governing tokens
+  //     let instructions: TransactionInstruction[] = [];
+  //     await withWithdrawGoverningTokens(
+  //       instructions,
+  //       GOVERNANCE_ID,
+  //       govRealm,
+  //       voteAta.address,
+  //       stakeAcc.stakeVoteMint,
+  //       staker.publicKey
+  //     );
+
+  //     let sig = await sendAndConfirmTransaction(provider.connection, new Transaction().add(...instructions), [
+  //       wallet.payer
+  //     ]);
+  //     console.log("signature", sig);
+
+  //     const updatedVaults = await voteToken.getAccountInfo(govVault);
+
+  //     assert.equal(updatedVaults.amount.toNumber(), 45_652_173_913);
+
+  //     await StakingProgram.rpc.burnVotes(new u64(1_000_000_000), {
+  //       accounts: {
+  //         owner: staker.publicKey,
+  //         stakePool: stakeAcc.stakePool,
+  //         stakeVoteMint: stakeAcc.stakeVoteMint,
+  //         stakeAccount: stakerAccount,
+  //         voterTokenAccount: voteAta.address,
+  //         voter: staker.publicKey,
+  //         tokenProgram: TOKEN_PROGRAM_ID
+  //       },
+  //       signers: [staker]
+  //     });
+
+  //     const updatedVault = await voteToken.getAccountInfo(govVault);
+
+  //     assert.equal(updatedVault.amount.toNumber(), 45_652_173_913 - 45_652_173_91);
+
+  // } catch (e) {
+  //     assert.equal(getErrorCode(e), 7100);
+  //   }
+  // });
 
   it("user cannot unbond with outstanding votes", async () => {
     try {

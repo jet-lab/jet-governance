@@ -178,7 +178,7 @@ pub struct SharedTokenPool {
 /// ensure the tokens/shares are available and not allocated in the program
 /// for any other purpose.
 impl SharedTokenPool {
-    fn amount(&self) -> FullAmount {
+    pub fn amount(&self) -> FullAmount {
         let (tokens, shares) = match self.tokens {
             0 => (INIT_TOKEN_SCALE, INIT_SHARE_SCALE),
             n => (n, self.shares),
