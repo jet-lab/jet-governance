@@ -45,7 +45,7 @@ export const HomeView = () => {
   // }, [realm?.account.communityMint.toBase58()]);
 
   return (
-    <section className="home view-container content-body column-grid">
+    <section className="home view content-body column-grid">
       <YourInfo />
       <div className="show-proposals">
         <Typography>

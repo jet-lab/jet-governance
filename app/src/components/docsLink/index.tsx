@@ -7,7 +7,7 @@ export const DocsLink = ({
   className?: any;
   noGradient?: boolean;
 }) => {
-  const classNames = noGradient ? className : "text-gradient-btn " + className;
+  const classNames = noGradient ? className : "link-btn" + className;
   return (
     <a
       href="https://docs.jetprotocol.io/jet-protocol/protocol/jet-staking"

@@ -161,7 +161,7 @@ export const YourInfo = () => {
   const withdrawAccountsAvailable =
     !unbondingComplete.isZero() || (unbondingAccounts && unbondingAccounts.length > 0);
   return (
-    <div className={`your-info ${isOwnPage ? "view-container" : ""}`}>
+    <div className={`your-info ${isOwnPage ? "view" : ""}`}>
       <Typography>
         <Title className="title-info" level={2}>
           Your Info
@@ -241,8 +241,8 @@ export const YourInfo = () => {
                   <Text>{toTokens(bnToNumber(unbondingQueue), jetMint)}</Text>
                 </div>
                 <div className="flex justify-between info-legend-item">
-                  <Text className="text-gradient bold">Available for Withdrawal</Text>
-                  <Text className="text-gradient bold">
+                  <Text className="gradient-text bold">Available for Withdrawal</Text>
+                  <Text className="gradient-text bold">
                     {toTokens(bnToNumber(unbondingComplete), jetMint)}
                   </Text>
                 </div>
@@ -319,12 +319,12 @@ export const YourInfo = () => {
             <div className="airdrops flex-centered">
               <i
                 onClick={getJetAirdrop}
-                className="clickable-icon text-gradient fas fa-parachute-box"
+                className="clickable-icon gradient-text fas fa-parachute-box"
                 title="Airdrop Jet"
               />
               <i
                 onClick={getCouncilAirdrop}
-                className="clickable-icon text-gradient fas fa-crown"
+                className="clickable-icon gradient-text fas fa-crown"
                 title="Airdrop Council"
               />
             </div>

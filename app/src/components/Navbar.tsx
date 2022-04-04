@@ -56,20 +56,23 @@ export function Navbar() {
         </Link>
         <div className="nav-links flex-centered">
           {navLinks.map(link => (
-            <Link
-              to={link.route}
-              className={`nav-link ${pathname === link.route ? "active" : ""} ${link.class}`}
-              key={link.route}
-            >
-              {link.title}
+            <>
+              <Link
+                to={link.route}
+                className={`nav-link ${pathname === link.route ? "active" : ""} ${link.class}`}
+                style={link.badge ? { marginRight: 0 } : {}}
+                key={link.route}
+              >
+                {link.title}
+              </Link>
               {link.badge ? (
                 <span className="badge">
-                  <span className="text-gradient">{link.badge}</span>
+                  <span className="gradient-text">{link.badge}</span>
                 </span>
               ) : (
                 ""
               )}
-            </Link>
+            </>
           ))}
           <Button
             ghost

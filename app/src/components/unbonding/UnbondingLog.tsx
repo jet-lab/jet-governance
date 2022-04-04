@@ -44,13 +44,13 @@ export const UnbondingLog = ({ unbondingAccount }: { unbondingAccount: Unbonding
 
   return (
     <tr>
-      <td className="italics" onClick={getUnbondingAccountExplorerUrl}>
+      <td className="italics-text" onClick={getUnbondingAccountExplorerUrl}>
         {!!stakePool &&
           dateFromUnixTimestamp(
             unbondingAccount?.unbondingAccount.unbondedAt.sub(stakePool.stakePool.unbondPeriod)
           )}
       </td>
-      <td className="italics tooltip" onClick={getUnbondingAccountExplorerUrl}>
+      <td className="italics-text tooltip" onClick={getUnbondingAccountExplorerUrl}>
         {isUnbonded ? "Unbonded" : "Unbonding"}
         {!isUnbonded && (
           <Tooltip
@@ -62,7 +62,7 @@ export const UnbondingLog = ({ unbondingAccount }: { unbondingAccount: Unbonding
         )}
       </td>
 
-      <td className="action italics">
+      <td className="action italics-text">
         <i onClick={getUnbondingAccountExplorerUrl}>
           {oneDayCountdown
             ? `Unstake complete in ${getRemainingTime(
@@ -96,7 +96,7 @@ export const UnbondingLog = ({ unbondingAccount }: { unbondingAccount: Unbonding
         )}
       </td>
       <td
-        className="italics"
+        className="italics-text"
         onClick={() =>
           unbondingAccount &&
           window.open(
