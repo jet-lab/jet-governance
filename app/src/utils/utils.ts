@@ -71,7 +71,9 @@ export const abbreviateNumber = (number: number, precision: number) => {
     scaled = number / scale;
   }
 
-  return scaled.toFixed(precision) + suffix;
+  return number < 100000
+    ? new Intl.NumberFormat().format(Math.floor(number))
+    : scaled.toFixed(precision) + suffix;
 };
 
 export const formatUSD = new Intl.NumberFormat("en-US", {
@@ -112,9 +114,9 @@ export const getRemainingTime = (currentTime: number, endTime: number): string =
   const seconds = Math.floor(difference % 60);
 
   if (days > 0) {
-    return `Ends in ${days} ${days === 1 ? "day" : "days"}`;
+    return `${days} ${days === 1 ? "day" : "days"}`;
   } else {
-    return `Ends in ${hours !== 0 ? `${hours.toLocaleString()}h` : ""} ${
+    return `${hours !== 0 ? `${hours.toLocaleString()}h` : ""} ${
       minutes !== 0 ? `${minutes.toLocaleString()}m` : ""
     } ${seconds.toLocaleString()}s`;
   }

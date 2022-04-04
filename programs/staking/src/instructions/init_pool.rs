@@ -4,6 +4,7 @@ use anchor_lang::prelude::*;
 use anchor_spl::token::TokenAccount;
 use anchor_spl::token::{Mint, Token};
 
+use crate::events::StakePoolCreated;
 use crate::state::*;
 
 #[derive(AnchorSerialize, AnchorDeserialize)]
@@ -93,6 +94,14 @@ pub fn init_pool_handler(ctx: Context<InitPool>, seed: String, config: PoolConfi
     stake_pool.seed_len = seed.len() as u8;
 
     stake_pool.unbond_period = config.unbond_period as i64;
+
+    emit!(StakePoolCreated {
+        stake_pool: stake_pool.key(),
+        authority: ctx.accounts.authority.key(),
+        seed,
+        token_mint: stake_pool.token_mint,
+        config,
+    });
 
     Ok(())
 }

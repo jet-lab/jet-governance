@@ -3,6 +3,7 @@ use solana_program::pubkey;
 
 declare_id!("JPLockxtkngHkaQT5AuRYow3HyUv5qWzmhwsCPd653n");
 
+pub mod events;
 mod instructions;
 pub mod state;
 
@@ -89,6 +90,12 @@ mod error {
         StakeRemaining,
         InvalidAmount,
     }
+}
+
+pub mod spl_governance {
+    use super::declare_id;
+
+    declare_id!("JPGovTiAUgyqirerBbXXmfyt3SkHVEcpSAPjRCCSHVx");
 }
 
 #[derive(Copy, Clone)]

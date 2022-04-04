@@ -121,7 +121,7 @@ impl Airdrop {
         bytemuck::from_bytes_mut(&mut self.target_info)
     }
 
-    fn target_info(&self) -> &AirdropTargetInfo {
+    pub fn target_info(&self) -> &AirdropTargetInfo {
         bytemuck::from_bytes(&self.target_info)
     }
 }

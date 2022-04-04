@@ -473,17 +473,31 @@ p,
       }
     }
     tr {
+      display: flex;
       th {
         min-width: unset;
         padding-bottom: @spacing-xs;
+        flex: 1;
+        &.action {
+          flex: 4;
+        }
       }
       td {
-        width: 100px;
+        flex: 1;
+        display: flex;
+        align-items: center;
+        &.tooltip {
+          justify-content: space-between;
+        }
         &.action {
-          width: 400px;
-
+          flex: 4;
+          flex-flow: row nowrap;
+          justify-content: space-between;
           button {
-            margin-left: @spacing-sm !important;
+            margin-right: @spacing-xl !important;
+          }
+          &.load-more {
+            justify-content: center;
           }
         }
         &:last-of-type {
@@ -945,4 +959,14 @@ p,
       box-shadow: unset;
     }
   }
+}
+
+.terms-privacy-check {
+  input {
+    display: none;
+  }
+}
+
+.terms-privacy-legend {
+  margin-left: @spacing-xl;
 }

@@ -481,31 +481,45 @@ export const VerifyModal = () => {
     children: (
       <div className="flex column">
         <p>
-          You are about to enter Jet Govern. Do not proceed if you do not understand and accept the
-          Terms of Service, and potential for financial loss.
+          You are about to enter JetGovern. New technologies have risk. Do not proceed if you do not
+          understand and accept the terms and potential for financial loss.
         </p>
         <p>
-          <a
-            href="https://www.jetprotocol.io/legal/terms-of-service"
-            target="_blank"
-            className="padding-right text-gradient-btn"
-            rel="noopener noreferrer"
-          >
-            Terms of Service
-          </a>
-          <a
-            href="https://www.jetprotocol.io/legal/privacy-policy"
-            target="_blank"
-            className="padding-right text-gradient-btn"
-            rel="noopener noreferrer"
-          >
-            Privacy Policy
-          </a>
-        </p>
-        <p>
-          <Checkbox onChange={e => setDisclaimerChecked(e.target.checked)}>
-            I understand the Terms of Service, Privacy Policy, Cookie Policy and accept the risks.
-          </Checkbox>
+          <Checkbox
+            id="terms-privacy-check"
+            className="terms-privacy-check"
+            onChange={e => setDisclaimerChecked(e.target.checked)}
+          />
+          <label htmlFor="terms-privacy-check" className="terms-privacy-legend">
+            I understand the{" "}
+            <a
+              href="https://www.jetprotocol.io/legal/terms-of-service"
+              target="_blank"
+              className="text-gradient-btn"
+              rel="noopener noreferrer"
+            >
+              Terms of Service
+            </a>
+            ,{" "}
+            <a
+              href="https://www.jetprotocol.io/legal/privacy-policy"
+              target="_blank"
+              className="text-gradient-btn"
+              rel="noopener noreferrer"
+            >
+              Privacy Policy
+            </a>
+            , and{" "}
+            <a
+              href="https://www.jetprotocol.io/legal/cookie-policy"
+              target="_blank"
+              className="text-gradient-btn"
+              rel="noopener noreferrer"
+            >
+              Cookie Policy
+            </a>
+            . I am aware of and accept the risks of using new technology.
+          </label>
         </p>
       </div>
     ),

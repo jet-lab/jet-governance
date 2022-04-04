@@ -1,8 +1,8 @@
 use anchor_lang::prelude::*;
 
-use crate::state::*;
+use crate::{events, state::*};
 
-#[derive(AnchorSerialize, AnchorDeserialize)]
+#[derive(AnchorSerialize, AnchorDeserialize, Clone)]
 pub struct AirdropAddRecipientsParams {
     pub start_index: u64,
     pub recipients: Vec<AirdropRecipientParam>,
@@ -33,13 +33,24 @@ pub fn airdrop_add_recipients_handler(
 ) -> Result<()> {
     let mut airdrop = ctx.accounts.airdrop.load_mut()?;
 
+    let info = airdrop.target_info();
+    let reward_0 = info.reward_total;
+
     airdrop.add_recipients(
         params.start_index,
-        params
-            .recipients
-            .into_iter()
-            .map(|r| (r.recipient, r.amount)),
+        params.recipients.iter().map(|r| (r.recipient, r.amount)),
     )?;
+
+    let info = airdrop.target_info();
+    let reward_1 = info.reward_total;
+    emit!(events::AirdropRecipientsAdded {
+        airdrop: airdrop.address,
+        reward_additional: reward_1 - reward_0,
+        reward_total: reward_1,
+        recipients_additional: params.recipients.len() as u64,
+        recipients_total: info.recipients_total,
+        recipients: params.recipients,
+    });
 
     Ok(())
 }
