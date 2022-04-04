@@ -245,12 +245,12 @@ const InnerProposalView = ({
               <div className="results">
                 <ResultProgressBar
                   type="Approve"
-                  amount={bnToNumber(sharesToTokens(voteCounts?.yes, stakePool).tokens)}
+                  amount={bnToNumber(voteCounts?.yes)}
                   total={bnToNumber(voteCounts?.total)}
                 />
                 <ResultProgressBar
                   type="Reject"
-                  amount={bnToNumber(sharesToTokens(voteCounts?.no, stakePool).tokens)}
+                  amount={bnToNumber(voteCounts?.no)}
                   total={bnToNumber(voteCounts?.total)}
                 />
               </div>
@@ -288,7 +288,7 @@ const InnerProposalView = ({
                       </span>
                     </div>
                   }
-                  title="Votes per JET"
+                  title="Title"
                   visible={popoverVisible}
                   trigger="click"
                 >

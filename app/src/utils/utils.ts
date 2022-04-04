@@ -160,7 +160,7 @@ export const dateToString = (date: Date) => {
 };
 
 export const sharesToTokens = (
-  shares: BN | undefined,
+  shares: BN | number | undefined,
   stakePool: StakePool | undefined
 ): { tokens: BN; conversion: BN } => {
   let tokens = new BN(0);
@@ -177,7 +177,11 @@ export const sharesToTokens = (
     return { tokens, conversion };
   }
 
-  tokens = shares.mul(stakePool?.stakePool.bonded.tokens).div(stakePool?.stakePool.bonded.shares);
+  const shareAmount = typeof shares === "number" ? new BN(shares) : shares;
+
+  tokens = shareAmount
+    .mul(stakePool?.stakePool.bonded.tokens)
+    .div(stakePool?.stakePool.bonded.shares);
   return { tokens, conversion };
 };
 
