@@ -1,12 +1,10 @@
 import {
   AssociatedToken,
-  bnToNumber,
   StakeAccount,
-  StakeIdl,
   StakePool,
   UnbondingAccount
 } from "@jet-lab/jet-engine";
-import { BN, Program, Provider } from "@project-serum/anchor";
+import { BN, Provider } from "@project-serum/anchor";
 import {
   Governance,
   ProgramAccount,
@@ -47,7 +45,7 @@ export const rescindAndUnstake = async (
 
   // FIXME: Handle error if there are unfinalised proposals
   if (tokenOwnerRecord.account.unrelinquishedVotesCount > 0) {
-    console.log("All Proposals Must Be Finalised To Withdraw Governing Tokens");
+    console.log("Relinquish all votes and finalise all proposals to withdraw governing tokens");
     console.log(
       "unrelinquishedVotesCount",
       tokenOwnerRecord.account.unrelinquishedVotesCount,
