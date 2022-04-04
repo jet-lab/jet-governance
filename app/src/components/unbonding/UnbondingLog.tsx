@@ -4,7 +4,12 @@ import { Button, Tooltip } from "antd";
 import { useEffect, useState } from "react";
 import { useBlockExplorer } from "../../contexts/blockExplorer";
 import { useProposalContext } from "../../contexts/proposal";
-import { dateFromUnixTimestamp, getRemainingTime, toTokens } from "../../utils";
+import {
+  dateFromUnixTimestamp,
+  sharesToTokensUnbonded,
+  getRemainingTime,
+  toTokens
+} from "../../utils";
 import { RestakeModal } from "../modals/RestakeModal";
 import { WithdrawModal } from "../modals/WithdrawModal";
 import { useCurrentTime } from "../../hooks";
@@ -90,8 +95,18 @@ export const UnbondingLog = ({ unbondingAccount }: { unbondingAccount: Unbonding
           />
         )}
       </td>
-      <td className="italics" onClick={getUnbondingAccountExplorerUrl}>
-        {toTokens(unbondingAccount?.tokens, jetMint)}
+      <td
+        className="italics"
+        onClick={() =>
+          unbondingAccount &&
+          window.open(
+            getAccountExplorerUrl(unbondingAccount.address.toBase58()),
+            "_blank",
+            "noreferrer"
+          )
+        }
+      >
+        {toTokens(sharesToTokensUnbonded(unbondingAccount?.shares, stakePool).tokens, jetMint)}
       </td>
       <td onClick={getUnbondingAccountExplorerUrl}>
         <i className="fas fa-external-link-alt"></i>

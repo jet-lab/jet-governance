@@ -2,17 +2,18 @@ import { InfoCircleFilled, MinusOutlined, PlusOutlined } from "@ant-design/icons
 import { bnToNumber } from "@jet-lab/jet-engine";
 import { Typography, Tooltip, Divider, Button, notification } from "antd";
 import { StakeInput } from "./Input";
-import { FC, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { jetFaucet } from "../actions/jetFaucet";
 import { useConnectionConfig } from "../contexts";
 import { useProposalContext } from "../contexts/proposal";
-import { useGoverningTokenDepositAmount, useWithdrawVotesAbility } from "../hooks";
+import { useWithdrawVotesAbility } from "../hooks";
 import {
   COUNCIL_FAUCET_DEVNET,
   COUNCIL_TOKEN_MINT,
   fromLamports,
   JET_FAUCET_DEVNET,
   JET_TOKEN_MINT,
+  sharesToTokens,
   toTokens
 } from "../utils";
 import { StakeModal } from "./modals/StakeModal";
@@ -21,44 +22,7 @@ import { WithdrawAllModal } from "./modals/WithdrawAllModal";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { useHistory, useLocation } from "react-router";
 import "./YourInfo.less";
-
-const VotesBalance: FC<{ votes: string }> = ({ votes }) => {
-  const { Paragraph } = Typography;
-  const getFontResizeClass = (lengthChars: number) => {
-    const resizeCharTypes = {
-      moreThan7: "resize-font-size-more-than-7-char",
-      moreThan9: "resize-font-size-more-than-9-char",
-      moreThan13: "resize-font-size-more-than-13-char",
-      moreThan16: "resize-font-size-more-than-16-char",
-      moreThan22: "resize-font-size-more-than-22-char",
-      moreThan30: "resize-font-size-more-than-30-char"
-    };
-    if (lengthChars > 30) {
-      return resizeCharTypes.moreThan30;
-    }
-    if (lengthChars > 22) {
-      return resizeCharTypes.moreThan22;
-    }
-    if (lengthChars > 16) {
-      return resizeCharTypes.moreThan16;
-    }
-    if (lengthChars > 12) {
-      return resizeCharTypes.moreThan13;
-    }
-    if (lengthChars > 8) {
-      return resizeCharTypes.moreThan9;
-    }
-    if (lengthChars > 6) {
-      return resizeCharTypes.moreThan7;
-    }
-    return "";
-  };
-  return (
-    <Paragraph className={`text-gradient vote-balance ${getFontResizeClass(votes.length)}`}>
-      {votes}
-    </Paragraph>
-  );
-};
+import { StakedJetBalance } from "./Dashboard/StakedJetBalance";
 
 export const YourInfo = () => {
   const [stakeModalVisible, setStakeModalVisible] = useState(false);
@@ -81,9 +45,10 @@ export const YourInfo = () => {
     stakingYield,
     realm,
     tokenOwnerRecord,
+    stakePool,
     programs
   } = useProposalContext();
-  const votes: string = useGoverningTokenDepositAmount();
+
   const withdrawVotesAbility = useWithdrawVotesAbility(tokenOwnerRecord);
   const rewards = useMemo(() => {
     return {
@@ -189,7 +154,9 @@ export const YourInfo = () => {
     setInputAmount(jetAccount ? fromLamports(jetAccount.info.amount, jetMint) : 0);
   };
   const preFillJetWithStaked = () => {
-    setInputAmount(stakedJet ? fromLamports(stakedJet, jetMint) : 0);
+    setInputAmount(
+      stakedJet ? fromLamports(sharesToTokens(stakedJet, stakePool).tokens, jetMint) : 0
+    );
   };
   const withdrawAccountsAvailable =
     !unbondingComplete.isZero() || (unbondingAccounts && unbondingAccounts.length > 0);
@@ -201,7 +168,7 @@ export const YourInfo = () => {
         </Title>
         <div className="box-info">
           <Text>
-            Votes{" "}
+            Staked JET{" "}
             <Tooltip
               title="For each JET token staked, you may cast 1 vote in JetGovern."
               placement="topLeft"
@@ -210,7 +177,10 @@ export const YourInfo = () => {
               <InfoCircleFilled />
             </Tooltip>
           </Text>
-          <VotesBalance votes={votes} />
+          <StakedJetBalance
+            stakedJet={toTokens(sharesToTokens(stakedJet, stakePool).tokens, jetMint)}
+            onClick={preFillJetWithStaked}
+          />
           <div className="wallet-overview flex justify-between column">
             <div className="flex justify-between">
               <Text className="staking-info current-staking-apr">
@@ -256,13 +226,6 @@ export const YourInfo = () => {
                 <Text className="text-btn">{walletBalance}</Text>
               </div>
             )}
-            <div
-              className="flex justify-between info-legend-item info-legend-item-prefill"
-              onClick={preFillJetWithStaked}
-            >
-              <Text>Staked JET</Text>
-              <Text className="text-btn">{toTokens(stakedJet, jetMint)}</Text>
-            </div>
             {connected && (
               <>
                 <div className="flex justify-between info-legend-item">

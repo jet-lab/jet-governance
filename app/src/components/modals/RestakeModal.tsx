@@ -3,7 +3,7 @@ import { Modal, ModalProps } from "antd";
 import { restake } from "../../actions/restake";
 import { useRpcContext } from "../../hooks/useRpcContext";
 import { UnbondingAccount } from "@jet-lab/jet-engine";
-import { fromLamports, isSignTransactionError } from "../../utils";
+import { isSignTransactionError } from "../../utils";
 import { useProposalContext } from "../../contexts/proposal";
 
 enum Steps {
@@ -22,8 +22,6 @@ export const RestakeModal = ({
   const [current, setCurrent] = useState<Steps>(Steps.Confirm);
   const [loading, setLoading] = useState(false);
   const { stakePool, stakeAccount, jetMint, realm, refresh } = useProposalContext();
-
-  const stakeAmount = fromLamports(unbondingAccount?.tokens, jetMint);
 
   const handleOk = () => {
     if (!unbondingAccount || !stakePool || !stakeAccount || !realm) {

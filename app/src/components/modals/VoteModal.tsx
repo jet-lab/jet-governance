@@ -1,10 +1,10 @@
 import { Modal, ModalProps } from "antd";
 import { ReactNode, useEffect, useState } from "react";
-import { useCountdown, useOtherActiveProposals, VoteOption } from "../../hooks/proposalHooks";
+import { useCountdown, VoteOption } from "../../hooks/proposalHooks";
 import { useRpcContext } from "../../hooks/useRpcContext";
 import { StakeBalance } from "@jet-lab/jet-engine";
 import { getPubkeyIndex } from "../../models/PUBKEYS_INDEX";
-import { isSignTransactionError, toTokens } from "../../utils";
+import { isSignTransactionError, sharesToTokens, toTokens } from "../../utils";
 import {
   Governance,
   ProgramAccount,
@@ -16,7 +16,6 @@ import {
 } from "@solana/spl-governance";
 import { castVote } from "../../actions/castVote";
 import { useProposalContext } from "../../contexts/proposal";
-import { VoteOnOtherProposal } from "../proposal/VoteOnOtherProposal";
 
 enum Steps {
   Confirm = 0,
@@ -45,8 +44,13 @@ export const VoteModal = ({
   const { endDate } = useCountdown(proposal, governance);
   const rpcContext = useRpcContext();
   const { programId, walletPubkey } = useRpcContext();
-  const { stakePool, stakeBalance, jetMint, programs, refresh, proposalsByGovernance } =
-    useProposalContext();
+  const {
+    stakePool,
+    stakeBalance: { stakedJet },
+    jetMint,
+    programs,
+    refresh
+  } = useProposalContext();
 
   let voteText: string = "";
 
@@ -109,9 +113,6 @@ export const VoteModal = ({
     }
   };
 
-  // Handlers for tx success all set modal
-  const otherActiveProposals = useOtherActiveProposals(proposalsByGovernance, proposal, governance);
-
   const steps: (ModalProps & { content: ReactNode })[] = [];
   steps[Steps.Confirm] = {
     title: "Confirm vote",
@@ -127,8 +128,8 @@ export const VoteModal = ({
           {getPubkeyIndex(proposal.pubkey.toBase58())}: {proposal.account.name}.
         </p>
         <p>
-          You have {toTokens(stakeBalance.stakedJet, jetMint)} JET staked, and will be able to
-          unstake these funds when voting ends on {endDate}.
+          You have {toTokens(sharesToTokens(stakedJet, stakePool).tokens, jetMint)} JET staked, and
+          will be able to unstake these funds when voting ends on {endDate}.
         </p>
       </div>
     ),
