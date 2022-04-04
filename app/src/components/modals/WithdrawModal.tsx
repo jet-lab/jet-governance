@@ -2,7 +2,7 @@ import { PropsWithChildren, useState } from "react";
 import { Modal, ModalProps } from "antd";
 import { useRpcContext } from "../../hooks/useRpcContext";
 import { UnbondingAccount } from "@jet-lab/jet-engine";
-import { fromLamports, isSignTransactionError } from "../../utils";
+import { isSignTransactionError } from "../../utils";
 import { withdrawUnbonded } from "../../actions/withdrawUnbonded";
 import { useProposalContext } from "../../contexts/proposal";
 
@@ -22,8 +22,6 @@ export const WithdrawModal = ({
   const [current, setCurrent] = useState<Steps>(Steps.Confirm);
   const [loading, setLoading] = useState(false);
   const { stakeAccount, jetMint, stakePool, refresh } = useProposalContext();
-
-  const stakeAmount = fromLamports(unbondingAccount?.tokens, jetMint);
 
   const handleOk = () => {
     if (!unbondingAccount || !stakeAccount || !stakePool) {

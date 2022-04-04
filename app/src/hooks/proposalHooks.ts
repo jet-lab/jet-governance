@@ -99,7 +99,7 @@ export function useCountdown(
   let endDateOrCountdown: string | undefined = useMemo(() => {
     if (!proposal?.account.isPreVotingState() && !!countdownTime && !!endDate) {
       return proposal?.account.state === ProposalState.Voting && countdownTime > currentTime
-        ? `${getRemainingTime(currentTime, countdownTime)}`
+        ? `Ends in ${getRemainingTime(currentTime, countdownTime)}`
         : `Ended on: ${endDate}`;
     }
   }, [countdownTime, currentTime, endDate, proposal?.account]);

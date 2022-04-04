@@ -20,19 +20,50 @@
     box-shadow: @neu-shadow-inset;
     border-radius: @border-radius;
   }
+
   .info-legend-item {
     margin-top: @spacing-xs;
   }
+
   .info-legend-item-prefill {
     cursor: pointer;
   }
+
   .vote-balance {
     padding-bottom: 16px;
     margin-bottom: 15px;
     padding-top: 23px;
     line-height: 35px;
     font-size: 68px;
+    max-width: 216px;
+    overflow: hidden;
   }
+
+  .resize-font-size-more-than-7-char {
+    font-size: clamp(1rem, -0.875rem + 8.333vw, 2.8rem);
+  }
+
+  .resize-font-size-more-than-9-char {
+    font-size: clamp(1rem, -0.875rem + 8.333vw, 2.2rem);
+  }
+
+  .resize-font-size-more-than-13-char {
+    font-size: clamp(1rem, -0.875rem + 8.333vw, 1.5rem);
+  }
+
+  .resize-font-size-more-than-16-char {
+    font-size: clamp(1rem, -0.875rem + 8.333vw, 1.1rem);
+  }
+
+  .resize-font-size-more-than-22-char {
+    font-size: clamp(0.5rem, 0.5rem + 0.5vw, 0.79rem);
+  }
+
+  .resize-font-size-more-than-30-char {
+    font-size: clamp(0.5rem, 0.5rem + 0.5vw, 0.79rem);
+    overflow-wrap: break-word;
+  }
+
   .action-btn-info {
     padding: 7px 20px;
     font-size: @sm-font-size;

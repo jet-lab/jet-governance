@@ -4,8 +4,8 @@ export let JET_TOKEN_MINT = new PublicKey("JET6zMJWkCN9tpRT2v2jfAmm5VnQFDpUBCyaK
 export const JET_FAUCET_DEVNET = new PublicKey("4RqY4p1xXMcMF1xrGYtJG8aaQDR7s8GHkjfSHFqcBmQV");
 export const COUNCIL_TOKEN_MINT = new PublicKey("GBZ2J49hpCLM8HDFav7gQ2zJNC3LCV264y42WhoqdEYo");
 export const COUNCIL_FAUCET_DEVNET = new PublicKey("3AJLr1kbsC8btrizbYTWPCvfTfCJpK7JYHHpmZdy7sgM");
-export let JET_REALM = new PublicKey("HAHXsb1xckpogJesjBQcuLSjaYwfbrf15mS2tj8ckbKc");
-export let JET_GOVERNANCE = new PublicKey("HbWqQEK6fCrQBkgZLwzwbutnidZkfTAYmJRnqLY5nUkj");
+export let JET_REALM = new PublicKey("DpfKN6p2LgeL79hrJTjHBpJJsKwjziswjjyPhHGqiock");
+export let JET_GOVERNANCE = new PublicKey("F944EEYVbztkh3aKNDnjpeSoky77nEMfZ58MN3JoPnsC");
 export const GOVERNANCE_PROGRAM_ID = new PublicKey("JPGovTiAUgyqirerBbXXmfyt3SkHVEcpSAPjRCCSHVx");
 export let BPF_UPGRADE_LOADER_ID = new PublicKey("BPFLoaderUpgradeab1e11111111111111111111111");
 
@@ -15,8 +15,8 @@ export const setProgramIds = (envName: string) => {
     JET_GOVERNANCE = PublicKey.default; // FIXME!
     JET_TOKEN_MINT = new PublicKey("JET6zMJWkCN9tpRT2v2jfAmm5VnQFDpUBCyaKojmGtz");
   } else if (envName === "devnet") {
-    JET_REALM = new PublicKey("HAHXsb1xckpogJesjBQcuLSjaYwfbrf15mS2tj8ckbKc");
-    JET_GOVERNANCE = new PublicKey("HbWqQEK6fCrQBkgZLwzwbutnidZkfTAYmJRnqLY5nUkj");
+    JET_REALM = new PublicKey("DpfKN6p2LgeL79hrJTjHBpJJsKwjziswjjyPhHGqiock");
+    JET_GOVERNANCE = new PublicKey("F944EEYVbztkh3aKNDnjpeSoky77nEMfZ58MN3JoPnsC");
     JET_TOKEN_MINT = new PublicKey("FRuFWBrp1Kh6LpAi9CRvjk97C6YpCR7AERq62N2CZFUg");
   }
 };
