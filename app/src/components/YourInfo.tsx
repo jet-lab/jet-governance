@@ -22,6 +22,7 @@ import { WithdrawAllModal } from "./modals/WithdrawAllModal";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { useHistory, useLocation } from "react-router";
 import "./YourInfo.less";
+import { StakedJetBalance } from "./Dashboard/StakedJetBalance";
 
 export const YourInfo = () => {
   const [stakeModalVisible, setStakeModalVisible] = useState(false);
@@ -33,28 +34,22 @@ export const YourInfo = () => {
   const { inDevelopment } = useConnectionConfig();
   const { claimsCount } = useProposalContext();
   const history = useHistory();
-
   const {
     refresh,
     walletFetched,
-
     unbondingTotal: { unbondingQueue, unbondingComplete },
     unbondingAccounts,
     stakeBalance: { stakedJet },
-
     jetAccount,
     jetMint,
     stakingYield,
-
     realm,
     tokenOwnerRecord,
     stakePool,
-
     programs
   } = useProposalContext();
-  const withdrawVotesAbility = useWithdrawVotesAbility(tokenOwnerRecord);
-  /* eslint-enable @typescript-eslint/no-unused-vars */
 
+  const withdrawVotesAbility = useWithdrawVotesAbility(tokenOwnerRecord);
   const rewards = useMemo(() => {
     return {
       apr: stakingYield ? (stakingYield.apr * 100).toFixed(0) : undefined,
@@ -73,9 +68,7 @@ export const YourInfo = () => {
     }
     const balance = bnToNumber(jetAccount.info.amount) / 10 ** jetMint.decimals;
     const stakable = Math.min(inputAmount, balance);
-
     setInputAmount(stakable);
-
     if (stakable === 0) {
       return;
     }
@@ -89,13 +82,10 @@ export const YourInfo = () => {
     const balance =
       bnToNumber(tokenOwnerRecord.account.governingTokenDepositAmount) / 10 ** jetMint.decimals;
     const stakable = Math.min(inputAmount, balance);
-
     setInputAmount(stakable);
-
     if (stakable === 0) {
       return;
     }
-
     setUnstakeModalVisible(true);
   };
 
@@ -103,7 +93,9 @@ export const YourInfo = () => {
     setWithdrawAllModalVisible(true);
   };
 
-  // Devnet only: airdrop JET tokens
+  /**
+   * Devnet only: airdrop JET tokens
+   */
   const getJetAirdrop = async () => {
     try {
       if (programs) {
@@ -114,7 +106,10 @@ export const YourInfo = () => {
       refresh();
     }
   };
-  // Devnet only: airdrop Council tokens
+
+  /**
+   * Devnet only: airdrop Council tokens
+   */
   const getCouncilAirdrop = async () => {
     try {
       if (programs) {
@@ -153,7 +148,7 @@ export const YourInfo = () => {
   };
 
   const isOwnPage = Boolean(useLocation().pathname.includes("your-info"));
-  const { Paragraph, Title, Text } = Typography;
+  const { Title, Text } = Typography;
   const walletBalance = jetAccount ? toTokens(jetAccount.info.amount, jetMint) : 0;
   const preFillJetWithBalance = () => {
     setInputAmount(jetAccount ? fromLamports(jetAccount.info.amount, jetMint) : 0);
@@ -182,12 +177,10 @@ export const YourInfo = () => {
               <InfoCircleFilled />
             </Tooltip>
           </Text>
-          <Paragraph
-            className="text-gradient vote-balance info-legend-item info-legend-item-prefill"
+          <StakedJetBalance
+            stakedJet={toTokens(sharesToTokens(stakedJet, stakePool).tokens, jetMint)}
             onClick={preFillJetWithStaked}
-          >
-            {toTokens(sharesToTokens(stakedJet, stakePool).tokens, jetMint)}
-          </Paragraph>
+          />
           <div className="wallet-overview flex justify-between column">
             <div className="flex justify-between">
               <Text className="staking-info current-staking-apr">
@@ -328,12 +321,12 @@ export const YourInfo = () => {
                 onClick={getJetAirdrop}
                 className="clickable-icon text-gradient fas fa-parachute-box"
                 title="Airdrop Jet"
-              ></i>
+              />
               <i
                 onClick={getCouncilAirdrop}
                 className="clickable-icon text-gradient fas fa-crown"
                 title="Airdrop Council"
-              ></i>
+              />
             </div>
           )}
         </div>
