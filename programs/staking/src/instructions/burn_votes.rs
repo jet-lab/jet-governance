@@ -56,7 +56,8 @@ pub fn burn_votes_handler(ctx: Context<BurnVotes>, token_amount: Option<u64>) ->
         // If the amount of tokens is specified, convert it to number of shares
         Some(n) => {
             let token_pool = stake_pool.bonded.amount();
-            token_pool.with_tokens(Rounding::Up, n).share_amount
+            // Round down as we round down when minting, to ensure correct round-trip
+            token_pool.with_tokens(Rounding::Down, n).share_amount
         }
         None => token::accessor::amount(&ctx.accounts.voter_token_account.to_account_info())?,
     };
