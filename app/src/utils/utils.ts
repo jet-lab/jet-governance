@@ -172,12 +172,12 @@ export const sharesToTokens = (
   ) {
     return { tokens, conversion };
   }
-  // conversion = stakePool?.stakePool.bonded.shares.div(stakePool?.stakePool.bonded.tokens);
+  conversion = stakePool?.stakePool.bonded.shares.div(stakePool?.stakePool.bonded.tokens);
   if (!shares) {
     return { tokens, conversion };
   }
 
-  // tokens = shares.mul(stakePool?.stakePool.bonded.tokens).div(stakePool?.stakePool.bonded.shares);
+  tokens = shares.mul(stakePool?.stakePool.bonded.tokens).div(stakePool?.stakePool.bonded.shares);
   return { tokens, conversion };
 };
 
