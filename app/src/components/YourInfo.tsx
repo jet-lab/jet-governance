@@ -170,7 +170,7 @@ export const YourInfo = () => {
           <Text>
             Staked JET{" "}
             <Tooltip
-              title="For each JET token staked, you may cast 1 vote in JetGovern."
+              title="Staking JET allows you to cast your vote in JetGovern."
               placement="topLeft"
               overlayClassName="no-arrow"
             >
