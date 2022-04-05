@@ -160,7 +160,7 @@ export const YourInfo = () => {
     );
   };
   const canWithdraw = useWithdrawableCount(unbondingAccounts) > 0;
-  
+
   return (
     <div className={`your-info ${isOwnPage ? "view" : ""}`}>
       <Typography>
