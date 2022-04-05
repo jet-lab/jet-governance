@@ -29,6 +29,7 @@ pub struct AwardRelease<'info> {
     pub voter_weight_record: AccountInfo<'info>,
 
     /// The max voter weight
+    /// CHECK:
     #[account(mut)]
     pub max_voter_weight_record: AccountInfo<'info>,
 
