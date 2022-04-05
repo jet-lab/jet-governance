@@ -102,7 +102,7 @@ export function sleep(ms: number): Promise<void> {
 
 // Get remaining days, hours and minutes
 export const getRemainingTime = (currentTime: number, endTime: number): string => {
-  if (endTime <= currentTime) return `Expired on ${dateToString(new Date(endTime))}`;
+  if (endTime <= currentTime) return `${dateFromUnixTimestamp(new BN(endTime/1000))}`;
   let difference = Math.abs(endTime - currentTime) / 1000;
 
   const days = Math.floor(difference / 86400);

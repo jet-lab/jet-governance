@@ -33,6 +33,8 @@ export const UnbondingLog = ({ unbondingAccount }: { unbondingAccount: Unbonding
     !isUnbonded &&
     bnToNumber(unbondingAccount.unbondingAccount.unbondedAt) * 1000 - currentTime < ONE_DAY;
 
+  const expired = bnToNumber(unbondingAccount.unbondingAccount.unbondedAt) * 1000 <= currentTime;
+
   const getUnbondingAccountExplorerUrl = () => {
     unbondingAccount &&
       window.open(
@@ -64,12 +66,13 @@ export const UnbondingLog = ({ unbondingAccount }: { unbondingAccount: Unbonding
 
       <td className="action italics-text">
         <i onClick={getUnbondingAccountExplorerUrl}>
-          {oneDayCountdown
-            ? `Unstake complete in ${getRemainingTime(
+          Unstake complete {" "}
+          {oneDayCountdown && !expired
+            ? `in ${getRemainingTime(
                 currentTime,
                 bnToNumber(unbondingAccount.unbondingAccount.unbondedAt) * 1000
               )}`
-            : `Unstake complete on 
+            : `on 
             ${dateFromUnixTimestamp(unbondingAccount.unbondingAccount.unbondedAt)}`}
         </i>{" "}
         <Button
