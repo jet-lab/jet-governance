@@ -43,6 +43,10 @@ pub struct AirdropClaim<'info> {
     #[account(mut)]
     pub stake_account: AccountInfo<'info>,
 
+    /// The voter weight for the stake account
+    #[account(mut)]
+    pub voter_weight_record: AccountInfo<'info>,
+
     pub staking_program: Program<'info, JetStaking>,
     pub token_program: Program<'info, Token>,
 }
@@ -55,6 +59,7 @@ impl<'info> AirdropClaim<'info> {
                 stake_pool: self.stake_pool.to_account_info(),
                 stake_pool_vault: self.stake_pool_vault.to_account_info(),
                 stake_account: self.stake_account.to_account_info(),
+                voter_weight_record: self.voter_weight_record.to_account_info(),
                 payer: self.reward_vault.to_account_info(),
                 payer_token_account: self.reward_vault.to_account_info(),
                 token_program: self.token_program.to_account_info(),

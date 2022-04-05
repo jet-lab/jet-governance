@@ -21,3 +21,4 @@ anchor-spl = { git = "https://github.com/jet-lab/anchor", branch = "master" }
 solana-program = "1.8"
 jet-proto-auth = { path = "../auth", features = ["cpi"] }
 spl-governance = { version = "2", features = ["no-entrypoint"] }
+spl-governance-tools = "0.1"

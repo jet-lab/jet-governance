@@ -2,6 +2,7 @@ use anchor_lang::prelude::*;
 use anchor_spl::token::{self, Token, TokenAccount, Transfer};
 
 use crate::events::{Note, StakeAdded};
+use crate::spl_addin::VoterWeightRecord;
 use crate::state::*;
 
 #[derive(Accounts)]
@@ -17,6 +18,10 @@ pub struct AddStake<'info> {
     /// The account to own the stake being deposited
     #[account(mut, has_one = stake_pool)]
     pub stake_account: Account<'info, StakeAccount>,
+
+    /// The voter weight to be updated
+    #[account(mut, constraint = voter_weight_record.owner == stake_account.owner)]
+    pub voter_weight_record: Account<'info, VoterWeightRecord>,
 
     /// The depositor of the stake
     pub payer: Signer<'info>,
@@ -45,6 +50,7 @@ impl<'info> AddStake<'info> {
 pub fn add_stake_handler(ctx: Context<AddStake>, amount: Option<u64>) -> Result<()> {
     let stake_pool = &mut ctx.accounts.stake_pool;
     let stake_account = &mut ctx.accounts.stake_account;
+    let voter_weight = &mut ctx.accounts.voter_weight_record;
 
     stake_pool.update_vault(ctx.accounts.stake_pool_vault.amount);
 
@@ -54,6 +60,7 @@ pub fn add_stake_handler(ctx: Context<AddStake>, amount: Option<u64>) -> Result<
     };
 
     let full_amount = stake_pool.deposit(stake_account, token_amount);
+    stake_account.update_voter_weight_record(voter_weight);
 
     token::transfer(ctx.accounts.transfer_context(), full_amount.token_amount)?;
     let stake_pool = &ctx.accounts.stake_pool;

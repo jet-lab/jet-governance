@@ -23,6 +23,10 @@ pub struct AwardRelease<'info> {
     #[account(mut)]
     pub stake_account: UncheckedAccount<'info>,
 
+    /// The voter weight for the stake account
+    #[account(mut)]
+    pub voter_weight_record: AccountInfo<'info>,
+
     /// The stake pool the account is part of
     /// CHECK:
     #[account(mut)]
@@ -45,6 +49,7 @@ impl<'info> AwardRelease<'info> {
                 stake_pool: self.stake_pool.to_account_info(),
                 stake_pool_vault: self.stake_pool_vault.to_account_info(),
                 stake_account: self.stake_account.to_account_info(),
+                voter_weight_record: self.voter_weight_record.to_account_info(),
                 payer: self.award.to_account_info(),
                 payer_token_account: self.vault.to_account_info(),
                 token_program: self.token_program.to_account_info(),

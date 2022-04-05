@@ -13,6 +13,9 @@ pub struct PoolConfig {
     ///
     /// Unit is seconds.
     pub unbond_period: u64,
+
+    /// The governance realm that the pool has voting power in
+    pub governance_realm: Pubkey,
 }
 
 #[derive(Accounts)]
@@ -88,6 +91,7 @@ pub fn init_pool_handler(ctx: Context<InitPool>, seed: String, config: PoolConfi
     stake_pool.token_mint = ctx.accounts.token_mint.key();
     stake_pool.stake_pool_vault = ctx.accounts.stake_pool_vault.key();
     stake_pool.stake_vote_mint = ctx.accounts.stake_vote_mint.key();
+    stake_pool.governance_realm = config.governance_realm;
 
     stake_pool.bump_seed[0] = *ctx.bumps.get("stake_pool").unwrap();
     stake_pool.seed.as_mut().write_all(seed.as_bytes())?;

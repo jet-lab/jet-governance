@@ -1,8 +1,12 @@
 use anchor_lang::prelude::*;
 use anchor_spl::token::TokenAccount;
 
+use spl_governance::state::token_owner_record::TokenOwnerRecordV2;
+
 use crate::events::{Note, StakeUnbonded};
+use crate::spl_addin::VoterWeightRecord;
 use crate::state::*;
+use crate::ErrorCode;
 
 #[derive(Accounts)]
 #[instruction(seed: u32)]
@@ -40,7 +44,35 @@ pub struct UnbondStake<'info> {
     )]
     pub unbonding_account: Account<'info, UnbondingAccount>,
 
+    /// The voter weight to be updated
+    #[account(mut, has_one = owner)]
+    pub voter_weight_record: Account<'info, VoterWeightRecord>,
+
+    /// The token owner record for the owner of the stake
+    /// CHECK: This has to be validated that its correct for the owner,
+    ///        and is owned by the governance program
+    pub token_owner_record: UncheckedAccount<'info>,
+
     pub system_program: Program<'info, System>,
+}
+
+impl<'info> UnbondStake<'info> {
+    fn read_token_owner_record(&self) -> Result<TokenOwnerRecordV2> {
+        let record = spl_governance_tools::account::get_account_data::<TokenOwnerRecordV2>(
+            &crate::spl_governance::ID,
+            &self.token_owner_record,
+        )?;
+
+        if record.governing_token_owner != *self.owner.key {
+            return err!(ErrorCode::InvalidTokenOwnerRecord);
+        }
+
+        if record.realm != self.stake_pool.governance_realm {
+            return err!(ErrorCode::InvalidTokenOwnerRecord);
+        }
+
+        Ok(record)
+    }
 }
 
 pub fn unbond_stake_handler(
@@ -48,16 +80,25 @@ pub fn unbond_stake_handler(
     _seed: u32,
     amount: Option<u64>,
 ) -> Result<()> {
+    let gov_owner_record = ctx.accounts.read_token_owner_record()?;
     let stake_pool = &mut ctx.accounts.stake_pool;
     let stake_account = &mut ctx.accounts.stake_account;
     let unbonding_account = &mut ctx.accounts.unbonding_account;
+    let voter_weight = &mut ctx.accounts.voter_weight_record;
     let clock = Clock::get()?;
+
+    // User can't have any outstanding votes at the time of unbond
+    gov_owner_record
+        .assert_can_withdraw_governing_tokens()
+        .map_err(|_| error!(ErrorCode::OutstandingVotes))?;
 
     unbonding_account.stake_account = stake_account.key();
     unbonding_account.unbonded_at = clock.unix_timestamp + stake_pool.unbond_period;
 
     stake_pool.update_vault(ctx.accounts.stake_pool_vault.amount);
     let unbonded_amount = stake_pool.unbond(stake_account, unbonding_account, amount)?;
+
+    stake_account.update_voter_weight_record(voter_weight);
 
     emit!(StakeUnbonded {
         stake_pool: stake_pool.key(),
