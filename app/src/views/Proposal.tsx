@@ -183,7 +183,7 @@ const InnerProposalView = ({
 
   return (
     <Typography>
-      <div className="view-container column-grid" id="proposal-page">
+      <div className="view column-grid" id="proposal-page">
         <Title level={2} className="mobile-only">
           Proposal detail
         </Title>
@@ -312,7 +312,7 @@ const InnerProposalView = ({
                 className={`vote-select vote-btn ${vote === VoteOption.Yes ? "selected" : ""}`}
                 type="primary"
               >
-                <span className="text-gradient">In favor</span>
+                <span className="gradient-text">In favor</span>
                 <ThumbsUp className="mobile-only" />
               </Button>
               <Button
@@ -323,7 +323,7 @@ const InnerProposalView = ({
                 className={`vote-select vote-btn ${vote === VoteOption.No ? "selected" : ""}`}
                 type="primary"
               >
-                <span className="text-gradient">Against</span>
+                <span className="gradient-text">Against</span>
                 <ThumbsDown className="mobile-only" />
               </Button>
               <Button

@@ -24,7 +24,7 @@ export const AirdropView = () => {
   }));
 
   return (
-    <section className="view-container justify-start">
+    <section className="view justify-start">
       <div className="neu-container flex justify-center align-start column" id="airdrop">
         <h1>Claim your airdrop!</h1>
         <Divider />
@@ -45,7 +45,7 @@ export const AirdropView = () => {
               href="https://medium.com/jetprotocol/jet-staking-and-the-jetdrop-two-more-steps-towards-jet-governance-84d8de26be4a"
               target="_blank"
               rel="noreferrer"
-              className="text-gradient-btn"
+              className="gradient-text-btn"
             >
               blog announcement
             </a>
@@ -59,7 +59,7 @@ export const AirdropView = () => {
             href="https://docs.jetprotocol.io/jet-protocol/terms-and-definitions#jetgovern-definitions"
             target="_blank"
             rel="noreferrer"
-            className="text-gradient-btn"
+            className="gradient-text-btn"
           >
             glossary
           </a>

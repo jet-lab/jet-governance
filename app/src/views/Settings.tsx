@@ -14,7 +14,7 @@ export function Settings(): JSX.Element {
   const { Option } = Select;
 
   return (
-    <div className="view-container flex justify-center column">
+    <div className="view flex justify-center column">
       <div className="settings">
         <div className="setting wallet flex align-start justify-center column">
           <span className="setting-title bold-text">WALLET</span>
@@ -69,13 +69,13 @@ export function Settings(): JSX.Element {
         <Divider />
         <div className="socials flex align-center justify-start">
           <a href="https://twitter.com/jetprotocol" target="_blank" rel="noopener noreferrer">
-            <i className="text-gradient fab fa-twitter"></i>
+            <i className="gradient-text fab fa-twitter"></i>
           </a>
           <a href="https://discord.gg/RW2hsqwfej" target="_blank" rel="noopener noreferrer">
-            <i className="text-gradient fab fa-discord"></i>
+            <i className="gradient-text fab fa-discord"></i>
           </a>
           <a href="https://github.com/jet-lab" target="_blank" rel="noopener noreferrer">
-            <i className="text-gradient fab fa-github"></i>
+            <i className="gradient-text fab fa-github"></i>
           </a>
         </div>
       </div>
