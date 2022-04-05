@@ -153,7 +153,6 @@ export function ProposalProvider({ children = undefined as any }) {
         dist.isActive(now)
       );
 
-      // ----- Airdrops -----
       // ----- Governance -----
       const realm = await getGovernanceAccount(connection, JET_REALM, Realm);
       const governance = await getGovernanceAccount(connection, JET_GOVERNANCE, Governance);
@@ -189,7 +188,6 @@ export function ProposalProvider({ children = undefined as any }) {
       // ----- Airdrops -----
       const airdrops =
         stakePool && (await Airdrop.loadAll(programs.rewards, stakePool.addresses.stakePool));
-      console.log(airdrops);
 
       // ----- Mints -----
       const jetMint = await AssociatedToken.loadMint(connection, stakePool.stakePool.tokenMint);
