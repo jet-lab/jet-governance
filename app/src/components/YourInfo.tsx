@@ -239,12 +239,12 @@ export const YourInfo = () => {
                       <InfoCircleFilled />
                     </Tooltip>
                   </Text>
-                  <Text>{toTokens(bnToNumber(unbondingQueue), jetMint)}</Text>
+                  <Text>{toTokens(sharesToTokens(unbondingQueue, stakePool).tokens, jetMint)}</Text>
                 </div>
                 <div className="flex justify-between info-legend-item">
                   <Text className="gradient-text bold">Available for Withdrawal</Text>
                   <Text className="gradient-text bold">
-                    {toTokens(bnToNumber(unbondingComplete), jetMint)}
+                    {toTokens(sharesToTokens(unbondingComplete, stakePool).tokens, jetMint)}
                   </Text>
                 </div>
               </>
