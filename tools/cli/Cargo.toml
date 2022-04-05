@@ -15,6 +15,4 @@ anyhow = "1.0"
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 pyth-client = "0.2"
-solana-account-decoder = "1.9"
-solana-transaction-status = "1.9"
 shellexpand = "2.1"
