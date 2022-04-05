@@ -18,12 +18,13 @@ export function Navbar() {
   const [drawerOpened, setDrawerOpened] = useState(false);
   const { claimsCount } = useProposalContext();
   const { darkTheme, toggleDarkTheme } = useDarkTheme();
+
   const navLinks = [
     { title: "Dashboard", route: "/" },
     {
       title: `Claims`,
       class: claimsCount > 0 ? "shimmer" : "",
-      badge: claimsCount,
+      badge: claimsCount > 0 ? claimsCount : "",
       route: "/claims"
     },
     {

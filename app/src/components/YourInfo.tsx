@@ -23,6 +23,7 @@ import { useWallet } from "@solana/wallet-adapter-react";
 import { useHistory, useLocation } from "react-router";
 import "./YourInfo.less";
 import { StakedJetBalance } from "./Dashboard/StakedJetBalance";
+import BN from "bn.js";
 
 export const YourInfo = () => {
   const [stakeModalVisible, setStakeModalVisible] = useState(false);
@@ -159,7 +160,7 @@ export const YourInfo = () => {
     );
   };
   const canWithdraw = useWithdrawableCount(unbondingAccounts) > 0;
-
+  
   return (
     <div className={`your-info ${isOwnPage ? "view" : ""}`}>
       <Typography>
