@@ -24,12 +24,9 @@ import {
   getTokenOwnerRecordAddress,
   VoteTipping,
   VoteThresholdPercentage,
-  VoteThresholdPercentageType,
   VoteType,
   GovernanceConfig,
   Vote,
-  VoteKind,
-  VoteChoice,
   YesNoVote,
   withSignOffProposal,
   withRelinquishVote
@@ -46,52 +43,36 @@ const AuthProgram = anchor.workspace.JetAuth as Program<JetAuth>;
 
 const getErrorCode = (e: any): number => (e as anchor.AnchorError).error.errorCode.number;
 
-interface StakePoolBumpSeeds {
-  stakePool: number;
-  stakePoolVault: number;
-  stakeVoteMint: number;
-  stakeCollateralMint: number;
-}
-
 interface StakePoolAccounts {
   stakePool: PublicKey;
   stakePoolVault: PublicKey;
-  stakeVoteMint: PublicKey;
+  maxVoterWeightRecord: PublicKey;
   stakeCollateralMint: PublicKey;
-
-  bumpSeeds: StakePoolBumpSeeds;
 }
 
-async function deriveStakePoolAccounts(seed: string): Promise<StakePoolAccounts> {
-  let [stakePool, stakePoolBump] = await PublicKey.findProgramAddress(
+async function deriveStakePoolAccounts(seed: string, realm: PublicKey): Promise<StakePoolAccounts> {
+  let [stakePool] = await PublicKey.findProgramAddress(
     [Buffer.from(seed)],
     StakingProgram.programId
   );
-  let [stakePoolVault, stakePoolVaultBump] = await PublicKey.findProgramAddress(
+  let [stakePoolVault] = await PublicKey.findProgramAddress(
     [Buffer.from(seed), Buffer.from("vault")],
     StakingProgram.programId
   );
-  let [stakeVoteMint, stakeVoteMintBump] = await PublicKey.findProgramAddress(
-    [Buffer.from(seed), Buffer.from("vote-mint")],
+  let [maxVoterWeightRecord] = await PublicKey.findProgramAddress(
+    [realm.toBuffer(), Buffer.from("max-vote-weight-record")],
     StakingProgram.programId
   );
-  let [stakeCollateralMint, stakeCollateralMintBump] = await PublicKey.findProgramAddress(
+  let [stakeCollateralMint] = await PublicKey.findProgramAddress(
     [Buffer.from(seed), Buffer.from("collateral-mint")],
     StakingProgram.programId
   );
 
   return {
     stakePool,
-    stakeVoteMint,
+    maxVoterWeightRecord,
     stakeCollateralMint,
-    stakePoolVault,
-
-    bumpSeeds: {
-      stakePool: stakePoolBump,
-      stakeVoteMint: stakeVoteMintBump,
-      stakeCollateralMint: stakeCollateralMintBump,
-      stakePoolVault: stakePoolVaultBump
-    }
+    stakePoolVault
   };
 }
 
@@ -109,17 +90,14 @@ describe("airdrop-staking", () => {
     .sort((a, b) => a.publicKey.toBuffer().compare(b.publicKey.toBuffer()));
 
   let testToken: Token;
-  let voteToken: Token;
+  let councilToken: Token;
   let stakeAcc: StakePoolAccounts;
 
   let stakerAccount: PublicKey;
   let stakerVoterWeight: PublicKey;
   let stakerAuth: PublicKey;
-  let stakerClaim: PublicKey;
   let stakerUnbond: PublicKey;
   let airdropVault: PublicKey;
-
-  let stakerUnbondBump: number;
 
   let distAccount: PublicKey;
   let distVault: PublicKey;
@@ -141,18 +119,20 @@ describe("airdrop-staking", () => {
       6,
       TOKEN_PROGRAM_ID
     );
+    councilToken = await Token.createMint(
+      provider.connection,
+      wallet.payer,
+      wallet.publicKey,
+      wallet.publicKey,
+      0,
+      TOKEN_PROGRAM_ID
+    );
 
-    stakeAcc = await deriveStakePoolAccounts(stakeSeed);
     [govRealm] = await PublicKey.findProgramAddress(
       [Buffer.from("governance"), Buffer.from("localtest")],
       GOVERNANCE_ID
     );
-    adminGovRecord = await getTokenOwnerRecordAddress(
-      GOVERNANCE_ID,
-      govRealm,
-      testToken.publicKey,
-      wallet.publicKey
-    );
+    stakeAcc = await deriveStakePoolAccounts(stakeSeed, govRealm);
   });
 
   it("create pool", async () => {
@@ -164,7 +144,7 @@ describe("airdrop-staking", () => {
         authority: wallet.publicKey,
         tokenMint: testToken.publicKey,
         stakePool: stakeAcc.stakePool,
-        stakeVoteMint: stakeAcc.stakeVoteMint,
+        maxVoterWeightRecord: stakeAcc.maxVoterWeightRecord,
         stakeCollateralMint: stakeAcc.stakeCollateralMint,
         stakePoolVault: stakeAcc.stakePoolVault,
         tokenProgram: TOKEN_PROGRAM_ID,
@@ -172,18 +152,16 @@ describe("airdrop-staking", () => {
         rent: SYSVAR_RENT_PUBKEY
       }
     });
-
-    voteToken = new Token(
-      provider.connection,
-      stakeAcc.stakeVoteMint,
-      TOKEN_PROGRAM_ID,
-      wallet.payer
-    );
   });
 
   it("create governance realm", async () => {
-    let adminTokenAccount = await testToken.getOrCreateAssociatedAccountInfo(wallet.publicKey);
-    await testToken.mintTo(adminTokenAccount.address, wallet.publicKey, [wallet.payer], 1_000_000);
+    let adminTokenAccount = await councilToken.getOrCreateAssociatedAccountInfo(wallet.publicKey);
+    await councilToken.mintTo(
+      adminTokenAccount.address,
+      wallet.publicKey,
+      [wallet.payer],
+      1_000_000
+    );
 
     let instructions: TransactionInstruction[] = [];
 
@@ -193,22 +171,22 @@ describe("airdrop-staking", () => {
       2,
       "localtest",
       wallet.payer.publicKey,
-      stakeAcc.stakeVoteMint,
-      wallet.payer.publicKey,
       testToken.publicKey,
+      wallet.payer.publicKey,
+      councilToken.publicKey,
       new MintMaxVoteWeightSource({ value: MintMaxVoteWeightSource.SUPPLY_FRACTION_BASE }),
       new anchor.BN(1),
       StakingProgram.programId,
-      undefined
+      StakingProgram.programId
     );
 
-    await withDepositGoverningTokens(
+    adminGovRecord = await withDepositGoverningTokens(
       instructions,
       GOVERNANCE_ID,
       2,
       govRealm,
       adminTokenAccount.address,
-      testToken.publicKey,
+      councilToken.publicKey,
       wallet.publicKey,
       wallet.publicKey,
       wallet.payer.publicKey,
@@ -244,7 +222,7 @@ describe("airdrop-staking", () => {
       adminGovRecord,
       "foobar",
       "beep boop",
-      stakeAcc.stakeVoteMint,
+      testToken.publicKey,
       wallet.publicKey,
       0,
       VoteType.SINGLE_CHOICE,
@@ -266,11 +244,11 @@ describe("airdrop-staking", () => {
       adminGovRecord
     );
 
-    govVault = await getTokenHoldingAddress(GOVERNANCE_ID, govRealm, stakeAcc.stakeVoteMint);
+    govVault = await getTokenHoldingAddress(GOVERNANCE_ID, govRealm, stakeAcc.maxVoterWeightRecord);
     stakerGovRecord = await getTokenOwnerRecordAddress(
       GOVERNANCE_ID,
       govRealm,
-      stakeAcc.stakeVoteMint,
+      stakeAcc.maxVoterWeightRecord,
       staker.publicKey
     );
 
@@ -342,7 +320,7 @@ describe("airdrop-staking", () => {
       GOVERNANCE_ID,
       govRealm,
       staker.publicKey,
-      stakeAcc.stakeVoteMint,
+      testToken.publicKey,
       wallet.payer.publicKey
     );
     await sendAndConfirmTransaction(provider.connection, new Transaction().add(...instructions), [
@@ -414,6 +392,7 @@ describe("airdrop-staking", () => {
           stakePoolVault: stakeAcc.stakePoolVault,
           stakeAccount: stakerAccount,
           voterWeightRecord: stakerVoterWeight,
+          maxVoterWeightRecord: stakeAcc.maxVoterWeightRecord,
           stakingProgram: StakingProgram.programId,
           tokenProgram: TOKEN_PROGRAM_ID
         },
@@ -447,6 +426,7 @@ describe("airdrop-staking", () => {
         stakePoolVault: stakeAcc.stakePoolVault,
         stakeAccount: stakerAccount,
         voterWeightRecord: stakerVoterWeight,
+        maxVoterWeightRecord: stakeAcc.maxVoterWeightRecord,
         stakingProgram: StakingProgram.programId,
         tokenProgram: TOKEN_PROGRAM_ID
       },
@@ -467,11 +447,11 @@ describe("airdrop-staking", () => {
       adminGovRecord,
       stakerGovRecord,
       staker.publicKey,
-      stakeAcc.stakeVoteMint,
+      testToken.publicKey,
       Vote.fromYesNoVote(YesNoVote.Yes),
       wallet.payer.publicKey,
       stakerVoterWeight,
-      undefined
+      stakeAcc.maxVoterWeightRecord
     );
 
     await sendAndConfirmTransaction(provider.connection, new Transaction().add(...instructions), [
@@ -482,7 +462,7 @@ describe("airdrop-staking", () => {
     try {
       let unbondSeed = Buffer.alloc(4);
 
-      [stakerUnbond, stakerUnbondBump] = await PublicKey.findProgramAddress(
+      [stakerUnbond] = await PublicKey.findProgramAddress(
         [stakerAccount.toBuffer(), unbondSeed],
         StakingProgram.programId
       );
@@ -493,6 +473,7 @@ describe("airdrop-staking", () => {
           payer: wallet.publicKey,
           stakeAccount: stakerAccount,
           voterWeightRecord: stakerVoterWeight,
+          maxVoterWeightRecord: stakeAcc.maxVoterWeightRecord,
           tokenOwnerRecord: stakerGovRecord,
           stakePool: stakeAcc.stakePool,
           stakePoolVault: stakeAcc.stakePoolVault,
@@ -515,7 +496,7 @@ describe("airdrop-staking", () => {
       govInstance,
       govProposal,
       stakerGovRecord,
-      stakeAcc.stakeVoteMint,
+      testToken.publicKey,
       voteRecord,
       staker.publicKey,
       wallet.publicKey
@@ -530,7 +511,7 @@ describe("airdrop-staking", () => {
   it("user unbonds stake", async () => {
     let unbondSeed = Buffer.alloc(4);
 
-    [stakerUnbond, stakerUnbondBump] = await PublicKey.findProgramAddress(
+    [stakerUnbond] = await PublicKey.findProgramAddress(
       [stakerAccount.toBuffer(), unbondSeed],
       StakingProgram.programId
     );
@@ -541,6 +522,7 @@ describe("airdrop-staking", () => {
         payer: wallet.publicKey,
         stakeAccount: stakerAccount,
         voterWeightRecord: stakerVoterWeight,
+        maxVoterWeightRecord: stakeAcc.maxVoterWeightRecord,
         tokenOwnerRecord: stakerGovRecord,
         stakePool: stakeAcc.stakePool,
         stakePoolVault: stakeAcc.stakePoolVault,
@@ -572,6 +554,7 @@ describe("airdrop-staking", () => {
         payer: wallet.publicKey,
         stakeAccount: stakerAccount,
         voterWeightRecord: stakerVoterWeight,
+        maxVoterWeightRecord: stakeAcc.maxVoterWeightRecord,
         tokenOwnerRecord: stakerGovRecord,
         stakePool: stakeAcc.stakePool,
         stakePoolVault: stakeAcc.stakePoolVault,
@@ -631,6 +614,7 @@ describe("airdrop-staking", () => {
       accounts: {
         stakeAccount: stakerAccount,
         voterWeightRecord: stakerVoterWeight,
+        maxVoterWeightRecord: stakeAcc.maxVoterWeightRecord,
         stakePool: stakeAcc.stakePool,
         stakePoolVault: stakeAcc.stakePoolVault,
         payer: staker.publicKey,
@@ -749,6 +733,7 @@ describe("airdrop-staking", () => {
         vault: awardVault,
         stakeAccount: stakerAccount,
         voterWeightRecord: stakerVoterWeight,
+        maxVoterWeightRecord: stakeAcc.maxVoterWeightRecord,
         stakePool: stakeAcc.stakePool,
         stakePoolVault: stakeAcc.stakePoolVault,
         stakingProgram: StakingProgram.programId,
@@ -845,6 +830,7 @@ describe("airdrop-staking", () => {
           payer: wallet.publicKey,
           stakeAccount: stakerAccount,
           voterWeightRecord: stakerVoterWeight,
+          maxVoterWeightRecord: stakeAcc.maxVoterWeightRecord,
           tokenOwnerRecord: stakerGovRecord,
           stakePool: stakeAcc.stakePool,
           stakePoolVault: stakeAcc.stakePoolVault,

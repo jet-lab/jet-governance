@@ -10,6 +10,7 @@ pub struct CloseStakeAccount<'info> {
     pub owner: Signer<'info>,
 
     /// The receiver for the rent recovered
+    /// CHECK:
     #[account(mut)]
     pub closer: AccountInfo<'info>,
 

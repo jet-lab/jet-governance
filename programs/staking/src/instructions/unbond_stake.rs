@@ -4,7 +4,7 @@ use anchor_spl::token::TokenAccount;
 use spl_governance::state::token_owner_record::TokenOwnerRecordV2;
 
 use crate::events::{Note, StakeUnbonded};
-use crate::spl_addin::VoterWeightRecord;
+use crate::spl_addin::{MaxVoterWeightRecord, VoterWeightRecord};
 use crate::state::*;
 use crate::ErrorCode;
 
@@ -22,14 +22,16 @@ pub struct UnbondStake<'info> {
     #[account(mut,
               has_one = owner,
               has_one = stake_pool)]
-    pub stake_account: Account<'info, StakeAccount>,
+    pub stake_account: Box<Account<'info, StakeAccount>>,
 
     /// The stake pool to be unbonded from
-    #[account(mut, has_one = stake_pool_vault)]
-    pub stake_pool: Account<'info, StakePool>,
+    #[account(mut,
+              has_one = stake_pool_vault,
+              has_one = max_voter_weight_record)]
+    pub stake_pool: Box<Account<'info, StakePool>>,
 
     /// The stake pool token vault
-    pub stake_pool_vault: Account<'info, TokenAccount>,
+    pub stake_pool_vault: Box<Account<'info, TokenAccount>>,
 
     /// The account to record this unbonding request
     #[account(
@@ -42,11 +44,15 @@ pub struct UnbondStake<'info> {
         bump,
         space = 8 + std::mem::size_of::<UnbondingAccount>(),
     )]
-    pub unbonding_account: Account<'info, UnbondingAccount>,
+    pub unbonding_account: Box<Account<'info, UnbondingAccount>>,
 
     /// The voter weight to be updated
     #[account(mut, has_one = owner)]
-    pub voter_weight_record: Account<'info, VoterWeightRecord>,
+    pub voter_weight_record: Box<Account<'info, VoterWeightRecord>>,
+
+    /// The max voter weight
+    #[account(mut)]
+    pub max_voter_weight_record: Box<Account<'info, MaxVoterWeightRecord>>,
 
     /// The token owner record for the owner of the stake
     /// CHECK: This has to be validated that its correct for the owner,
@@ -85,6 +91,7 @@ pub fn unbond_stake_handler(
     let stake_account = &mut ctx.accounts.stake_account;
     let unbonding_account = &mut ctx.accounts.unbonding_account;
     let voter_weight = &mut ctx.accounts.voter_weight_record;
+    let max_weight = &mut ctx.accounts.max_voter_weight_record;
     let clock = Clock::get()?;
 
     // User can't have any outstanding votes at the time of unbond
@@ -99,6 +106,7 @@ pub fn unbond_stake_handler(
     let unbonded_amount = stake_pool.unbond(stake_account, unbonding_account, amount)?;
 
     stake_account.update_voter_weight_record(voter_weight);
+    stake_pool.update_max_vote_weight_record(max_weight);
 
     emit!(StakeUnbonded {
         stake_pool: stake_pool.key(),

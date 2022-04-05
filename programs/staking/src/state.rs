@@ -2,7 +2,7 @@ use std::convert::TryInto;
 
 use anchor_lang::prelude::*;
 
-use crate::spl_addin::{VoterWeightAction, VoterWeightRecord};
+use crate::spl_addin::{MaxVoterWeightRecord, VoterWeightAction, VoterWeightRecord};
 use crate::ErrorCode;
 
 const INIT_TOKEN_SCALE: u64 = 1_000_000_000;
@@ -36,8 +36,8 @@ pub struct StakePool {
     /// The token account owned by this pool, holding the staked tokens
     pub stake_pool_vault: Pubkey,
 
-    /// The mint for the derived voting token
-    pub stake_vote_mint: Pubkey,
+    /// The address of the max vote weight record, which is read by the governance program
+    pub max_voter_weight_record: Pubkey,
 
     /// The governance realm that this pool has voting power in.
     pub governance_realm: Pubkey,
@@ -157,6 +157,11 @@ impl StakePool {
         self.deposit(account, amount.token_amount);
 
         amount
+    }
+
+    pub fn update_max_vote_weight_record(&self, max_record: &mut MaxVoterWeightRecord) {
+        max_record.max_voter_weight = self.bonded.shares;
+        max_record.max_voter_weight_expiry = None;
     }
 }
 

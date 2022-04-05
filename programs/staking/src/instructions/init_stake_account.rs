@@ -59,7 +59,7 @@ pub fn init_stake_account_handler(ctx: Context<InitStakeAccount>) -> Result<()> 
     account.stake_pool = pool.key();
 
     voter_weight.realm = pool.governance_realm;
-    voter_weight.governing_token_mint = pool.stake_vote_mint;
+    voter_weight.governing_token_mint = pool.token_mint;
 
     account.update_voter_weight_record(voter_weight);
 

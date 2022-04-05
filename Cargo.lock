@@ -668,6 +668,7 @@ dependencies = [
  "jet-proto-auth",
  "solana-program",
  "spl-governance",
+ "spl-governance-addin-api",
  "spl-governance-tools",
 ]
 
