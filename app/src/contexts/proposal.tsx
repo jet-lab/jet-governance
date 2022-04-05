@@ -230,7 +230,7 @@ export function ProposalProvider({ children = undefined as any }) {
           unbondingAccounts = await UnbondingAccount.loadByStakeAccount(
             programs.stake,
             stakeAccount.address,
-            programs.stake
+            stakePool.stakePool
           );
         }
       } catch {}
