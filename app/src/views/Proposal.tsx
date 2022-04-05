@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { ResultProgressBar } from "../components/proposal/ResultProgressBar";
-import { Button, Divider, Popover, Tooltip, Typography } from "antd";
+import { Button, Divider, Popover, Typography } from "antd";
 import { ProposalCard } from "../components/ProposalCard";
 import { VoterList } from "../components/proposal/VoterList";
 import { useWallet } from "@solana/wallet-adapter-react";
@@ -288,7 +288,7 @@ const InnerProposalView = ({
                       </span>
                     </div>
                   }
-                  title="Title"
+                  title="Votes per JET"
                   visible={popoverVisible}
                   trigger="click"
                 >
