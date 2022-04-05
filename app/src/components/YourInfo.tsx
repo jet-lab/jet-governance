@@ -6,7 +6,7 @@ import { useEffect, useMemo, useState } from "react";
 import { jetFaucet } from "../actions/jetFaucet";
 import { useConnectionConfig } from "../contexts";
 import { useProposalContext } from "../contexts/proposal";
-import { useWithdrawVotesAbility } from "../hooks";
+import { useWithdrawableCount, useWithdrawVotesAbility } from "../hooks";
 import {
   COUNCIL_FAUCET_DEVNET,
   COUNCIL_TOKEN_MINT,
@@ -159,8 +159,8 @@ export const YourInfo = () => {
       stakedJet ? fromLamports(sharesToTokens(stakedJet, stakePool).tokens, jetMint) : 0
     );
   };
-  const withdrawAccountsAvailable =
-    unbondingComplete.gt(new BN(0)) || (unbondingAccounts && unbondingAccounts.length > 0);
+  const canWithdraw = useWithdrawableCount(unbondingAccounts) > 0;
+  
   return (
     <div className={`your-info ${isOwnPage ? "view" : ""}`}>
       <Typography>
@@ -303,7 +303,7 @@ export const YourInfo = () => {
                 onClose={() => setUnstakeModalVisible(false)}
               />
             )}
-            {withdrawAccountsAvailable && (
+            {canWithdraw && (
               <Button
                 className="full-width withdraw-btn"
                 onClick={() => handleWithdrawUnstaked()}

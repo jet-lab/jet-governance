@@ -46,10 +46,12 @@ export const withdrawAllUnbonded = async (
     stakeAccount.stakeAccount.owner,
     stakePool.stakePool.tokenMint
   );
-  allTxs.push({
-    tx: new Transaction().add(...ix),
-    signers: []
-  });
+  if (ix.length > 0) {
+    allTxs.push({
+      tx: new Transaction().add(...ix),
+      signers: []
+    });
+  }
 
   for (let i = 0; i < unbondingAccounts.length; i++) {
     const unbondedState = UnbondingAccount.isUnbonded(unbondingAccounts[i]);
@@ -70,5 +72,7 @@ export const withdrawAllUnbonded = async (
       });
     }
   }
-  await sendAllTransactionsWithNotifications(provider, allTxs, "JET has been withdrawn");
+  if (allTxs.length === 0) {
+    await sendAllTransactionsWithNotifications(provider, allTxs, "JET has been withdrawn");
+  }
 };
