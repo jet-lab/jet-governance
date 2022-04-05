@@ -6,7 +6,7 @@ import { useBlockExplorer } from "../../contexts/blockExplorer";
 import { useProposalContext } from "../../contexts/proposal";
 import {
   dateFromUnixTimestamp,
-  sharesToTokensUnbonded,
+  sharesToTokens,
   getRemainingTime,
   toTokens
 } from "../../utils";
@@ -69,7 +69,7 @@ export const UnbondingLog = ({ unbondingAccount }: { unbondingAccount: Unbonding
                 currentTime,
                 bnToNumber(unbondingAccount.unbondingAccount.unbondedAt) * 1000
               )}`
-            : `Unstake complete on 
+            : `Unstake complete on
             ${dateFromUnixTimestamp(unbondingAccount.unbondingAccount.unbondedAt)}`}
         </i>{" "}
         <Button
@@ -106,7 +106,7 @@ export const UnbondingLog = ({ unbondingAccount }: { unbondingAccount: Unbonding
           )
         }
       >
-        {toTokens(sharesToTokensUnbonded(unbondingAccount?.shares, stakePool).tokens, jetMint)}
+        {toTokens(unbondingAccount.tokens, jetMint)}
       </td>
       <td onClick={getUnbondingAccountExplorerUrl}>
         <i className="fas fa-external-link-alt"></i>
