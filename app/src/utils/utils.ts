@@ -185,25 +185,6 @@ export const sharesToTokens = (
   return { tokens, conversion };
 };
 
-export const sharesToTokensUnbonded = (
-  shares: BN | undefined,
-  stakePool: StakePool | undefined
-): { tokens: BN; conversion: BN } => {
-  let tokens = new BN(0);
-  let conversion = new BN(0);
-  if (!stakePool) {
-    return { tokens, conversion };
-  }
-  conversion = stakePool?.stakePool.unbonding.shares.div(stakePool?.stakePool.unbonding.tokens);
-  if (!shares) {
-    return { tokens, conversion };
-  }
-  tokens = shares
-    .mul(stakePool?.stakePool.unbonding.tokens)
-    .div(stakePool?.stakePool.unbonding.shares);
-  return { tokens, conversion };
-};
-
 // --------- Country Code Info ---------
 interface CountryCodeInfo {
   country: string;

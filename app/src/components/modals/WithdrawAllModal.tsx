@@ -3,8 +3,7 @@ import { Modal, ModalProps } from "antd";
 import { useRpcContext } from "../../hooks/useRpcContext";
 import { withdrawAllUnbonded } from "../../actions/withdrawUnbonded";
 import { useProposalContext } from "../../contexts/proposal";
-import { UnbondingAccount } from "@jet-lab/jet-engine";
-import { isSignTransactionError, toTokens } from "../../utils";
+import { isSignTransactionError } from "../../utils";
 
 enum Steps {
   Confirm = 0,
@@ -16,12 +15,7 @@ export const WithdrawAllModal = ({ onClose }: { onClose: () => void }) => {
   const rpcContext = useRpcContext();
   const [current, setCurrent] = useState<Steps>(Steps.Confirm);
   const [loading, setLoading] = useState(false);
-  const { stakeAccount, unbondingAccounts, jetMint, stakePool, refresh } = useProposalContext();
-
-  const stakeAmount = toTokens(
-    UnbondingAccount.useUnbondingAmountTotal(unbondingAccounts).unbondingComplete,
-    jetMint
-  );
+  const { stakeAccount, unbondingAccounts, stakePool, refresh } = useProposalContext();
 
   const handleOk = () => {
     if (!stakeAccount || !stakePool || !unbondingAccounts) {
