@@ -41,7 +41,6 @@ import { useQuery, useQueryClient } from "react-query";
 import { useRpcContext } from "../hooks";
 import { useConnectionConfig } from ".";
 import { RewardsIdl } from "@jet-lab/jet-engine/lib/rewards";
-import { Mint } from "@solana/spl-token";
 
 export type ProposalFilter = "active" | "inactive" | "passed" | "rejected" | "all";
 
@@ -153,7 +152,6 @@ export function ProposalProvider({ children = undefined as any }) {
         dist.isActive(now)
       );
 
-      // ----- Airdrops -----
       // ----- Governance -----
       const realm = await getGovernanceAccount(connection, JET_REALM, Realm);
       const governance = await getGovernanceAccount(connection, JET_GOVERNANCE, Governance);
@@ -186,10 +184,9 @@ export function ProposalProvider({ children = undefined as any }) {
       );
       // ----- Staking -----
       const stakePool = await StakePool.load(programs.stake, StakePool.CANONICAL_SEED);
+
       // ----- Airdrops -----
-      const airdrops =
-        stakePool && (await Airdrop.loadAll(programs.rewards, stakePool.addresses.stakePool));
-      console.log(airdrops);
+      const airdrops = await Airdrop.loadAll(programs.rewards, stakePool.addresses.stakePool);
 
       // ----- Mints -----
       const jetMint = await AssociatedToken.loadMint(connection, stakePool.stakePool.tokenMint);
@@ -206,7 +203,9 @@ export function ProposalProvider({ children = undefined as any }) {
   const { data: wallet, isFetched: walletFetched } = useQuery(
     ["wallet", endpoint, walletAddress?.toBase58()],
     async () => {
+      console.log("Refreshing wallet");
       if (!programs || !stakePool || !walletAddress || !realm) {
+        console.log("Stakepool does not exist");
         return;
       }
       // ----- Tokens -----
@@ -296,8 +295,8 @@ export function ProposalProvider({ children = undefined as any }) {
   useStakePoolCompatibleWithRealm(stakePool?.stakePool, realm?.realm);
 
   function refresh() {
-    // Allow the rpc node to catch up after a transaction before refreshing
-    setTimeout(() => queryClient.invalidateQueries("stakePool"), 4000);
+    queryClient.invalidateQueries("stakePool");
+    queryClient.invalidateQueries("wallet");
   }
 
   return (
