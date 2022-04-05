@@ -54,7 +54,7 @@ export const UnbondingLog = ({ unbondingAccount }: { unbondingAccount: Unbonding
         {isUnbonded ? "Unbonded" : "Unbonding"}
         {!isUnbonded && (
           <Tooltip
-            title="Unstaking transactions require a 29.5-day unbonding period. before withdrawal to your wallet is enabled. Status will show as 'unbonding' until this period completes."
+            title="Unstaking requires a 29.5-day unbonding period before withdrawal to your wallet is enabled. Status will show as 'Unbonding' until this period completes."
             mouseEnterDelay={0.1}
           >
             <InfoCircleFilled />
