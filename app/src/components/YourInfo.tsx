@@ -243,9 +243,7 @@ export const YourInfo = () => {
                 </div>
                 <div className="flex justify-between info-legend-item">
                   <Text className="gradient-text bold">Available for Withdrawal</Text>
-                  <Text className="gradient-text bold">
-                    {toTokens(unbondingComplete, jetMint)}
-                  </Text>
+                  <Text className="gradient-text bold">{toTokens(unbondingComplete, jetMint)}</Text>
                 </div>
               </>
             )}

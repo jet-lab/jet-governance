@@ -4,12 +4,7 @@ import { Button, Tooltip } from "antd";
 import { useEffect, useState } from "react";
 import { useBlockExplorer } from "../../contexts/blockExplorer";
 import { useProposalContext } from "../../contexts/proposal";
-import {
-  dateFromUnixTimestamp,
-  sharesToTokens,
-  getRemainingTime,
-  toTokens
-} from "../../utils";
+import { dateFromUnixTimestamp, getRemainingTime, toTokens } from "../../utils";
 import { RestakeModal } from "../modals/RestakeModal";
 import { WithdrawModal } from "../modals/WithdrawModal";
 import { useCurrentTime } from "../../hooks";
