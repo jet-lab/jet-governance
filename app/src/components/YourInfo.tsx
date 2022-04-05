@@ -14,7 +14,8 @@ import {
   JET_FAUCET_DEVNET,
   JET_TOKEN_MINT,
   sharesToTokens,
-  toTokens
+  toTokens,
+  toTokensPrecisionNumber
 } from "../utils";
 import { StakeModal } from "./modals/StakeModal";
 import { UnstakeModal } from "./modals/UnstakeModal";
@@ -152,11 +153,15 @@ export const YourInfo = () => {
   const { Title, Text } = Typography;
   const walletBalance = jetAccount ? toTokens(jetAccount.info.amount, jetMint) : 0;
   const preFillJetWithBalance = () => {
-    setInputAmount(jetAccount ? fromLamports(jetAccount.info.amount, jetMint) : 0);
+    setInputAmount(
+      jetAccount && jetMint ? toTokensPrecisionNumber(jetAccount.info.amount, jetMint, 1) : 0
+    );
   };
   const preFillJetWithStaked = () => {
     setInputAmount(
-      stakedJet ? fromLamports(sharesToTokens(stakedJet, stakePool).tokens, jetMint) : 0
+      stakedJet && jetMint
+        ? toTokensPrecisionNumber(sharesToTokens(stakedJet, stakePool).tokens, jetMint, 1)
+        : 0
     );
   };
   const canWithdraw = useWithdrawableCount(unbondingAccounts) > 0;

@@ -63,6 +63,17 @@ export const toTokens = (amount: BN | number | undefined, mint?: JetMint) => {
   });
 };
 
+export const toTokensPrecisionNumber = (
+  amount: BN | number,
+  mint: JetMint,
+  precision: number = 1
+): number => {
+  if (amount === new BN(0) || amount === 0) {
+    return 0;
+  }
+  return Number(fromLamports(amount, mint).toFixed(precision)) as number;
+};
+
 var SI_SYMBOL = ["", "k", "M", "G", "T", "P", "E"];
 
 export const abbreviateNumber = (number: number) => {
