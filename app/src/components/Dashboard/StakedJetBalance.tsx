@@ -39,7 +39,7 @@ export const StakedJetBalance = ({
   };
   return (
     <Paragraph
-      className={`text-gradient vote-balance info-legend-item info-legend-item-prefill ${getFontResizeClass(
+      className={`gradient-text vote-balance info-legend-item info-legend-item-prefill ${getFontResizeClass(
         stakedJet.length
       )}`}
       onClick={onClick}
