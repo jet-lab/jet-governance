@@ -1,9 +1,11 @@
+import {
+  getGovernanceProgramVersion,
+  ProgramAccount,
+  Proposal,
+  RpcContext,
+  withCancelProposal
+} from "@solana/spl-governance";
 import { Keypair, PublicKey, TransactionInstruction } from "@solana/web3.js";
-
-import { getGovernanceProgramVersion, RpcContext } from "@solana/spl-governance";
-import { Proposal } from "@solana/spl-governance";
-import { ProgramAccount } from "@solana/spl-governance";
-import { withCancelProposal } from "@solana/spl-governance";
 import { sendTransactionWithNotifications } from "../tools/transactions";
 
 export const cancelProposal = async (

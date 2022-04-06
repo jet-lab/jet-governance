@@ -1,4 +1,4 @@
-import { useProposalContext } from "./../contexts/proposal";
+import { ProposalFilter, useProposalContext } from "./../contexts";
 import { Airdrop, bnToNumber, StakePool, UnbondingAccount } from "@jet-lab/jet-engine";
 import {
   Governance,
@@ -15,7 +15,6 @@ import { PublicKey } from "@solana/web3.js";
 import BN from "bn.js";
 import { useEffect, useMemo, useState } from "react";
 import { ZERO } from "../constants";
-import { ProposalFilter } from "../contexts/proposal";
 import { dateToString, getRemainingTime, toTokens } from "../utils";
 import { useGovernanceAccounts } from "./accountHooks";
 import { useRpcContext } from "./useRpcContext";

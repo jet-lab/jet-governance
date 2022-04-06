@@ -1,5 +1,4 @@
-import { Auth } from "@jet-lab/jet-engine";
-import { AuthIdl } from "@jet-lab/jet-engine/lib/auth/idl";
+import { Auth, AuthIdl } from "@jet-lab/jet-engine";
 import { Program } from "@project-serum/anchor";
 import { RpcContext } from "@solana/spl-governance";
 import { PublicKey } from "@solana/web3.js";

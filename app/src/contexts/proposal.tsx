@@ -1,28 +1,20 @@
 import {
   Airdrop,
+  AssociatedToken,
   Distribution,
+  DistributionYield,
+  JetMint,
   RewardsClient,
+  RewardsIdl,
   StakeAccount,
   StakeBalance,
   StakeClient,
   StakeIdl,
   StakePool,
-  UnbondingAccount
+  UnbondingAccount,
+  UnbondingAmount
 } from "@jet-lab/jet-engine";
 import { BN, Program } from "@project-serum/anchor";
-import React, { useState, useContext, useMemo } from "react";
-import { JET_REALM, JET_GOVERNANCE } from "../utils";
-import {
-  useAirdropsByWallet,
-  useAvailableAirdrop,
-  useClaimsCount,
-  useProposalFilters,
-  useStakingCompatibleWithRealm as useStakePoolCompatibleWithRealm
-} from "../hooks/proposalHooks";
-import { useWallet } from "@solana/wallet-adapter-react";
-import { AssociatedToken, JetMint } from "@jet-lab/jet-engine/lib/common";
-import { useConnection } from "./connection";
-import { useProvider } from "../hooks/apiHooks";
 import {
   getGovernanceAccount,
   getProposalsByGovernance,
@@ -35,12 +27,21 @@ import {
   TokenOwnerRecord,
   VoteRecord
 } from "@solana/spl-governance";
-import { DistributionYield } from "@jet-lab/jet-engine/lib/rewards/distribution";
-import { UnbondingAmount } from "@jet-lab/jet-engine/lib/staking/unbondingAccount";
+import { useWallet } from "@solana/wallet-adapter-react";
+import { createContext, useState, useContext, useMemo } from "react";
 import { useQuery, useQueryClient } from "react-query";
-import { useRpcContext } from "../hooks";
 import { useConnectionConfig } from ".";
-import { RewardsIdl } from "@jet-lab/jet-engine/lib/rewards";
+import { useConnection } from "./connection";
+import {
+  useAirdropsByWallet,
+  useAvailableAirdrop,
+  useClaimsCount,
+  useProposalFilters,
+  useProvider,
+  useRpcContext,
+  useStakingCompatibleWithRealm as useStakePoolCompatibleWithRealm
+} from "../hooks";
+import { JET_REALM, JET_GOVERNANCE } from "../utils";
 
 export type ProposalFilter = "active" | "inactive" | "passed" | "rejected" | "all";
 
@@ -83,7 +84,7 @@ interface ProposalContextState {
   };
 }
 
-const ProposalContext = React.createContext<ProposalContextState>({
+const ProposalContext = createContext<ProposalContextState>({
   proposalFilter: "active",
   setProposalFilter: () => {},
   pastProposalFilter: "all",

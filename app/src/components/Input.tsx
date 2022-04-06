@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useCallback } from "react";
-import logoMark from "../images/jet_logomark_gradient.png";
 import "./Input.less";
+import { useState, useEffect, useCallback } from "react";
+import logoMark from "../images/jet_logomark_gradient.png";
 
 export const StakeInput = ({
   value,

@@ -1,8 +1,8 @@
-import React from "react";
-import { Typography } from "antd";
-import { shortenAddress } from "../../utils/utils";
 import { Connection, PublicKey } from "@solana/web3.js";
-import { useBlockExplorer } from "../../contexts/blockExplorer";
+import { Typography } from "antd";
+import React from "react";
+import { useBlockExplorer } from "../../contexts";
+import { shortenAddress } from "../../utils";
 
 export const ExplorerLink = (props: {
   address: string | PublicKey;

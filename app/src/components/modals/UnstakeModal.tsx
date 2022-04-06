@@ -1,12 +1,11 @@
-import { ReactNode, useState } from "react";
-import { Modal, ModalProps } from "antd";
-import { useProposalContext } from "../../contexts/proposal";
-import { rescindAndUnstake } from "../../actions/rescindAndUnstake";
-import { useRpcContext } from "../../hooks/useRpcContext";
-import { dateToString } from "../../utils";
 import { bnToNumber } from "@jet-lab/jet-engine";
-import { isSignTransactionError } from "../../utils";
-import { BN } from "@project-serum/anchor";
+import { Modal, ModalProps } from "antd";
+import BN from "bn.js";
+import { ReactNode, useState } from "react";
+import { rescindAndUnstake } from "../../actions/rescindAndUnstake";
+import { useProposalContext } from "../../contexts";
+import { useRpcContext } from "../../hooks";
+import { dateToString, isSignTransactionError } from "../../utils";
 
 enum Steps {
   Confirm = 0,

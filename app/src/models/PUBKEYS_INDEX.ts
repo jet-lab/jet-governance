@@ -1,6 +1,6 @@
 import { GOVERNANCE_PROGRAM_SEED } from "@solana/spl-governance";
 import { PublicKey } from "@solana/web3.js";
-import { JET_GOVERNANCE, GOVERNANCE_PROGRAM_ID } from "../utils/ids";
+import { JET_GOVERNANCE, GOVERNANCE_PROGRAM_ID } from "../utils";
 
 export const getFirstTwoHundredPubkeys = async (communityMint: PublicKey | undefined) => {
   if (!communityMint) {

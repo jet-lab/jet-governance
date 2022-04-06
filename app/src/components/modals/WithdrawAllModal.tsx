@@ -1,8 +1,8 @@
-import { PropsWithChildren, useState } from "react";
 import { Modal, ModalProps } from "antd";
-import { useRpcContext } from "../../hooks/useRpcContext";
+import { PropsWithChildren, useState } from "react";
 import { withdrawAllUnbonded } from "../../actions/withdrawUnbonded";
-import { useProposalContext } from "../../contexts/proposal";
+import { useProposalContext } from "../../contexts";
+import { useRpcContext } from "../../hooks";
 import { isSignTransactionError } from "../../utils";
 
 enum Steps {
