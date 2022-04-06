@@ -1,36 +1,38 @@
-import { UnbondingAccount } from "@jet-lab/jet-engine";
-import { Modal, ModalProps } from "antd";
 import { PropsWithChildren, useState } from "react";
-import { withdrawAllUnbonded } from "../../actions/withdrawUnbonded";
-import { useProposalContext } from "../../contexts";
-import { useRpcContext } from "../../hooks";
+import { Modal, ModalProps } from "antd";
+import { useRpcContext } from "../../hooks/useRpcContext";
+import { withdrawUnbonded } from "../../actions/withdrawUnbonded";
+import { useProposalContext } from "../../contexts/proposal";
 import { isSignTransactionError } from "../../utils";
+import { UnbondingAccount } from "@jet-lab/jet-engine";
 
 enum Steps {
   Confirm = 0,
-  Error = 1
+  Error = 1,
+  NothingToWithdraw = 2
 }
 
-export const WithdrawModal = ({
-  onClose,
-  unbondingAccount
-}: {
+interface WithdrawModalProps {
   onClose: () => void;
-  unbondingAccount: UnbondingAccount | undefined;
-}) => {
+  unbondingAccount?: UnbondingAccount;
+}
+
+export const WithdrawModal = ({ onClose, unbondingAccount }: WithdrawModalProps) => {
   const rpcContext = useRpcContext();
   const [current, setCurrent] = useState<Steps>(Steps.Confirm);
   const [loading, setLoading] = useState(false);
-  const { stakeAccount, jetMint, stakePool, refresh } = useProposalContext();
+  const { stakeAccount, unbondingAccounts, stakePool, refresh } = useProposalContext();
 
+  const unbondingAcc = unbondingAccount ? [unbondingAccount] : unbondingAccounts;
   const handleOk = () => {
-    if (!unbondingAccount || !stakeAccount || !stakePool) {
+    if (!stakeAccount || !stakePool || !unbondingAcc) {
       return;
     }
-
+    if (unbondingAccounts && unbondingAccounts.length === 0) {
+      return setCurrent(Steps.NothingToWithdraw);
+    }
     setLoading(true);
-    let unbondingAccounts: UnbondingAccount[] = [unbondingAccount];
-    withdrawAllUnbonded(rpcContext, unbondingAccounts, stakeAccount, stakePool)
+    withdrawUnbonded(rpcContext, unbondingAcc, stakeAccount, stakePool)
       .then(() => {
         onClose();
       })
@@ -47,6 +49,7 @@ export const WithdrawModal = ({
         refresh();
       });
   };
+
   const steps: PropsWithChildren<ModalProps>[] = [];
 
   steps[Steps.Confirm] = {
@@ -59,7 +62,7 @@ export const WithdrawModal = ({
     children: (
       <div className="flex column">
         <p>Choosing to withdraw will return your governance tokens to your wallet.</p>
-        <p>Withdrawn governance tokens will not be able to vote on proposals.</p>
+        <p>To vote on proposals with these tokens, stake the tokens from your wallet again.</p>
       </div>
     )
   };
@@ -71,6 +74,15 @@ export const WithdrawModal = ({
     closable: true,
     cancelButtonProps: { style: { display: "none " } },
     children: <p>We have encountered an unknown error, please try again.</p>
+  };
+  steps[Steps.NothingToWithdraw] = {
+    title: "Nothing To Withdraw",
+    okText: "Okay",
+    onOk: () => onClose(),
+    onCancel: () => onClose(),
+    closable: true,
+    cancelButtonProps: { style: { display: "none " } },
+    children: <p>You don't have any tokens ready for you to withdraw. Come back later!</p>
   };
 
   return <Modal visible={true} {...steps[current]} />;
