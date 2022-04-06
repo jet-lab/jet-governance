@@ -3,7 +3,7 @@ import { Modal, ModalProps } from "antd";
 import { useRpcContext } from "../../hooks/useRpcContext";
 import { UnbondingAccount } from "@jet-lab/jet-engine";
 import { isSignTransactionError } from "../../utils";
-import {withdrawAllUnbonded, withdrawUnbonded} from "../../actions/withdrawUnbonded";
+import { withdrawAllUnbonded, withdrawUnbonded } from "../../actions/withdrawUnbonded";
 import { useProposalContext } from "../../contexts/proposal";
 
 enum Steps {

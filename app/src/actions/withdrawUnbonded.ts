@@ -72,7 +72,7 @@ export const withdrawAllUnbonded = async (
       });
     }
   }
-  if (allTxs.length > 0) {
+  if (allTxs.length != 0) {
     await sendAllTransactionsWithNotifications(provider, allTxs, "JET has been withdrawn");
   }
 };
