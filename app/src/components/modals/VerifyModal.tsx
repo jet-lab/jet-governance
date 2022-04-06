@@ -470,7 +470,7 @@ export const VerifyModal = () => {
         continue to browse proposals while disconnected.
       </p>
     ),
-    closable: true
+    closable: false
   };
   steps[Steps.AgreeToTerms] = {
     title: "Warning",
