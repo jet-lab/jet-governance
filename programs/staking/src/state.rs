@@ -363,6 +363,9 @@ pub struct StakeAccount {
     /// The pool this account is associated with
     pub stake_pool: Pubkey,
 
+    /// The address of the voter weight record for this account
+    pub voter_weight_record: Pubkey,
+
     /// The stake balance (in share units)
     /// this number must remain > max(minted_votes, minted_collateral)
     pub bonded_shares: u64,

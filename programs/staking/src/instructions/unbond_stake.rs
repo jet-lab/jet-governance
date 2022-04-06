@@ -21,7 +21,8 @@ pub struct UnbondStake<'info> {
     /// The account owning the stake to be unbonded
     #[account(mut,
               has_one = owner,
-              has_one = stake_pool)]
+              has_one = stake_pool,
+              has_one = voter_weight_record)]
     pub stake_account: Box<Account<'info, StakeAccount>>,
 
     /// The stake pool to be unbonded from
@@ -47,7 +48,7 @@ pub struct UnbondStake<'info> {
     pub unbonding_account: Box<Account<'info, UnbondingAccount>>,
 
     /// The voter weight to be updated
-    #[account(mut, has_one = owner)]
+    #[account(mut)]
     pub voter_weight_record: Box<Account<'info, VoterWeightRecord>>,
 
     /// The max voter weight

@@ -18,11 +18,13 @@ pub struct AddStake<'info> {
     pub stake_pool_vault: Box<Account<'info, TokenAccount>>,
 
     /// The account to own the stake being deposited
-    #[account(mut, has_one = stake_pool)]
+    #[account(mut,
+              has_one = stake_pool,
+              has_one = voter_weight_record)]
     pub stake_account: Box<Account<'info, StakeAccount>>,
 
     /// The voter weight to be updated
-    #[account(mut, constraint = voter_weight_record.owner == stake_account.owner)]
+    #[account(mut)]
     pub voter_weight_record: Box<Account<'info, VoterWeightRecord>>,
 
     /// The max voter weight
