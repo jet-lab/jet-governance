@@ -5,6 +5,7 @@ import { useRpcContext } from "../../hooks/useRpcContext";
 import { UnbondingAccount } from "@jet-lab/jet-engine";
 import { fromLamports, isSignTransactionError } from "../../utils";
 import { useProposalContext } from "../../contexts/proposal";
+import { useBlockExplorer } from "../../contexts/blockExplorer";
 
 enum Steps {
   Confirm = 0,
@@ -23,6 +24,7 @@ export const RestakeModal = ({
   const [current, setCurrent] = useState<Steps>(Steps.Confirm);
   const [loading, setLoading] = useState(false);
   const { stakePool, stakeAccount, jetMint, realm, refresh } = useProposalContext();
+  const { getTxExplorerUrl } = useBlockExplorer();
 
   const stakeAmount = fromLamports(unbondingAccount?.tokens, jetMint);
 
@@ -32,7 +34,7 @@ export const RestakeModal = ({
     }
 
     setLoading(true);
-    restake(rpcContext, unbondingAccount, stakeAccount, stakePool, realm)
+    restake(rpcContext, unbondingAccount, stakeAccount, stakePool, realm, getTxExplorerUrl)
       .then(() => {
         setCurrent(Steps.Success);
       })

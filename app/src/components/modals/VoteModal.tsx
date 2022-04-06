@@ -17,6 +17,7 @@ import {
 import { castVote } from "../../actions/castVote";
 import { useProposalContext } from "../../contexts/proposal";
 import { VoteOnOtherProposal } from "../proposal/VoteOnOtherProposal";
+import { useBlockExplorer } from "../../contexts/blockExplorer";
 
 enum Steps {
   Confirm = 0,
@@ -48,6 +49,7 @@ export const VoteModal = ({
   const { programId, walletPubkey } = useRpcContext();
   const { stakePool, stakeBalance, jetMint, programs, refresh, proposalsByGovernance } =
     useProposalContext();
+  const { getTxExplorerUrl } = useBlockExplorer();
 
   let voteText: string = "";
 
@@ -90,6 +92,7 @@ export const VoteModal = ({
         yesNoVote,
         programs.stake,
         stakePool,
+        getTxExplorerUrl,
         undefined,
         voteRecord ? voteRecord!.pubkey : undefined
       )

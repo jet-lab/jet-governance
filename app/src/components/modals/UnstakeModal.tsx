@@ -7,6 +7,7 @@ import { u64 } from "@solana/spl-token";
 import { dateToString } from "../../utils";
 import { bnToNumber } from "@jet-lab/jet-engine";
 import { isSignTransactionError } from "../../utils";
+import { useBlockExplorer } from "../../contexts/blockExplorer";
 
 enum Steps {
   Confirm = 0,
@@ -40,6 +41,7 @@ export const UnstakeModal = ({
 
   const [current, setCurrent] = useState(Steps.Confirm);
   const [loading, setLoading] = useState(false);
+  const { getTxExplorerUrl } = useBlockExplorer();
 
   const unrelinquishedVoteRecords = walletVoteRecords?.filter(
     voteRecord => !voteRecord.account.isRelinquished
@@ -68,6 +70,7 @@ export const UnstakeModal = ({
 
     const unstakeAmount = new u64(amount * 10 ** voteMint.decimals);
     setLoading(true);
+
     rescindAndUnstake(
       rpcContext,
       programs.stake,
@@ -75,7 +78,8 @@ export const UnstakeModal = ({
       stakeAccount,
       governance,
       tokenOwnerRecord,
-      unstakeAmount
+      unstakeAmount,
+      getTxExplorerUrl
     )
       .then(() => {
         setLoading(false);

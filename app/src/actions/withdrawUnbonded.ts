@@ -8,7 +8,8 @@ export const withdrawUnbonded = async (
   { connection, wallet, walletPubkey }: RpcContext,
   unbondingAccount: UnbondingAccount,
   stakeAccount: StakeAccount,
-  stakePool: StakePool
+  stakePool: StakePool,
+  explorerUrlMaker: Function
 ) => {
   const instructions = await UnbondingAccount.withdrawUnbonded(
     unbondingAccount,
@@ -22,7 +23,8 @@ export const withdrawUnbonded = async (
     wallet,
     instructions,
     [],
-    "JET has been withdrawn"
+    "JET has been withdrawn",
+    explorerUrlMaker
   );
 };
 
@@ -30,7 +32,8 @@ export const withdrawAllUnbonded = async (
   { connection, wallet }: RpcContext,
   unbondingAccounts: UnbondingAccount[],
   stakeAccount: StakeAccount,
-  stakePool: StakePool
+  stakePool: StakePool,
+  explorerUrlMaker: Function
 ) => {
   let ix: TransactionInstruction[] = [];
   const provider = new Provider(connection, wallet as any, Provider.defaultOptions());
@@ -53,5 +56,12 @@ export const withdrawAllUnbonded = async (
     );
   }
 
-  await sendTransactionWithNotifications(connection, wallet, ix, [], "JET has been withdrawn");
+  await sendTransactionWithNotifications(
+    connection,
+    wallet,
+    ix,
+    [],
+    "JET has been withdrawn",
+    explorerUrlMaker
+  );
 };

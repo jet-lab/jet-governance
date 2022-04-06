@@ -13,7 +13,8 @@ export const addStake = async (
   realm: ProgramAccount<Realm>,
   owner: PublicKey,
   amount: BN,
-  jetMint: MintInfo | undefined
+  jetMint: MintInfo | undefined,
+  explorerUrlMaker: Function
 ) => {
   let instructions: TransactionInstruction[] = [];
   let signers: Keypair[] = [];
@@ -48,6 +49,7 @@ export const addStake = async (
     wallet,
     instructions,
     signers,
-    notificationTitle
+    notificationTitle,
+    explorerUrlMaker
   );
 };

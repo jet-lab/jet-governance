@@ -5,6 +5,7 @@ import { UnbondingAccount } from "@jet-lab/jet-engine";
 import { fromLamports, isSignTransactionError } from "../../utils";
 import { withdrawUnbonded } from "../../actions/withdrawUnbonded";
 import { useProposalContext } from "../../contexts/proposal";
+import { useBlockExplorer } from "../../contexts/blockExplorer";
 
 enum Steps {
   Confirm = 0,
@@ -23,6 +24,7 @@ export const WithdrawModal = ({
   const [current, setCurrent] = useState<Steps>(Steps.Confirm);
   const [loading, setLoading] = useState(false);
   const { stakeAccount, jetMint, stakePool, refresh } = useProposalContext();
+  const { getTxExplorerUrl } = useBlockExplorer();
 
   const stakeAmount = fromLamports(unbondingAccount?.tokens, jetMint);
 
@@ -32,7 +34,7 @@ export const WithdrawModal = ({
     }
 
     setLoading(true);
-    withdrawUnbonded(rpcContext, unbondingAccount, stakeAccount, stakePool)
+    withdrawUnbonded(rpcContext, unbondingAccount, stakeAccount, stakePool, getTxExplorerUrl)
       .then(() => {
         setCurrent(Steps.Success);
       })

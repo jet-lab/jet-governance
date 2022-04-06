@@ -8,6 +8,7 @@ import { useBN } from "../../hooks";
 import { ProgramAccount, Realm } from "@solana/spl-governance";
 import { DocsLink } from "../docsLink";
 import { isSignTransactionError } from "../../utils";
+import { useBlockExplorer } from "../../contexts/blockExplorer";
 
 enum Steps {
   Confirm = 0,
@@ -31,6 +32,7 @@ export const StakeModal = ({
   const { stakePool, jetAccount, refresh } = useProposalContext();
   const rpcContext = useRpcContext();
   const stakeLamports = useBN(amount, stakePool?.collateralMint.decimals);
+  const { getTxExplorerUrl } = useBlockExplorer();
   // Handlers for staking info modal
 
   const handleSubmitTx = () => {
@@ -39,7 +41,7 @@ export const StakeModal = ({
     }
 
     setLoading(true);
-    addStake(rpcContext, stakePool, realm, publicKey, stakeLamports, jetMint)
+    addStake(rpcContext, stakePool, realm, publicKey, stakeLamports, jetMint, getTxExplorerUrl)
       .then(() => {
         setCurrent(Steps.Success);
       })

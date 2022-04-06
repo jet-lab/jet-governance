@@ -8,6 +8,7 @@ import { claimAndStake } from "../../actions/claimAndStake";
 import { DocsLink } from "../docsLink";
 import { isSignTransactionError } from "../../utils";
 import { useWallet } from "@solana/wallet-adapter-react";
+import { useBlockExplorer } from "../../contexts/blockExplorer";
 
 enum Steps {
   Confirm = 0,
@@ -29,6 +30,7 @@ export const ClaimModal = ({
   const [current, setCurrent] = useState<Steps>(Steps.Confirm);
   const [loading, setLoading] = useState(false);
   const { programs, stakePool, stakeAccount, realm, refresh } = useProposalContext();
+  const { getTxExplorerUrl } = useBlockExplorer();
 
   const handleOk = () => {
     if (!stakeAmount || !airdrop) {
@@ -44,7 +46,8 @@ export const ClaimModal = ({
         stakePool,
         stakeAccount,
         publicKey,
-        realm
+        realm,
+        getTxExplorerUrl
       )
         .then(() => {
           setCurrent(Steps.Success);

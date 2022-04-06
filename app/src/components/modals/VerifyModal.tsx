@@ -9,6 +9,7 @@ import CountryPhoneInput, { CountryPhoneInputValue } from "antd-country-phone-in
 import { DocsLink } from "../docsLink";
 import { ReactComponent as ArrowIcon } from "../../images/arrow_icon.svg";
 import { geoBannedCountries } from "../../models/GEOBANNED_COUNTRIES";
+import { useBlockExplorer } from "../../contexts/blockExplorer";
 
 enum Steps {
   Welcome = 0,

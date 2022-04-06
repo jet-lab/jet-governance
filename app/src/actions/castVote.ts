@@ -24,6 +24,7 @@ export const castVote = async (
   yesNoVote: YesNoVote,
   stakeProgram: Program,
   stakePool: StakePool,
+  explorerUrlMaker: Function,
   message?: ChatMessageBody,
   voteRecord?: PublicKey
 ) => {
@@ -115,5 +116,5 @@ export const castVote = async (
     signers
   });
 
-  await sendAllTransactionsWithNotifications(provider, allTxs, "Vote cast");
+  await sendAllTransactionsWithNotifications(provider, allTxs, "Vote cast", explorerUrlMaker);
 };
