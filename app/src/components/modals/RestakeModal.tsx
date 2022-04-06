@@ -4,7 +4,7 @@ import { PropsWithChildren, useState } from "react";
 import { restake } from "../../actions/restake";
 import { useProposalContext } from "../../contexts";
 import { useRpcContext } from "../../hooks";
-import { fromLamports, isSignTransactionError } from "../../utils";
+import { isSignTransactionError } from "../../utils";
 
 enum Steps {
   Confirm = 0,
@@ -22,8 +22,6 @@ export const RestakeModal = ({
   const [current, setCurrent] = useState<Steps>(Steps.Confirm);
   const [loading, setLoading] = useState(false);
   const { stakePool, stakeAccount, jetMint, realm, refresh } = useProposalContext();
-
-  const stakeAmount = fromLamports(unbondingAccount?.tokens, jetMint);
 
   const handleOk = () => {
     if (!unbondingAccount || !stakePool || !stakeAccount || !realm) {

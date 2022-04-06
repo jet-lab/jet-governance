@@ -1,5 +1,4 @@
-import { bnToNumber, JetMint } from "@jet-lab/jet-engine";
-import { Mint } from "@solana/spl-token";
+import { bnToNumber, JetMint, StakePool } from "@jet-lab/jet-engine";
 import { PublicKey } from "@solana/web3.js";
 import { SelectProps } from "antd";
 import BN from "bn.js";
@@ -55,14 +54,17 @@ export function fromLamports(account?: number | BN, mint?: JetMint, rate: number
 }
 
 export const toTokens = (amount: BN | number | undefined, mint?: JetMint) => {
+  if (amount === new BN(0) || amount === 0) {
+    return "0";
+  }
   return fromLamports(amount, mint).toLocaleString(undefined, {
-    maximumFractionDigits: 0
+    maximumFractionDigits: 1
   });
 };
 
 var SI_SYMBOL = ["", "k", "M", "G", "T", "P", "E"];
 
-export const abbreviateNumber = (number: number, precision: number) => {
+export const abbreviateNumber = (number: number) => {
   let tier = (Math.log10(number) / 3) | 0;
   let scaled = number;
   let suffix = SI_SYMBOL[tier];
@@ -72,8 +74,8 @@ export const abbreviateNumber = (number: number, precision: number) => {
   }
 
   return number < 100000
-    ? new Intl.NumberFormat().format(Math.floor(number))
-    : scaled.toFixed(precision) + suffix;
+    ? new Intl.NumberFormat().format(Number(number.toFixed(2)))
+    : scaled.toFixed(2) + suffix;
 };
 
 export const formatUSD = new Intl.NumberFormat("en-US", {
@@ -154,6 +156,32 @@ export const dateToString = (date: Date) => {
   const year = date.getFullYear();
   const localTime = date.toLocaleTimeString();
   return `${day} ${months[month]} ${year}, ${localTime}`;
+};
+
+export const sharesToTokens = (
+  shares: BN | number | undefined,
+  stakePool: StakePool | undefined
+): { tokens: BN; conversion: BN } => {
+  let tokens = new BN(0);
+  let conversion = new BN(0);
+  if (
+    !stakePool ||
+    stakePool?.stakePool.bonded.shares === new BN(0) ||
+    stakePool?.stakePool.bonded.tokens === new BN(0)
+  ) {
+    return { tokens, conversion };
+  }
+  conversion = stakePool?.stakePool.bonded.shares.div(stakePool?.stakePool.bonded.tokens);
+  if (!shares) {
+    return { tokens, conversion };
+  }
+
+  const shareAmount = typeof shares === "number" ? new BN(shares) : shares;
+
+  tokens = shareAmount
+    .mul(stakePool?.stakePool.bonded.tokens)
+    .div(stakePool?.stakePool.bonded.shares);
+  return { tokens, conversion };
 };
 
 // --------- Country Code Info ---------

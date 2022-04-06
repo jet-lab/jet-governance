@@ -28,6 +28,7 @@ export const UnstakeModal = ({
     stakeAccount,
     voteMint,
 
+    realm,
     governance,
     tokenOwnerRecord,
     walletVoteRecords,
@@ -57,6 +58,7 @@ export const UnstakeModal = ({
       !programs ||
       !stakePool ||
       !stakeAccount ||
+      !realm ||
       !governance ||
       !tokenOwnerRecord ||
       !voteMint
@@ -70,6 +72,7 @@ export const UnstakeModal = ({
       rpcContext,
       stakePool,
       stakeAccount,
+      realm,
       governance,
       tokenOwnerRecord,
       unstakeAmount

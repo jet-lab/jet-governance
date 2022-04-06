@@ -1,10 +1,10 @@
 import { UnbondingAccount } from "@jet-lab/jet-engine";
 import { Modal, ModalProps } from "antd";
 import { PropsWithChildren, useState } from "react";
-import { withdrawUnbonded } from "../../actions/withdrawUnbonded";
+import { withdrawAllUnbonded } from "../../actions/withdrawUnbonded";
 import { useProposalContext } from "../../contexts";
 import { useRpcContext } from "../../hooks";
-import { fromLamports, isSignTransactionError } from "../../utils";
+import { isSignTransactionError } from "../../utils";
 
 enum Steps {
   Confirm = 0,
@@ -23,15 +23,14 @@ export const WithdrawModal = ({
   const [loading, setLoading] = useState(false);
   const { stakeAccount, jetMint, stakePool, refresh } = useProposalContext();
 
-  const stakeAmount = fromLamports(unbondingAccount?.tokens, jetMint);
-
   const handleOk = () => {
     if (!unbondingAccount || !stakeAccount || !stakePool) {
       return;
     }
 
     setLoading(true);
-    withdrawUnbonded(rpcContext, unbondingAccount, stakeAccount, stakePool)
+    let unbondingAccounts: UnbondingAccount[] = [unbondingAccount];
+    withdrawAllUnbonded(rpcContext, unbondingAccounts, stakeAccount, stakePool)
       .then(() => {
         onClose();
       })

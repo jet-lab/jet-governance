@@ -1,20 +1,26 @@
-import { JetMint } from "@jet-lab/jet-engine";
+import { JetMint, StakePool } from "@jet-lab/jet-engine";
 import { PublicKey } from "@solana/web3.js";
 import { VoterDisplayData } from "../hooks";
-import { fromLamports } from "../utils";
+import { fromLamports, sharesToTokens } from "../utils";
 
 /** Downloads vote records in CSV format */
 export const voteRecordCsvDownload = (
   itemAddress: PublicKey,
   votes: VoterDisplayData[],
+  stakePool: StakePool,
   mint?: JetMint
 ) => {
   // define the heading for each row of the data
-  var csv = "Public Key,Vote Weight,Vote\n";
+  var csv = "Public Key,Staked JET,Vote Weight,Vote\n";
 
   // merge the data with CSV
   votes?.forEach(function (vote) {
-    csv += [vote.user, fromLamports(vote.voteWeight, mint), vote.voteKind].join(",");
+    csv += [
+      vote.user,
+      fromLamports(sharesToTokens(vote.voteWeight, stakePool).tokens, mint),
+      fromLamports(vote.voteWeight, mint),
+      vote.voteKind
+    ].join(",");
     csv += "\n";
   });
 

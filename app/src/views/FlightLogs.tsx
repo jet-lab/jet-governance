@@ -10,7 +10,7 @@ export const FlightLogView = () => {
   const { getTxExplorerUrl } = useBlockExplorer();
 
   return (
-    <div className="view-container justify-start" id="flight-logs-view">
+    <div className="view justify-start" id="flight-logs-view">
       <div className="neu-container centered" id="flight-log">
         <h1>Flight Logs</h1>
         <table>

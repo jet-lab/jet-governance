@@ -6,9 +6,10 @@ import { Typography, Tooltip, Divider, Button, notification } from "antd";
 import { useEffect, useMemo, useState } from "react";
 import { useHistory, useLocation } from "react-router";
 import { StakeInput } from "./Input";
+import { StakedJetBalance } from "./Dashboard/StakedJetBalance";
 import { jetFaucet } from "../actions/jetFaucet";
 import { useConnectionConfig, useProposalContext } from "../contexts";
-import { useGoverningTokenDepositAmount, useWithdrawVotesAbility } from "../hooks";
+import { useWithdrawableCount, useWithdrawVotesAbility } from "../hooks";
 import { StakeModal, UnstakeModal, WithdrawAllModal } from "./modals";
 import {
   COUNCIL_FAUCET_DEVNET,
@@ -16,6 +17,7 @@ import {
   fromLamports,
   JET_FAUCET_DEVNET,
   JET_TOKEN_MINT,
+  sharesToTokens,
   toTokens
 } from "../utils";
 
@@ -29,29 +31,22 @@ export const YourInfo = () => {
   const { inDevelopment } = useConnectionConfig();
   const { claimsCount } = useProposalContext();
   const history = useHistory();
-
   const {
     refresh,
     walletFetched,
-
     unbondingTotal: { unbondingQueue, unbondingComplete },
     unbondingAccounts,
     stakeBalance: { stakedJet },
-
     jetAccount,
     jetMint,
     stakingYield,
-
     realm,
     tokenOwnerRecord,
-
+    stakePool,
     programs
   } = useProposalContext();
 
-  const votes = useGoverningTokenDepositAmount();
   const withdrawVotesAbility = useWithdrawVotesAbility(tokenOwnerRecord);
-  /* eslint-enable @typescript-eslint/no-unused-vars */
-
   const rewards = useMemo(() => {
     return {
       apr: stakingYield ? (stakingYield.apr * 100).toFixed(0) : undefined,
@@ -70,9 +65,7 @@ export const YourInfo = () => {
     }
     const balance = bnToNumber(jetAccount.info.amount) / 10 ** jetMint.decimals;
     const stakable = Math.min(inputAmount, balance);
-
     setInputAmount(stakable);
-
     if (stakable === 0) {
       return;
     }
@@ -86,13 +79,10 @@ export const YourInfo = () => {
     const balance =
       bnToNumber(tokenOwnerRecord.account.governingTokenDepositAmount) / 10 ** jetMint.decimals;
     const stakable = Math.min(inputAmount, balance);
-
     setInputAmount(stakable);
-
     if (stakable === 0) {
       return;
     }
-
     setUnstakeModalVisible(true);
   };
 
@@ -100,7 +90,9 @@ export const YourInfo = () => {
     setWithdrawAllModalVisible(true);
   };
 
-  // Devnet only: airdrop JET tokens
+  /**
+   * Devnet only: airdrop JET tokens
+   */
   const getJetAirdrop = async () => {
     try {
       if (programs) {
@@ -111,7 +103,10 @@ export const YourInfo = () => {
       refresh();
     }
   };
-  // Devnet only: airdrop Council tokens
+
+  /**
+   * Devnet only: airdrop Council tokens
+   */
   const getCouncilAirdrop = async () => {
     try {
       if (programs) {
@@ -150,34 +145,39 @@ export const YourInfo = () => {
   };
 
   const isOwnPage = Boolean(useLocation().pathname.includes("your-info"));
-  const { Paragraph, Title, Text } = Typography;
+  const { Title, Text } = Typography;
   const walletBalance = jetAccount ? toTokens(jetAccount.info.amount, jetMint) : 0;
   const preFillJetWithBalance = () => {
     setInputAmount(jetAccount ? fromLamports(jetAccount.info.amount, jetMint) : 0);
   };
   const preFillJetWithStaked = () => {
-    setInputAmount(stakedJet ? fromLamports(stakedJet, jetMint) : 0);
+    setInputAmount(
+      stakedJet ? fromLamports(sharesToTokens(stakedJet, stakePool).tokens, jetMint) : 0
+    );
   };
-  const withdrawAccountsAvailable =
-    !unbondingComplete.isZero() || (unbondingAccounts && unbondingAccounts.length > 0);
+  const canWithdraw = useWithdrawableCount(unbondingAccounts) > 0;
+
   return (
-    <div className={`your-info ${isOwnPage ? "view-container" : ""}`}>
+    <div className={`your-info ${isOwnPage ? "view" : ""}`}>
       <Typography>
         <Title className="title-info" level={2}>
           Your Info
         </Title>
         <div className="box-info">
           <Text>
-            Votes{" "}
+            Staked JET{" "}
             <Tooltip
-              title="For each JET token staked, you may cast 1 vote in JetGovern."
+              title="Staking JET allows you to cast your vote in JetGovern."
               placement="topLeft"
               overlayClassName="no-arrow"
             >
               <InfoCircleFilled />
             </Tooltip>
           </Text>
-          <Paragraph className="text-gradient vote-balance">{votes}</Paragraph>
+          <StakedJetBalance
+            stakedJet={toTokens(sharesToTokens(stakedJet, stakePool).tokens, jetMint)}
+            onClick={preFillJetWithStaked}
+          />
           <div className="wallet-overview flex justify-between column">
             <div className="flex justify-between">
               <Text className="staking-info current-staking-apr">
@@ -223,13 +223,6 @@ export const YourInfo = () => {
                 <Text className="text-btn">{walletBalance}</Text>
               </div>
             )}
-            <div
-              className="flex justify-between info-legend-item info-legend-item-prefill"
-              onClick={preFillJetWithStaked}
-            >
-              <Text>Staked JET</Text>
-              <Text className="text-btn">{toTokens(stakedJet, jetMint)}</Text>
-            </div>
             {connected && (
               <>
                 <div className="flex justify-between info-legend-item">
@@ -242,13 +235,11 @@ export const YourInfo = () => {
                       <InfoCircleFilled />
                     </Tooltip>
                   </Text>
-                  <Text>{toTokens(bnToNumber(unbondingQueue), jetMint)}</Text>
+                  <Text>{toTokens(unbondingQueue, jetMint)}</Text>
                 </div>
                 <div className="flex justify-between info-legend-item">
-                  <Text className="text-gradient bold">Available for Withdrawal</Text>
-                  <Text className="text-gradient bold">
-                    {toTokens(bnToNumber(unbondingComplete), jetMint)}
-                  </Text>
+                  <Text className="gradient-text bold">Available for Withdrawal</Text>
+                  <Text className="gradient-text bold">{toTokens(unbondingComplete, jetMint)}</Text>
                 </div>
               </>
             )}
@@ -306,7 +297,7 @@ export const YourInfo = () => {
                 onClose={() => setUnstakeModalVisible(false)}
               />
             )}
-            {withdrawAccountsAvailable && (
+            {canWithdraw && (
               <Button
                 className="full-width withdraw-btn"
                 onClick={() => handleWithdrawUnstaked()}
@@ -323,14 +314,14 @@ export const YourInfo = () => {
             <div className="airdrops flex-centered">
               <i
                 onClick={getJetAirdrop}
-                className="clickable-icon text-gradient fas fa-parachute-box"
+                className="clickable-icon gradient-text fas fa-parachute-box"
                 title="Airdrop Jet"
-              ></i>
+              />
               <i
                 onClick={getCouncilAirdrop}
-                className="clickable-icon text-gradient fas fa-crown"
+                className="clickable-icon gradient-text fas fa-crown"
                 title="Airdrop Council"
-              ></i>
+              />
             </div>
           )}
         </div>

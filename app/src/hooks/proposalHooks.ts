@@ -1,5 +1,5 @@
 import { ProposalFilter, useProposalContext } from "./../contexts";
-import { Airdrop, bnToNumber, StakePool } from "@jet-lab/jet-engine";
+import { Airdrop, bnToNumber, StakePool, UnbondingAccount } from "@jet-lab/jet-engine";
 import {
   Governance,
   ProgramAccount,
@@ -321,6 +321,19 @@ export function useAirdropsByWallet(
       return !!found;
     });
   }, [airdrops, wallet]);
+}
+
+export function useWithdrawableCount(unbondingAccounts: UnbondingAccount[] | undefined) {
+  if (!unbondingAccounts) {
+    return 0;
+  }
+  let count = 0;
+  for (let i = 0; i < unbondingAccounts.length; i++) {
+    if (UnbondingAccount.isUnbonded(unbondingAccounts[i])) {
+      count++;
+    }
+  }
+  return count;
 }
 
 export function useClaimsCount(airdrops: Airdrop[] | undefined, wallet: PublicKey | undefined) {

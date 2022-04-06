@@ -7,6 +7,7 @@ pub mod events;
 mod instructions;
 pub mod state;
 
+pub use instructions::PoolConfig;
 use instructions::*;
 
 #[program]

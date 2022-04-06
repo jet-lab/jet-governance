@@ -16,12 +16,13 @@ export function Navbar() {
   const [drawerOpened, setDrawerOpened] = useState(false);
   const { claimsCount } = useProposalContext();
   const { darkTheme, toggleDarkTheme } = useDarkTheme();
+
   const navLinks = [
     { title: "Dashboard", route: "/" },
     {
       title: `Claims`,
       class: claimsCount > 0 ? "shimmer" : "",
-      badge: claimsCount,
+      badge: claimsCount > 0 ? claimsCount : "",
       route: "/claims"
     },
     {
@@ -54,20 +55,23 @@ export function Navbar() {
         </Link>
         <div className="nav-links flex-centered">
           {navLinks.map(link => (
-            <Link
-              to={link.route}
-              className={`nav-link ${pathname === link.route ? "active" : ""} ${link.class}`}
-              key={link.route}
-            >
-              {link.title}
+            <>
+              <Link
+                to={link.route}
+                className={`nav-link ${pathname === link.route ? "active" : ""} ${link.class}`}
+                style={link.badge ? { marginRight: 0 } : {}}
+                key={link.route}
+              >
+                {link.title}
+              </Link>
               {link.badge ? (
                 <span className="badge">
-                  <span className="text-gradient">{link.badge}</span>
+                  <span className="gradient-text">{link.badge}</span>
                 </span>
               ) : (
                 ""
               )}
-            </Link>
+            </>
           ))}
           <Button
             ghost

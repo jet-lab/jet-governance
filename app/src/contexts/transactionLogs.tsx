@@ -118,9 +118,13 @@ export function TransactionsProvider(props: { children: any }) {
                       blockDate: dateFromUnixTimestamp(new BN(log.blockTime)),
                       signature,
                       action: getActionType(progInst, pre.owner!),
-                      amount: `${Math.abs(
-                        pre.uiTokenAmount.uiAmount! - post.uiTokenAmount.uiAmount!
-                      ).toFixed(2)}`
+                      amount: `${new Intl.NumberFormat().format(
+                        Number(
+                          Math.abs(
+                            pre.uiTokenAmount.uiAmount! - post.uiTokenAmount.uiAmount!
+                          ).toFixed(1)
+                        )
+                      )}`
                     };
 
                     // If we found mint match, add tx to logs

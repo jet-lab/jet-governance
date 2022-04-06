@@ -37,17 +37,17 @@ export const UnbondingLog = ({ unbondingAccount }: { unbondingAccount: Unbonding
 
   return (
     <tr>
-      <td className="italics" onClick={getUnbondingAccountExplorerUrl}>
+      <td className="italics-text" onClick={getUnbondingAccountExplorerUrl}>
         {!!stakePool &&
           dateFromUnixTimestamp(
             unbondingAccount?.unbondingAccount.unbondedAt.sub(stakePool.stakePool.unbondPeriod)
           )}
       </td>
-      <td className="italics tooltip" onClick={getUnbondingAccountExplorerUrl}>
+      <td className="italics-text tooltip" onClick={getUnbondingAccountExplorerUrl}>
         {isUnbonded ? "Unbonded" : "Unbonding"}
         {!isUnbonded && (
           <Tooltip
-            title="Unstaking transactions require a 29.5-day unbonding period. before withdrawal to your wallet is enabled. Status will show as 'unbonding' until this period completes."
+            title="Unstaking requires a 29.5-day unbonding period before withdrawal to your wallet is enabled. Status will show as 'Unbonding' until this period completes."
             mouseEnterDelay={0.1}
           >
             <InfoCircleFilled />
@@ -55,14 +55,14 @@ export const UnbondingLog = ({ unbondingAccount }: { unbondingAccount: Unbonding
         )}
       </td>
 
-      <td className="action italics">
+      <td className="action italics-text">
         <i onClick={getUnbondingAccountExplorerUrl}>
           {oneDayCountdown
             ? `Unstake complete in ${getRemainingTime(
                 currentTime,
                 bnToNumber(unbondingAccount.unbondingAccount.unbondedAt) * 1000
               )}`
-            : `Unstake complete on 
+            : `Unstake complete on
             ${dateFromUnixTimestamp(unbondingAccount.unbondingAccount.unbondedAt)}`}
         </i>{" "}
         <Button
@@ -88,8 +88,18 @@ export const UnbondingLog = ({ unbondingAccount }: { unbondingAccount: Unbonding
           />
         )}
       </td>
-      <td className="italics" onClick={getUnbondingAccountExplorerUrl}>
-        {toTokens(unbondingAccount?.tokens, jetMint)}
+      <td
+        className="italics-text"
+        onClick={() =>
+          unbondingAccount &&
+          window.open(
+            getAccountExplorerUrl(unbondingAccount.address.toBase58()),
+            "_blank",
+            "noreferrer"
+          )
+        }
+      >
+        {toTokens(unbondingAccount.tokens, jetMint)}
       </td>
       <td onClick={getUnbondingAccountExplorerUrl}>
         <i className="fas fa-external-link-alt"></i>

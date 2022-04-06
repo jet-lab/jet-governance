@@ -12,7 +12,7 @@ pub struct PoolConfig {
     /// The time period for unbonding staked tokens from the pool.
     ///
     /// Unit is seconds.
-    unbond_period: u64,
+    pub unbond_period: u64,
 }
 
 #[derive(Accounts)]

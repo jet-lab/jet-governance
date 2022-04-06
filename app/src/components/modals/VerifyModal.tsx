@@ -406,7 +406,7 @@ export const VerifyModal = () => {
           JetGovern. For more info, see our{" "}
           <a
             href="https://www.jetprotocol.io/legal/terms-of-service"
-            className="text-gradient-btn"
+            className="gradient-text-btn"
             target="_blank"
             rel="noopener noreferrer"
           >
@@ -469,7 +469,7 @@ export const VerifyModal = () => {
         continue to browse proposals while disconnected.
       </p>
     ),
-    closable: true
+    closable: false
   };
   steps[Steps.AgreeToTerms] = {
     title: "Warning",
@@ -495,7 +495,7 @@ export const VerifyModal = () => {
             <a
               href="https://www.jetprotocol.io/legal/terms-of-service"
               target="_blank"
-              className="text-gradient-btn"
+              className="gradient-text-btn"
               rel="noopener noreferrer"
             >
               Terms of Service
@@ -504,7 +504,7 @@ export const VerifyModal = () => {
             <a
               href="https://www.jetprotocol.io/legal/privacy-policy"
               target="_blank"
-              className="text-gradient-btn"
+              className="gradient-text-btn"
               rel="noopener noreferrer"
             >
               Privacy Policy
@@ -513,7 +513,7 @@ export const VerifyModal = () => {
             <a
               href="https://www.jetprotocol.io/legal/cookie-policy"
               target="_blank"
-              className="text-gradient-btn"
+              className="gradient-text-btn"
               rel="noopener noreferrer"
             >
               Cookie Policy
@@ -629,7 +629,7 @@ export const VerifyModal = () => {
           <a
             href="https://www.jetprotocol.io/legal/terms-of-service"
             target="_blank"
-            className="text-gradient-btn"
+            className="gradient-text-btn"
             rel="noreferrer"
           >
             Terms of Service
