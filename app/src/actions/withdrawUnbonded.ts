@@ -8,12 +8,16 @@ import {
 } from "../tools/transactions";
 import { SendTxRequest } from "@project-serum/anchor/dist/cjs/provider";
 
+/* The instruction creator (UnbondingAccount.withdrawUnbonded) used in this method does not work.  It needs to be fixed
+   before the method can beused.
+ */
 export const withdrawUnbonded = async (
   { connection, wallet, walletPubkey }: RpcContext,
   unbondingAccount: UnbondingAccount,
   stakeAccount: StakeAccount,
   stakePool: StakePool
 ) => {
+  // the below method does not work.
   const instructions = await UnbondingAccount.withdrawUnbonded(
     unbondingAccount,
     stakeAccount,
@@ -72,7 +76,7 @@ export const withdrawAllUnbonded = async (
       });
     }
   }
-  if (allTxs.length === 0) {
+  if (allTxs.length > 0) {
     await sendAllTransactionsWithNotifications(provider, allTxs, "JET has been withdrawn");
   }
 };

@@ -3,7 +3,7 @@ import { Modal, ModalProps } from "antd";
 import { useRpcContext } from "../../hooks/useRpcContext";
 import { UnbondingAccount } from "@jet-lab/jet-engine";
 import { isSignTransactionError } from "../../utils";
-import { withdrawUnbonded } from "../../actions/withdrawUnbonded";
+import { withdrawAllUnbonded } from "../../actions/withdrawUnbonded";
 import { useProposalContext } from "../../contexts/proposal";
 
 enum Steps {
@@ -29,7 +29,8 @@ export const WithdrawModal = ({
     }
 
     setLoading(true);
-    withdrawUnbonded(rpcContext, unbondingAccount, stakeAccount, stakePool)
+    let unbondingAccounts: UnbondingAccount[] = [unbondingAccount];
+    withdrawAllUnbonded(rpcContext, unbondingAccounts, stakeAccount, stakePool)
       .then(() => {
         onClose();
       })
