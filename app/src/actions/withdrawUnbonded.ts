@@ -21,7 +21,7 @@ export const withdrawUnbonded = async (
     stakeAccount.stakeAccount.owner,
     stakePool.stakePool.tokenMint
   );
-  
+
   if (ix.length > 0) {
     allTxs.push({
       tx: new Transaction().add(...ix),
