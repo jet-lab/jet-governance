@@ -17,7 +17,6 @@ import { useCountdown, VoteOption, useRpcContext } from "../../hooks";
 import { getPubkeyIndex } from "../../models/PUBKEYS_INDEX";
 import { isSignTransactionError, sharesToTokens, toTokens } from "../../utils";
 
-
 enum Steps {
   Confirm = 0,
   NoVoteError = 1,
