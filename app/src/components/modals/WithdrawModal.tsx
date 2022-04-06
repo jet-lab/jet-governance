@@ -62,7 +62,7 @@ export const WithdrawModal = ({ onClose, unbondingAccount }: WithdrawModalProps)
     children: (
       <div className="flex column">
         <p>Choosing to withdraw will return your governance tokens to your wallet.</p>
-        <p>Withdrawn governance tokens will not be able to vote on proposals.</p>
+        <p>To vote on proposals with these tokens, stake the tokens from your wallet again.</p>
       </div>
     )
   };
