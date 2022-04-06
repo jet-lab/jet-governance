@@ -1,16 +1,12 @@
-import "./YourInfo.less";
 import { InfoCircleFilled, MinusOutlined, PlusOutlined } from "@ant-design/icons";
 import { bnToNumber } from "@jet-lab/jet-engine";
-import { useWallet } from "@solana/wallet-adapter-react";
 import { Typography, Tooltip, Divider, Button, notification } from "antd";
-import { useEffect, useMemo, useState } from "react";
-import { useHistory, useLocation } from "react-router";
 import { StakeInput } from "./Input";
-import { StakedJetBalance } from "./Dashboard/StakedJetBalance";
+import { useEffect, useMemo, useState } from "react";
 import { jetFaucet } from "../actions/jetFaucet";
-import { useConnectionConfig, useProposalContext } from "../contexts";
+import { useConnectionConfig } from "../contexts";
+import { useProposalContext } from "../contexts/proposal";
 import { useWithdrawableCount, useWithdrawVotesAbility } from "../hooks";
-import { StakeModal, UnstakeModal, WithdrawAllModal } from "./modals";
 import {
   COUNCIL_FAUCET_DEVNET,
   COUNCIL_TOKEN_MINT,
@@ -20,11 +16,18 @@ import {
   sharesToTokens,
   toTokens
 } from "../utils";
+import { StakeModal } from "./modals/StakeModal";
+import { UnstakeModal } from "./modals/UnstakeModal";
+import { WithdrawModal } from "./modals/WithdrawModal";
+import { useWallet } from "@solana/wallet-adapter-react";
+import { useHistory, useLocation } from "react-router";
+import "./YourInfo.less";
+import { StakedJetBalance } from "./Dashboard/StakedJetBalance";
 
 export const YourInfo = () => {
   const [stakeModalVisible, setStakeModalVisible] = useState(false);
   const [unstakeModalVisible, setUnstakeModalVisible] = useState(false);
-  const [withdrawAllModalVisible, setWithdrawAllModalVisible] = useState(false);
+  const [withdrawModalVisible, setWithdrawModalVisible] = useState(false);
   const [showRewards, setShowRewards] = useState(false);
   const [inputAmount, setInputAmount] = useState<number | undefined>();
   const { connected } = useWallet();
@@ -87,7 +90,7 @@ export const YourInfo = () => {
   };
 
   const handleWithdrawUnstaked = () => {
-    setWithdrawAllModalVisible(true);
+    setWithdrawModalVisible(true);
   };
 
   /**
@@ -306,8 +309,8 @@ export const YourInfo = () => {
                 Withdraw balance
               </Button>
             )}
-            {withdrawAllModalVisible && (
-              <WithdrawAllModal onClose={() => setWithdrawAllModalVisible(false)} />
+            {withdrawModalVisible && (
+              <WithdrawModal onClose={() => setWithdrawModalVisible(false)} />
             )}
           </div>
           {inDevelopment && (
