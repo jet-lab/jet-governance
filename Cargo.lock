@@ -1418,6 +1418,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "jet-spl-golf"
+version = "1.0.0"
+dependencies = [
+ "anchor-lang",
+ "anchor-spl",
+ "itertools",
+ "solana-program",
+ "spl-governance",
+]
+
+[[package]]
 name = "jobserver"
 version = "0.1.24"
 source = "registry+https://github.com/rust-lang/crates.io-index"

@@ -6,7 +6,7 @@
 **/*.rs.bk
 
 /test-ledger
-/node_modules/
+node_modules/
 /app/node_modules/
 /app/public/build/
 yarn-error.log
