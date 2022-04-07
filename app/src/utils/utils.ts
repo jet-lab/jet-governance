@@ -166,12 +166,12 @@ export const sharesToTokens = (
   let conversion = new BN(0);
   if (
     !stakePool ||
-    stakePool?.stakePool.bonded.shares === new BN(0) ||
-    stakePool?.stakePool.bonded.tokens === new BN(0)
+    stakePool.stakePool.bonded.shares.eq(new BN(0)) ||
+    stakePool.stakePool.bonded.tokens.eq(new BN(0))
   ) {
     return { tokens, conversion };
   }
-  conversion = stakePool?.stakePool.bonded.shares.div(stakePool?.stakePool.bonded.tokens);
+  conversion = stakePool.stakePool.bonded.shares.div(stakePool.stakePool.bonded.tokens);
   if (!shares) {
     return { tokens, conversion };
   }
@@ -179,8 +179,8 @@ export const sharesToTokens = (
   const shareAmount = typeof shares === "number" ? new BN(shares) : shares;
 
   tokens = shareAmount
-    .mul(stakePool?.stakePool.bonded.tokens)
-    .div(stakePool?.stakePool.bonded.shares);
+    .mul(stakePool.stakePool.bonded.tokens)
+    .div(stakePool.stakePool.bonded.shares);
   return { tokens, conversion };
 };
 
