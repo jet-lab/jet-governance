@@ -270,7 +270,7 @@ export const VerifyModal = () => {
         setConfirmCodeLoading(false);
         if (res.status === 204) {
           // The verification was successful and transaction was confirmed.
-          setCurrent(Steps.AccessGranted1);
+          setCurrent(Steps.AgreeToTerms);
         } else if (res.status === 400) {
           // Payload validation failed.
           console.log("Payload validation failed");
