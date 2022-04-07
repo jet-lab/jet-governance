@@ -34,16 +34,8 @@ export const ClaimModal = ({
     }
 
     setLoading(true);
-    if (!!programs && !!airdrop && !!stakePool && !!stakeAccount && !!publicKey && !!realm) {
-      claimAndStake(
-        rpcContext,
-        programs.rewards,
-        airdrop,
-        stakePool,
-        stakeAccount,
-        publicKey,
-        realm
-      )
+    if (!!programs && !!airdrop && !!stakePool && !!stakeAccount && !!realm) {
+      claimAndStake(rpcContext, programs.rewards, airdrop, stakePool, stakeAccount)
         .then(() => {
           onClose();
         })

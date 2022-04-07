@@ -1,29 +1,24 @@
-import { AssociatedToken, StakeAccount, StakePool, UnbondingAccount } from "@jet-lab/jet-engine";
+import { StakeAccount, StakePool, UnbondingAccount } from "@jet-lab/jet-engine";
 import { BN, Provider } from "@project-serum/anchor";
 import {
   Governance,
   ProgramAccount,
-  Realm,
   RpcContext,
   TokenOwnerRecord,
-  withRelinquishVote,
-  withWithdrawGoverningTokens
+  withRelinquishVote
 } from "@solana/spl-governance";
 import { Transaction, TransactionInstruction } from "@solana/web3.js";
 import { getParsedProposalsByGovernance, getUnrelinquishedVoteRecords } from "../hooks";
 import { sendAllTransactionsWithNotifications } from "../tools/transactions";
-import { GOVERNANCE_PROGRAM_ID } from "../utils";
 
 export const rescindAndUnstake = async (
   { programId, wallet, walletPubkey, connection }: RpcContext,
   stakePool: StakePool,
   stakeAccount: StakeAccount,
-  realm: ProgramAccount<Realm>,
   governance: ProgramAccount<Governance>,
   tokenOwnerRecord: ProgramAccount<TokenOwnerRecord>,
   amount: BN
 ) => {
-  const voteMint = stakePool.addresses.stakeVoteMint;
   const unbondingSeed = UnbondingAccount.randomSeed();
   const withdrawIxs: TransactionInstruction[] = [];
   const ix: TransactionInstruction[] = [];
@@ -48,6 +43,7 @@ export const rescindAndUnstake = async (
       programId,
       tokenOwnerRecord.account.governingTokenOwner
     );
+
     for (const voteRecord of Object.values(voteRecords)) {
       let proposal = proposals[voteRecord.account.proposal.toString()];
 
@@ -81,55 +77,22 @@ export const rescindAndUnstake = async (
     }
   }
 
-  // Create vote token account
-  let voterTokenAccount = await AssociatedToken.withCreate(
-    withdrawIxs,
-    provider,
-    walletPubkey,
-    voteMint
-  );
-  // Unstake Votes
-  await withWithdrawGoverningTokens(
-    withdrawIxs,
-    GOVERNANCE_PROGRAM_ID,
-    governance.account.realm,
-    voterTokenAccount,
-    voteMint,
-    walletPubkey
-  );
-  // Burn votes
-  await StakeAccount.withBurnVotes(
-    withdrawIxs,
-    stakePool,
-    stakeAccount,
-    walletPubkey,
-    voterTokenAccount
-  );
   // Unstake Jet
   await UnbondingAccount.withUnbondStake(
     withdrawIxs,
     stakePool,
     stakeAccount,
+    tokenOwnerRecord,
     walletPubkey,
     unbondingSeed,
     amount
   );
-  // Close vote token account
-  await AssociatedToken.withClose(withdrawIxs, walletPubkey, voteMint, walletPubkey);
 
   const relinquishAndWithdrawTx = new Transaction().add(...withdrawIxs);
   allTxs.push({
     tx: relinquishAndWithdrawTx,
     signers: []
   });
-
-  // Recreate the voter token account for the next transaction
-  voterTokenAccount = await AssociatedToken.withCreate(ix, provider, walletPubkey, voteMint);
-  // Mint all votes that are remaining after burning
-  await StakeAccount.withMintVotes(ix, stakePool, realm, walletPubkey, voterTokenAccount);
-
-  // Close vote token account
-  await AssociatedToken.withClose(ix, walletPubkey, voteMint, walletPubkey);
 
   allTxs.push({
     tx: new Transaction().add(...ix),

@@ -37,7 +37,7 @@ export const StakeModal = ({
     }
 
     setLoading(true);
-    addStake(rpcContext, stakePool, realm, publicKey, stakeLamports, jetMint)
+    addStake(rpcContext, stakePool, publicKey, stakeLamports, jetMint)
       .then(() => {
         onClose();
       })

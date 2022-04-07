@@ -38,8 +38,7 @@ import {
   useClaimsCount,
   useProposalFilters,
   useProvider,
-  useRpcContext,
-  useStakingCompatibleWithRealm as useStakePoolCompatibleWithRealm
+  useRpcContext
 } from "../hooks";
 import { JET_REALM, JET_GOVERNANCE } from "../utils";
 
@@ -191,12 +190,7 @@ export function ProposalProvider({ children = undefined as any }) {
 
       // ----- Mints -----
       const jetMint = await AssociatedToken.loadMint(connection, stakePool.stakePool.tokenMint);
-      const voteMint = await AssociatedToken.loadMint(
-        connection,
-        stakePool.stakePool.stakeVoteMint
-      );
-
-      return { proposalsByGovernance, stakePool, airdrops, jetMint, voteMint };
+      return { proposalsByGovernance, stakePool, airdrops, jetMint };
     },
     { enabled: !!programs }
   );
@@ -230,7 +224,7 @@ export function ProposalProvider({ children = undefined as any }) {
         if (stakeAccount) {
           unbondingAccounts = await UnbondingAccount.loadByStakeAccount(
             programs.stake,
-            stakeAccount.address,
+            stakeAccount.addresses.stakeAccount,
             stakePool.stakePool
           );
         }
@@ -293,8 +287,6 @@ export function ProposalProvider({ children = undefined as any }) {
     pastProposalFilter,
     realm?.governance.account
   );
-
-  useStakePoolCompatibleWithRealm(stakePool?.stakePool, realm?.realm);
 
   function refresh() {
     queryClient.invalidateQueries("stakePool");

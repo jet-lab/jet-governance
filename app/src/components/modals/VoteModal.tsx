@@ -15,7 +15,7 @@ import { castVote } from "../../actions/castVote";
 import { useProposalContext } from "../../contexts";
 import { useCountdown, VoteOption, useRpcContext } from "../../hooks";
 import { getPubkeyIndex } from "../../models/PUBKEYS_INDEX";
-import { isSignTransactionError, sharesToTokens, toTokens } from "../../utils";
+import { isSignTransactionError, JET_TOKEN_MINT, sharesToTokens, toTokens } from "../../utils";
 
 enum Steps {
   Confirm = 0,
@@ -81,7 +81,7 @@ export const VoteModal = ({
       const tokenOwnerRecordPubkey = await getTokenOwnerRecordAddress(
         programId,
         realm.pubkey,
-        stakePool.addresses.stakeVoteMint,
+        JET_TOKEN_MINT,
         walletPubkey
       );
 
