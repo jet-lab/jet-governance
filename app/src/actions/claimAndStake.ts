@@ -12,7 +12,8 @@ export const claimAndStake = async (
   stakePool: StakePool,
   stakeAccount: StakeAccount,
   owner: PublicKey,
-  realm: ProgramAccount<Realm>
+  realm: ProgramAccount<Realm>,
+  explorerUrlMaker: Function
 ) => {
   let instructions: TransactionInstruction[] = [];
   let signers: Keypair[] = [];
@@ -37,6 +38,7 @@ export const claimAndStake = async (
     wallet,
     instructions,
     signers,
-    "JET claimed and staked"
+    "JET claimed and staked",
+    explorerUrlMaker
   );
 };

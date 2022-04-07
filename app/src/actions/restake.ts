@@ -10,7 +10,8 @@ export const restake = async (
   unbondingAccount: UnbondingAccount,
   stakeAccount: StakeAccount,
   stakePool: StakePool,
-  realm: ProgramAccount<Realm>
+  realm: ProgramAccount<Realm>,
+  explorerUrlMaker: Function
 ) => {
   const provider = new Provider(connection, wallet as any, Provider.defaultOptions());
   const ix: TransactionInstruction[] = [];
@@ -36,5 +37,12 @@ export const restake = async (
 
   await AssociatedToken.withClose(ix, walletPubkey, voteMint, walletPubkey);
 
-  await sendTransactionWithNotifications(connection, wallet, ix, [], "JET has been staked");
+  await sendTransactionWithNotifications(
+    connection,
+    wallet,
+    ix,
+    [],
+    "JET has been staked",
+    explorerUrlMaker
+  );
 };

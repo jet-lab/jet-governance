@@ -3,14 +3,16 @@ import { Modal, ModalProps } from "antd";
 import { useProposalContext } from "../../contexts/proposal";
 import { rescindAndUnstake } from "../../actions/rescindAndUnstake";
 import { useRpcContext } from "../../hooks/useRpcContext";
+import BN from "bn.js";
 import { dateToString } from "../../utils";
 import { bnToNumber } from "@jet-lab/jet-engine";
 import { isSignTransactionError } from "../../utils";
-import { BN } from "@project-serum/anchor";
+import { useBlockExplorer } from "../../contexts/blockExplorer";
 
 enum Steps {
   Confirm = 0,
-  Error = 1
+  Success = 1,
+  Error = 2
 }
 
 export const UnstakeModal = ({
@@ -28,7 +30,6 @@ export const UnstakeModal = ({
     stakePool,
     stakeAccount,
     voteMint,
-
     realm,
     governance,
     tokenOwnerRecord,
@@ -40,6 +41,7 @@ export const UnstakeModal = ({
 
   const [current, setCurrent] = useState(Steps.Confirm);
   const [loading, setLoading] = useState(false);
+  const { getTxExplorerUrl } = useBlockExplorer();
 
   const unrelinquishedVoteRecords = walletVoteRecords?.filter(
     voteRecord => !voteRecord.account.isRelinquished
@@ -69,6 +71,7 @@ export const UnstakeModal = ({
 
     const unstakeAmount = new BN(amount * 10 ** voteMint.decimals);
     setLoading(true);
+
     rescindAndUnstake(
       rpcContext,
       stakePool,
@@ -76,13 +79,14 @@ export const UnstakeModal = ({
       realm,
       governance,
       tokenOwnerRecord,
-      unstakeAmount
+      unstakeAmount,
+      getTxExplorerUrl
     )
       .then(() => {
         setLoading(false);
         setDisplayUnbondDate();
+        setCurrent(Steps.Success);
         resetInput();
-        onClose();
       })
       .catch(err => {
         if (isSignTransactionError(err)) {
@@ -132,6 +136,22 @@ export const UnstakeModal = ({
             Logs page at any point during the unbonding period.
           </p>
         </div>
+      </div>
+    )
+  };
+  steps[Steps.Success] = {
+    title: `All set!`,
+    okText: "Okay",
+    onOk: () => onClose(),
+    onCancel: () => onClose(),
+    closable: true,
+    cancelButtonProps: { style: { display: "none" } },
+    content: (
+      <div className="flex column">
+        <p>
+          You've unstaked {amount && Intl.NumberFormat("us-US").format(amount)} JET from JetGovern.
+        </p>
+        <p>Your 29.5-day unbonding period will complete on {unbondDate}.</p>
       </div>
     )
   };

@@ -1,10 +1,10 @@
 import { Modal, ModalProps } from "antd";
 import { ReactNode, useEffect, useState } from "react";
-import { useCountdown, VoteOption } from "../../hooks/proposalHooks";
+import { useCountdown, useOtherActiveProposals, VoteOption } from "../../hooks/proposalHooks";
 import { useRpcContext } from "../../hooks/useRpcContext";
 import { StakeBalance } from "@jet-lab/jet-engine";
 import { getPubkeyIndex } from "../../models/PUBKEYS_INDEX";
-import { isSignTransactionError, sharesToTokens, toTokens } from "../../utils";
+import { isSignTransactionError, toTokens } from "../../utils";
 import {
   Governance,
   ProgramAccount,
@@ -16,11 +16,14 @@ import {
 } from "@solana/spl-governance";
 import { castVote } from "../../actions/castVote";
 import { useProposalContext } from "../../contexts/proposal";
+import { VoteOnOtherProposal } from "../proposal/VoteOnOtherProposal";
+import { useBlockExplorer } from "../../contexts/blockExplorer";
 
 enum Steps {
   Confirm = 0,
-  NoVoteError = 1,
-  UnknownError = 2
+  VoteSuccess = 1,
+  NoVoteError = 2,
+  UnknownError = 3
 }
 
 export const VoteModal = ({
@@ -44,13 +47,9 @@ export const VoteModal = ({
   const { endDate } = useCountdown(proposal, governance);
   const rpcContext = useRpcContext();
   const { programId, walletPubkey } = useRpcContext();
-  const {
-    stakePool,
-    stakeBalance: { stakedJet },
-    jetMint,
-    programs,
-    refresh
-  } = useProposalContext();
+  const { stakePool, stakeBalance, jetMint, programs, refresh, proposalsByGovernance } =
+    useProposalContext();
+  const { getTxExplorerUrl } = useBlockExplorer();
 
   let voteText: string = "";
 
@@ -93,11 +92,12 @@ export const VoteModal = ({
         yesNoVote,
         programs.stake,
         stakePool,
+        getTxExplorerUrl,
         undefined,
         voteRecord ? voteRecord!.pubkey : undefined
       )
         .then(() => {
-          onClose();
+          setCurrent(Steps.VoteSuccess);
         })
         .catch(err => {
           if (isSignTransactionError(err)) {
@@ -112,6 +112,9 @@ export const VoteModal = ({
         });
     }
   };
+
+  // Handlers for tx success all set modal
+  const otherActiveProposals = useOtherActiveProposals(proposalsByGovernance, proposal, governance);
 
   const steps: (ModalProps & { content: ReactNode })[] = [];
   steps[Steps.Confirm] = {
@@ -128,13 +131,41 @@ export const VoteModal = ({
           {getPubkeyIndex(proposal.pubkey.toBase58())}: {proposal.account.name}.
         </p>
         <p>
-          You have {toTokens(sharesToTokens(stakedJet, stakePool).tokens, jetMint)} JET staked, and
-          will be able to unstake these funds when voting ends on {endDate}.
+          You have {toTokens(stakeBalance.stakedJet, jetMint)} JET staked, and will be able to
+          unstake these funds when voting ends on {endDate}.
         </p>
       </div>
     ),
     closable: true,
     cancelButtonProps: undefined
+  };
+  steps[Steps.VoteSuccess] = {
+    title: `All set`,
+    okText: "Okay",
+    onOk: () => onClose(),
+    onCancel: () => onClose(),
+    content: (
+      <div className="flex column">
+        <p>
+          You've successfully voted <strong>{voteText}</strong> JUMP-
+          {getPubkeyIndex(proposal.pubkey.toBase58())}: {proposal.account.name}.
+        </p>
+        <h2 className="text-gradient" style={{ marginLeft: 0 }}>
+          Vote on other proposals:
+        </h2>
+        {otherActiveProposals && otherActiveProposals.length > 0
+          ? otherActiveProposals.map(otherProposal => (
+              <VoteOnOtherProposal
+                proposal={otherProposal}
+                governance={governance}
+                onClose={onClose}
+              />
+            ))
+          : "There are no other proposals at this time."}
+      </div>
+    ),
+    closable: true,
+    cancelButtonProps: { style: { display: "none " } }
   };
   steps[Steps.NoVoteError] = {
     title: "Set a vote!",

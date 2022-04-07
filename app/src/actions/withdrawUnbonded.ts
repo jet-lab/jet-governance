@@ -1,23 +1,16 @@
 import { Provider } from "@project-serum/anchor";
 import { AssociatedToken, StakeAccount, StakePool, UnbondingAccount } from "@jet-lab/jet-engine";
 import { RpcContext } from "@solana/spl-governance";
-import { Transaction, TransactionInstruction } from "@solana/web3.js";
-import {
-  sendAllTransactionsWithNotifications,
-  sendTransactionWithNotifications
-} from "../tools/transactions";
-import { SendTxRequest } from "@project-serum/anchor/dist/cjs/provider";
+import { TransactionInstruction } from "@solana/web3.js";
+import { sendTransactionWithNotifications } from "../tools/transactions";
 
-/* The instruction creator (UnbondingAccount.withdrawUnbonded) used in this method does not work.  It needs to be fixed
-   before the method can beused.
- */
 export const withdrawUnbonded = async (
   { connection, wallet, walletPubkey }: RpcContext,
   unbondingAccount: UnbondingAccount,
   stakeAccount: StakeAccount,
-  stakePool: StakePool
+  stakePool: StakePool,
+  explorerUrlMaker: Function
 ) => {
-  // the below method does not work.
   const instructions = await UnbondingAccount.withdrawUnbonded(
     unbondingAccount,
     stakeAccount,
@@ -30,7 +23,8 @@ export const withdrawUnbonded = async (
     wallet,
     instructions,
     [],
-    "JET has been withdrawn"
+    "JET has been withdrawn",
+    explorerUrlMaker
   );
 };
 
@@ -38,10 +32,10 @@ export const withdrawAllUnbonded = async (
   { connection, wallet }: RpcContext,
   unbondingAccounts: UnbondingAccount[],
   stakeAccount: StakeAccount,
-  stakePool: StakePool
+  stakePool: StakePool,
+  explorerUrlMaker: Function
 ) => {
   let ix: TransactionInstruction[] = [];
-  const allTxs: SendTxRequest[] = [];
   const provider = new Provider(connection, wallet as any, Provider.defaultOptions());
 
   const tokenReceiver = await AssociatedToken.withCreate(
@@ -50,33 +44,24 @@ export const withdrawAllUnbonded = async (
     stakeAccount.stakeAccount.owner,
     stakePool.stakePool.tokenMint
   );
-  if (ix.length > 0) {
-    allTxs.push({
-      tx: new Transaction().add(...ix),
-      signers: []
-    });
-  }
 
   for (let i = 0; i < unbondingAccounts.length; i++) {
-    const unbondedState = UnbondingAccount.isUnbonded(unbondingAccounts[i]);
-    if (unbondedState) {
-      ix = [];
-      await UnbondingAccount.withWithdrawUnbonded(
-        ix,
-        unbondingAccounts[i],
-        stakeAccount,
-        stakePool,
-        tokenReceiver,
-        provider.wallet.publicKey
-      );
-      const unboundTx = new Transaction().add(...ix);
-      allTxs.push({
-        tx: unboundTx,
-        signers: []
-      });
-    }
+    await UnbondingAccount.withWithdrawUnbonded(
+      ix,
+      unbondingAccounts[i],
+      stakeAccount,
+      stakePool,
+      tokenReceiver,
+      provider.wallet.publicKey
+    );
   }
-  if (allTxs.length > 0) {
-    await sendAllTransactionsWithNotifications(provider, allTxs, "JET has been withdrawn");
-  }
+
+  await sendTransactionWithNotifications(
+    connection,
+    wallet,
+    ix,
+    [],
+    "JET has been withdrawn",
+    explorerUrlMaker
+  );
 };

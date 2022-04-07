@@ -36,7 +36,7 @@ export const Stakeholders = ({
           {address}
         </a>
       </span>
-      <span className="amount">{abbreviateNumber(fromLamports(amount, jetMint))} JET</span>
+      <span className="amount">{abbreviateNumber(fromLamports(amount, jetMint), 2)} JET</span>
       <span className="vote">{vote}</span>
     </div>
   );

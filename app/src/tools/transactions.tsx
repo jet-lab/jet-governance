@@ -3,36 +3,44 @@ import { sendTransaction2 } from "./sdk/core/connection";
 import {
   isTransactionTimeoutError,
   isSendTransactionError,
-  isSignTransactionError
+  isSignTransactionError,
+  shortenAddress
 } from "../utils";
 import { Provider } from "@project-serum/anchor";
 import { SendTxRequest } from "@project-serum/anchor/dist/cjs/provider";
 import { WalletSigner } from "@solana/spl-governance";
 import { notification } from "antd";
+import { PublicKey } from "@solana/web3.js";
 
+/**
+ * For sending a single transaction
+ * @param connection
+ * @param wallet
+ * @param instructions
+ * @param signers
+ * @param successMessage
+ * @param explorerUrlMaker
+ */
 export async function sendTransactionWithNotifications(
   connection: Connection,
   wallet: WalletSigner,
   instructions: TransactionInstruction[],
   signers: Keypair[],
-  successMessage: string
+  successMessage: string,
+  explorerUrlMaker: Function
 ) {
   try {
     const transaction = new Transaction();
     transaction.add(...instructions);
 
-    await sendTransaction2({
+    const txnSignature = await sendTransaction2({
       transaction,
       wallet,
       signers,
       connection
     });
 
-    notification.success({
-      message: "Success!",
-      description: successMessage,
-      placement: "bottomLeft"
-    });
+    notifyTransactionSuccess(successMessage, txnSignature, explorerUrlMaker);
   } catch (err) {
     notifyTransactionError(err);
     console.error(err);
@@ -40,25 +48,59 @@ export async function sendTransactionWithNotifications(
   }
 }
 
-// For sending multiple transactions
+//
+/**
+ * For sending multiple transactions
+ * @param provider
+ * @param transactions
+ * @param successMessage
+ * @param explorerUrlMaker
+ */
 export async function sendAllTransactionsWithNotifications(
   provider: Provider,
   transactions: SendTxRequest[],
-  successMessage: string
+  successMessage: string,
+  explorerUrlMaker: Function
 ) {
   try {
-    await provider.sendAll(transactions);
-
-    notification.success({
-      message: "Success!",
-      description: successMessage,
-      placement: "bottomLeft"
-    });
+    const txnResult = await provider.sendAll(transactions);
+    const txnSignature = txnResult[txnResult.length - 1];
+    notifyTransactionSuccess(successMessage, txnSignature, explorerUrlMaker);
   } catch (err) {
     notifyTransactionError(err);
     console.error(err);
     throw err;
   }
+}
+
+/**
+ *
+ * @param successMessage
+ * @param txnSignature
+ * @param explorerUrlMaker
+ */
+export function notifyTransactionSuccess(
+  successMessage: string,
+  txnSignature: string | PublicKey,
+  explorerUrlMaker: Function
+) {
+  const explorerUrl = explorerUrlMaker(txnSignature);
+
+  notification.success({
+    message: `${successMessage} Successful!`,
+    description: (
+      <div id="txnSuccess-modal">
+        <div style={{ textDecoration: "underline" }}>
+          <a href={explorerUrl} target="_blank"></a>
+          {shortenAddress(txnSignature, 8)} <i className="fas fa-external-link-alt"></i>
+        </div>
+      </div>
+    ),
+    placement: "bottomLeft",
+    onClick: () => {
+      window.open(explorerUrl, "_blank");
+    }
+  });
 }
 
 function notifyTransactionError(err: unknown) {

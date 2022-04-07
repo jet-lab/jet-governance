@@ -4,6 +4,7 @@ import { useRpcContext } from "../../hooks/useRpcContext";
 import { withdrawAllUnbonded } from "../../actions/withdrawUnbonded";
 import { useProposalContext } from "../../contexts/proposal";
 import { isSignTransactionError } from "../../utils";
+import { useBlockExplorer } from "../../contexts/blockExplorer";
 
 enum Steps {
   Confirm = 0,
@@ -16,6 +17,7 @@ export const WithdrawAllModal = ({ onClose }: { onClose: () => void }) => {
   const [current, setCurrent] = useState<Steps>(Steps.Confirm);
   const [loading, setLoading] = useState(false);
   const { stakeAccount, unbondingAccounts, stakePool, refresh } = useProposalContext();
+  const { getTxExplorerUrl } = useBlockExplorer();
 
   const handleOk = () => {
     if (!stakeAccount || !stakePool || !unbondingAccounts) {
@@ -25,7 +27,7 @@ export const WithdrawAllModal = ({ onClose }: { onClose: () => void }) => {
       return setCurrent(Steps.NothingToWithdraw);
     }
     setLoading(true);
-    withdrawAllUnbonded(rpcContext, unbondingAccounts, stakeAccount, stakePool)
+    withdrawAllUnbonded(rpcContext, unbondingAccounts, stakeAccount, stakePool, getTxExplorerUrl)
       .then(() => {
         onClose();
       })

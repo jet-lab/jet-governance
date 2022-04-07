@@ -2,13 +2,15 @@ import { PropsWithChildren, useState } from "react";
 import { Modal, ModalProps } from "antd";
 import { useRpcContext } from "../../hooks/useRpcContext";
 import { UnbondingAccount } from "@jet-lab/jet-engine";
-import { isSignTransactionError } from "../../utils";
-import { withdrawAllUnbonded } from "../../actions/withdrawUnbonded";
+import { fromLamports, isSignTransactionError } from "../../utils";
+import { withdrawUnbonded } from "../../actions/withdrawUnbonded";
 import { useProposalContext } from "../../contexts/proposal";
+import { useBlockExplorer } from "../../contexts/blockExplorer";
 
 enum Steps {
   Confirm = 0,
-  Error = 1
+  Success = 1,
+  Error = 2
 }
 
 export const WithdrawModal = ({
@@ -22,6 +24,9 @@ export const WithdrawModal = ({
   const [current, setCurrent] = useState<Steps>(Steps.Confirm);
   const [loading, setLoading] = useState(false);
   const { stakeAccount, jetMint, stakePool, refresh } = useProposalContext();
+  const { getTxExplorerUrl } = useBlockExplorer();
+
+  const stakeAmount = fromLamports(unbondingAccount?.tokens, jetMint);
 
   const handleOk = () => {
     if (!unbondingAccount || !stakeAccount || !stakePool) {
@@ -29,10 +34,9 @@ export const WithdrawModal = ({
     }
 
     setLoading(true);
-    let unbondingAccounts: UnbondingAccount[] = [unbondingAccount];
-    withdrawAllUnbonded(rpcContext, unbondingAccounts, stakeAccount, stakePool)
+    withdrawUnbonded(rpcContext, unbondingAccount, stakeAccount, stakePool, getTxExplorerUrl)
       .then(() => {
-        onClose();
+        setCurrent(Steps.Success);
       })
       .catch(err => {
         if (isSignTransactionError(err)) {
@@ -63,9 +67,20 @@ export const WithdrawModal = ({
       </div>
     )
   };
+  steps[Steps.Success] = {
+    title: `All set!`,
+    okText: "I understand",
+    onOk: () => onClose(),
+    onCancel: () => onClose(),
+    closable: true,
+    cancelButtonProps: { style: { display: "none " } },
+    children: (
+      <p>You've withdrawn {Intl.NumberFormat("us-US").format(stakeAmount)} JET from JetGovern.</p>
+    )
+  };
   steps[Steps.Error] = {
     title: "Error",
-    okText: "Okay",
+    okText: "I understand",
     onOk: () => onClose(),
     onCancel: () => onClose(),
     closable: true,

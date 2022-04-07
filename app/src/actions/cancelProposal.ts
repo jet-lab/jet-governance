@@ -9,7 +9,8 @@ import { sendTransactionWithNotifications } from "../tools/transactions";
 export const cancelProposal = async (
   { connection, wallet, programId, walletPubkey }: RpcContext,
   realmPk: PublicKey,
-  proposal: ProgramAccount<Proposal> | undefined
+  proposal: ProgramAccount<Proposal> | undefined,
+  explorerUrlMaker: Function
 ) => {
   const instructions: TransactionInstruction[] = [];
   const signers: Keypair[] = [];
@@ -35,6 +36,7 @@ export const cancelProposal = async (
     wallet,
     instructions,
     signers,
-    "Proposal cancelled"
+    "Proposal cancelled",
+    explorerUrlMaker
   );
 };

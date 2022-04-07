@@ -24,7 +24,8 @@ export const rescindAndUnstake = async (
   realm: ProgramAccount<Realm>,
   governance: ProgramAccount<Governance>,
   tokenOwnerRecord: ProgramAccount<TokenOwnerRecord>,
-  amount: BN
+  amount: BN,
+  explorerUrlMaker: Function
 ) => {
   const voteMint = stakePool.addresses.stakeVoteMint;
   const unbondingSeed = UnbondingAccount.randomSeed();
@@ -139,5 +140,10 @@ export const rescindAndUnstake = async (
     signers: []
   });
 
-  await sendAllTransactionsWithNotifications(provider, allTxs, "JET has begun unbonding");
+  await sendAllTransactionsWithNotifications(
+    provider,
+    allTxs,
+    "JET has begun unbonding",
+    explorerUrlMaker
+  );
 };

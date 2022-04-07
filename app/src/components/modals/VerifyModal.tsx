@@ -1,17 +1,15 @@
 import { useWallet } from "@solana/wallet-adapter-react";
-import { Modal, Input, ModalProps, Checkbox } from "antd";
+import { Modal, Input, ModalProps } from "antd";
 import { PropsWithChildren, useEffect, useState } from "react";
 import { useConnectWallet } from "../../contexts/connectWallet";
 import axios from "axios";
-import { useConnection, useConnectionConfig } from "../../contexts";
+import { useConnectionConfig } from "../../contexts";
 import { Auth } from "@jet-lab/jet-engine/lib/auth/auth";
 import CountryPhoneInput, { CountryPhoneInputValue } from "antd-country-phone-input";
 import { DocsLink } from "../docsLink";
 import { ReactComponent as ArrowIcon } from "../../images/arrow_icon.svg";
 import { geoBannedCountries } from "../../models/GEOBANNED_COUNTRIES";
-import { filterSort } from "../../utils";
-import { createUserAuth } from "../../actions/createUserAuth";
-import { useProvider, useRpcContext } from "../../hooks";
+import { useBlockExplorer } from "../../contexts/blockExplorer";
 
 enum Steps {
   Welcome = 0,
@@ -19,31 +17,30 @@ enum Steps {
   ConfirmLocation = 2,
   EnterSMSCode = 3,
   AccessDenied = 4,
-  AgreeToTerms = 5,
-  AccessGranted1 = 6,
-  AccessGranted2 = 7,
-  UnknownError = 8,
-  PhoneInvalid = 9,
-  VpnBlocked = 10,
-  InvalidToken = 11,
-  RegionNotSupported = 12
+  AccessGranted1 = 5,
+  AccessGranted2 = 6,
+  UnknownError = 7,
+  PhoneInvalid = 8,
+  VpnBlocked = 9,
+  InvalidToken = 10,
+  RegionNotSupported = 11
 }
 const API_KEY: string = process.env.REACT_APP_SMS_AUTH_API_KEY!;
 
-export const VerifyModal = () => {
+export const VerifyModal = ({
+  authAccount,
+  authAccountLoading,
+  createAuthAccount
+}: {
+  authAccount: Auth | undefined;
+  authAccountLoading: boolean;
+  createAuthAccount: () => Promise<boolean>;
+}) => {
   const [current, setCurrent] = useState<Steps>(Steps.Welcome);
-  const { wallets, select, disconnect, disconnecting, wallet, publicKey } = useWallet();
+  const { wallets, select, connected, disconnect, disconnecting, wallet, publicKey } = useWallet();
   const { connecting, setConnecting } = useConnectWallet();
-  const rpcContext = useRpcContext();
-
-  const connection = useConnection();
-  const provider = useProvider(connection, wallet);
-  const authProgram = Auth.useAuthProgram(provider);
-  const { authAccount, loading: authAccountLoading } = Auth.useAuthAccount(authProgram, publicKey);
-
-  const [phoneNumber, setPhoneNumber] = useState<CountryPhoneInputValue>({ short: "CH" });
+  const [phoneNumber, setPhoneNumber] = useState<CountryPhoneInputValue>({ short: "US" });
   const [isGeobanned, setIsGeobanned] = useState(false);
-  const [disclaimerChecked, setDisclaimerChecked] = useState(false);
   const [country, setCountry] = useState("");
   // The ID of the SMS verification session with MessageBird.
   const [verificationId, setVerificationId] = useState<string>();
@@ -105,34 +102,32 @@ export const VerifyModal = () => {
           true
       );
     }
-    function getAgreedToTerms() {
-      return (
-        publicKey && JSON.parse(localStorage.getItem(`jetGovernTermsAccepted`) ?? "false") === true
-      );
-    }
     function onStepOrClosed(step: Steps) {
       return current === step || !connecting;
     }
-    if (onStepOrClosed(Steps.ConnectWallet) && !disconnecting && !authAccountLoading) {
-      if (!authAccount || !authAccount.userAuthentication.complete) {
-        if (isGeobanned) {
-          setCurrent(Steps.RegionNotSupported);
-        } else {
-          setCurrent(Steps.ConfirmLocation);
-        }
+    if (onStepOrClosed(Steps.ConnectWallet) && connected && !disconnecting && !authAccountLoading) {
+      if (isGeobanned) {
+        setCurrent(Steps.RegionNotSupported);
+      } else if (!authAccount || !authAccount.userAuthentication.complete) {
+        setCurrent(Steps.ConfirmLocation);
+        setConnecting(true);
       } else if (authAccount.userAuthentication.allowed) {
-        if (getAuthorizationConfirmed() && getAgreedToTerms()) {
+        if (getAuthorizationConfirmed()) {
           setConnecting(false);
+          setCurrent(Steps.Welcome);
         } else {
-          setCurrent(Steps.AgreeToTerms);
+          setCurrent(Steps.AccessGranted1);
+          setConnecting(true);
         }
       } else if (!authAccount.userAuthentication.allowed) {
         setCurrent(Steps.AccessDenied);
+        setConnecting(true);
       }
     }
   }, [
     authAccount,
     authAccountLoading,
+    connected,
     connecting,
     current,
     disconnecting,
@@ -151,28 +146,12 @@ export const VerifyModal = () => {
     }
   };
 
-  const createAuthAccount = async () => {
-    if (authAccountLoading || !authProgram || !publicKey) {
-      return false;
-    }
-
-    // If the auth account is created, do not create it again
-    if (authAccount) {
-      return true;
-    }
-
-    try {
-      await createUserAuth(rpcContext, authProgram, publicKey, publicKey);
-      return true;
-    } catch (err) {
-      console.error(err);
-      setCurrent(Steps.UnknownError);
-      return false;
-    }
-  };
-
   const handlePhoneVerify = async () => {
-    if ((await createAuthAccount()) === false) {
+    if (authAccountLoading) {
+      return;
+    }
+
+    if (!(await createAuthAccount())) {
       return;
     }
 
@@ -328,11 +307,6 @@ export const VerifyModal = () => {
     setConnecting(false);
   };
 
-  const handleAcceptTerms = () => {
-    localStorage.setItem("jetGovernTermsAccepted", "true");
-    setCurrent(Steps.AccessGranted1);
-  };
-
   const steps: PropsWithChildren<ModalProps>[] = [];
   steps[Steps.Welcome] = {
     title: "Stake your JET to earn rewards and start voting today!",
@@ -393,7 +367,7 @@ export const VerifyModal = () => {
   };
   steps[Steps.ConfirmLocation] = {
     title: "Confirm location",
-    okText: "Send SMS",
+    okText: "Okay",
     okButtonProps: {
       disabled: authAccountLoading || phoneNumber.phone === undefined
     },
@@ -407,9 +381,8 @@ export const VerifyModal = () => {
           JetGovern. For more info, see our{" "}
           <a
             href="https://www.jetprotocol.io/legal/terms-of-service"
-            className="gradient-text-btn"
             target="_blank"
-            rel="noopener noreferrer"
+            rel="noreferrer"
           >
             Terms of Use
           </a>
@@ -429,7 +402,6 @@ export const VerifyModal = () => {
           placeholder={"Phone number"}
           value={phoneNumber}
           onChange={(e: CountryPhoneInputValue) => handleInputPhoneNumber(e)}
-          selectProps={{ filterSort }}
           onKeyPress={(e: any) => enterKeyPhoneVerify(e)}
           type={"number"}
         />
@@ -439,7 +411,7 @@ export const VerifyModal = () => {
   };
   steps[Steps.EnterSMSCode] = {
     title: "Enter your secure access code",
-    okText: "Submit",
+    okText: "Okay",
     okButtonProps: { loading: confirmCodeLoading },
     onOk: () => handleConfirmCode(),
     onCancel: () => handleDisconnect(),
@@ -459,7 +431,7 @@ export const VerifyModal = () => {
   };
   steps[Steps.AccessDenied] = {
     title: "Access Denied",
-    okText: "Disconnect",
+    okText: "Okay",
     cancelText: "Disconnect",
     onOk: () => handleDisconnect(),
     onCancel: () => handleDisconnect(),
@@ -470,61 +442,7 @@ export const VerifyModal = () => {
         continue to browse proposals while disconnected.
       </p>
     ),
-    closable: false
-  };
-  steps[Steps.AgreeToTerms] = {
-    title: "Warning",
-    okText: "Accept",
-    okButtonProps: { disabled: !disclaimerChecked },
-    onOk: () => handleAcceptTerms(),
-    cancelButtonProps: { style: { display: "none " } },
-    onCancel: () => null,
-    children: (
-      <div className="flex column">
-        <p>
-          You are about to enter JetGovern. New technologies have risk. Do not proceed if you do not
-          understand and accept the terms and potential for financial loss.
-        </p>
-        <p>
-          <Checkbox
-            id="terms-privacy-check"
-            className="terms-privacy-check"
-            onChange={e => setDisclaimerChecked(e.target.checked)}
-          />
-          <label htmlFor="terms-privacy-check" className="terms-privacy-legend">
-            I understand the{" "}
-            <a
-              href="https://www.jetprotocol.io/legal/terms-of-service"
-              target="_blank"
-              className="gradient-text-btn"
-              rel="noopener noreferrer"
-            >
-              Terms of Service
-            </a>
-            ,{" "}
-            <a
-              href="https://www.jetprotocol.io/legal/privacy-policy"
-              target="_blank"
-              className="gradient-text-btn"
-              rel="noopener noreferrer"
-            >
-              Privacy Policy
-            </a>
-            , and{" "}
-            <a
-              href="https://www.jetprotocol.io/legal/cookie-policy"
-              target="_blank"
-              className="gradient-text-btn"
-              rel="noopener noreferrer"
-            >
-              Cookie Policy
-            </a>
-            . I am aware of and accept the risks of using new technology.
-          </label>
-        </p>
-      </div>
-    ),
-    closable: false
+    closable: true
   };
   steps[Steps.AccessGranted1] = {
     title: "Stake JET to earn and vote!",
@@ -630,7 +548,6 @@ export const VerifyModal = () => {
           <a
             href="https://www.jetprotocol.io/legal/terms-of-service"
             target="_blank"
-            className="gradient-text-btn"
             rel="noreferrer"
           >
             Terms of Service
@@ -652,5 +569,5 @@ export const VerifyModal = () => {
     closable: true
   };
 
-  return <Modal visible={true} {...steps[current]} />;
+  return <Modal visible={connecting} {...steps[current]} />;
 };

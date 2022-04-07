@@ -10,7 +10,6 @@ import { AirdropView } from "./views/Airdrop";
 import { ProposalView } from "./views/Proposal";
 import { Settings } from "./views/Settings";
 import { YourInfo } from "./components/YourInfo";
-import { MobileMessage } from "./components/MobileMessage";
 import { DarkThemeProvider } from "./contexts/darkTheme";
 import { ConnectWalletProvider } from "./contexts/connectWallet";
 import { TransactionsProvider } from "./contexts/transactionLogs";
@@ -21,7 +20,6 @@ import { ProposalProvider } from "./contexts/proposal";
 import { ConfigProvider } from "antd-country-phone-input";
 import en from "world_countries_lists/data/en/world.json";
 import { BlockExplorerProvider } from "./contexts/blockExplorer";
-import { geoBannedCountriesArr } from "./utils";
 
 const queryClient = new QueryClient();
 
@@ -38,10 +36,7 @@ export function Routes() {
               <BlockExplorerProvider>
                 <GovernanceProvider>
                   <WalletProvider>
-                    <ConfigProvider
-                      locale={en}
-                      areaFilter={area => !geoBannedCountriesArr.includes(area.name!)}
-                    >
+                    <ConfigProvider locale={en}>
                       <ConnectWalletProvider>
                         <ProposalProvider>
                           <TransactionsProvider>
@@ -54,7 +49,6 @@ export function Routes() {
                                   <Route exact path="/claims" children={<AirdropView />} />
                                   <Route exact path="/flight-logs" children={<FlightLogView />} />
                                   <Route exact path="/settings" children={<Settings />} />
-                                  <MobileMessage />
                                 </ScrollToTop>
                               </Switch>
                             </AppLayout>

@@ -1,10 +1,7 @@
 import { useCallback, useState } from "react";
 import { PublicKey } from "@solana/web3.js";
 import BN from "bn.js";
-import { bnToNumber, StakePool } from "@jet-lab/jet-engine";
-import { geoBannedCountries } from "../models/GEOBANNED_COUNTRIES";
-import { SelectProps } from "antd";
-import { JetMint } from "@jet-lab/jet-engine/lib/common";
+import { bnToNumber, JetMint } from "@jet-lab/jet-engine";
 
 export function useLocalStorageState(key: string, defaultState?: string) {
   const [state, setState] = useState(() => {
@@ -55,17 +52,14 @@ export function fromLamports(account?: number | BN, mint?: JetMint, rate: number
 }
 
 export const toTokens = (amount: BN | number | undefined, mint?: JetMint) => {
-  if (amount === new BN(0) || amount === 0) {
-    return "0";
-  }
   return fromLamports(amount, mint).toLocaleString(undefined, {
-    maximumFractionDigits: 1
+    maximumFractionDigits: 0
   });
 };
 
 var SI_SYMBOL = ["", "k", "M", "G", "T", "P", "E"];
 
-export const abbreviateNumber = (number: number) => {
+export const abbreviateNumber = (number: number, precision: number) => {
   let tier = (Math.log10(number) / 3) | 0;
   let scaled = number;
   let suffix = SI_SYMBOL[tier];
@@ -74,9 +68,7 @@ export const abbreviateNumber = (number: number) => {
     scaled = number / scale;
   }
 
-  return number < 100000
-    ? new Intl.NumberFormat().format(Number(number.toFixed(2)))
-    : scaled.toFixed(2) + suffix;
+  return scaled.toFixed(precision) + suffix;
 };
 
 export const formatUSD = new Intl.NumberFormat("en-US", {
@@ -117,9 +109,9 @@ export const getRemainingTime = (currentTime: number, endTime: number): string =
   const seconds = Math.floor(difference % 60);
 
   if (days > 0) {
-    return `${days} ${days === 1 ? "day" : "days"}`;
+    return `Ends in ${days} ${days === 1 ? "day" : "days"}`;
   } else {
-    return `${hours !== 0 ? `${hours.toLocaleString()}h` : ""} ${
+    return `Ends in ${hours !== 0 ? `${hours.toLocaleString()}h` : ""} ${
       minutes !== 0 ? `${minutes.toLocaleString()}m` : ""
     } ${seconds.toLocaleString()}s`;
   }
@@ -158,53 +150,3 @@ export const dateToString = (date: Date) => {
   const localTime = date.toLocaleTimeString();
   return `${day} ${months[month]} ${year}, ${localTime}`;
 };
-
-export const sharesToTokens = (
-  shares: BN | number | undefined,
-  stakePool: StakePool | undefined
-): { tokens: BN; conversion: BN } => {
-  let tokens = new BN(0);
-  let conversion = new BN(0);
-  if (
-    !stakePool ||
-    stakePool?.stakePool.bonded.shares === new BN(0) ||
-    stakePool?.stakePool.bonded.tokens === new BN(0)
-  ) {
-    return { tokens, conversion };
-  }
-  conversion = stakePool?.stakePool.bonded.shares.div(stakePool?.stakePool.bonded.tokens);
-  if (!shares) {
-    return { tokens, conversion };
-  }
-
-  const shareAmount = typeof shares === "number" ? new BN(shares) : shares;
-
-  tokens = shareAmount
-    .mul(stakePool?.stakePool.bonded.tokens)
-    .div(stakePool?.stakePool.bonded.shares);
-  return { tokens, conversion };
-};
-
-// --------- Country Code Info ---------
-interface CountryCodeInfo {
-  country: string;
-  code: string;
-}
-
-const getGeoBannedCountriesArr = (geoBannedCountries: CountryCodeInfo[]) => {
-  return geoBannedCountries.map(country => country.country);
-};
-
-export const geoBannedCountriesArr = getGeoBannedCountriesArr(geoBannedCountries);
-
-const getLastNumber = (str: string) => {
-  const arr = str.split(" ");
-  return Number(arr[arr.length - 1]);
-};
-
-export const filterSort: SelectProps["filterSort"] = (a, b) => {
-  const keyA = getLastNumber(a.key);
-  const keyB = getLastNumber(b.key);
-  return keyA - keyB;
-};
-// --------- End Country Code Info ---------

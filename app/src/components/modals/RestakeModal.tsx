@@ -3,12 +3,14 @@ import { Modal, ModalProps } from "antd";
 import { restake } from "../../actions/restake";
 import { useRpcContext } from "../../hooks/useRpcContext";
 import { UnbondingAccount } from "@jet-lab/jet-engine";
-import { isSignTransactionError } from "../../utils";
+import { fromLamports, isSignTransactionError } from "../../utils";
 import { useProposalContext } from "../../contexts/proposal";
+import { useBlockExplorer } from "../../contexts/blockExplorer";
 
 enum Steps {
   Confirm = 0,
-  Error = 1
+  Success = 1,
+  Error = 2
 }
 
 export const RestakeModal = ({
@@ -22,6 +24,9 @@ export const RestakeModal = ({
   const [current, setCurrent] = useState<Steps>(Steps.Confirm);
   const [loading, setLoading] = useState(false);
   const { stakePool, stakeAccount, jetMint, realm, refresh } = useProposalContext();
+  const { getTxExplorerUrl } = useBlockExplorer();
+
+  const stakeAmount = fromLamports(unbondingAccount?.tokens, jetMint);
 
   const handleOk = () => {
     if (!unbondingAccount || !stakePool || !stakeAccount || !realm) {
@@ -29,9 +34,9 @@ export const RestakeModal = ({
     }
 
     setLoading(true);
-    restake(rpcContext, unbondingAccount, stakeAccount, stakePool, realm)
+    restake(rpcContext, unbondingAccount, stakeAccount, stakePool, realm, getTxExplorerUrl)
       .then(() => {
-        onClose();
+        setCurrent(Steps.Success);
       })
       .catch(err => {
         if (isSignTransactionError(err)) {
@@ -67,9 +72,25 @@ export const RestakeModal = ({
       </div>
     )
   };
+  steps[Steps.Success] = {
+    title: `All set!`,
+    okText: "I understand",
+    onOk: () => onClose(),
+    onCancel: () => onClose(),
+    closable: true,
+    cancelButtonProps: { style: { display: "none " } },
+    children: (
+      <div className="flex column">
+        <p>
+          You've restaked {Intl.NumberFormat("us-US").format(stakeAmount)} JET into JetGovern and
+          can begin voting on active proposals immediately.
+        </p>
+      </div>
+    )
+  };
   steps[Steps.Error] = {
     title: "Error",
-    okText: "Okay",
+    okText: "I understand",
     onOk: () => onClose(),
     onCancel: () => onClose(),
     closable: true,

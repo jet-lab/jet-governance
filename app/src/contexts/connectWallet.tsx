@@ -1,9 +1,11 @@
 import { Auth } from "@jet-lab/jet-engine";
+import { useProvider } from "@jet-lab/jet-engine/lib/common";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { createContext, useContext, useState } from "react";
+import { createUserAuth } from "../actions/createUserAuth";
 import { VerifyModal } from "../components/modals/VerifyModal";
-import { useConnection } from "../contexts";
-import { useProvider } from "../hooks";
+import { useRpcContext } from "../hooks";
+import { useConnection } from "./connection";
 
 // Connecting wallet context
 interface ConnectWallet {
@@ -16,17 +18,35 @@ const ConnectWalletContext = createContext<ConnectWallet>({
 });
 
 export const ConnectWalletProvider = (props: { children: any }) => {
+  const wallet = useWallet();
+  const connection = useConnection();
+  const rpcContext = useRpcContext();
+  const { publicKey } = useWallet();
   const [connecting, setConnecting] = useState(false);
 
-  const { connected, wallet, publicKey } = useWallet();
-  const connection = useConnection();
   const provider = useProvider(connection, wallet);
   const authProgram = Auth.useAuthProgram(provider);
-  const { authAccount } = Auth.useAuthAccount(authProgram, publicKey);
-  const authed = authAccount?.userAuthentication.allowed;
+  const { authAccount, loading: authAccountLoading } = Auth.useAuthAccount(
+    authProgram,
+    wallet.publicKey
+  );
 
   const connect = (connecting: boolean) => {
     setConnecting(connecting);
+  };
+
+  const createAuthAccount = async () => {
+    if (authAccountLoading || authAccount || !authProgram || !publicKey) {
+      return true;
+    }
+
+    let success = true;
+    try {
+      await createUserAuth(rpcContext, authProgram, publicKey, publicKey);
+    } catch (ex) {
+      success = false;
+    }
+    return success;
   };
 
   return (
@@ -36,7 +56,11 @@ export const ConnectWalletProvider = (props: { children: any }) => {
         setConnecting: connect
       }}
     >
-      {(connecting || (connected && !authed)) && <VerifyModal />}
+      <VerifyModal
+        authAccount={authAccount}
+        authAccountLoading={authAccountLoading}
+        createAuthAccount={createAuthAccount}
+      />
       {props.children}
     </ConnectWalletContext.Provider>
   );

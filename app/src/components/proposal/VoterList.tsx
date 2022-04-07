@@ -1,18 +1,14 @@
 import { useState, useMemo } from "react";
 import { List, Button, Skeleton } from "antd";
 import { Stakeholders } from "./Stakeholders";
+import { bnToIntLossy } from "../../tools/units";
 import { ProgramAccount, VoteRecord } from "@solana/spl-governance";
 import { getVoterDisplayData, VoterDisplayData } from "../../hooks";
-import { bnToNumber } from "@jet-lab/jet-engine";
-import { useProposalContext } from "../../contexts/proposal";
-import { sharesToTokens } from "../../utils/utils";
 
 export const VoterList = (props: {
   voteRecords: VoterDisplayData[] | undefined;
   userVoteRecord?: ProgramAccount<VoteRecord>;
 }) => {
-  const { stakePool } = useProposalContext();
-
   const [page, setPage] = useState(1);
 
   const count = 5;
@@ -53,7 +49,7 @@ export const VoterList = (props: {
       {userVote && (
         <Stakeholders
           type={userVote.voteKind}
-          amount={bnToNumber(sharesToTokens(userVote.voteWeight, stakePool).tokens)}
+          amount={bnToIntLossy(userVote.voteWeight)}
           user={userVote.user}
           thisUser={true}
         />
@@ -69,7 +65,7 @@ export const VoterList = (props: {
               <Skeleton avatar title={false} loading={false} active>
                 <Stakeholders
                   type={item.voteKind}
-                  amount={bnToNumber(sharesToTokens(item.voteWeight, stakePool).tokens)}
+                  amount={bnToIntLossy(item.voteWeight)}
                   user={item.user}
                 />
               </Skeleton>

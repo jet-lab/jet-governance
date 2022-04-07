@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { ResultProgressBar } from "../components/proposal/ResultProgressBar";
-import { Button, Divider, Popover, Typography } from "antd";
+import { Button, Divider, Typography } from "antd";
 import { ProposalCard } from "../components/ProposalCard";
 import { VoterList } from "../components/proposal/VoterList";
 import { useWallet } from "@solana/wallet-adapter-react";
@@ -22,10 +22,11 @@ import {
   VoteOption,
   VoterDisplayData
 } from "../hooks";
+import { bnToIntLossy } from "../tools/units";
 import { LABELS } from "../constants";
 import ReactMarkdown from "react-markdown";
 import { voteRecordCsvDownload } from "../actions/voteRecordCsvDownload";
-import { ArrowLeftOutlined, DownloadOutlined, InfoCircleFilled } from "@ant-design/icons";
+import { ArrowLeftOutlined, DownloadOutlined } from "@ant-design/icons";
 import { getPubkeyIndex } from "../models/PUBKEYS_INDEX";
 import { useProposalContext } from "../contexts/proposal";
 import { bnToNumber, StakeBalance } from "@jet-lab/jet-engine";
@@ -34,7 +35,6 @@ import { ReactComponent as ThumbsUp } from "../images/thumbs_up.svg";
 import { ReactComponent as ThumbsDown } from "../images/thumbs_down.svg";
 import "./Proposal.less";
 import { useBlockExplorer } from "../contexts/blockExplorer";
-import { sharesToTokens } from "../utils";
 
 export const ProposalView = () => {
   const proposalAddress = useKeyParam();
@@ -66,27 +66,29 @@ export const ProposalView = () => {
 
 const RenderContent = ({
   proposal,
-  gistInfo
+  loading,
+  failed,
+  msg,
+  content,
+  isUrl
 }: {
   proposal: ProgramAccount<Proposal> | undefined;
-  gistInfo: {
-    loading: boolean;
-    failed: boolean | undefined;
-    msg: string | undefined;
-    content: string | undefined;
-    isUrl: boolean;
-  };
+  loading: boolean;
+  failed: boolean | undefined;
+  msg: string | undefined;
+  content: string | undefined;
+  isUrl: boolean;
 }) => {
   const { Paragraph } = Typography;
 
-  if (gistInfo.isUrl) {
-    if (gistInfo.failed) {
+  if (isUrl) {
+    if (failed) {
       return (
         //when fetching fails
         <Paragraph className="description-text">
           {LABELS.DESCRIPTION}:{" "}
           <a href={proposal?.account.descriptionLink} target="_blank" rel="noopener noreferrer">
-            {gistInfo.msg ? gistInfo.msg : LABELS.NO_LOAD}
+            {msg ? msg : LABELS.NO_LOAD}
           </a>
         </Paragraph>
       );
@@ -95,7 +97,7 @@ const RenderContent = ({
       return (
         <ReactMarkdown
           className="description-text"
-          children={gistInfo.content ? gistInfo.content : "&mdash; &mdash; &mdash; "}
+          children={content ? content : "&mdash; &mdash; &mdash; "}
         />
       );
     }
@@ -103,7 +105,7 @@ const RenderContent = ({
     //When there's no description at all
     return (
       <Paragraph className="description-text">
-        {gistInfo.content ? gistInfo.content : "- - - No Proposal Description - - -"}
+        {content ? content : "- - - No Proposal Description - - -"}
       </Paragraph>
     );
   }
@@ -132,14 +134,13 @@ const InnerProposalView = ({
   };
 
   const [isVoteModalVisible, setIsVoteModalVisible] = useState(false);
-  const [popoverVisible, setPopoverVisible] = useState(false);
   const tokenOwnerRecord = useWalletTokenOwnerRecord(
     governance?.account.realm,
     proposal?.account.governingTokenMint
   );
   const voteRecord = useTokenOwnerVoteRecord(proposal?.pubkey, tokenOwnerRecord?.pubkey);
   const { connected } = useWallet();
-  const { jetMint, stakePool } = useProposalContext();
+  const { jetMint } = useProposalContext();
   const { getAccountExplorerUrl } = useBlockExplorer();
   const proposalAddress = useKeyParam();
   const { startDate, endDate } = useCountdown(proposal, governance);
@@ -183,7 +184,7 @@ const InnerProposalView = ({
 
   return (
     <Typography>
-      <div className="view column-grid" id="proposal-page">
+      <div className="view-container column-grid" id="proposal-page">
         <Title level={2} className="mobile-only">
           Proposal detail
         </Title>
@@ -208,7 +209,14 @@ const InnerProposalView = ({
             <Title className="description-title">{loaded ? proposal.account.name : "---"}</Title>
 
             {/* Main Proposal Content */}
-            {gistInfo && <RenderContent proposal={proposal} gistInfo={gistInfo} />}
+            {gistInfo && (
+              <RenderContent
+                {...{
+                  proposal,
+                  ...gistInfo
+                }}
+              />
+            )}
 
             {/* Proposal Address and Dates */}
             <div className="neu-inset details">
@@ -231,8 +239,8 @@ const InnerProposalView = ({
               <Title>Vote Results</Title>
               <Text
                 onClick={() => {
-                  if (loaded && voterDisplayData && stakePool) {
-                    voteRecordCsvDownload(proposal.pubkey, voterDisplayData, stakePool, jetMint);
+                  if (loaded && voterDisplayData) {
+                    voteRecordCsvDownload(proposal.pubkey, voterDisplayData, jetMint);
                   }
                 }}
                 id="csv"
@@ -245,13 +253,13 @@ const InnerProposalView = ({
               <div className="results">
                 <ResultProgressBar
                   type="Approve"
-                  amount={bnToNumber(voteCounts?.yes)}
-                  total={bnToNumber(voteCounts?.total)}
+                  amount={bnToIntLossy(voteCounts?.yes)}
+                  total={bnToIntLossy(voteCounts?.total)}
                 />
                 <ResultProgressBar
                   type="Reject"
-                  amount={bnToNumber(voteCounts?.no)}
-                  total={bnToNumber(voteCounts?.total)}
+                  amount={bnToIntLossy(voteCounts?.no)}
+                  total={bnToIntLossy(voteCounts?.total)}
                 />
               </div>
 
@@ -266,43 +274,18 @@ const InnerProposalView = ({
                 <div className={`stakeholders`}>
                   <span className="voter title" />
                   <span className="address title">Wallet</span>
-                  <span className="amount title">Staked JET</span>
+                  <span className="amount title">Stake</span>
                   <span className="vote title">Vote</span>
                 </div>
                 <VoterList voteRecords={voterDisplayData} userVoteRecord={voteRecord} />
               </div>
-            </div>
-
-            <div>
-              <span>
-                Votes per JET{" "}
-                <Popover
-                  content={
-                    <div className="flex column">
-                      <p>
-                        Votes per JET is used to track the amount of voting power each account has.
-                        The downloadable CSV tracks both values.
-                      </p>
-                      <span className="link-btn" onClick={() => setPopoverVisible(false)}>
-                        Close
-                      </span>
-                    </div>
-                  }
-                  title="Votes per JET"
-                  visible={popoverVisible}
-                  trigger="click"
-                >
-                  <InfoCircleFilled onClick={() => setPopoverVisible(true)} />
-                </Popover>{" "}
-                = {bnToNumber(sharesToTokens(undefined, stakePool).conversion)}
-              </span>
             </div>
           </div>
         </div>
 
         {/* If voting is in progress */}
         <div className="flex column proposal-right">
-          {!(proposal?.account.state !== ProposalState.Voting || hasDeadlineLapsed) && loaded && (
+          {!(proposal?.account.state !== ProposalState.Voting || hasDeadlineLapsed) && (
             <div className={`neu-container flex column`} id="your-vote">
               <Button
                 disabled={
@@ -312,7 +295,7 @@ const InnerProposalView = ({
                 className={`vote-select vote-btn ${vote === VoteOption.Yes ? "selected" : ""}`}
                 type="primary"
               >
-                <span className="gradient-text">In favor</span>
+                <span className="text-gradient">In favor</span>
                 <ThumbsUp className="mobile-only" />
               </Button>
               <Button
@@ -323,7 +306,7 @@ const InnerProposalView = ({
                 className={`vote-select vote-btn ${vote === VoteOption.No ? "selected" : ""}`}
                 type="primary"
               >
-                <span className="gradient-text">Against</span>
+                <span className="text-gradient">Against</span>
                 <ThumbsDown className="mobile-only" />
               </Button>
               <Button
@@ -366,7 +349,7 @@ const InnerProposalView = ({
               : "centered"
           }`}
         >
-          <h1>Other Proposals</h1>
+          <h3>Other active proposals</h3>
           <div className="flex">
             {otherActiveProposals && loaded && otherActiveProposals.length > 0
               ? otherActiveProposals.map(proposal => (

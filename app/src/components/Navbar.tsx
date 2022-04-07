@@ -18,13 +18,12 @@ export function Navbar() {
   const [drawerOpened, setDrawerOpened] = useState(false);
   const { claimsCount } = useProposalContext();
   const { darkTheme, toggleDarkTheme } = useDarkTheme();
-
   const navLinks = [
     { title: "Dashboard", route: "/" },
     {
       title: `Claims`,
       class: claimsCount > 0 ? "shimmer" : "",
-      badge: claimsCount > 0 ? claimsCount : "",
+      badge: claimsCount,
       route: "/claims"
     },
     {
@@ -57,23 +56,20 @@ export function Navbar() {
         </Link>
         <div className="nav-links flex-centered">
           {navLinks.map(link => (
-            <>
-              <Link
-                to={link.route}
-                className={`nav-link ${pathname === link.route ? "active" : ""} ${link.class}`}
-                style={link.badge ? { marginRight: 0 } : {}}
-                key={link.route}
-              >
-                {link.title}
-              </Link>
+            <Link
+              to={link.route}
+              className={`nav-link ${pathname === link.route ? "active" : ""} ${link.class}`}
+              key={link.route}
+            >
+              {link.title}
               {link.badge ? (
                 <span className="badge">
-                  <span className="gradient-text">{link.badge}</span>
+                  <span className="text-gradient">{link.badge}</span>
                 </span>
               ) : (
                 ""
               )}
-            </>
+            </Link>
           ))}
           <Button
             ghost
@@ -159,9 +155,7 @@ export function Navbar() {
                 {link.title}
               </a>
             ))}
-            <DocsLink className="footer-link footer-link-pad" noGradient>
-              Docs
-            </DocsLink>
+            <DocsLink className="footer-link footer-link-pad ">Docs</DocsLink>
             <Switch
               className="secondary-switch"
               onClick={() => toggleDarkTheme()}
