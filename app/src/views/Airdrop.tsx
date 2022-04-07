@@ -1,7 +1,6 @@
 import { Divider } from "antd";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { useProposalContext } from "../contexts/proposal";
-import { useState } from "react";
 import { Available } from "../components/airdrop/Available";
 import { bnToNumber } from "@jet-lab/jet-engine";
 import { DocsLink } from "../components/docsLink";
@@ -9,12 +8,6 @@ import { DocsLink } from "../components/docsLink";
 export const AirdropView = () => {
   const { connected, publicKey } = useWallet();
   const { airdropsByWallet } = useProposalContext();
-
-  const [showGlossaryModal, setShowGlossaryModal] = useState(false);
-
-  const toggleGlossaryModal = () => {
-    setShowGlossaryModal(!showGlossaryModal);
-  };
 
   const availAirdropsRender = airdropsByWallet?.map(airdrop => ({
     airdrop,
@@ -31,7 +24,7 @@ export const AirdropView = () => {
   }));
 
   return (
-    <section className="view-container justify-start">
+    <section className="view justify-start">
       <div className="neu-container flex justify-center align-start column" id="airdrop">
         <h1>Claim your airdrop!</h1>
         <Divider />
@@ -52,6 +45,7 @@ export const AirdropView = () => {
               href="https://medium.com/jetprotocol/jet-staking-and-the-jetdrop-two-more-steps-towards-jet-governance-84d8de26be4a"
               target="_blank"
               rel="noreferrer"
+              className="gradient-text-btn"
             >
               blog announcement
             </a>
@@ -61,18 +55,15 @@ export const AirdropView = () => {
             <DocsLink>docs</DocsLink>
           </u>{" "}
           and{" "}
-          <span
-            onClick={toggleGlossaryModal}
-            style={{ textDecoration: "underline", cursor: "pointer" }}
+          <a
+            href="https://docs.jetprotocol.io/jet-protocol/terms-and-definitions#jetgovern-definitions"
+            target="_blank"
+            rel="noreferrer"
+            className="gradient-text-btn"
           >
-            <a
-              href="https://docs.jetprotocol.io/jet-protocol/terms-and-definitions#jetgovern-definitions"
-              about="_blank"
-              rel="noreferrer"
-            >
-              glossary.
-            </a>
-          </span>
+            glossary
+          </a>
+          .
         </p>
         <Divider />
         {connected &&

@@ -1,4 +1,4 @@
-import { MintInfo } from "@solana/spl-token";
+import { JetMint } from "@jet-lab/jet-engine";
 import { PublicKey } from "@solana/web3.js";
 import { VoterDisplayData } from "../hooks/proposalHooks";
 import { fromLamports } from "../utils/utils";
@@ -7,7 +7,7 @@ import { fromLamports } from "../utils/utils";
 export function voteRecordCsvDownload(
   itemAddress: PublicKey,
   votes: VoterDisplayData[] | undefined,
-  mint?: MintInfo
+  mint?: JetMint
 ) {
   // define the heading for each row of the data
   var csv = "PublicKey,VoteWeight,VoteType\n";

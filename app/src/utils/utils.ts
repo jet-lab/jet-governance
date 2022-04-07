@@ -1,8 +1,7 @@
 import { useCallback, useState } from "react";
-import { MintInfo } from "@solana/spl-token";
 import { PublicKey } from "@solana/web3.js";
 import BN from "bn.js";
-import { bnToNumber } from "@jet-lab/jet-engine";
+import { bnToNumber, JetMint } from "@jet-lab/jet-engine";
 
 export function useLocalStorageState(key: string, defaultState?: string) {
   const [state, setState] = useState(() => {
@@ -41,7 +40,7 @@ export function shortenAddress(address: PublicKey | string, chars = 4): string {
   return `${address.slice(0, chars)}...${address.slice(-chars)}`;
 }
 
-export function fromLamports(account?: number | BN, mint?: MintInfo, rate: number = 1.0): number {
+export function fromLamports(account?: number | BN, mint?: JetMint, rate: number = 1.0): number {
   if (!account || !mint) {
     return 0;
   }
@@ -52,7 +51,7 @@ export function fromLamports(account?: number | BN, mint?: MintInfo, rate: numbe
   return (amount / precision) * rate;
 }
 
-export const toTokens = (amount: BN | number | undefined, mint?: MintInfo) => {
+export const toTokens = (amount: BN | number | undefined, mint?: JetMint) => {
   return fromLamports(amount, mint).toLocaleString(undefined, {
     maximumFractionDigits: 0
   });

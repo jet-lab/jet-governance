@@ -3,7 +3,7 @@ use std::io::Write;
 use anchor_lang::prelude::*;
 use anchor_spl::token::{self, Token, TokenAccount, Transfer};
 
-use crate::state::*;
+use crate::{events, state::*};
 
 #[derive(AnchorSerialize, AnchorDeserialize)]
 pub struct AwardCreateParams {
@@ -30,14 +30,16 @@ pub struct AwardCreateParams {
 #[instruction(params: AwardCreateParams)]
 pub struct AwardCreate<'info> {
     /// The award being created
-    #[account(init,
-              seeds = [
-                  b"award".as_ref(),
-                  params.stake_account.as_ref(),
-                  params.seed.as_bytes(),
-              ],
-              bump,
-              payer = payer_rent
+    #[account(
+        init,
+        payer = payer_rent,
+        seeds = [
+            b"award".as_ref(),
+            params.stake_account.as_ref(),
+            params.seed.as_bytes(),
+        ],
+        bump,
+        space = 8 + Award::space(),
     )]
     pub award: Account<'info, Award>,
 
@@ -55,9 +57,11 @@ pub struct AwardCreate<'info> {
     pub vault: Account<'info, TokenAccount>,
 
     /// The address of the mint for the token being awarded
+    /// CHECK:
     pub token_mint: UncheckedAccount<'info>,
 
     /// The source account for the tokens to be awarded
+    /// CHECK:
     #[account(mut)]
     pub token_source: UncheckedAccount<'info>,
 
@@ -86,7 +90,7 @@ impl<'info> AwardCreate<'info> {
     }
 }
 
-pub fn award_create_handler(ctx: Context<AwardCreate>, params: AwardCreateParams) -> ProgramResult {
+pub fn award_create_handler(ctx: Context<AwardCreate>, params: AwardCreateParams) -> Result<()> {
     let award = &mut ctx.accounts.award;
 
     award.authority = params.authority;
@@ -103,7 +107,16 @@ pub fn award_create_handler(ctx: Context<AwardCreate>, params: AwardCreateParams
     award.end_at = params.end_at;
     award.kind = DistributionKind::Linear;
 
+    let award = &ctx.accounts.award;
+
     token::transfer(ctx.accounts.transfer_context(), params.amount)?;
+
+    emit!(events::AwardCreated {
+        award: award.key(),
+        token_mint: ctx.accounts.token_mint.key(),
+        params,
+        distribution_kind: award.kind,
+    });
 
     Ok(())
 }

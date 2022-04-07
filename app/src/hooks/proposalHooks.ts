@@ -1,5 +1,5 @@
 import { useProposalContext } from "./../contexts/proposal";
-import { Airdrop, bnToNumber, StakePool } from "@jet-lab/jet-engine";
+import { Airdrop, bnToNumber, StakePool, UnbondingAccount } from "@jet-lab/jet-engine";
 import {
   Governance,
   ProgramAccount,
@@ -16,7 +16,6 @@ import BN from "bn.js";
 import { useEffect, useMemo, useState } from "react";
 import { ZERO } from "../constants";
 import { ProposalFilter } from "../contexts/proposal";
-import { bnToIntLossy } from "../tools/units";
 import { dateToString, getRemainingTime, toTokens } from "../utils";
 import { useGovernanceAccounts } from "./accountHooks";
 import { useRpcContext } from "./useRpcContext";
@@ -100,7 +99,7 @@ export function useCountdown(
   let endDateOrCountdown: string | undefined = useMemo(() => {
     if (!proposal?.account.isPreVotingState() && !!countdownTime && !!endDate) {
       return proposal?.account.state === ProposalState.Voting && countdownTime > currentTime
-        ? `${getRemainingTime(currentTime, countdownTime)}`
+        ? `Ends in ${getRemainingTime(currentTime, countdownTime)}`
         : `Ended on: ${endDate}`;
     }
   }, [countdownTime, currentTime, endDate, proposal?.account]);
@@ -297,10 +296,10 @@ export function getVoteCounts(proposal: ProgramAccount<Proposal>) {
   const abstain = new BN(0); // FIXME: multiple choice votes
 
   const total = yes.add(no).add(abstain);
-  const yesPercent = total.isZero() ? 0 : (bnToIntLossy(yes) / bnToIntLossy(total)) * 100;
+  const yesPercent = total.isZero() ? 0 : (bnToNumber(yes) / bnToNumber(total)) * 100;
   const yesAbstainPercent = total.isZero()
     ? 0
-    : (bnToIntLossy(abstain.add(yes)) / bnToIntLossy(total)) * 100;
+    : (bnToNumber(abstain.add(yes)) / bnToNumber(total)) * 100;
   return { yes, no, abstain, total, yesPercent: yesPercent, yesAbstainPercent };
 }
 
@@ -323,6 +322,19 @@ export function useAirdropsByWallet(
       return !!found;
     });
   }, [airdrops, wallet]);
+}
+
+export function useWithdrawableCount(unbondingAccounts: UnbondingAccount[] | undefined) {
+  if (!unbondingAccounts) {
+    return 0;
+  }
+  let count = 0;
+  for (let i = 0; i < unbondingAccounts.length; i++) {
+    if (UnbondingAccount.isUnbonded(unbondingAccounts[i])) {
+      count++;
+    }
+  }
+  return count;
 }
 
 export function useClaimsCount(airdrops: Airdrop[] | undefined, wallet: PublicKey | undefined) {

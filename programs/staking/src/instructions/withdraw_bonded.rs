@@ -1,3 +1,5 @@
+use crate::events::BondedWithdrawn;
+use crate::events::Note;
 use anchor_lang::prelude::*;
 use anchor_spl::token;
 use anchor_spl::token::Token;
@@ -18,6 +20,7 @@ pub struct WithdrawBonded<'info> {
     pub stake_pool: Account<'info, StakePool>,
 
     /// The receiver for the withdrawn tokens
+    /// CHECK:
     #[account(mut)]
     pub token_receiver: UncheckedAccount<'info>,
 
@@ -41,7 +44,7 @@ impl<'info> WithdrawBonded<'info> {
     }
 }
 
-pub fn withdraw_bonded_handler(ctx: Context<WithdrawBonded>, amount: u64) -> ProgramResult {
+pub fn withdraw_bonded_handler(ctx: Context<WithdrawBonded>, amount: u64) -> Result<()> {
     let stake_pool = &mut ctx.accounts.stake_pool;
 
     stake_pool.update_vault(ctx.accounts.stake_pool_vault.amount);
@@ -54,6 +57,14 @@ pub fn withdraw_bonded_handler(ctx: Context<WithdrawBonded>, amount: u64) -> Pro
             .with_signer(&[&stake_pool.signer_seeds()]),
         amount,
     )?;
+
+    emit!(BondedWithdrawn {
+        stake_pool: stake_pool.key(),
+
+        withdrawn_amount: amount,
+
+        pool_note: stake_pool.note(),
+    });
 
     Ok(())
 }

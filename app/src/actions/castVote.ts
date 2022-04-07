@@ -14,7 +14,7 @@ import {
   withRelinquishVote,
   YesNoVote
 } from "@solana/spl-governance";
-import { AssociatedToken, StakeAccount, StakePool } from "@jet-lab/jet-engine";
+import { AssociatedToken, StakeAccount, StakeIdl, StakePool } from "@jet-lab/jet-engine";
 
 export const castVote = async (
   { connection, wallet, programId, programVersion, walletPubkey }: RpcContext,
@@ -22,7 +22,7 @@ export const castVote = async (
   proposal: ProgramAccount<Proposal>,
   tokenOwnerRecordPubkey: PublicKey,
   yesNoVote: YesNoVote,
-  stakeProgram: Program,
+  stakeProgram: Program<StakeIdl>,
   stakePool: StakePool,
   explorerUrlMaker: Function,
   message?: ChatMessageBody,

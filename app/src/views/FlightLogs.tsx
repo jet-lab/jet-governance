@@ -13,16 +13,15 @@ export const FlightLogView = () => {
   const { getTxExplorerUrl } = useBlockExplorer();
 
   return (
-    <div className="view-container justify-start" id="flight-logs-view">
+    <div className="view justify-start" id="flight-logs-view">
       <div className="neu-container centered" id="flight-log">
         <h1>Flight Logs</h1>
-        <Divider />
         <table>
           <thead>
             <tr>
               <th>Date</th>
               <th>Status</th>
-              <th>Action</th>
+              <th className="action">Action</th>
               <th>Amount</th>
               <th>{/* Empty column for arrow */}</th>
             </tr>
@@ -36,14 +35,19 @@ export const FlightLogView = () => {
             ))}
 
             {unbondingAccounts && unbondingAccounts?.length > 0 && logs.length > 0 && (
-              <td colSpan={4}>
-                <Divider />
-              </td>
+              <tr className="desktop">
+                <td colSpan={5}>
+                  <Divider />
+                </td>
+              </tr>
             )}
 
             {/* Staking actions and completed unstaking actions */}
             {logs.map(row => (
-              <tr onClick={() => window.open(getTxExplorerUrl(row.signature), "_blank")}>
+              <tr
+                key={row.signature}
+                onClick={() => window.open(getTxExplorerUrl(row.signature), "_blank")}
+              >
                 <td>{row.blockDate}</td>
                 <td>Complete</td>
                 <td className="action">{row.action}</td>

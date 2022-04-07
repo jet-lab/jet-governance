@@ -1,7 +1,7 @@
 use anchor_lang::prelude::*;
-use anchor_spl::token::Token;
+use anchor_spl::token::{Token, TokenAccount};
 
-use crate::state::*;
+use crate::{events, state::*};
 use jet_staking::cpi::accounts::AddStake;
 use jet_staking::program::JetStaking;
 
@@ -14,18 +14,22 @@ pub struct AwardRelease<'info> {
     pub award: Account<'info, Award>,
 
     /// The account storing the tokens to be distributed
+    /// CHECK:
     #[account(mut)]
-    pub vault: AccountInfo<'info>,
+    pub vault: Account<'info, TokenAccount>,
 
     /// The account to transfer the distributed tokens to
+    /// CHECK:
     #[account(mut)]
     pub stake_account: UncheckedAccount<'info>,
 
     /// The stake pool the account is part of
+    /// CHECK:
     #[account(mut)]
     pub stake_pool: UncheckedAccount<'info>,
 
     /// The token vault for the pool
+    /// CHECK:
     #[account(mut)]
     pub stake_pool_vault: UncheckedAccount<'info>,
 
@@ -49,7 +53,7 @@ impl<'info> AwardRelease<'info> {
     }
 }
 
-pub fn award_release_handler(ctx: Context<AwardRelease>) -> ProgramResult {
+pub fn award_release_handler(ctx: Context<AwardRelease>) -> Result<()> {
     let award = &mut ctx.accounts.award;
     let clock = Clock::get()?;
 
@@ -62,6 +66,14 @@ pub fn award_release_handler(ctx: Context<AwardRelease>) -> ProgramResult {
             .with_signer(&[&award.signer_seeds()]),
         Some(to_distribute),
     )?;
+
+    emit!(events::AwardReleased {
+        award: award.key(),
+        amount_released: to_distribute,
+        total_released: award.distributed,
+
+        vault_balance: ctx.accounts.vault.amount,
+    });
 
     Ok(())
 }

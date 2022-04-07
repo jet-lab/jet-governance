@@ -4,6 +4,8 @@ use anchor_spl::token::Token;
 use anchor_spl::token::TokenAccount;
 use anchor_spl::token::Transfer;
 
+use crate::events::Note;
+use crate::events::UnbondedWithdrawn;
 use crate::state::*;
 use crate::ErrorCode;
 
@@ -13,10 +15,12 @@ pub struct WithdrawUnbonded<'info> {
     pub owner: Signer<'info>,
 
     /// The receiver for the recovered rent
+    /// CHECK:
     #[account(mut)]
     pub closer: UncheckedAccount<'info>,
 
     /// The receiver for the withdrawn tokens
+    /// CHECK:
     #[account(mut)]
     pub token_receiver: UncheckedAccount<'info>,
 
@@ -56,7 +60,7 @@ impl<'info> WithdrawUnbonded<'info> {
     }
 }
 
-pub fn withdraw_unbonded_handler(ctx: Context<WithdrawUnbonded>) -> ProgramResult {
+pub fn withdraw_unbonded_handler(ctx: Context<WithdrawUnbonded>) -> Result<()> {
     let stake_pool = &mut ctx.accounts.stake_pool;
     let stake_account = &mut ctx.accounts.stake_account;
     let unbonding_account = &mut ctx.accounts.unbonding_account;
@@ -67,7 +71,7 @@ pub fn withdraw_unbonded_handler(ctx: Context<WithdrawUnbonded>) -> ProgramResul
     }
 
     stake_pool.update_vault(ctx.accounts.stake_pool_vault.amount);
-    let unbond_amount = stake_pool.withdraw_unbonded(stake_account, unbonding_account);
+    let withdrawn_amount = stake_pool.withdraw_unbonded(stake_account, unbonding_account);
 
     unbonding_account.stake_account = Pubkey::default();
     let stake_pool = &ctx.accounts.stake_pool;
@@ -76,8 +80,21 @@ pub fn withdraw_unbonded_handler(ctx: Context<WithdrawUnbonded>) -> ProgramResul
         ctx.accounts
             .transfer_context()
             .with_signer(&[&stake_pool.signer_seeds()]),
-        unbond_amount.token_amount,
+        withdrawn_amount.token_amount,
     )?;
+
+    let stake_account = &ctx.accounts.stake_account;
+
+    emit!(UnbondedWithdrawn {
+        stake_pool: stake_pool.key(),
+        stake_account: stake_account.key(),
+        owner: ctx.accounts.owner.key(),
+
+        withdrawn_amount,
+
+        pool_note: stake_pool.note(),
+        account_note: stake_account.note(),
+    });
 
     Ok(())
 }

@@ -16,9 +16,8 @@ cpi = ["no-entrypoint"]
 default = []
 
 [dependencies]
-anchor-lang = "0.21.0"
-anchor-spl = "0.21.0"
-solana-program = "1.9"
-
+anchor-lang = { git = "https://github.com/jet-lab/anchor", branch = "master" }
+anchor-spl = { git = "https://github.com/jet-lab/anchor", branch = "master" }
+solana-program = "1.8"
 jet-proto-auth = { path = "../auth", features = ["cpi"] }
 spl-governance = { version = "2", features = ["no-entrypoint"] }

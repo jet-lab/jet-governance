@@ -1,6 +1,6 @@
+import { JetMint } from "@jet-lab/jet-engine";
 import { BN } from "@project-serum/anchor";
 import { MintMaxVoteWeightSource } from "@solana/spl-governance";
-import { MintInfo } from "@solana/spl-token";
 import { BigNumber } from "bignumber.js";
 
 const SECONDS_PER_DAY = 86400;
@@ -14,17 +14,17 @@ export function getTimestampFromDays(days: number) {
 }
 
 /// Formats mint amount (natural units) as a decimal string
-export function formatMintNaturalAmountAsDecimal(mint: MintInfo, naturalAmount: BN) {
+export function formatMintNaturalAmountAsDecimal(mint: JetMint, naturalAmount: BN) {
   return getMintDecimalAmountFromNatural(mint, naturalAmount).toFormat();
 }
 
 /// Formats mint supply (natural units) as a decimal string
-export function formatMintSupplyAsDecimal(mint: MintInfo) {
+export function formatMintSupplyAsDecimal(mint: JetMint) {
   return getMintDecimalAmountFromNatural(mint, mint.supply).toFormat();
 }
 
 // Converts mint amount (natural units) to decimals
-export function getMintDecimalAmountFromNatural(mint: MintInfo, naturalAmount: BN) {
+export function getMintDecimalAmountFromNatural(mint: JetMint, naturalAmount: BN) {
   return new BigNumber(naturalAmount.toString()).shiftedBy(-mint.decimals);
 }
 
@@ -52,25 +52,25 @@ export function getMintNaturalAmountFromDecimal(decimalAmount: number, decimals:
 }
 
 // Calculates percentage (provided as 0-100) of mint supply as decimal amount
-export function getMintSupplyPercentageAsDecimal(mint: MintInfo, percentage: number) {
+export function getMintSupplyPercentageAsDecimal(mint: JetMint, percentage: number) {
   return new BigNumber(mint.supply.mul(new BN(percentage)).toString())
     .shiftedBy(-(mint.decimals + 2))
     .toNumber();
 }
 
 // Calculates mint min amount as decimal
-export function getMintMinAmountAsDecimal(mint: MintInfo) {
+export function getMintMinAmountAsDecimal(mint: JetMint) {
   return new BigNumber(1).shiftedBy(-mint.decimals).toNumber();
 }
 
 // Returns mint supply amount as decimal
-export function getMintSupplyAsDecimal(mint: MintInfo) {
+export function getMintSupplyAsDecimal(mint: JetMint) {
   return new BigNumber(mint.supply.toString()).shiftedBy(-mint.decimals).toNumber();
 }
 
 // Calculates mint supply fraction for the given natural amount as decimal amount
 export function getMintSupplyFractionAsDecimalPercentage(
-  mint: MintInfo,
+  mint: JetMint,
   naturalAmount: BN | number
 ) {
   return getBigNumberAmount(naturalAmount)
@@ -109,7 +109,7 @@ export function formatPercentage(percentage: number) {
 }
 
 // Returns amount vote weight for the given mint as percentage in decimals
-export function getMintVoteWeight(mint: MintInfo, naturalAmount: BN) {
+export function getMintVoteWeight(mint: JetMint, naturalAmount: BN) {
   return new BigNumber(100)
     .multipliedBy(getBigNumberAmount(naturalAmount))
     .div(getBigNumberAmount(mint.supply))
@@ -124,19 +124,19 @@ export function getMintSupplyVoteWeight(supply: BN, naturalAmount: BN) {
     .toNumber();
 }
 
-export function formatMintVoteWeight(mint: MintInfo, naturalAmount: BN) {
+export function formatMintVoteWeight(mint: JetMint, naturalAmount: BN) {
   return formatPercentage(getMintVoteWeight(mint, naturalAmount));
 }
 
 export function formatMintSupplyFractionAsDecimalPercentage(
-  mint: MintInfo,
+  mint: JetMint,
   naturalAmount: BN | number
 ) {
   return formatPercentage(getMintSupplyFractionAsDecimalPercentage(mint, naturalAmount));
 }
 
 export function formatMintMaxVoteWeight(
-  mint: MintInfo,
+  mint: JetMint,
   maxVoteWeightSource: MintMaxVoteWeightSource
 ) {
   const supplyFraction = maxVoteWeightSource.getSupplyFraction();
@@ -162,7 +162,7 @@ export function formatMintMaxVotePercentage(maxVoteWeightSource: MintMaxVoteWeig
   return rounded === percentage ? `${rounded}%` : `~${rounded}%`;
 }
 
-export function getMintMaxVoteWeight(mint: MintInfo, maxVoteWeightSource: MintMaxVoteWeightSource) {
+export function getMintMaxVoteWeight(mint: JetMint, maxVoteWeightSource: MintMaxVoteWeightSource) {
   if (maxVoteWeightSource.isFullSupply()) {
     return mint.supply as BN;
   }

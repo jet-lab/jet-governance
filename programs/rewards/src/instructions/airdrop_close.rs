@@ -1,8 +1,8 @@
 use anchor_lang::prelude::*;
 use anchor_spl::token::{self, CloseAccount, Token, TokenAccount, Transfer};
 
-use crate::state::*;
 use crate::ErrorCode;
+use crate::{events, state::*};
 
 #[derive(Accounts)]
 pub struct AirdropClose<'info> {
@@ -20,10 +20,12 @@ pub struct AirdropClose<'info> {
     pub authority: Signer<'info>,
 
     /// The account to received the rent recovered
+    /// CHECK:
     #[account(mut)]
     pub receiver: UncheckedAccount<'info>,
 
     /// The account to receive any remaining tokens in the vault
+    /// CHECK:
     #[account(mut)]
     pub token_receiver: UncheckedAccount<'info>,
 
@@ -54,9 +56,10 @@ impl<'info> AirdropClose<'info> {
     }
 }
 
-pub fn airdrop_close_handler(ctx: Context<AirdropClose>) -> ProgramResult {
+pub fn airdrop_close_handler(ctx: Context<AirdropClose>) -> Result<()> {
     let airdrop = ctx.accounts.airdrop.load()?;
     let clock = Clock::get()?;
+    let vault_amount = ctx.accounts.reward_vault.amount;
 
     if airdrop.expire_at > clock.unix_timestamp {
         msg!("airdrop not expired");
@@ -68,7 +71,7 @@ pub fn airdrop_close_handler(ctx: Context<AirdropClose>) -> ProgramResult {
         ctx.accounts
             .transfer_remaining_context()
             .with_signer(&[&airdrop.signer_seeds()]),
-        ctx.accounts.reward_vault.amount,
+        vault_amount,
     )?;
 
     // close out the vault to recover rent
@@ -77,6 +80,12 @@ pub fn airdrop_close_handler(ctx: Context<AirdropClose>) -> ProgramResult {
             .close_context()
             .with_signer(&[&airdrop.signer_seeds()]),
     )?;
+
+    emit!(events::AirdropClosed {
+        airdrop: airdrop.address,
+
+        vault_amount,
+    });
 
     Ok(())
 }

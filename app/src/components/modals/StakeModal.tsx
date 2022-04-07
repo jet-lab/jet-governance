@@ -82,23 +82,9 @@ export const StakeModal = ({
       </div>
     )
   };
-  steps[Steps.Success] = {
-    title: `All set!`,
-    okText: "Okay",
-    onOk: () => onClose(),
-    onCancel: () => onClose(),
-    closable: true,
-    cancelButtonProps: { style: { display: "none" } },
-    content: (
-      <p>
-        You've staked {amount && Intl.NumberFormat("us-US").format(amount)} JET into JetGovern and
-        can begin using to vote on active proposals immediately.
-      </p>
-    )
-  };
   steps[Steps.Error] = {
     title: `Error.`,
-    okText: "I understand",
+    okText: "Okay",
     onOk: () => onClose(),
     onCancel: () => onClose(),
     content: <p>We have encountered an unknown error.</p>,
