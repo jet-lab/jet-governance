@@ -3,7 +3,7 @@ use std::io::Write;
 use anchor_lang::prelude::*;
 use anchor_spl::token::{Token, TokenAccount};
 
-use crate::{events, state::*};
+use crate::{events, seeds, state::*};
 
 #[derive(Debug, AnchorDeserialize, AnchorSerialize)]
 pub struct AirdropCreateParams {
@@ -39,7 +39,7 @@ pub struct AirdropCreate<'info> {
     #[account(init,
               seeds = [
                   airdrop.key().as_ref(),
-                  b"vault".as_ref()
+                  seeds::VAULT,
               ],
               bump,
               payer = payer,

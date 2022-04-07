@@ -1,9 +1,10 @@
 use anchor_lang::prelude::*;
+use jet_auth::UserAuthentication;
 
 use crate::events::StakeAccountCreated;
+use crate::seeds;
 use crate::spl_addin::VoterWeightRecord;
 use crate::state::*;
-use jet_auth::UserAuthentication;
 
 #[derive(Accounts)]
 pub struct InitStakeAccount<'info> {
@@ -35,7 +36,7 @@ pub struct InitStakeAccount<'info> {
     /// The voter weight record to be created for this stake
     #[account(init,
               seeds = [
-                  b"voter-weight-record",
+                  seeds::VOTER_WEIGHT_RECORD,
                   stake_account.key().as_ref()
               ],
               bump,
