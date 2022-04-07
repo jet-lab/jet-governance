@@ -39,7 +39,6 @@ import {
   useProposalFilters,
   useProvider,
   useRpcContext
-  // useStakingCompatibleWithRealm as useStakePoolCompatibleWithRealm
 } from "../hooks";
 import { JET_REALM, JET_GOVERNANCE } from "../utils";
 
@@ -288,9 +287,6 @@ export function ProposalProvider({ children = undefined as any }) {
     pastProposalFilter,
     realm?.governance.account
   );
-
-  // TODO: check if this is necessary
-  // useStakePoolCompatibleWithRealm(stakePool?.stakePool, realm?.realm);
 
   function refresh() {
     queryClient.invalidateQueries("stakePool");
