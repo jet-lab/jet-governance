@@ -17,7 +17,8 @@ pub struct CancelUnbond<'info> {
     /// The account owning the stake to be rebonded
     #[account(mut,
               has_one = owner,
-              has_one = stake_pool)]
+              has_one = stake_pool,
+              has_one = voter_weight_record)]
     pub stake_account: Account<'info, StakeAccount>,
 
     /// The voter weight to be updated
@@ -29,7 +30,9 @@ pub struct CancelUnbond<'info> {
     pub max_voter_weight_record: Box<Account<'info, MaxVoterWeightRecord>>,
 
     /// The stake pool to be rebonded to
-    #[account(mut, has_one = stake_pool_vault)]
+    #[account(mut,
+              has_one = stake_pool_vault,
+              has_one = max_voter_weight_record)]
     pub stake_pool: Account<'info, StakePool>,
 
     /// The stake pool token vault
