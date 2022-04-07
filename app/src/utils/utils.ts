@@ -43,35 +43,42 @@ export function shortenAddress(address: PublicKey | string, chars = 4): string {
   return `${address.slice(0, chars)}...${address.slice(-chars)}`;
 }
 
-export function fromLamports(account?: number | BN, mint?: JetMint, rate: number = 1.0): number {
+export function fromLamports(account?: number | BN, mint?: JetMint): number {
   if (!account || !mint) {
     return 0;
   }
-
-  const amount = Math.floor(typeof account === "number" ? account : bnToNumber(account));
-
-  const precision = Math.pow(10, mint.decimals || 0);
-  return (amount / precision) * rate;
+  const fromAmount = typeof account === "number" ? new BN(account) : account;
+  return bnToNumber(fromAmount) / 10 ** mint.decimals;
 }
 
-export const toTokens = (amount: BN | number | undefined, mint?: JetMint) => {
-  if (amount === new BN(0) || amount === 0) {
+export const toTokens = (amount?: BN | number, mint?: JetMint) => {
+  const fromAmount = typeof amount === "number" ? new BN(amount) : amount;
+  const hasNoValue = fromAmount === new BN(0) || amount === 0;
+  if (hasNoValue) {
     return "0";
   }
-  return fromLamports(amount, mint).toLocaleString(undefined, {
+  return fromLamports(fromAmount, mint).toLocaleString(undefined, {
     maximumFractionDigits: 1
   });
 };
 
+export const withPrecisionNumber = (amount: number, precision: number = 1): number => {
+  if (amount === 0) {
+    return 0;
+  }
+  const factor = Math.pow(10, precision);
+  return Math.floor(amount * factor) / factor;
+};
+
 export const toTokensPrecisionNumber = (
-  amount: BN | number,
+  amount: BN,
   mint: JetMint,
   precision: number = 1
 ): number => {
-  if (amount === new BN(0) || amount === 0) {
+  if (amount === new BN(0)) {
     return 0;
   }
-  return Number(fromLamports(amount, mint).toFixed(precision)) as number;
+  return withPrecisionNumber(fromLamports(amount, mint), precision);
 };
 
 var SI_SYMBOL = ["", "k", "M", "G", "T", "P", "E"];
