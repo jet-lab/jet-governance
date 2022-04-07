@@ -1,6 +1,7 @@
 use anchor_lang::prelude::*;
 use anchor_spl::token::{self, Token, TokenAccount, Transfer};
 
+use crate::events::{Note, StakeAdded};
 use crate::state::*;
 
 #[derive(Accounts)]
@@ -41,7 +42,7 @@ impl<'info> AddStake<'info> {
 }
 
 /// handler handler
-pub fn add_stake_handler(ctx: Context<AddStake>, amount: Option<u64>) -> ProgramResult {
+pub fn add_stake_handler(ctx: Context<AddStake>, amount: Option<u64>) -> Result<()> {
     let stake_pool = &mut ctx.accounts.stake_pool;
     let stake_account = &mut ctx.accounts.stake_account;
 
@@ -53,7 +54,22 @@ pub fn add_stake_handler(ctx: Context<AddStake>, amount: Option<u64>) -> Program
     };
 
     let full_amount = stake_pool.deposit(stake_account, token_amount);
+
     token::transfer(ctx.accounts.transfer_context(), full_amount.token_amount)?;
+    let stake_pool = &ctx.accounts.stake_pool;
+    let stake_account = &ctx.accounts.stake_account;
+
+    emit!(StakeAdded {
+        stake_pool: stake_pool.key(),
+        stake_account: stake_account.key(),
+        owner: stake_account.owner,
+        depositor: ctx.accounts.payer.key(),
+
+        staked_amount: full_amount,
+
+        pool_note: stake_pool.note(),
+        account_note: stake_account.note(),
+    });
 
     Ok(())
 }

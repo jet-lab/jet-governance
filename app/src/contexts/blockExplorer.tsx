@@ -1,7 +1,7 @@
 import { createContext, useContext, useState } from "react";
 
 // Block explorers
-export const blockExplorers: Record<string, Record<string, string>> = {
+const blockExplorers: Record<string, Record<string, string>> = {
   solanaExplorer: {
     name: "Solana Explorer",
     img: "img/explorers/solana_explorer.svg",

@@ -1,6 +1,7 @@
 use anchor_lang::prelude::*;
 use anchor_spl::token::{self, CloseAccount, Token, TokenAccount};
 
+use crate::events;
 use crate::state::*;
 use crate::ErrorCode;
 
@@ -18,6 +19,7 @@ pub struct DistributionClose<'info> {
     pub vault: Account<'info, TokenAccount>,
 
     /// The account to receive the rent
+    /// CHECK:
     #[account(mut)]
     pub receiver: UncheckedAccount<'info>,
 
@@ -40,7 +42,7 @@ impl<'info> DistributionClose<'info> {
     }
 }
 
-pub fn distribution_close_handler(ctx: Context<DistributionClose>) -> ProgramResult {
+pub fn distribution_close_handler(ctx: Context<DistributionClose>) -> Result<()> {
     let distribution = &ctx.accounts.distribution;
     let clock = Clock::get()?;
 
@@ -54,6 +56,10 @@ pub fn distribution_close_handler(ctx: Context<DistributionClose>) -> ProgramRes
             .close_vault_context()
             .with_signer(&[&distribution.signer_seeds()]),
     )?;
+
+    emit!(events::DistributionClosed {
+        distribution: distribution.key(),
+    });
 
     Ok(())
 }

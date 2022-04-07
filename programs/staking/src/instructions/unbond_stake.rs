@@ -1,6 +1,7 @@
 use anchor_lang::prelude::*;
 use anchor_spl::token::TokenAccount;
 
+use crate::events::{Note, StakeUnbonded};
 use crate::state::*;
 
 #[derive(Accounts)]
@@ -27,13 +28,16 @@ pub struct UnbondStake<'info> {
     pub stake_pool_vault: Account<'info, TokenAccount>,
 
     /// The account to record this unbonding request
-    #[account(init,
-              seeds = [
-                  stake_account.key().as_ref(),
-                  seed.to_le_bytes().as_ref()
-              ],
-              bump,
-              payer = payer)]
+    #[account(
+        init,
+        payer = payer,
+        seeds = [
+            stake_account.key().as_ref(),
+            seed.to_le_bytes().as_ref()
+        ],
+        bump,
+        space = 8 + std::mem::size_of::<UnbondingAccount>(),
+    )]
     pub unbonding_account: Account<'info, UnbondingAccount>,
 
     pub system_program: Program<'info, System>,
@@ -43,7 +47,7 @@ pub fn unbond_stake_handler(
     ctx: Context<UnbondStake>,
     _seed: u32,
     amount: Option<u64>,
-) -> ProgramResult {
+) -> Result<()> {
     let stake_pool = &mut ctx.accounts.stake_pool;
     let stake_account = &mut ctx.accounts.stake_account;
     let unbonding_account = &mut ctx.accounts.unbonding_account;
@@ -53,7 +57,20 @@ pub fn unbond_stake_handler(
     unbonding_account.unbonded_at = clock.unix_timestamp + stake_pool.unbond_period;
 
     stake_pool.update_vault(ctx.accounts.stake_pool_vault.amount);
-    stake_pool.unbond(stake_account, unbonding_account, amount)?;
+    let unbonded_amount = stake_pool.unbond(stake_account, unbonding_account, amount)?;
+
+    emit!(StakeUnbonded {
+        stake_pool: stake_pool.key(),
+        stake_account: stake_account.key(),
+        unbonding_account: unbonding_account.key(),
+        owner: ctx.accounts.owner.key(),
+
+        unbonded_amount,
+        unbonded_at: unbonding_account.unbonded_at,
+
+        pool_note: stake_pool.note(),
+        account_note: stake_account.note(),
+    });
 
     Ok(())
 }

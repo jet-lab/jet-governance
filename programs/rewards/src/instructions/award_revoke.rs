@@ -2,6 +2,7 @@ use anchor_lang::prelude::*;
 use anchor_spl::token::Transfer;
 use anchor_spl::token::{self, CloseAccount, Token, TokenAccount};
 
+use crate::events::AwardRevoked;
 use crate::state::*;
 
 #[derive(Accounts)]
@@ -18,10 +19,12 @@ pub struct AwardRevoke<'info> {
     pub vault: Account<'info, TokenAccount>,
 
     /// The account to receive the rent
+    /// CHECK:
     #[account(mut)]
     pub receiver: UncheckedAccount<'info>,
 
     /// The account to receive any remaining tokens
+    /// CHECK:
     #[account(mut)]
     pub token_receiver: UncheckedAccount<'info>,
 
@@ -55,14 +58,18 @@ impl<'info> AwardRevoke<'info> {
     }
 }
 
-pub fn award_revoke_handler(ctx: Context<AwardRevoke>) -> ProgramResult {
+pub fn award_revoke_handler(ctx: Context<AwardRevoke>) -> Result<()> {
     let award = &ctx.accounts.award;
+
+    let vault_amount = ctx.accounts.vault.amount;
+    let total_released = award.distributed;
+    let unreleased_amount = award.target_amount - total_released;
 
     token::transfer(
         ctx.accounts
             .transfer_remaining_context()
             .with_signer(&[&award.signer_seeds()]),
-        ctx.accounts.vault.amount,
+        vault_amount,
     )?;
 
     token::close_account(
@@ -70,6 +77,15 @@ pub fn award_revoke_handler(ctx: Context<AwardRevoke>) -> ProgramResult {
             .close_vault_context()
             .with_signer(&[&award.signer_seeds()]),
     )?;
+
+    emit!(AwardRevoked {
+        award: award.key(),
+
+        unreleased_amount,
+        total_released,
+
+        vault_amount,
+    });
 
     Ok(())
 }

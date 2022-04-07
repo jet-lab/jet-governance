@@ -3,7 +3,7 @@ use std::io::Write;
 use anchor_lang::prelude::*;
 use anchor_spl::token::{self, Token, TokenAccount, Transfer};
 
-use crate::state::*;
+use crate::{events, state::*};
 
 #[derive(AnchorDeserialize, AnchorSerialize)]
 pub struct DistributionCreateParams {
@@ -30,13 +30,16 @@ pub struct DistributionCreateParams {
 #[instruction(params: DistributionCreateParams)]
 pub struct DistributionCreate<'info> {
     /// The account to store the distribution info
-    #[account(init,
-              seeds = [
-                  b"distribution".as_ref(),
-                  params.seed.as_bytes()
-              ],
-              bump,
-              payer = payer_rent)]
+    #[account(
+        init,
+        payer = payer_rent,
+        seeds = [
+            b"distribution".as_ref(),
+            params.seed.as_bytes()
+        ],
+        bump,
+        space = 8 + Distribution::space(),
+    )]
     pub distribution: Account<'info, Distribution>,
 
     /// The account to store the tokens to be distributed
@@ -59,10 +62,12 @@ pub struct DistributionCreate<'info> {
     pub payer_token_authority: Signer<'info>,
 
     /// The account to source the tokens to be distributed
+    /// CHECK:
     #[account(mut)]
     pub payer_token_account: UncheckedAccount<'info>,
 
     /// The distribution token's mint
+    /// CHECK:
     pub token_mint: UncheckedAccount<'info>,
 
     pub token_program: Program<'info, Token>,
@@ -86,7 +91,7 @@ impl<'info> DistributionCreate<'info> {
 pub fn distribution_create_handler(
     ctx: Context<DistributionCreate>,
     params: DistributionCreateParams,
-) -> ProgramResult {
+) -> Result<()> {
     let distribution = &mut ctx.accounts.distribution;
 
     distribution.address = distribution.key();
@@ -105,7 +110,17 @@ pub fn distribution_create_handler(
     distribution.end_at = params.end_at;
     distribution.kind = DistributionKind::Linear;
 
+    let distribution = &ctx.accounts.distribution;
+
     token::transfer(ctx.accounts.transfer_context(), params.amount)?;
+
+    emit!(events::DistributionCreated {
+        distribution: distribution.key(),
+        authority: distribution.authority,
+        token_mint: ctx.accounts.token_mint.key(),
+        params,
+        distribution_kind: distribution.kind,
+    });
 
     Ok(())
 }

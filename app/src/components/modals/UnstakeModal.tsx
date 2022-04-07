@@ -3,7 +3,7 @@ import { Modal, ModalProps } from "antd";
 import { useProposalContext } from "../../contexts/proposal";
 import { rescindAndUnstake } from "../../actions/rescindAndUnstake";
 import { useRpcContext } from "../../hooks/useRpcContext";
-import { u64 } from "@solana/spl-token";
+import BN from "bn.js";
 import { dateToString } from "../../utils";
 import { bnToNumber } from "@jet-lab/jet-engine";
 import { isSignTransactionError } from "../../utils";
@@ -30,7 +30,7 @@ export const UnstakeModal = ({
     stakePool,
     stakeAccount,
     voteMint,
-
+    realm,
     governance,
     tokenOwnerRecord,
     walletVoteRecords,
@@ -61,6 +61,7 @@ export const UnstakeModal = ({
       !programs ||
       !stakePool ||
       !stakeAccount ||
+      !realm ||
       !governance ||
       !tokenOwnerRecord ||
       !voteMint
@@ -68,14 +69,14 @@ export const UnstakeModal = ({
       return;
     }
 
-    const unstakeAmount = new u64(amount * 10 ** voteMint.decimals);
+    const unstakeAmount = new BN(amount * 10 ** voteMint.decimals);
     setLoading(true);
 
     rescindAndUnstake(
       rpcContext,
-      programs.stake,
       stakePool,
       stakeAccount,
+      realm,
       governance,
       tokenOwnerRecord,
       unstakeAmount,

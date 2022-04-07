@@ -66,7 +66,7 @@ export const StakeInput = ({
               alt="Jet Token Icon"
               style={{ filter: isActive ? "none" : "grayscale(1)" }}
             />
-            <span className={`legend-input token-abbrev ${isActive ? "text-gradient" : ""}`}>
+            <span className={`legend-input token-abbrev ${isActive ? "gradient-text" : ""}`}>
               JET
             </span>
           </>

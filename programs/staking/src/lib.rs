@@ -1,11 +1,13 @@
 use anchor_lang::prelude::*;
-use anchor_lang::solana_program::pubkey;
+use solana_program::pubkey;
 
 declare_id!("JPLockxtkngHkaQT5AuRYow3HyUv5qWzmhwsCPd653n");
 
+pub mod events;
 mod instructions;
 pub mod state;
 
+pub use instructions::PoolConfig;
 use instructions::*;
 
 #[program]
@@ -17,7 +19,7 @@ pub mod jet_staking {
     /// # Params
     ///
     /// * `seed` - A string to derive the pool address
-    pub fn init_pool(ctx: Context<InitPool>, seed: String, config: PoolConfig) -> ProgramResult {
+    pub fn init_pool(ctx: Context<InitPool>, seed: String, config: PoolConfig) -> Result<()> {
         instructions::init_pool_handler(ctx, seed, config)
     }
 
@@ -25,7 +27,7 @@ pub mod jet_staking {
     ///
     /// The account created is tied to the owner that signed to create it.
     ///
-    pub fn init_stake_account(ctx: Context<InitStakeAccount>) -> ProgramResult {
+    pub fn init_stake_account(ctx: Context<InitStakeAccount>) -> Result<()> {
         instructions::init_stake_account_handler(ctx)
     }
 
@@ -34,46 +36,42 @@ pub mod jet_staking {
     /// # Params
     ///
     /// * `amount` - The amount of tokens to transfer to the stake pool
-    pub fn add_stake(ctx: Context<AddStake>, amount: Option<u64>) -> ProgramResult {
+    pub fn add_stake(ctx: Context<AddStake>, amount: Option<u64>) -> Result<()> {
         instructions::add_stake_handler(ctx, amount)
     }
 
     /// Unbond stake from an account, allowing it to be withdrawn
-    pub fn unbond_stake(
-        ctx: Context<UnbondStake>,
-        seed: u32,
-        amount: Option<u64>,
-    ) -> ProgramResult {
+    pub fn unbond_stake(ctx: Context<UnbondStake>, seed: u32, amount: Option<u64>) -> Result<()> {
         instructions::unbond_stake_handler(ctx, seed, amount)
     }
 
     /// Cancel a previous request to unbond stake
-    pub fn cancel_unbond(ctx: Context<CancelUnbond>) -> ProgramResult {
+    pub fn cancel_unbond(ctx: Context<CancelUnbond>) -> Result<()> {
         instructions::cancel_unbond_handler(ctx)
     }
 
     /// Withdraw stake that was previously unbonded
-    pub fn withdraw_unbonded(ctx: Context<WithdrawUnbonded>) -> ProgramResult {
+    pub fn withdraw_unbonded(ctx: Context<WithdrawUnbonded>) -> Result<()> {
         instructions::withdraw_unbonded_handler(ctx)
     }
 
     /// Withdraw stake from the pool by the authority
-    pub fn withdraw_bonded(ctx: Context<WithdrawBonded>, amount: u64) -> ProgramResult {
+    pub fn withdraw_bonded(ctx: Context<WithdrawBonded>, amount: u64) -> Result<()> {
         instructions::withdraw_bonded_handler(ctx, amount)
     }
 
     /// Mint voting tokens based on current stake
-    pub fn mint_votes(ctx: Context<MintVotes>, amount: Option<u64>) -> ProgramResult {
+    pub fn mint_votes(ctx: Context<MintVotes>, amount: Option<u64>) -> Result<()> {
         instructions::mint_votes_handler(ctx, amount)
     }
 
     /// Burn outstanding burning tokens to unlock stake
-    pub fn burn_votes(ctx: Context<BurnVotes>, amount: Option<u64>) -> ProgramResult {
+    pub fn burn_votes(ctx: Context<BurnVotes>, amount: Option<u64>) -> Result<()> {
         instructions::burn_votes_handler(ctx, amount)
     }
 
     /// Close out the stake account, return any rent
-    pub fn close_stake_account(ctx: Context<CloseStakeAccount>) -> ProgramResult {
+    pub fn close_stake_account(ctx: Context<CloseStakeAccount>) -> Result<()> {
         instructions::close_stake_account_handler(ctx)
     }
 }
@@ -83,16 +81,22 @@ pub use error::ErrorCode;
 mod error {
     use super::*;
 
-    #[error]
+    #[error_code(offset = 0)]
     #[derive(Eq, PartialEq)]
     pub enum ErrorCode {
-        InsufficientStake = 1100,
+        InsufficientStake = 7100,
         VotesLocked,
         CollateralLocked,
         NotYetUnbonded,
         StakeRemaining,
         InvalidAmount,
     }
+}
+
+pub mod spl_governance {
+    use super::declare_id;
+
+    declare_id!("JPGovTiAUgyqirerBbXXmfyt3SkHVEcpSAPjRCCSHVx");
 }
 
 #[derive(Copy, Clone)]

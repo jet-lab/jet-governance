@@ -3,16 +3,16 @@
   "version": "0.0.1",
   "dependencies": {
     "@ant-design/icons": "^4.7.0",
-    "@jet-lab/jet-antd": "^0.4.20",
-    "@jet-lab/jet-engine": "^0.2.34",
-    "@project-serum/anchor": "^0.21.0",
+    "@jet-lab/jet-antd": "^0.4.22",
+    "@jet-lab/jet-engine": "^0.2.40",
+    "@project-serum/anchor": "^0.23.0",
     "@solana/spl-governance": "^0.0.29",
-    "@solana/spl-token": "^0.1.8",
+    "@solana/spl-token": "^0.2.0",
     "@solana/spl-token-registry": "^0.2.819",
     "@solana/wallet-adapter-base": "^0.6.0",
     "@solana/wallet-adapter-react": "^0.12.6",
     "@solana/wallet-adapter-wallets": "^0.10.1",
-    "@solana/web3.js": "^1.22.0",
+    "@solana/web3.js": "^1.37.0",
     "@types/react": "^17.0.39",
     "@welldone-software/why-did-you-render": "^6.0.5",
     "antd": "^4.6.6",
@@ -41,7 +41,7 @@
     "predeploy": "git pull --ff-only && yarn && yarn build",
     "deploy": "gh-pages -d ../../build/governance --repo https://github.com/solana-labs/oyster-gov",
     "deploy:ar": "arweave deploy-dir ../../build/governance --key-file ",
-    "fmt:fix": "prettier --write \"**/*.+(js|jsx|ts|tsx|json|css|md)\""
+    "fmt:fix": "prettier --write \"**/*.+(js|jsx|ts|tsx|json|css|md|less)\""
   },
   "eslintConfig": {
     "extends": "react-app"

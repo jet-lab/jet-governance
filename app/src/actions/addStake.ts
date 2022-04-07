@@ -3,9 +3,8 @@ import { Keypair, PublicKey, TransactionInstruction } from "@solana/web3.js";
 import BN from "bn.js";
 import { ProgramAccount, Realm, RpcContext } from "@solana/spl-governance";
 import { sendTransactionWithNotifications } from "../tools/transactions";
-import { AssociatedToken, StakeAccount, StakePool } from "@jet-lab/jet-engine";
+import { AssociatedToken, JetMint, StakeAccount, StakePool } from "@jet-lab/jet-engine";
 import { fromLamports } from "../utils";
-import { MintInfo } from "@solana/spl-token";
 
 export const addStake = async (
   { connection, wallet, programId, programVersion, walletPubkey }: RpcContext,
@@ -13,7 +12,7 @@ export const addStake = async (
   realm: ProgramAccount<Realm>,
   owner: PublicKey,
   amount: BN,
-  jetMint: MintInfo | undefined,
+  jetMint: JetMint | undefined,
   explorerUrlMaker: Function
 ) => {
   let instructions: TransactionInstruction[] = [];
