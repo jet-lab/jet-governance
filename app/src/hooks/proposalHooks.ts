@@ -421,19 +421,21 @@ export function useWithdrawVotesAbility(
   );
 }
 
-export function useStakingCompatibleWithRealm(
-  stakePool: StakePool | undefined,
-  realm: ProgramAccount<Realm> | undefined
-) {
-  useMemo(() => {
-    if (!stakePool || !realm) {
-      return;
-    }
+// export function useStakingCompatibleWithRealm(
+//   stakePool: StakePool | undefined,
+//   realm: ProgramAccount<Realm> | undefined
+// ) {
+//   useMemo(() => {
+//     if (!stakePool || !realm) {
+//       return;
+//     }
 
-    if (!stakePool.stakePool.stakeVoteMint.equals(realm.account.communityMint)) {
-      console.error(
-        `Stake Pool vote mint ${stakePool.stakePool.stakeVoteMint.toBase58()} does not equal realm community mint ${realm.account.communityMint.toBase58()}. Some features will have problems.`
-      );
-    }
-  }, [stakePool, realm]);
-}
+//     // TODO: check if this is necessary
+//     // TODO: fix this for vote-record match the number?
+//     if (!stakePool.stakePool.stakeVoteMint.equals(realm.account.communityMint)) {
+//       console.error(
+//         `Stake Pool vote mint ${stakePool.stakePool.stakeVoteMint.toBase58()} does not equal realm community mint ${realm.account.communityMint.toBase58()}. Some features will have problems.`
+//       );
+//     }
+//   }, [stakePool, realm]);
+// }

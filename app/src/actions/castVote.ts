@@ -1,4 +1,4 @@
-import { AssociatedToken, StakeAccount, StakeIdl, StakePool } from "@jet-lab/jet-engine";
+import { StakeAccount, StakeIdl, StakePool } from "@jet-lab/jet-engine";
 import { Program, Provider } from "@project-serum/anchor";
 import {
   ChatMessageBody,
@@ -58,14 +58,6 @@ export const castVote = async (
     });
   }
 
-  const voteMint = stakePool.addresses.stakeVoteMint;
-
-  const voterTokenAccount = await AssociatedToken.withCreate(
-    castVoteIx,
-    provider,
-    walletPubkey,
-    voteMint
-  );
   await StakeAccount.withCreate(
     castVoteIx,
     stakeProgram,
@@ -73,9 +65,6 @@ export const castVote = async (
     walletPubkey,
     walletPubkey
   );
-  await StakeAccount.withMintVotes(castVoteIx, stakePool, realm, walletPubkey, voterTokenAccount);
-
-  await AssociatedToken.withClose(castVoteIx, walletPubkey, voteMint, walletPubkey);
 
   await withCastVote(
     castVoteIx,

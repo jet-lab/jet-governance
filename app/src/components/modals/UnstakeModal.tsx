@@ -72,7 +72,6 @@ export const UnstakeModal = ({
       rpcContext,
       stakePool,
       stakeAccount,
-      realm,
       governance,
       tokenOwnerRecord,
       unstakeAmount
