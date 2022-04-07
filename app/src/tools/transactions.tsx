@@ -1,14 +1,14 @@
+import { Provider } from "@project-serum/anchor";
+import { SendTxRequest } from "@project-serum/anchor/dist/cjs/provider";
+import { WalletSigner } from "@solana/spl-governance";
 import { TransactionInstruction, Connection, Transaction, Keypair } from "@solana/web3.js";
+import { notification } from "antd";
 import { sendTransaction2 } from "./sdk/core/connection";
 import {
   isTransactionTimeoutError,
   isSendTransactionError,
   isSignTransactionError
 } from "../utils";
-import { Provider } from "@project-serum/anchor";
-import { SendTxRequest } from "@project-serum/anchor/dist/cjs/provider";
-import { WalletSigner } from "@solana/spl-governance";
-import { notification } from "antd";
 
 export async function sendTransactionWithNotifications(
   connection: Connection,

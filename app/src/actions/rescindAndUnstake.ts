@@ -4,18 +4,15 @@ import {
   Governance,
   ProgramAccount,
   Realm,
+  RpcContext,
   TokenOwnerRecord,
   withRelinquishVote,
   withWithdrawGoverningTokens
 } from "@solana/spl-governance";
 import { Transaction, TransactionInstruction } from "@solana/web3.js";
-import { RpcContext } from "@solana/spl-governance";
+import { getParsedProposalsByGovernance, getUnrelinquishedVoteRecords } from "../hooks";
 import { sendAllTransactionsWithNotifications } from "../tools/transactions";
 import { GOVERNANCE_PROGRAM_ID } from "../utils";
-import {
-  getParsedProposalsByGovernance,
-  getUnrelinquishedVoteRecords
-} from "../hooks/accountHooks";
 
 export const rescindAndUnstake = async (
   { programId, wallet, walletPubkey, connection }: RpcContext,

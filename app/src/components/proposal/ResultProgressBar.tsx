@@ -1,8 +1,8 @@
-import { useState, useMemo } from "react";
-import { Progress } from "antd";
-import { abbreviateNumber, fromLamports, sharesToTokens } from "../../utils";
-import { useProposalContext } from "../../contexts/proposal";
 import { bnToNumber } from "@jet-lab/jet-engine";
+import { Progress } from "antd";
+import { useState, useMemo } from "react";
+import { useProposalContext } from "../../contexts";
+import { abbreviateNumber, fromLamports, sharesToTokens } from "../../utils";
 
 export const ResultProgressBar = ({
   type,

@@ -1,10 +1,5 @@
-import { Modal, ModalProps } from "antd";
-import { ReactNode, useEffect, useState } from "react";
-import { useCountdown, VoteOption } from "../../hooks/proposalHooks";
-import { useRpcContext } from "../../hooks/useRpcContext";
 import { StakeBalance } from "@jet-lab/jet-engine";
-import { getPubkeyIndex } from "../../models/PUBKEYS_INDEX";
-import { isSignTransactionError, sharesToTokens, toTokens } from "../../utils";
+
 import {
   Governance,
   ProgramAccount,
@@ -14,8 +9,13 @@ import {
   YesNoVote,
   getTokenOwnerRecordAddress
 } from "@solana/spl-governance";
+import { Modal, ModalProps } from "antd";
+import { ReactNode, useEffect, useState } from "react";
 import { castVote } from "../../actions/castVote";
-import { useProposalContext } from "../../contexts/proposal";
+import { useProposalContext } from "../../contexts";
+import { useCountdown, VoteOption, useRpcContext } from "../../hooks";
+import { getPubkeyIndex } from "../../models/PUBKEYS_INDEX";
+import { isSignTransactionError, sharesToTokens, toTokens } from "../../utils";
 
 enum Steps {
   Confirm = 0,

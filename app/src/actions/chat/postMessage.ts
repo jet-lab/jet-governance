@@ -1,9 +1,13 @@
+import {
+  ChatMessageBody,
+  GOVERNANCE_CHAT_PROGRAM_ID,
+  ProgramAccount,
+  Proposal,
+  Realm,
+  RpcContext,
+  withPostChatMessage
+} from "@solana/spl-governance";
 import { PublicKey, Keypair, TransactionInstruction } from "@solana/web3.js";
-import { GOVERNANCE_CHAT_PROGRAM_ID, Proposal, Realm } from "@solana/spl-governance";
-import { ChatMessageBody } from "@solana/spl-governance";
-import { withPostChatMessage } from "@solana/spl-governance";
-import { ProgramAccount } from "@solana/spl-governance";
-import { RpcContext } from "@solana/spl-governance";
 import { sendTransactionWithNotifications } from "../../tools/transactions";
 
 export async function postChatMessage(

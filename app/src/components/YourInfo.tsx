@@ -18,7 +18,7 @@ import {
 } from "../utils";
 import { StakeModal } from "./modals/StakeModal";
 import { UnstakeModal } from "./modals/UnstakeModal";
-import { WithdrawAllModal } from "./modals/WithdrawAllModal";
+import { WithdrawModal } from "./modals/WithdrawModal";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { useHistory, useLocation } from "react-router";
 import "./YourInfo.less";
@@ -27,7 +27,7 @@ import { StakedJetBalance } from "./Dashboard/StakedJetBalance";
 export const YourInfo = () => {
   const [stakeModalVisible, setStakeModalVisible] = useState(false);
   const [unstakeModalVisible, setUnstakeModalVisible] = useState(false);
-  const [withdrawAllModalVisible, setWithdrawAllModalVisible] = useState(false);
+  const [withdrawModalVisible, setWithdrawModalVisible] = useState(false);
   const [showRewards, setShowRewards] = useState(false);
   const [inputAmount, setInputAmount] = useState<number | undefined>();
   const { connected } = useWallet();
@@ -84,7 +84,7 @@ export const YourInfo = () => {
     setUnstakeModalVisible(true);
   };
   const handleWithdrawUnstaked = () => {
-    setWithdrawAllModalVisible(true);
+    setWithdrawModalVisible(true);
   };
 
   /**
@@ -243,14 +243,12 @@ export const YourInfo = () => {
                     </Tooltip>
                   </Text>
                   <Text>
-                    {fromLamports(sharesToTokens(unbondingQueue, stakePool).tokens, jetMint)}
+                    {fromLamports(unbondingQueue, jetMint)}
                   </Text>
                 </div>
                 <div className="flex justify-between info-legend-item">
                   <Text className="gradient-text bold">Available for Withdrawal</Text>
-                  <Text className="gradient-text bold">
-                    {fromLamports(sharesToTokens(unbondingComplete, stakePool).tokens, jetMint)}
-                  </Text>
+                  <Text className="gradient-text bold">{fromLamports(unbondingComplete, jetMint)}</Text>
                 </div>
               </>
             )}
@@ -321,8 +319,8 @@ export const YourInfo = () => {
                 Withdraw balance
               </Button>
             )}
-            {withdrawAllModalVisible && (
-              <WithdrawAllModal onClose={() => setWithdrawAllModalVisible(false)} />
+            {withdrawModalVisible && (
+              <WithdrawModal onClose={() => setWithdrawModalVisible(false)} />
             )}
           </div>
           {inDevelopment && (

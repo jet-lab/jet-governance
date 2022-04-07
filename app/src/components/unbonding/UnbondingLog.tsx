@@ -2,16 +2,9 @@ import { InfoCircleFilled } from "@ant-design/icons";
 import { bnToNumber, UnbondingAccount } from "@jet-lab/jet-engine";
 import { Button, Tooltip } from "antd";
 import { useEffect, useState } from "react";
-import { useBlockExplorer } from "../../contexts/blockExplorer";
-import { useProposalContext } from "../../contexts/proposal";
-import {
-  dateFromUnixTimestamp,
-  sharesToTokensUnbonded,
-  getRemainingTime,
-  toTokens
-} from "../../utils";
-import { RestakeModal } from "../modals/RestakeModal";
-import { WithdrawModal } from "../modals/WithdrawModal";
+import { useBlockExplorer, useProposalContext } from "../../contexts";
+import { RestakeModal, WithdrawModal } from "../modals";
+import { dateFromUnixTimestamp, getRemainingTime, toTokens } from "../../utils";
 import { useCurrentTime } from "../../hooks";
 import { ONE_DAY } from "../../constants";
 
@@ -69,7 +62,7 @@ export const UnbondingLog = ({ unbondingAccount }: { unbondingAccount: Unbonding
                 currentTime,
                 bnToNumber(unbondingAccount.unbondingAccount.unbondedAt) * 1000
               )}`
-            : `Unstake complete on 
+            : `Unstake complete on
             ${dateFromUnixTimestamp(unbondingAccount.unbondingAccount.unbondedAt)}`}
         </i>{" "}
         <Button
@@ -106,7 +99,7 @@ export const UnbondingLog = ({ unbondingAccount }: { unbondingAccount: Unbonding
           )
         }
       >
-        {toTokens(sharesToTokensUnbonded(unbondingAccount?.shares, stakePool).tokens, jetMint)}
+        {toTokens(unbondingAccount.tokens, jetMint)}
       </td>
       <td onClick={getUnbondingAccountExplorerUrl}>
         <i className="fas fa-external-link-alt"></i>

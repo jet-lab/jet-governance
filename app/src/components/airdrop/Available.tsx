@@ -1,11 +1,11 @@
+import { Airdrop } from "@jet-lab/jet-engine";
+import { PublicKey } from "@solana/web3.js";
 import { useState } from "react";
 import { Button } from "antd";
 import { CheckOutlined } from "@ant-design/icons";
-import { ClaimModal } from "../modals/ClaimModal";
+import { ClaimModal } from "../modals";
+import { useProposalContext } from "../../contexts";
 import { fromLamports, getRemainingTime } from "../../utils";
-import { Airdrop } from "@jet-lab/jet-engine";
-import { PublicKey } from "@solana/web3.js";
-import { useProposalContext } from "../../contexts/proposal";
 import { useCurrentTime } from "../../hooks";
 
 interface availAirdropsRender {

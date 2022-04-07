@@ -1,10 +1,9 @@
-import { useCallback, useState } from "react";
+import { bnToNumber, JetMint, StakePool } from "@jet-lab/jet-engine";
 import { PublicKey } from "@solana/web3.js";
-import BN from "bn.js";
-import { bnToNumber, StakePool } from "@jet-lab/jet-engine";
-import { geoBannedCountries } from "../models/GEOBANNED_COUNTRIES";
 import { SelectProps } from "antd";
-import { JetMint } from "@jet-lab/jet-engine/lib/common";
+import BN from "bn.js";
+import { useCallback, useState } from "react";
+import { geoBannedCountries } from "../models/GEOBANNED_COUNTRIES";
 
 export function useLocalStorageState(key: string, defaultState?: string) {
   const [state, setState] = useState(() => {
@@ -200,25 +199,6 @@ export const sharesToTokens = (
   tokens = shareAmount
     .mul(stakePool?.stakePool.bonded.tokens)
     .div(stakePool?.stakePool.bonded.shares);
-  return { tokens, conversion };
-};
-
-export const sharesToTokensUnbonded = (
-  shares: BN | undefined,
-  stakePool: StakePool | undefined
-): { tokens: BN; conversion: BN } => {
-  let tokens = new BN(0);
-  let conversion = new BN(0);
-  if (!stakePool) {
-    return { tokens, conversion };
-  }
-  conversion = stakePool?.stakePool.unbonding.shares.div(stakePool?.stakePool.unbonding.tokens);
-  if (!shares) {
-    return { tokens, conversion };
-  }
-  tokens = shares
-    .mul(stakePool?.stakePool.unbonding.tokens)
-    .div(stakePool?.stakePool.unbonding.shares);
   return { tokens, conversion };
 };
 

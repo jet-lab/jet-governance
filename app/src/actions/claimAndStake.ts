@@ -1,9 +1,8 @@
-import { Airdrop, AssociatedToken, StakeAccount, StakePool } from "@jet-lab/jet-engine";
+import { Airdrop, AssociatedToken, RewardsIdl, StakeAccount, StakePool } from "@jet-lab/jet-engine";
 import { Program, Provider } from "@project-serum/anchor";
 import { ProgramAccount, Realm, RpcContext } from "@solana/spl-governance";
-import { sendTransactionWithNotifications } from "../tools/transactions";
 import { Keypair, PublicKey, TransactionInstruction } from "@solana/web3.js";
-import { RewardsIdl } from "@jet-lab/jet-engine/lib/rewards";
+import { sendTransactionWithNotifications } from "../tools/transactions";
 
 export const claimAndStake = async (
   { connection, wallet }: RpcContext,

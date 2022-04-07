@@ -1,12 +1,11 @@
-import { ReactNode, useState } from "react";
-import { Modal, ModalProps } from "antd";
-import { useProposalContext } from "../../contexts/proposal";
-import { rescindAndUnstake } from "../../actions/rescindAndUnstake";
-import { useRpcContext } from "../../hooks/useRpcContext";
-import { dateToString } from "../../utils";
 import { bnToNumber } from "@jet-lab/jet-engine";
-import { isSignTransactionError } from "../../utils";
-import { BN } from "@project-serum/anchor";
+import { Modal, ModalProps } from "antd";
+import BN from "bn.js";
+import { ReactNode, useState } from "react";
+import { rescindAndUnstake } from "../../actions/rescindAndUnstake";
+import { useProposalContext } from "../../contexts";
+import { useRpcContext } from "../../hooks";
+import { dateToString, isSignTransactionError } from "../../utils";
 
 enum Steps {
   Confirm = 0,
@@ -112,9 +111,13 @@ export const UnstakeModal = ({
       <div className="flex column">
         {unrelinquishedVoteRecords && unrelinquishedVoteRecords.length !== 0 && (
           <p>
-            You currently have votes cast on active proposals, which will be rescinded upon
-            unbonding. If you wish to keep your votes, wait until the voting period has ended before
-            unstaking.
+            You currently have votes cast on active proposals. When you unstake ANY amount of JET
+            tokens that have already voted, ALL of your active votes are rescinded. Even if you only
+            unstaked a portion of your staked JET,{" "}
+            <b>
+              please immediately revote on any active proposals with any remaining staked JET you
+              still have after this unstaking.
+            </b>
           </p>
         )}
         <p>

@@ -1,17 +1,16 @@
+import { Auth } from "@jet-lab/jet-engine";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { Modal, Input, ModalProps, Checkbox } from "antd";
-import { PropsWithChildren, useEffect, useState } from "react";
-import { useConnectWallet } from "../../contexts/connectWallet";
+import { CountryPhoneInput, CountryPhoneInputValue } from "antd-country-phone-input";
 import axios from "axios";
-import { useConnection, useConnectionConfig } from "../../contexts";
-import { Auth } from "@jet-lab/jet-engine/lib/auth/auth";
-import CountryPhoneInput, { CountryPhoneInputValue } from "antd-country-phone-input";
+import { PropsWithChildren, useEffect, useState } from "react";
 import { DocsLink } from "../docsLink";
+import { createUserAuth } from "../../actions/createUserAuth";
+import { useConnection, useConnectionConfig, useConnectWallet } from "../../contexts";
+import { useProvider, useRpcContext } from "../../hooks";
 import { ReactComponent as ArrowIcon } from "../../images/arrow_icon.svg";
 import { geoBannedCountries } from "../../models/GEOBANNED_COUNTRIES";
 import { filterSort } from "../../utils";
-import { createUserAuth } from "../../actions/createUserAuth";
-import { useProvider, useRpcContext } from "../../hooks";
 
 enum Steps {
   Welcome = 0,
@@ -470,7 +469,7 @@ export const VerifyModal = () => {
         continue to browse proposals while disconnected.
       </p>
     ),
-    closable: true
+    closable: false
   };
   steps[Steps.AgreeToTerms] = {
     title: "Warning",

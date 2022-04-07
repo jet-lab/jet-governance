@@ -1,11 +1,11 @@
-import { useState, useMemo } from "react";
-import { List, Button, Skeleton } from "antd";
-import { Stakeholders } from "./Stakeholders";
-import { ProgramAccount, VoteRecord } from "@solana/spl-governance";
-import { getVoterDisplayData, VoterDisplayData } from "../../hooks";
 import { bnToNumber } from "@jet-lab/jet-engine";
-import { useProposalContext } from "../../contexts/proposal";
-import { sharesToTokens } from "../../utils/utils";
+import { ProgramAccount, VoteRecord } from "@solana/spl-governance";
+import { List, Button, Skeleton } from "antd";
+import { useState, useMemo } from "react";
+import { Stakeholders } from "./Stakeholders";
+import { useProposalContext } from "../../contexts";
+import { getVoterDisplayData, VoterDisplayData } from "../../hooks";
+import { sharesToTokens } from "../../utils";
 
 export const VoterList = (props: {
   voteRecords: VoterDisplayData[] | undefined;

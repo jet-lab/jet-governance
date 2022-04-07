@@ -1,10 +1,7 @@
 import { useWallet } from "@solana/wallet-adapter-react";
-import { useProposalContext } from "../contexts/proposal";
-import { UnbondingLog } from "../components/unbonding/UnbondingLog";
-import { useTransactionLogs } from "../contexts/transactionLogs";
 import { Divider } from "antd";
-import { Loader } from "../components/Loader";
-import { useBlockExplorer } from "../contexts/blockExplorer";
+import { Loader, UnbondingLog } from "../components";
+import { useBlockExplorer, useProposalContext, useTransactionLogs } from "../contexts";
 
 export const FlightLogView = () => {
   const { unbondingAccounts } = useProposalContext();

@@ -1,8 +1,7 @@
 import { PublicKey } from "@solana/web3.js";
 import { useState, useEffect, useMemo } from "react";
-import { useProposalContext } from "../../contexts/proposal";
+import { useBlockExplorer, useProposalContext } from "../../contexts";
 import { shortenAddress, abbreviateNumber, fromLamports } from "../../utils";
-import { useBlockExplorer } from "../../contexts/blockExplorer";
 
 export const Stakeholders = ({
   type,

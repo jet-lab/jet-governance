@@ -1,12 +1,11 @@
-import { ReactNode, useState } from "react";
-import { Modal, ModalProps } from "antd";
-import { useWallet } from "@solana/wallet-adapter-react";
-import { useProposalContext } from "../../contexts/proposal";
-import { addStake } from "../../actions/addStake";
-import { useRpcContext } from "../../hooks/useRpcContext";
-import { useBN } from "../../hooks";
 import { ProgramAccount, Realm } from "@solana/spl-governance";
+import { useWallet } from "@solana/wallet-adapter-react";
+import { Modal, ModalProps } from "antd";
+import { ReactNode, useState } from "react";
 import { DocsLink } from "../docsLink";
+import { addStake } from "../../actions/addStake";
+import { useProposalContext } from "../../contexts";
+import { useBN, useRpcContext } from "../../hooks";
 import { isSignTransactionError, withPrecisionNumber } from "../../utils";
 
 enum Steps {
