@@ -27,10 +27,10 @@ export const UnstakeModal = ({
     stakePool,
     stakeAccount,
     jetMint,
+    stakeBalance: {stakedJet},
 
     realm,
     governance,
-    tokenOwnerRecord,
     walletVoteRecords,
 
     programs
@@ -60,7 +60,8 @@ export const UnstakeModal = ({
       !stakeAccount ||
       !realm ||
       !governance ||
-      !jetMint
+      !jetMint ||
+      !stakedJet
     ) {
       return;
     }
@@ -73,7 +74,8 @@ export const UnstakeModal = ({
       stakeAccount,
       governance,
       unstakeAmount,
-      programs.stake
+      programs.stake,
+      unstakeAmount.eq(stakedJet)
     )
       .then(() => {
         setLoading(false);

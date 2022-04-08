@@ -22,7 +22,8 @@ export const rescindAndUnstake = async (
   stakeAccount: StakeAccount,
   governance: ProgramAccount<Governance>,
   amount: BN,
-  stakeProgram: Program<StakeIdl>
+  stakeProgram: Program<StakeIdl>,
+  unstakeAll: boolean
 ) => {
   const unbondingSeed = UnbondingAccount.randomSeed();
   const allTxs = [];
@@ -118,8 +119,7 @@ export const rescindAndUnstake = async (
 
   // If there is still remaining JET and they have previously cast votes,
   // Re-cast those votes if proposals are still active
-
-  if (tokenOwnerRecord) {
+  if (tokenOwnerRecord && !unstakeAll) {
     const voteRecords = await getUnrelinquishedVoteRecords(
       connection,
       programId,
