@@ -36,7 +36,7 @@ pub struct StakeAdded {
     pub account_note: StakeAccountNote,
 
     pub voter_weight: u64,
-    pub max_voter_weight: u64
+    pub max_voter_weight: u64,
 }
 
 #[event]
@@ -53,7 +53,7 @@ pub struct StakeUnbonded {
     pub account_note: StakeAccountNote,
 
     pub voter_weight: u64,
-    pub max_voter_weight: u64
+    pub max_voter_weight: u64,
 }
 
 #[event]
