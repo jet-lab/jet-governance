@@ -6,7 +6,7 @@ import { DocsLink } from "../docsLink";
 import { addStake } from "../../actions/addStake";
 import { useProposalContext } from "../../contexts";
 import { useBN, useRpcContext } from "../../hooks";
-import { isSignTransactionError } from "../../utils";
+import { isSignTransactionError, withPrecisionNumber } from "../../utils";
 
 enum Steps {
   Confirm = 0,
@@ -16,11 +16,13 @@ enum Steps {
 export const StakeModal = ({
   onClose,
   amount,
-  realm
+  realm,
+  precisionOnDisplayAmounts
 }: {
   onClose: () => void;
   amount: number | undefined;
   realm: ProgramAccount<Realm> | undefined;
+  precisionOnDisplayAmounts?: number | undefined;
 }) => {
   const { jetMint } = useProposalContext();
   const [current, setCurrent] = useState<Steps>(Steps.Confirm);
@@ -57,9 +59,10 @@ export const StakeModal = ({
 
   const steps: (ModalProps & { content: ReactNode })[] = [];
   steps[Steps.Confirm] = {
-    title: `You are staking ${
-      amount && Intl.NumberFormat("us-US").format(amount)
-    } JET into the platform.`,
+    title: `You are staking ${withPrecisionNumber(
+      amount || 0,
+      precisionOnDisplayAmounts
+    )} JET into the platform.`,
     okText: "I understand",
     onOk: () => handleSubmitTx(),
     onCancel: () => onClose(),
