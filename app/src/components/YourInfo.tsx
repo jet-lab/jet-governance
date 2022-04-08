@@ -1,6 +1,6 @@
 import { InfoCircleFilled, MinusOutlined, PlusOutlined } from "@ant-design/icons";
 import { Button, Divider, notification, Tooltip, Typography } from "antd";
-import { StakeInput } from "./Input";
+import { StakeInput } from "./StakeInput";
 import { useEffect, useMemo, useState } from "react";
 import { jetFaucet } from "../actions/jetFaucet";
 import { useConnectionConfig } from "../contexts";
@@ -150,14 +150,14 @@ export const YourInfo = () => {
   const isOwnPage = Boolean(useLocation().pathname.includes("your-info"));
   const { Title, Text } = Typography;
   const precisionOnAmounts = 1;
-  const walletBalanceDisplay =
+  const jetBalanceTokens =
     jetAccount && jetMint
       ? toTokensPrecisionNumber(jetAccount.info.amount, jetMint, precisionOnAmounts)
       : 0;
-  const preFillJetWithBalance = () => {
-    setInputAmount(walletBalanceDisplay);
+  const preFillWithJetBalance = () => {
+    setInputAmount(jetBalanceTokens);
   };
-  const sharesToTokenValueDisplay =
+  const stakedJetTokens =
     stakedJet && jetMint
       ? toTokensPrecisionNumber(
           sharesToTokens(stakedJet, stakePool).tokens,
@@ -165,8 +165,15 @@ export const YourInfo = () => {
           precisionOnAmounts
         )
       : 0;
-  const preFillJetWithStaked = () => {
-    setInputAmount(sharesToTokenValueDisplay);
+  const preFillWithStakedJet = () => {
+    setInputAmount(stakedJetTokens);
+  };
+  const setInputAmountInRange = () => {
+    if (inputAmount) {
+      const maxInput = Math.max(jetBalanceTokens, stakedJetTokens);
+      const withinRange = Math.min(inputAmount, maxInput);
+      setInputAmount(withinRange);
+    }
   };
   const canWithdraw = useWithdrawableCount(unbondingAccounts) > 0;
 
@@ -187,10 +194,7 @@ export const YourInfo = () => {
               <InfoCircleFilled />
             </Tooltip>
           </Text>
-          <StakedJetBalance
-            stakedJet={sharesToTokenValueDisplay.toString()}
-            onClick={preFillJetWithStaked}
-          />
+          <StakedJetBalance stakedJet={stakedJetTokens.toString()} onClick={preFillWithStakedJet} />
           <div className="wallet-overview flex justify-between column">
             <div className="flex justify-between">
               <Text className="staking-info current-staking-apr">
@@ -230,10 +234,10 @@ export const YourInfo = () => {
             {connected && (
               <div
                 className="flex justify-between info-legend-item info-legend-item-prefill"
-                onClick={preFillJetWithBalance}
+                onClick={preFillWithJetBalance}
               >
                 <Text>Wallet Balance</Text>
-                <Text className="text-btn">{walletBalanceDisplay}</Text>
+                <Text className="text-btn">{jetBalanceTokens}</Text>
               </div>
             )}
             {connected && (
@@ -260,16 +264,17 @@ export const YourInfo = () => {
             )}
             <StakeInput
               type="number"
-              token
-              value={inputAmount === undefined ? "" : inputAmount}
+              value={inputAmount === undefined || inputAmount === 0 ? "" : inputAmount}
               disabled={!connected}
-              onChange={(value: number) => {
-                if (isNaN(value) || value < 0) {
-                  value = 0;
-                } else {
-                  setInputAmount(value);
+              token
+              onChange={(value: string) => {
+                let number = Number(value);
+                if (isNaN(number) || number < 0) {
+                  number = 0;
                 }
+                setInputAmount(number);
               }}
+              onBlur={setInputAmountInRange}
               submit={() => handleStake()}
             />
             <Button
