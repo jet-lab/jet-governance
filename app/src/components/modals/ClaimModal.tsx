@@ -37,7 +37,14 @@ export const ClaimModal = ({
 
     setLoading(true);
     if (!!programs && !!airdrop && !!stakePool && !!stakeAccount && !!realm) {
-      claimAndStake(rpcContext, programs.rewards, airdrop, stakePool, stakeAccount, getTxExplorerUrl)
+      claimAndStake(
+        rpcContext,
+        programs.rewards,
+        airdrop,
+        stakePool,
+        stakeAccount,
+        getTxExplorerUrl
+      )
         .then(() => {
           onClose();
         })

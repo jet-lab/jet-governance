@@ -9,7 +9,6 @@ import { useBN, useRpcContext } from "../../hooks";
 import { isSignTransactionError } from "../../utils";
 import { useBlockExplorer } from "../../contexts/blockExplorer";
 
-
 enum Steps {
   Confirm = 0,
   Error = 1

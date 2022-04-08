@@ -18,7 +18,6 @@ import { getPubkeyIndex } from "../../models/PUBKEYS_INDEX";
 import { isSignTransactionError, JET_TOKEN_MINT, sharesToTokens, toTokens } from "../../utils";
 import { useBlockExplorer } from "../../contexts/blockExplorer";
 
-
 enum Steps {
   Confirm = 0,
   NoVoteError = 1,
@@ -54,7 +53,6 @@ export const VoteModal = ({
     refresh
   } = useProposalContext();
   const { getTxExplorerUrl } = useBlockExplorer();
-
 
   let voteText: string = "";
 

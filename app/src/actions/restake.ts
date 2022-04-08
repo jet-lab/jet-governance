@@ -21,5 +21,12 @@ export const restake = async (
     walletPubkey
   );
 
-  await sendTransactionWithNotifications(connection, wallet, ix, [], "JET has been staked", explorerUrlMaker);
+  await sendTransactionWithNotifications(
+    connection,
+    wallet,
+    ix,
+    [],
+    "JET has been staked",
+    explorerUrlMaker
+  );
 };

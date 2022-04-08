@@ -50,6 +50,11 @@ export const withdrawUnbonded = async (
     }
   }
   if (allTxs.length > 0) {
-    await sendAllTransactionsWithNotifications(provider, allTxs, "JET has been withdrawn", explorerUrlMaker);
+    await sendAllTransactionsWithNotifications(
+      provider,
+      allTxs,
+      "JET has been withdrawn",
+      explorerUrlMaker
+    );
   }
 };

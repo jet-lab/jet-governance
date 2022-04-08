@@ -8,7 +8,6 @@ import { useRpcContext } from "../../hooks";
 import { dateToString, isSignTransactionError } from "../../utils";
 import { useBlockExplorer } from "../../contexts/blockExplorer";
 
-
 enum Steps {
   Confirm = 0,
   Error = 1
@@ -42,7 +41,6 @@ export const UnstakeModal = ({
   const [current, setCurrent] = useState(Steps.Confirm);
   const [loading, setLoading] = useState(false);
   const { getTxExplorerUrl } = useBlockExplorer();
-
 
   const unrelinquishedVoteRecords = walletVoteRecords?.filter(
     voteRecord => !voteRecord.account.isRelinquished

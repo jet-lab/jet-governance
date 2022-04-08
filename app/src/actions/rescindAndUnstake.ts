@@ -100,5 +100,10 @@ export const rescindAndUnstake = async (
     signers: []
   });
 
-  await sendAllTransactionsWithNotifications(provider, allTxs, "JET has begun unbonding", explorerUrlMaker);
+  await sendAllTransactionsWithNotifications(
+    provider,
+    allTxs,
+    "JET has begun unbonding",
+    explorerUrlMaker
+  );
 };

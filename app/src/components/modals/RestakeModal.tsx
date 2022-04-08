@@ -7,7 +7,6 @@ import { useRpcContext } from "../../hooks";
 import { isSignTransactionError } from "../../utils";
 import { useBlockExplorer } from "../../contexts/blockExplorer";
 
-
 enum Steps {
   Confirm = 0,
   Error = 1
@@ -25,7 +24,6 @@ export const RestakeModal = ({
   const [loading, setLoading] = useState(false);
   const { stakePool, stakeAccount, jetMint, realm, refresh } = useProposalContext();
   const { getTxExplorerUrl } = useBlockExplorer();
-
 
   const handleOk = () => {
     if (!unbondingAccount || !stakePool || !stakeAccount || !realm) {
