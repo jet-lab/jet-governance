@@ -15,7 +15,6 @@ import { Transaction, TransactionInstruction } from "@solana/web3.js";
 import { getParsedProposalsByGovernance, getUnrelinquishedVoteRecords } from "../hooks";
 import { sendAllTransactionsWithNotifications } from "../tools/transactions";
 import { GOVERNANCE_PROGRAM_ID } from "../utils";
-
 export const rescindAndUnstake = async (
   { programId, wallet, walletPubkey, connection, programVersion }: RpcContext,
   stakePool: StakePool,
@@ -29,7 +28,6 @@ export const rescindAndUnstake = async (
   const allTxs = [];
   const provider = new Provider(connection, wallet as any, { skipPreflight: true });
   const proposals = await getParsedProposalsByGovernance(connection, programId, governance);
-
   // Load the token owner record
   const tokenOwnerRecordAddress = await getTokenOwnerRecordAddress(
     GOVERNANCE_PROGRAM_ID,
@@ -51,7 +49,6 @@ export const rescindAndUnstake = async (
   }
   if (!tokenOwnerRecord) {
     const ix: TransactionInstruction[] = [];
-
     // unbond_stake requires that the token owner record must exist,
     // so that it can verify that the owner is allowed to withdraw
     await withCreateTokenOwnerRecord(
@@ -62,23 +59,6 @@ export const rescindAndUnstake = async (
       stakePool.stakePool.tokenMint,
       walletPubkey
     );
-  } catch (err: any) {
-    console.log(err);
-  }
-  if (!tokenOwnerRecord) {
-    const ix: TransactionInstruction[] = [];
-
-    // unbond_stake requires that the token owner record must exist,
-    // so that it can verify that the owner is allowed to withdraw
-    await withCreateTokenOwnerRecord(
-      ix,
-      GOVERNANCE_PROGRAM_ID,
-      stakePool.stakePool.governanceRealm,
-      walletPubkey,
-      stakePool.stakePool.tokenMint,
-      walletPubkey
-    );
-
     allTxs.push({
       tx: new Transaction().add(...ix),
       signers: []
@@ -89,16 +69,11 @@ export const rescindAndUnstake = async (
       programId,
       tokenOwnerRecord.account.governingTokenOwner
     );
-
-    const proposals = await getParsedProposalsByGovernance(connection, programId, governance);
-
     for (const voteRecord of Object.values(voteRecords)) {
       let proposal = proposals[voteRecord.account.proposal.toString()];
-
       if (!proposal) {
         continue;
       }
-
       const relinquishIxs: TransactionInstruction[] = [];
       withRelinquishVote(
         relinquishIxs,
@@ -117,7 +92,6 @@ export const rescindAndUnstake = async (
       });
     }
   }
-
   // Unstake Jet
   const unbondIxs: TransactionInstruction[] = [];
   await UnbondingAccount.withUnbondStake(
@@ -129,7 +103,6 @@ export const rescindAndUnstake = async (
     unbondingSeed,
     amount
   );
-
   allTxs.push({
     tx: new Transaction().add(...unbondIxs),
     signers: []
@@ -143,7 +116,6 @@ export const rescindAndUnstake = async (
       programId,
       tokenOwnerRecord.account.governingTokenOwner
     );
-
     for (const voteRecord of Object.values(voteRecords)) {
       let proposal = proposals[voteRecord.account.proposal.toString()];
       if (!proposal || proposal.account.hasVoteTimeEnded(governance.account)) {
@@ -151,7 +123,6 @@ export const rescindAndUnstake = async (
       }
       if (voteRecord.account.vote) {
         const recastIxs: TransactionInstruction[] = [];
-
         await StakeAccount.withCreate(
           recastIxs,
           stakeProgram,
@@ -182,6 +153,5 @@ export const rescindAndUnstake = async (
       }
     }
   }
-
   await sendAllTransactionsWithNotifications(provider, allTxs, "JET has begun unbonding");
 };
