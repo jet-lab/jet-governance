@@ -167,8 +167,8 @@ export const YourInfo = () => {
     setInputAmount(stakedJetTokens);
   };
   const setInputAmountInRange = () => {
-    const maxInput = Math.max(jetBalanceTokens, stakedJetTokens);
     if (inputAmount) {
+      const maxInput = Math.max(jetBalanceTokens, stakedJetTokens);
       const withinRange = Math.min(inputAmount, maxInput);
       setInputAmount(withinRange);
     }
