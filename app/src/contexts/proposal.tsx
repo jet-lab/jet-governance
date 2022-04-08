@@ -169,7 +169,6 @@ export function ProposalProvider({ children = undefined as any }) {
   const { data: stakePool } = useQuery(
     ["stakePool", endpoint],
     async () => {
-      console.log("refreshing stakePool");
       if (!programs) {
         console.log("programs do not exist");
         return;
@@ -197,7 +196,6 @@ export function ProposalProvider({ children = undefined as any }) {
   const { data: wallet, isFetched: walletFetched } = useQuery(
     ["wallet", endpoint, walletAddress?.toBase58()],
     async () => {
-      console.log("Refreshing wallet");
       if (!programs || !stakePool || !walletAddress || !realm) {
         console.log("Stakepool does not exist");
         return;
