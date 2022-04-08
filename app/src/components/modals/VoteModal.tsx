@@ -95,8 +95,7 @@ export const VoteModal = ({
         programs.stake,
         stakePool,
         stakeAccount,
-        undefined,
-        voteRecord ? voteRecord.pubkey : undefined
+        undefined
       )
         .then(() => {
           onClose();
