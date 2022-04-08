@@ -68,6 +68,9 @@ pub fn cancel_unbond_handler(ctx: Context<CancelUnbond>) -> Result<()> {
 
         pool_note: stake_pool.note(),
         account_note: stake_account.note(),
+
+        voter_weight: voter_weight.voter_weight,
+        max_voter_weight: max_weight.max_voter_weight,
     });
 
     Ok(())

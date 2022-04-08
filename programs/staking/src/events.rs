@@ -59,6 +59,9 @@ pub struct UnbondCancelled {
 
     pub pool_note: StakePoolNote,
     pub account_note: StakeAccountNote,
+
+    pub voter_weight: u64,
+    pub max_voter_weight: u64,
 }
 
 #[event]
