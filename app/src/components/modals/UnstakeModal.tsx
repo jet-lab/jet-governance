@@ -27,7 +27,7 @@ export const UnstakeModal = ({
     stakePool,
     stakeAccount,
     jetMint,
-    stakeBalance: {stakedJet},
+    stakeBalance: { stakedJet },
 
     realm,
     governance,
