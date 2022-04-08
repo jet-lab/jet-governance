@@ -116,9 +116,8 @@ export const rescindAndUnstake = async (
     signers: []
   });
 
-    // If there is still remaining JET and they have previously cast votes,
-  // Re-cast those votes
-  // Does not check for relinquished votes
+  // If there is still remaining JET and they have previously cast votes,
+  // Re-cast those votes if proposals are still active
 
   if (tokenOwnerRecord) {
     const voteRecords = await getUnrelinquishedVoteRecords(
@@ -128,13 +127,10 @@ export const rescindAndUnstake = async (
     );
 
     for (const voteRecord of Object.values(voteRecords)) {
-      console.log("recast votes", voteRecord.account);
       let proposal = proposals[voteRecord.account.proposal.toString()];
-
-      if (!proposal) {
+      if (!proposal || proposal.account.hasVoteTimeEnded(governance.account)) {
         continue;
       }
-
       if (voteRecord.account.vote) {
         const recastIxs: TransactionInstruction[] = [];
 
