@@ -538,6 +538,8 @@ describe("airdrop-staking", () => {
       accounts: {
         owner: staker.publicKey,
         stakeAccount: stakerAccount,
+        voterWeightRecord: stakerVoterWeight,
+        maxVoterWeightRecord: stakeAcc.maxVoterWeightRecord,
         stakePool: stakeAcc.stakePool,
         stakePoolVault: stakeAcc.stakePoolVault,
         unbondingAccount: stakerUnbond,
