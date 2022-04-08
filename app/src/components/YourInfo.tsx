@@ -46,6 +46,7 @@ export const YourInfo = () => {
     realm,
     tokenOwnerRecord,
     stakePool,
+    stakeAccount,
     programs
   } = useProposalContext();
 
@@ -76,11 +77,12 @@ export const YourInfo = () => {
   };
 
   const handleUnstake = () => {
-    if (!jetMint || !inputAmount || !tokenOwnerRecord) {
+    if (!jetMint || !inputAmount || !stakeAccount) {
       return;
     }
     const balance =
-      bnToNumber(tokenOwnerRecord.account.governingTokenDepositAmount) / 10 ** jetMint.decimals;
+      bnToNumber(sharesToTokens(stakeAccount.voterWeightRecord.voterWeight, stakePool).tokens) /
+      10 ** jetMint.decimals;
     const stakable = Math.min(inputAmount, balance);
     setInputAmount(stakable);
     if (stakable === 0) {

@@ -67,7 +67,6 @@ interface ProposalContextState {
 
   jetAccount?: AssociatedToken;
   jetMint?: JetMint;
-  voteMint?: JetMint;
 
   realm?: ProgramAccount<Realm>;
   governance?: ProgramAccount<Governance>;

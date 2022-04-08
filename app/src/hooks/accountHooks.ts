@@ -12,7 +12,8 @@ import {
   pubkeyFilter,
   Proposal,
   Governance,
-  getProposalsByGovernance
+  getProposalsByGovernance,
+  getVoteRecordAddress
 } from "@solana/spl-governance";
 
 export async function getUnrelinquishedVoteRecords(
@@ -163,4 +164,14 @@ export function useGovernanceAccountByFilter<TAccount extends GovernanceAccount>
   throw new Error(
     `Filters ${filters} returned multiple accounts ${accounts} for ${accountClass.name} while a single result was expected`
   );
+}
+
+export async function getVoteRecord(
+  connection: Connection,
+  programId: PublicKey,
+  proposal: PublicKey,
+  tokenOwnerRecord: PublicKey
+) {
+  const address = await getVoteRecordAddress(programId, proposal, tokenOwnerRecord);
+  return await getGovernanceAccount(connection, address, VoteRecord);
 }
