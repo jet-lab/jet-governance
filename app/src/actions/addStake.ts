@@ -1,9 +1,9 @@
 import { AssociatedToken, JetMint, StakeAccount, StakePool } from "@jet-lab/jet-engine";
 import { BN } from "@project-serum/anchor";
-import { RpcContext } from "@solana/spl-governance";
+import { RpcContext, withCreateTokenOwnerRecord } from "@solana/spl-governance";
 import { Keypair, PublicKey, TransactionInstruction } from "@solana/web3.js";
 import { sendTransactionWithNotifications } from "../tools/transactions";
-import { fromLamports } from "../utils";
+import { fromLamports, GOVERNANCE_PROGRAM_ID } from "../utils";
 
 export const addStake = async (
   { connection, wallet }: RpcContext,
@@ -26,6 +26,14 @@ export const addStake = async (
     owner
   );
   await StakeAccount.withAddStake(instructions, stakePool, owner, owner, tokenAccount, amount);
+  await withCreateTokenOwnerRecord(
+    instructions,
+    GOVERNANCE_PROGRAM_ID,
+    stakePool.stakePool.governanceRealm,
+    owner,
+    stakePool.stakePool.tokenMint,
+    owner
+  );
 
   const notificationTitle = `${fromLamports(amount, jetMint)} JET staked`;
 
