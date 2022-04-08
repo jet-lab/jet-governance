@@ -46,6 +46,7 @@ export const VoteModal = ({
   const { programId, walletPubkey } = useRpcContext();
   const {
     stakePool,
+    stakeAccount,
     stakeBalance: { stakedJet },
     jetMint,
     programs,
@@ -77,7 +78,7 @@ export const VoteModal = ({
       throw new Error("Not a yes or no vote.");
     }
 
-    if (programs && stakePool) {
+    if (programs && stakePool && stakeAccount) {
       const tokenOwnerRecordPubkey = await getTokenOwnerRecordAddress(
         programId,
         realm.pubkey,
@@ -93,8 +94,9 @@ export const VoteModal = ({
         yesNoVote,
         programs.stake,
         stakePool,
+        stakeAccount,
         undefined,
-        voteRecord ? voteRecord!.pubkey : undefined
+        voteRecord ? voteRecord.pubkey : undefined
       )
         .then(() => {
           onClose();

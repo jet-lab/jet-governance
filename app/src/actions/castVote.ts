@@ -24,6 +24,7 @@ export const castVote = async (
   yesNoVote: YesNoVote,
   stakeProgram: Program<StakeIdl>,
   stakePool: StakePool,
+  stakeAccount: StakeAccount,
   message?: ChatMessageBody,
   voteRecord?: PublicKey
 ) => {
@@ -78,7 +79,9 @@ export const castVote = async (
     governanceAuthority,
     proposal.account.governingTokenMint,
     Vote.fromYesNoVote(yesNoVote),
-    payer
+    payer,
+    stakeAccount.addresses.voterWeightRecord,
+    stakePool.stakePool.maxVoterWeightRecord
   );
 
   if (message) {
