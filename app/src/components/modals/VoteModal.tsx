@@ -15,7 +15,7 @@ import { castVote } from "../../actions/castVote";
 import { useProposalContext } from "../../contexts";
 import { useCountdown, VoteOption, useRpcContext } from "../../hooks";
 import { getPubkeyIndex } from "../../models/PUBKEYS_INDEX";
-import { isSignTransactionError, sharesToTokens, toTokens } from "../../utils";
+import { isSignTransactionError, JET_TOKEN_MINT, sharesToTokens, toTokens } from "../../utils";
 
 enum Steps {
   Confirm = 0,
@@ -46,6 +46,7 @@ export const VoteModal = ({
   const { programId, walletPubkey } = useRpcContext();
   const {
     stakePool,
+    stakeAccount,
     stakeBalance: { stakedJet },
     jetMint,
     programs,
@@ -77,11 +78,11 @@ export const VoteModal = ({
       throw new Error("Not a yes or no vote.");
     }
 
-    if (programs && stakePool) {
+    if (programs && stakePool && stakeAccount) {
       const tokenOwnerRecordPubkey = await getTokenOwnerRecordAddress(
         programId,
         realm.pubkey,
-        stakePool.addresses.stakeVoteMint,
+        JET_TOKEN_MINT,
         walletPubkey
       );
 
@@ -93,8 +94,8 @@ export const VoteModal = ({
         yesNoVote,
         programs.stake,
         stakePool,
-        undefined,
-        voteRecord ? voteRecord!.pubkey : undefined
+        stakeAccount,
+        undefined
       )
         .then(() => {
           onClose();

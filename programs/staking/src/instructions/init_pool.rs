@@ -5,6 +5,7 @@ use anchor_spl::token::TokenAccount;
 use anchor_spl::token::{Mint, Token};
 
 use crate::events::StakePoolCreated;
+use crate::seeds;
 use crate::spl_addin::MaxVoterWeightRecord;
 use crate::state::*;
 
@@ -48,7 +49,7 @@ pub struct InitPool<'info> {
     #[account(init,
               seeds = [
                   config.governance_realm.as_ref(),
-                  b"max-vote-weight-record".as_ref()
+                  seeds::MAX_VOTE_WEIGHT_RECORD,
               ],
               bump,
               payer = payer,
@@ -59,7 +60,7 @@ pub struct InitPool<'info> {
     #[account(init,
               seeds = [
                   seed.as_bytes(),
-                  b"collateral-mint".as_ref()
+                  seeds::COLLATERAL_MINT,
               ],
               bump,
               payer = payer,
@@ -71,7 +72,7 @@ pub struct InitPool<'info> {
     #[account(init,
               seeds = [
                   seed.as_bytes(),
-                  b"vault".as_ref()
+                  seeds::VAULT,
               ],
               bump,
               payer = payer,
@@ -110,6 +111,7 @@ pub fn init_pool_handler(ctx: Context<InitPool>, seed: String, config: PoolConfi
         seed,
         token_mint: stake_pool.token_mint,
         config,
+        max_voter_weight: max_voter_weight_record.max_voter_weight,
     });
 
     Ok(())

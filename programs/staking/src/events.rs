@@ -12,6 +12,8 @@ pub struct StakePoolCreated {
     pub seed: String,
     pub token_mint: Pubkey,
     pub config: PoolConfig,
+
+    pub max_voter_weight: u64,
 }
 
 #[event]
@@ -32,6 +34,9 @@ pub struct StakeAdded {
 
     pub pool_note: StakePoolNote,
     pub account_note: StakeAccountNote,
+
+    pub voter_weight: u64,
+    pub max_voter_weight: u64,
 }
 
 #[event]
@@ -46,6 +51,9 @@ pub struct StakeUnbonded {
 
     pub pool_note: StakePoolNote,
     pub account_note: StakeAccountNote,
+
+    pub voter_weight: u64,
+    pub max_voter_weight: u64,
 }
 
 #[event]
@@ -80,16 +88,6 @@ pub struct BondedWithdrawn {
     pub withdrawn_amount: u64,
 
     pub pool_note: StakePoolNote,
-}
-
-#[event]
-pub struct CreatedVoterWeightRecord {
-    pub owner: Pubkey,
-
-    pub weight: u64,
-    pub weight_expiry: Option<u64>,
-
-    pub account_note: StakeAccountNote,
 }
 
 #[event]

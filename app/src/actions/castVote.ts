@@ -1,4 +1,4 @@
-import { AssociatedToken, StakeAccount, StakeIdl, StakePool } from "@jet-lab/jet-engine";
+import { StakeAccount, StakeIdl, StakePool } from "@jet-lab/jet-engine";
 import { Program, Provider } from "@project-serum/anchor";
 import {
   ChatMessageBody,
@@ -8,13 +8,16 @@ import {
   Realm,
   RpcContext,
   Vote,
+  VoteRecord,
   withCastVote,
   withPostChatMessage,
   withRelinquishVote,
   YesNoVote
 } from "@solana/spl-governance";
 import { PublicKey, Transaction, TransactionInstruction, Keypair } from "@solana/web3.js";
+import { getVoteRecord } from "../hooks";
 import { sendAllTransactionsWithNotifications } from "../tools/transactions";
+import { GOVERNANCE_PROGRAM_ID } from "../utils";
 
 export const castVote = async (
   { connection, wallet, programId, programVersion, walletPubkey }: RpcContext,
@@ -24,8 +27,8 @@ export const castVote = async (
   yesNoVote: YesNoVote,
   stakeProgram: Program<StakeIdl>,
   stakePool: StakePool,
-  message?: ChatMessageBody,
-  voteRecord?: PublicKey
+  stakeAccount: StakeAccount,
+  message?: ChatMessageBody
 ) => {
   let relinquishVoteIx: TransactionInstruction[] = [];
   let signers: Keypair[] = [];
@@ -38,6 +41,15 @@ export const castVote = async (
 
   // Withdraw existing vote before casting new vote
   // Then sign both transactions at once
+  let voteRecord: ProgramAccount<VoteRecord> | undefined;
+  try {
+    voteRecord = await getVoteRecord(
+      connection,
+      GOVERNANCE_PROGRAM_ID,
+      proposal.pubkey,
+      tokenOwnerRecordPubkey
+    );
+  } catch {}
   if (voteRecord) {
     await withRelinquishVote(
       relinquishVoteIx,
@@ -46,7 +58,7 @@ export const castVote = async (
       proposal.pubkey,
       tokenOwnerRecordPubkey,
       proposal.account.governingTokenMint,
-      voteRecord,
+      voteRecord.pubkey,
       governanceAuthority,
       payer
     );
@@ -58,14 +70,6 @@ export const castVote = async (
     });
   }
 
-  const voteMint = stakePool.addresses.stakeVoteMint;
-
-  const voterTokenAccount = await AssociatedToken.withCreate(
-    castVoteIx,
-    provider,
-    walletPubkey,
-    voteMint
-  );
   await StakeAccount.withCreate(
     castVoteIx,
     stakeProgram,
@@ -73,9 +77,6 @@ export const castVote = async (
     walletPubkey,
     walletPubkey
   );
-  await StakeAccount.withMintVotes(castVoteIx, stakePool, realm, walletPubkey, voterTokenAccount);
-
-  await AssociatedToken.withClose(castVoteIx, walletPubkey, voteMint, walletPubkey);
 
   await withCastVote(
     castVoteIx,
@@ -89,7 +90,9 @@ export const castVote = async (
     governanceAuthority,
     proposal.account.governingTokenMint,
     Vote.fromYesNoVote(yesNoVote),
-    payer
+    payer,
+    stakeAccount.addresses.voterWeightRecord,
+    stakePool.stakePool.maxVoterWeightRecord
   );
 
   if (message) {

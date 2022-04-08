@@ -26,11 +26,10 @@ export const UnstakeModal = ({
 
     stakePool,
     stakeAccount,
-    voteMint,
+    jetMint,
 
     realm,
     governance,
-    tokenOwnerRecord,
     walletVoteRecords,
 
     programs
@@ -60,23 +59,14 @@ export const UnstakeModal = ({
       !stakeAccount ||
       !realm ||
       !governance ||
-      !tokenOwnerRecord ||
-      !voteMint
+      !jetMint
     ) {
       return;
     }
 
-    const unstakeAmount = new BN(amount * 10 ** voteMint.decimals);
+    const unstakeAmount = new BN(amount * 10 ** jetMint.decimals);
     setLoading(true);
-    rescindAndUnstake(
-      rpcContext,
-      stakePool,
-      stakeAccount,
-      realm,
-      governance,
-      tokenOwnerRecord,
-      unstakeAmount
-    )
+    rescindAndUnstake(rpcContext, stakePool, stakeAccount, governance, unstakeAmount)
       .then(() => {
         setLoading(false);
         setDisplayUnbondDate();

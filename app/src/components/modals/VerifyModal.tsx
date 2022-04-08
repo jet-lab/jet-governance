@@ -270,7 +270,7 @@ export const VerifyModal = () => {
         setConfirmCodeLoading(false);
         if (res.status === 204) {
           // The verification was successful and transaction was confirmed.
-          setCurrent(Steps.AccessGranted1);
+          setCurrent(Steps.AgreeToTerms);
         } else if (res.status === 400) {
           // Payload validation failed.
           console.log("Payload validation failed");
@@ -495,7 +495,7 @@ export const VerifyModal = () => {
             <a
               href="https://www.jetprotocol.io/legal/terms-of-service"
               target="_blank"
-              className="gradient-text-btn"
+              className="link-btn"
               rel="noopener noreferrer"
             >
               Terms of Service
@@ -504,7 +504,7 @@ export const VerifyModal = () => {
             <a
               href="https://www.jetprotocol.io/legal/privacy-policy"
               target="_blank"
-              className="gradient-text-btn"
+              className="link-btn"
               rel="noopener noreferrer"
             >
               Privacy Policy
@@ -513,7 +513,7 @@ export const VerifyModal = () => {
             <a
               href="https://www.jetprotocol.io/legal/cookie-policy"
               target="_blank"
-              className="gradient-text-btn"
+              className="link-btn"
               rel="noopener noreferrer"
             >
               Cookie Policy

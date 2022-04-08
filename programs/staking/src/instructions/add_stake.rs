@@ -72,9 +72,12 @@ pub fn add_stake_handler(ctx: Context<AddStake>, amount: Option<u64>) -> Result<
     stake_account.update_voter_weight_record(voter_weight);
     stake_pool.update_max_vote_weight_record(max_weight);
 
-    token::transfer(ctx.accounts.transfer_context(), full_amount.token_amount)?;
     let stake_pool = &ctx.accounts.stake_pool;
     let stake_account = &ctx.accounts.stake_account;
+    let voter_weight = &ctx.accounts.voter_weight_record;
+    let max_weight = &ctx.accounts.max_voter_weight_record;
+
+    token::transfer(ctx.accounts.transfer_context(), full_amount.token_amount)?;
 
     emit!(StakeAdded {
         stake_pool: stake_pool.key(),
@@ -86,6 +89,9 @@ pub fn add_stake_handler(ctx: Context<AddStake>, amount: Option<u64>) -> Result<
 
         pool_note: stake_pool.note(),
         account_note: stake_account.note(),
+
+        voter_weight: voter_weight.voter_weight,
+        max_voter_weight: max_weight.max_voter_weight,
     });
 
     Ok(())

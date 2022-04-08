@@ -8,6 +8,19 @@ pub mod state;
 
 pub use instructions::*;
 
+pub mod seeds {
+    use super::constant;
+
+    #[constant]
+    pub const AWARD: &[u8] = b"award";
+
+    #[constant]
+    pub const DISTRIBUTION: &[u8] = b"distribution";
+
+    #[constant]
+    pub const VAULT: &[u8] = b"vault";
+}
+
 #[program]
 pub mod jet_rewards {
     use super::*;
