@@ -16,17 +16,17 @@ export const UnbondingLog = ({ unbondingAccount }: { unbondingAccount: Unbonding
   const [isUnbonded, setIsUnbonded] = useState(false);
   const { getAccountExplorerUrl } = useBlockExplorer();
 
-  useEffect(() => {
-    const unbondedState = UnbondingAccount.isUnbonded(unbondingAccount);
-    return setIsUnbonded(unbondedState);
-  }, [setIsUnbonded, unbondingAccount]);
-
   const currentTime = useCurrentTime();
   const oneDayCountdown =
     !isUnbonded &&
     bnToNumber(unbondingAccount.unbondingAccount.unbondedAt) * 1000 - currentTime < ONE_DAY;
 
   const expired = bnToNumber(unbondingAccount.unbondingAccount.unbondedAt) * 1000 <= currentTime;
+
+  useEffect(() => {
+    const unbondedState = UnbondingAccount.isUnbonded(unbondingAccount);
+    return setIsUnbonded(unbondedState);
+  }, [setIsUnbonded, unbondingAccount, currentTime]);
 
   const getUnbondingAccountExplorerUrl = () => {
     unbondingAccount &&
@@ -59,7 +59,7 @@ export const UnbondingLog = ({ unbondingAccount }: { unbondingAccount: Unbonding
 
       <td className="action italics-text">
         <i onClick={getUnbondingAccountExplorerUrl}>
-          Unstake complete {" "}
+          Unstake complete{" "}
           {oneDayCountdown && !expired
             ? `in ${getRemainingTime(
                 currentTime,
@@ -67,7 +67,7 @@ export const UnbondingLog = ({ unbondingAccount }: { unbondingAccount: Unbonding
               )}`
             : `on 
             ${dateFromUnixTimestamp(unbondingAccount.unbondingAccount.unbondedAt)}`}
-        </i>{" "}
+        </i>
         <Button
           size="small"
           type={isUnbonded ? undefined : "dashed"}
