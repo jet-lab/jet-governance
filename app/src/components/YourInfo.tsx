@@ -67,7 +67,6 @@ export const YourInfo = () => {
       return;
     }
     const balance = fromLamports(jetAccount.info.amount, jetMint);
-    console.log(balance, inputAmount);
     const stakable = Math.min(inputAmount, balance);
     setInputAmount(stakable);
     if (stakable === 0) {
