@@ -56,18 +56,6 @@ pub struct InitPool<'info> {
               space = 8 + std::mem::size_of::<MaxVoterWeightRecord>())]
     pub max_voter_weight_record: Account<'info, MaxVoterWeightRecord>,
 
-    /// The mint to issue derived collateral tokens
-    #[account(init,
-              seeds = [
-                  seed.as_bytes(),
-                  seeds::COLLATERAL_MINT,
-              ],
-              bump,
-              payer = payer,
-              mint::decimals = token_mint.decimals,
-              mint::authority = stake_pool)]
-    pub stake_collateral_mint: Account<'info, Mint>,
-
     /// The token account that stores the tokens staked into the pool.
     #[account(init,
               seeds = [
