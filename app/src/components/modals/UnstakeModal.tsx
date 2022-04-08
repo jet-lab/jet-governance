@@ -30,6 +30,7 @@ export const UnstakeModal = ({
 
     realm,
     governance,
+    tokenOwnerRecord,
     walletVoteRecords,
 
     programs
@@ -66,7 +67,7 @@ export const UnstakeModal = ({
 
     const unstakeAmount = new BN(amount * 10 ** jetMint.decimals);
     setLoading(true);
-    rescindAndUnstake(rpcContext, stakePool, stakeAccount, governance, unstakeAmount)
+    rescindAndUnstake(rpcContext, stakePool, stakeAccount, governance, unstakeAmount, programs.stake)
       .then(() => {
         setLoading(false);
         setDisplayUnbondDate();

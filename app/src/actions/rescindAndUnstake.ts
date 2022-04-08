@@ -1,5 +1,5 @@
-import { StakeAccount, StakePool, UnbondingAccount } from "@jet-lab/jet-engine";
-import { BN, Provider } from "@project-serum/anchor";
+import { StakeAccount, StakeIdl, StakePool, UnbondingAccount } from "@jet-lab/jet-engine";
+import { BN, Program, Provider } from "@project-serum/anchor";
 import {
   getTokenOwnerRecordAddress,
   getTokenOwnerRecordForRealm,
@@ -7,6 +7,7 @@ import {
   ProgramAccount,
   RpcContext,
   TokenOwnerRecord,
+  withCastVote,
   withCreateTokenOwnerRecord,
   withRelinquishVote
 } from "@solana/spl-governance";
@@ -16,15 +17,17 @@ import { sendAllTransactionsWithNotifications } from "../tools/transactions";
 import { GOVERNANCE_PROGRAM_ID } from "../utils";
 
 export const rescindAndUnstake = async (
-  { programId, wallet, walletPubkey, connection }: RpcContext,
+  { programId, wallet, walletPubkey, connection, programVersion }: RpcContext,
   stakePool: StakePool,
   stakeAccount: StakeAccount,
   governance: ProgramAccount<Governance>,
-  amount: BN
+  amount: BN,
+  stakeProgram: Program<StakeIdl>
 ) => {
   const unbondingSeed = UnbondingAccount.randomSeed();
   const allTxs = [];
   const provider = new Provider(connection, wallet as any, { skipPreflight: true });
+  const proposals = await getParsedProposalsByGovernance(connection, programId, governance);
 
   // Load the token owner record
   const tokenOwnerRecordAddress = await getTokenOwnerRecordAddress(
@@ -70,8 +73,6 @@ export const rescindAndUnstake = async (
       tokenOwnerRecord.account.governingTokenOwner
     );
 
-    const proposals = await getParsedProposalsByGovernance(connection, programId, governance);
-
     for (const voteRecord of Object.values(voteRecords)) {
       let proposal = proposals[voteRecord.account.proposal.toString()];
 
@@ -114,6 +115,59 @@ export const rescindAndUnstake = async (
     tx: new Transaction().add(...unbondIxs),
     signers: []
   });
+
+    // If there is still remaining JET and they have previously cast votes,
+  // Re-cast those votes
+  // Does not check for relinquished votes
+
+  if (tokenOwnerRecord) {
+    const voteRecords = await getUnrelinquishedVoteRecords(
+      connection,
+      programId,
+      tokenOwnerRecord.account.governingTokenOwner
+    );
+
+    for (const voteRecord of Object.values(voteRecords)) {
+      console.log("recast votes", voteRecord.account);
+      let proposal = proposals[voteRecord.account.proposal.toString()];
+
+      if (!proposal) {
+        continue;
+      }
+
+      if (voteRecord.account.vote) {
+        const recastIxs: TransactionInstruction[] = [];
+
+        await StakeAccount.withCreate(
+          recastIxs,
+          stakeProgram,
+          stakePool.addresses.stakePool,
+          walletPubkey,
+          walletPubkey
+        );
+        await withCastVote(
+          recastIxs,
+          programId,
+          programVersion,
+          stakePool.stakePool.governanceRealm,
+          proposal.account.governance,
+          proposal.pubkey,
+          proposal.account.tokenOwnerRecord,
+          tokenOwnerRecord.pubkey,
+          walletPubkey,
+          proposal.account.governingTokenMint,
+          voteRecord.account.vote,
+          walletPubkey,
+          stakeAccount.addresses.voterWeightRecord,
+          stakePool.stakePool.maxVoterWeightRecord
+        );
+        allTxs.push({
+          tx: new Transaction().add(...recastIxs),
+          signers: []
+        });
+      }
+    }
+  }
 
   await sendAllTransactionsWithNotifications(provider, allTxs, "JET has begun unbonding");
 };
