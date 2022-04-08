@@ -47,7 +47,6 @@ interface StakePoolAccounts {
   stakePool: PublicKey;
   stakePoolVault: PublicKey;
   maxVoterWeightRecord: PublicKey;
-  stakeCollateralMint: PublicKey;
 }
 
 async function deriveStakePoolAccounts(seed: string, realm: PublicKey): Promise<StakePoolAccounts> {
@@ -63,15 +62,10 @@ async function deriveStakePoolAccounts(seed: string, realm: PublicKey): Promise<
     [realm.toBuffer(), Buffer.from("max-vote-weight-record")],
     StakingProgram.programId
   );
-  let [stakeCollateralMint] = await PublicKey.findProgramAddress(
-    [Buffer.from(seed), Buffer.from("collateral-mint")],
-    StakingProgram.programId
-  );
 
   return {
     stakePool,
     maxVoterWeightRecord,
-    stakeCollateralMint,
     stakePoolVault
   };
 }
@@ -145,7 +139,6 @@ describe("airdrop-staking", () => {
         tokenMint: testToken.publicKey,
         stakePool: stakeAcc.stakePool,
         maxVoterWeightRecord: stakeAcc.maxVoterWeightRecord,
-        stakeCollateralMint: stakeAcc.stakeCollateralMint,
         stakePoolVault: stakeAcc.stakePoolVault,
         tokenProgram: TOKEN_PROGRAM_ID,
         systemProgram: SystemProgram.programId,

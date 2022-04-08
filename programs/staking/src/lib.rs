@@ -15,9 +15,6 @@ pub mod seeds {
     use super::constant;
 
     #[constant]
-    pub const COLLATERAL_MINT: &[u8] = b"collateral-mint";
-
-    #[constant]
     pub const MAX_VOTE_WEIGHT_RECORD: &[u8] = b"max-vote-weight-record";
 
     #[constant]

@@ -42,9 +42,6 @@ pub struct StakePool {
     /// The governance realm that this pool has voting power in.
     pub governance_realm: Pubkey,
 
-    /// The mint for the derived collateral token
-    pub stake_collateral_mint: Pubkey,
-
     /// Length of the unbonding period
     pub unbond_period: i64,
 
