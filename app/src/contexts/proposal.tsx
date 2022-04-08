@@ -288,8 +288,10 @@ export function ProposalProvider({ children = undefined as any }) {
   );
 
   function refresh() {
-    queryClient.invalidateQueries("stakePool");
-    queryClient.invalidateQueries("wallet");
+    setTimeout(() => {
+      queryClient.invalidateQueries("stakePool");
+      queryClient.invalidateQueries("wallet");
+    }, 2000);
   }
 
   return (
