@@ -42,11 +42,11 @@ export function shortenAddress(address: PublicKey | string, chars = 4): string {
   return `${address.slice(0, chars)}...${address.slice(-chars)}`;
 }
 
-export function fromLamports(account?: number | BN, mint?: JetMint): number {
-  if (!account || !mint) {
+export function fromLamports(amount: number | BN | undefined, mint: JetMint | undefined): number {
+  if (!amount || !mint) {
     return 0;
   }
-  const fromAmount = typeof account === "number" ? new BN(account) : account;
+  const fromAmount = typeof amount === "number" ? new BN(amount) : amount;
   return bnToNumber(fromAmount) / 10 ** mint.decimals;
 }
 

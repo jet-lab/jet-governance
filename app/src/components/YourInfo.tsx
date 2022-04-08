@@ -63,11 +63,14 @@ export const YourInfo = () => {
     };
   }, [stakingYield, jetMint]);
   const handleStake = () => {
-    if (!inputAmount) {
+    if (!inputAmount || !jetAccount) {
       return;
     }
-    setInputAmount(inputAmount);
-    if (inputAmount === 0) {
+    const balance = fromLamports(jetAccount.info.amount, jetMint);
+    console.log(balance, inputAmount);
+    const stakable = Math.min(inputAmount, balance);
+    setInputAmount(stakable);
+    if (stakable === 0) {
       return;
     }
     setStakeModalVisible(true);
