@@ -1,6 +1,5 @@
 import { InfoCircleFilled, MinusOutlined, PlusOutlined } from "@ant-design/icons";
-import { bnToNumber } from "@jet-lab/jet-engine";
-import { Typography, Tooltip, Divider, Button, notification } from "antd";
+import { Button, Divider, notification, Tooltip, Typography } from "antd";
 import { StakeInput } from "./Input";
 import { useEffect, useMemo, useState } from "react";
 import { jetFaucet } from "../actions/jetFaucet";
@@ -14,21 +13,21 @@ import {
   JET_FAUCET_DEVNET,
   JET_TOKEN_MINT,
   sharesToTokens,
-  toTokens
+  toTokens,
+  toTokensPrecisionNumber
 } from "../utils";
 import { StakeModal } from "./modals/StakeModal";
 import { UnstakeModal } from "./modals/UnstakeModal";
-import { WithdrawAllModal } from "./modals/WithdrawAllModal";
+import { WithdrawModal } from "./modals/WithdrawModal";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { useHistory, useLocation } from "react-router";
 import "./YourInfo.less";
 import { StakedJetBalance } from "./Dashboard/StakedJetBalance";
-import BN from "bn.js";
 
 export const YourInfo = () => {
   const [stakeModalVisible, setStakeModalVisible] = useState(false);
   const [unstakeModalVisible, setUnstakeModalVisible] = useState(false);
-  const [withdrawAllModalVisible, setWithdrawAllModalVisible] = useState(false);
+  const [withdrawModalVisible, setWithdrawModalVisible] = useState(false);
   const [showRewards, setShowRewards] = useState(false);
   const [inputAmount, setInputAmount] = useState<number | undefined>();
   const { connected } = useWallet();
@@ -47,6 +46,7 @@ export const YourInfo = () => {
     realm,
     tokenOwnerRecord,
     stakePool,
+    stakeAccount,
     programs
   } = useProposalContext();
 
@@ -62,12 +62,11 @@ export const YourInfo = () => {
         stakingYield?.perYear !== undefined ? toTokens(stakingYield.perYear, jetMint) : undefined
     };
   }, [stakingYield, jetMint]);
-
   const handleStake = () => {
-    if (!jetMint || !inputAmount || !jetAccount) {
+    if (!inputAmount || !jetAccount) {
       return;
     }
-    const balance = bnToNumber(jetAccount.info.amount) / 10 ** jetMint.decimals;
+    const balance = fromLamports(jetAccount.info.amount, jetMint);
     const stakable = Math.min(inputAmount, balance);
     setInputAmount(stakable);
     if (stakable === 0) {
@@ -75,13 +74,14 @@ export const YourInfo = () => {
     }
     setStakeModalVisible(true);
   };
-
   const handleUnstake = () => {
-    if (!jetMint || !inputAmount || !tokenOwnerRecord) {
+    if (!jetMint || !inputAmount || !stakeAccount) {
       return;
     }
-    const balance =
-      bnToNumber(tokenOwnerRecord.account.governingTokenDepositAmount) / 10 ** jetMint.decimals;
+    const balance = fromLamports(
+      sharesToTokens(stakeAccount.voterWeightRecord.voterWeight, stakePool).tokens,
+      jetMint
+    );
     const stakable = Math.min(inputAmount, balance);
     setInputAmount(stakable);
     if (stakable === 0) {
@@ -89,9 +89,8 @@ export const YourInfo = () => {
     }
     setUnstakeModalVisible(true);
   };
-
   const handleWithdrawUnstaked = () => {
-    setWithdrawAllModalVisible(true);
+    setWithdrawModalVisible(true);
   };
 
   /**
@@ -150,17 +149,27 @@ export const YourInfo = () => {
 
   const isOwnPage = Boolean(useLocation().pathname.includes("your-info"));
   const { Title, Text } = Typography;
-  const walletBalance = jetAccount ? toTokens(jetAccount.info.amount, jetMint) : 0;
+  const precisionOnAmounts = 1;
+  const walletBalanceDisplay =
+    jetAccount && jetMint
+      ? toTokensPrecisionNumber(jetAccount.info.amount, jetMint, precisionOnAmounts)
+      : 0;
   const preFillJetWithBalance = () => {
-    setInputAmount(jetAccount ? fromLamports(jetAccount.info.amount, jetMint) : 0);
+    setInputAmount(walletBalanceDisplay);
   };
+  const sharesToTokenValueDisplay =
+    stakedJet && jetMint
+      ? toTokensPrecisionNumber(
+          sharesToTokens(stakedJet, stakePool).tokens,
+          jetMint,
+          precisionOnAmounts
+        )
+      : 0;
   const preFillJetWithStaked = () => {
-    setInputAmount(
-      stakedJet ? fromLamports(sharesToTokens(stakedJet, stakePool).tokens, jetMint) : 0
-    );
+    setInputAmount(sharesToTokenValueDisplay);
   };
   const canWithdraw = useWithdrawableCount(unbondingAccounts) > 0;
-  
+
   return (
     <div className={`your-info ${isOwnPage ? "view" : ""}`}>
       <Typography>
@@ -179,7 +188,7 @@ export const YourInfo = () => {
             </Tooltip>
           </Text>
           <StakedJetBalance
-            stakedJet={toTokens(sharesToTokens(stakedJet, stakePool).tokens, jetMint)}
+            stakedJet={sharesToTokenValueDisplay.toString()}
             onClick={preFillJetWithStaked}
           />
           <div className="wallet-overview flex justify-between column">
@@ -224,7 +233,7 @@ export const YourInfo = () => {
                 onClick={preFillJetWithBalance}
               >
                 <Text>Wallet Balance</Text>
-                <Text className="text-btn">{walletBalance}</Text>
+                <Text className="text-btn">{walletBalanceDisplay}</Text>
               </div>
             )}
             {connected && (
@@ -239,12 +248,12 @@ export const YourInfo = () => {
                       <InfoCircleFilled />
                     </Tooltip>
                   </Text>
-                  <Text>{toTokens(bnToNumber(unbondingQueue), jetMint)}</Text>
+                  <Text>{fromLamports(unbondingQueue, jetMint)}</Text>
                 </div>
                 <div className="flex justify-between info-legend-item">
                   <Text className="gradient-text bold">Available for Withdrawal</Text>
                   <Text className="gradient-text bold">
-                    {toTokens(bnToNumber(unbondingComplete), jetMint)}
+                    {fromLamports(unbondingComplete, jetMint)}
                   </Text>
                 </div>
               </>
@@ -272,9 +281,13 @@ export const YourInfo = () => {
             </Button>
             {stakeModalVisible && (
               <StakeModal
-                onClose={() => setStakeModalVisible(false)}
+                onClose={() => {
+                  setInputAmount(0);
+                  setStakeModalVisible(false);
+                }}
                 realm={realm}
                 amount={inputAmount ?? 0}
+                precisionOnDisplayAmounts={precisionOnAmounts}
               />
             )}
             <div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
@@ -312,8 +325,8 @@ export const YourInfo = () => {
                 Withdraw balance
               </Button>
             )}
-            {withdrawAllModalVisible && (
-              <WithdrawAllModal onClose={() => setWithdrawAllModalVisible(false)} />
+            {withdrawModalVisible && (
+              <WithdrawModal onClose={() => setWithdrawModalVisible(false)} />
             )}
           </div>
           {inDevelopment && (

@@ -1,4 +1,4 @@
-import { useProposalContext } from "./../contexts/proposal";
+import { ProposalFilter, useProposalContext } from "./../contexts";
 import { Airdrop, bnToNumber, StakePool, UnbondingAccount } from "@jet-lab/jet-engine";
 import {
   Governance,
@@ -15,7 +15,6 @@ import { PublicKey } from "@solana/web3.js";
 import BN from "bn.js";
 import { useEffect, useMemo, useState } from "react";
 import { ZERO } from "../constants";
-import { ProposalFilter } from "../contexts/proposal";
 import { dateToString, getRemainingTime, toTokens } from "../utils";
 import { useGovernanceAccounts } from "./accountHooks";
 import { useRpcContext } from "./useRpcContext";
@@ -420,21 +419,4 @@ export function useWithdrawVotesAbility(
     tokenOwnerRecord?.account.outstandingProposalCount === 0 ||
     tokenOwnerRecord?.account.outstandingProposalCount === undefined
   );
-}
-
-export function useStakingCompatibleWithRealm(
-  stakePool: StakePool | undefined,
-  realm: ProgramAccount<Realm> | undefined
-) {
-  useMemo(() => {
-    if (!stakePool || !realm) {
-      return;
-    }
-
-    if (!stakePool.stakePool.stakeVoteMint.equals(realm.account.communityMint)) {
-      console.error(
-        `Stake Pool vote mint ${stakePool.stakePool.stakeVoteMint.toBase58()} does not equal realm community mint ${realm.account.communityMint.toBase58()}. Some features will have problems.`
-      );
-    }
-  }, [stakePool, realm]);
 }

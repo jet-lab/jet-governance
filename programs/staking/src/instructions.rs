@@ -7,9 +7,6 @@ mod unbond_stake;
 mod withdraw_bonded;
 mod withdraw_unbonded;
 
-mod burn_votes;
-mod mint_votes;
-
 mod close_stake_account;
 
 pub use init_pool::*;
@@ -20,8 +17,5 @@ pub use cancel_unbond::*;
 pub use unbond_stake::*;
 pub use withdraw_bonded::*;
 pub use withdraw_unbonded::*;
-
-pub use burn_votes::*;
-pub use mint_votes::*;
 
 pub use close_stake_account::*;

@@ -5,7 +5,7 @@ import { useWallet } from "@solana/wallet-adapter-react";
 import bs58 from "bs58";
 import { dateFromUnixTimestamp, JET_TOKEN_MINT, shortenAddress } from "../utils";
 import { useRpcContext } from "../hooks";
-import { BN } from "@project-serum/anchor";
+import BN from "bn.js";
 
 // Transaction logs context
 export interface TransactionLog {

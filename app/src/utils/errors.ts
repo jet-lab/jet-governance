@@ -1,5 +1,6 @@
 import { Idl } from "@project-serum/anchor";
 import { TransactionError } from "@solana/web3.js";
+
 export class SendTransactionError extends Error {
   txError: TransactionError | undefined;
   txId: string;

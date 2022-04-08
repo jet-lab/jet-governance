@@ -1,28 +1,20 @@
 import {
   Airdrop,
+  AssociatedToken,
   Distribution,
+  DistributionYield,
+  JetMint,
   RewardsClient,
+  RewardsIdl,
   StakeAccount,
   StakeBalance,
   StakeClient,
   StakeIdl,
   StakePool,
-  UnbondingAccount
+  UnbondingAccount,
+  UnbondingAmount
 } from "@jet-lab/jet-engine";
 import { BN, Program } from "@project-serum/anchor";
-import React, { useState, useContext, useMemo } from "react";
-import { JET_REALM, JET_GOVERNANCE } from "../utils";
-import {
-  useAirdropsByWallet,
-  useAvailableAirdrop,
-  useClaimsCount,
-  useProposalFilters,
-  useStakingCompatibleWithRealm as useStakePoolCompatibleWithRealm
-} from "../hooks/proposalHooks";
-import { useWallet } from "@solana/wallet-adapter-react";
-import { AssociatedToken, JetMint } from "@jet-lab/jet-engine/lib/common";
-import { useConnection } from "./connection";
-import { useProvider } from "../hooks/apiHooks";
 import {
   getGovernanceAccount,
   getProposalsByGovernance,
@@ -35,12 +27,20 @@ import {
   TokenOwnerRecord,
   VoteRecord
 } from "@solana/spl-governance";
-import { DistributionYield } from "@jet-lab/jet-engine/lib/rewards/distribution";
-import { UnbondingAmount } from "@jet-lab/jet-engine/lib/staking/unbondingAccount";
+import { useWallet } from "@solana/wallet-adapter-react";
+import { createContext, useState, useContext, useMemo } from "react";
 import { useQuery, useQueryClient } from "react-query";
-import { useRpcContext } from "../hooks";
 import { useConnectionConfig } from ".";
-import { RewardsIdl } from "@jet-lab/jet-engine/lib/rewards";
+import { useConnection } from "./connection";
+import {
+  useAirdropsByWallet,
+  useAvailableAirdrop,
+  useClaimsCount,
+  useProposalFilters,
+  useProvider,
+  useRpcContext
+} from "../hooks";
+import { JET_REALM, JET_GOVERNANCE } from "../utils";
 
 export type ProposalFilter = "active" | "inactive" | "passed" | "rejected" | "all";
 
@@ -67,7 +67,6 @@ interface ProposalContextState {
 
   jetAccount?: AssociatedToken;
   jetMint?: JetMint;
-  voteMint?: JetMint;
 
   realm?: ProgramAccount<Realm>;
   governance?: ProgramAccount<Governance>;
@@ -83,7 +82,7 @@ interface ProposalContextState {
   };
 }
 
-const ProposalContext = React.createContext<ProposalContextState>({
+const ProposalContext = createContext<ProposalContextState>({
   proposalFilter: "active",
   setProposalFilter: () => {},
   pastProposalFilter: "all",
@@ -190,12 +189,7 @@ export function ProposalProvider({ children = undefined as any }) {
 
       // ----- Mints -----
       const jetMint = await AssociatedToken.loadMint(connection, stakePool.stakePool.tokenMint);
-      const voteMint = await AssociatedToken.loadMint(
-        connection,
-        stakePool.stakePool.stakeVoteMint
-      );
-
-      return { proposalsByGovernance, stakePool, airdrops, jetMint, voteMint };
+      return { proposalsByGovernance, stakePool, airdrops, jetMint };
     },
     { enabled: !!programs }
   );
@@ -229,7 +223,8 @@ export function ProposalProvider({ children = undefined as any }) {
         if (stakeAccount) {
           unbondingAccounts = await UnbondingAccount.loadByStakeAccount(
             programs.stake,
-            stakeAccount.address
+            stakeAccount.addresses.stakeAccount,
+            stakePool.stakePool
           );
         }
       } catch {}
@@ -291,8 +286,6 @@ export function ProposalProvider({ children = undefined as any }) {
     pastProposalFilter,
     realm?.governance.account
   );
-
-  useStakePoolCompatibleWithRealm(stakePool?.stakePool, realm?.realm);
 
   function refresh() {
     queryClient.invalidateQueries("stakePool");

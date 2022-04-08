@@ -3,7 +3,7 @@ use std::io::Write;
 use anchor_lang::prelude::*;
 use anchor_spl::token::{self, Token, TokenAccount, Transfer};
 
-use crate::{events, state::*};
+use crate::{events, seeds, state::*};
 
 #[derive(AnchorDeserialize, AnchorSerialize)]
 pub struct DistributionCreateParams {
@@ -34,7 +34,7 @@ pub struct DistributionCreate<'info> {
         init,
         payer = payer_rent,
         seeds = [
-            b"distribution".as_ref(),
+            seeds::DISTRIBUTION,
             params.seed.as_bytes()
         ],
         bump,
@@ -46,7 +46,7 @@ pub struct DistributionCreate<'info> {
     #[account(init,
               seeds = [
                   distribution.key().as_ref(),
-                  b"vault".as_ref()
+                  seeds::VAULT,
               ],
               bump,
               payer = payer_rent,

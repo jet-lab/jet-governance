@@ -12,6 +12,8 @@ pub struct StakePoolCreated {
     pub seed: String,
     pub token_mint: Pubkey,
     pub config: PoolConfig,
+
+    pub max_voter_weight: u64,
 }
 
 #[event]
@@ -32,6 +34,9 @@ pub struct StakeAdded {
 
     pub pool_note: StakePoolNote,
     pub account_note: StakeAccountNote,
+
+    pub voter_weight: u64,
+    pub max_voter_weight: u64,
 }
 
 #[event]
@@ -46,6 +51,9 @@ pub struct StakeUnbonded {
 
     pub pool_note: StakePoolNote,
     pub account_note: StakeAccountNote,
+
+    pub voter_weight: u64,
+    pub max_voter_weight: u64,
 }
 
 #[event]
@@ -83,35 +91,6 @@ pub struct BondedWithdrawn {
 }
 
 #[event]
-pub struct VotesMinted {
-    pub stake_pool: Pubkey,
-    pub stake_account: Pubkey,
-    pub owner: Pubkey,
-
-    pub minted_amount: u64,
-
-    pub pool_note: StakePoolNote,
-    pub account_note: StakeAccountNote,
-
-    pub governance_realm: Pubkey,
-    pub voter_account_balance: u64,
-}
-
-#[event]
-pub struct VotesBurned {
-    pub stake_pool: Pubkey,
-    pub stake_account: Pubkey,
-    pub owner: Pubkey,
-
-    pub burned_amount: u64,
-
-    pub pool_note: StakePoolNote,
-    pub account_note: StakeAccountNote,
-
-    pub voter_account_balance: u64,
-}
-
-#[event]
 pub struct StakeAccountClosed {
     pub stake_account: Pubkey,
     pub owner: Pubkey,
@@ -127,8 +106,6 @@ pub struct StakePoolNote {
 #[derive(AnchorSerialize, AnchorDeserialize)]
 pub struct StakeAccountNote {
     bonded_shares: u64,
-    minted_votes: u64,
-    minted_collateral: u64,
     unbonding_shares: u64,
 }
 
@@ -156,8 +133,6 @@ impl Note for StakeAccount {
     fn note(&self) -> Self::Output {
         StakeAccountNote {
             bonded_shares: self.bonded_shares,
-            minted_votes: self.minted_votes,
-            minted_collateral: self.minted_collateral,
             unbonding_shares: self.unbonding_shares,
         }
     }

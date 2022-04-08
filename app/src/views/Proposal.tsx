@@ -1,11 +1,18 @@
-import { useEffect, useMemo, useState } from "react";
-import { Link } from "react-router-dom";
-import { ResultProgressBar } from "../components/proposal/ResultProgressBar";
-import { Button, Divider, Popover, Tooltip, Typography } from "antd";
-import { ProposalCard } from "../components/ProposalCard";
-import { VoterList } from "../components/proposal/VoterList";
+import "./Proposal.less";
+import { ArrowLeftOutlined, DownloadOutlined, InfoCircleFilled } from "@ant-design/icons";
+import { bnToNumber, StakeBalance } from "@jet-lab/jet-engine";
+import { Governance, ProgramAccount, Proposal, ProposalState, Realm } from "@solana/spl-governance";
 import { useWallet } from "@solana/wallet-adapter-react";
-import { VoteModal } from "../components/modals/VoteModal";
+import { Button, Divider, Popover, Typography } from "antd";
+import { useEffect, useMemo, useState } from "react";
+import ReactMarkdown from "react-markdown";
+import { Link } from "react-router-dom";
+import { voteRecordCsvDownload } from "../actions/voteRecordCsvDownload";
+import { ProposalCard } from "../components";
+import { VoteModal } from "../components/modals";
+import { ResultProgressBar, VoterList } from "../components/proposal";
+import { LABELS } from "../constants";
+import { useBlockExplorer, useProposalContext } from "../contexts";
 import {
   getVoteCounts,
   getVoteType,
@@ -22,18 +29,9 @@ import {
   VoteOption,
   VoterDisplayData
 } from "../hooks";
-import { LABELS } from "../constants";
-import ReactMarkdown from "react-markdown";
-import { voteRecordCsvDownload } from "../actions/voteRecordCsvDownload";
-import { ArrowLeftOutlined, DownloadOutlined, InfoCircleFilled } from "@ant-design/icons";
-import { getPubkeyIndex } from "../models/PUBKEYS_INDEX";
-import { useProposalContext } from "../contexts/proposal";
-import { bnToNumber, StakeBalance } from "@jet-lab/jet-engine";
-import { Governance, ProgramAccount, Proposal, ProposalState, Realm } from "@solana/spl-governance";
 import { ReactComponent as ThumbsUp } from "../images/thumbs_up.svg";
 import { ReactComponent as ThumbsDown } from "../images/thumbs_down.svg";
-import "./Proposal.less";
-import { useBlockExplorer } from "../contexts/blockExplorer";
+import { getPubkeyIndex } from "../models/PUBKEYS_INDEX";
 import { sharesToTokens } from "../utils";
 
 export const ProposalView = () => {
@@ -288,7 +286,7 @@ const InnerProposalView = ({
                       </span>
                     </div>
                   }
-                  title="Title"
+                  title="Votes per JET"
                   visible={popoverVisible}
                   trigger="click"
                 >

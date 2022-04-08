@@ -1,10 +1,11 @@
+import {
+  getGovernanceProgramVersion,
+  ProgramAccount,
+  Proposal,
+  RpcContext,
+  withFlagTransactionError
+} from "@solana/spl-governance";
 import { Keypair, PublicKey, Transaction, TransactionInstruction } from "@solana/web3.js";
-
-import { getGovernanceProgramVersion, Proposal } from "@solana/spl-governance";
-
-import { withFlagTransactionError } from "@solana/spl-governance";
-import { RpcContext } from "@solana/spl-governance";
-import { ProgramAccount } from "@solana/spl-governance";
 import { sendTransactionWithNotifications } from "../tools/transactions";
 
 export const flagInstructionError = async (

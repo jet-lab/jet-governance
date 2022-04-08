@@ -1,10 +1,9 @@
-import { useCallback, useState } from "react";
+import { bnToNumber, JetMint, StakePool } from "@jet-lab/jet-engine";
 import { PublicKey } from "@solana/web3.js";
-import BN from "bn.js";
-import { bnToNumber, StakePool } from "@jet-lab/jet-engine";
-import { geoBannedCountries } from "../models/GEOBANNED_COUNTRIES";
 import { SelectProps } from "antd";
-import { JetMint } from "@jet-lab/jet-engine/lib/common";
+import BN from "bn.js";
+import { useCallback, useState } from "react";
+import { geoBannedCountries } from "../models/GEOBANNED_COUNTRIES";
 
 export function useLocalStorageState(key: string, defaultState?: string) {
   const [state, setState] = useState(() => {
@@ -43,24 +42,42 @@ export function shortenAddress(address: PublicKey | string, chars = 4): string {
   return `${address.slice(0, chars)}...${address.slice(-chars)}`;
 }
 
-export function fromLamports(account?: number | BN, mint?: JetMint, rate: number = 1.0): number {
-  if (!account || !mint) {
+export function fromLamports(amount: number | BN | undefined, mint: JetMint | undefined): number {
+  if (!amount || !mint) {
     return 0;
   }
-
-  const amount = Math.floor(typeof account === "number" ? account : bnToNumber(account));
-
-  const precision = Math.pow(10, mint.decimals || 0);
-  return (amount / precision) * rate;
+  const fromAmount = typeof amount === "number" ? new BN(amount) : amount;
+  return bnToNumber(fromAmount) / 10 ** mint.decimals;
 }
 
-export const toTokens = (amount: BN | number | undefined, mint?: JetMint) => {
-  if (amount === new BN(0) || amount === 0) {
+export const toTokens = (amount?: BN | number, mint?: JetMint) => {
+  const fromAmount = typeof amount === "number" ? new BN(amount) : amount;
+  const hasNoValue = fromAmount === new BN(0) || amount === 0;
+  if (hasNoValue) {
     return "0";
   }
-  return fromLamports(amount, mint).toLocaleString(undefined, {
+  return fromLamports(fromAmount, mint).toLocaleString(undefined, {
     maximumFractionDigits: 1
   });
+};
+
+export const withPrecisionNumber = (amount: number, precision: number = 1): number => {
+  if (amount === 0) {
+    return 0;
+  }
+  const factor = Math.pow(10, precision);
+  return Math.floor(amount * factor) / factor;
+};
+
+export const toTokensPrecisionNumber = (
+  amount: BN,
+  mint: JetMint,
+  precision: number = 1
+): number => {
+  if (amount === new BN(0)) {
+    return 0;
+  }
+  return withPrecisionNumber(fromLamports(amount, mint), precision);
 };
 
 var SI_SYMBOL = ["", "k", "M", "G", "T", "P", "E"];
@@ -167,12 +184,12 @@ export const sharesToTokens = (
   let conversion = new BN(0);
   if (
     !stakePool ||
-    stakePool?.stakePool.bonded.shares === new BN(0) ||
-    stakePool?.stakePool.bonded.tokens === new BN(0)
+    stakePool.stakePool.bonded.shares.eq(new BN(0)) ||
+    stakePool.stakePool.bonded.tokens.eq(new BN(0))
   ) {
     return { tokens, conversion };
   }
-  conversion = stakePool?.stakePool.bonded.shares.div(stakePool?.stakePool.bonded.tokens);
+  conversion = stakePool.stakePool.bonded.shares.div(stakePool.stakePool.bonded.tokens);
   if (!shares) {
     return { tokens, conversion };
   }
@@ -180,27 +197,8 @@ export const sharesToTokens = (
   const shareAmount = typeof shares === "number" ? new BN(shares) : shares;
 
   tokens = shareAmount
-    .mul(stakePool?.stakePool.bonded.tokens)
-    .div(stakePool?.stakePool.bonded.shares);
-  return { tokens, conversion };
-};
-
-export const sharesToTokensUnbonded = (
-  shares: BN | undefined,
-  stakePool: StakePool | undefined
-): { tokens: BN; conversion: BN } => {
-  let tokens = new BN(0);
-  let conversion = new BN(0);
-  if (!stakePool) {
-    return { tokens, conversion };
-  }
-  conversion = stakePool?.stakePool.unbonding.shares.div(stakePool?.stakePool.unbonding.tokens);
-  if (!shares) {
-    return { tokens, conversion };
-  }
-  tokens = shares
-    .mul(stakePool?.stakePool.unbonding.tokens)
-    .div(stakePool?.stakePool.unbonding.shares);
+    .mul(stakePool.stakePool.bonded.tokens)
+    .div(stakePool.stakePool.bonded.shares);
   return { tokens, conversion };
 };
 
