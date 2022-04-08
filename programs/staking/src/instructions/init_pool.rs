@@ -111,6 +111,7 @@ pub fn init_pool_handler(ctx: Context<InitPool>, seed: String, config: PoolConfi
         seed,
         token_mint: stake_pool.token_mint,
         config,
+        max_voter_weight: max_voter_weight_record.max_voter_weight,
     });
 
     Ok(())

@@ -62,6 +62,22 @@ export const rescindAndUnstake = async (
       stakePool.stakePool.tokenMint,
       walletPubkey
     );
+  } catch (err: any) {
+    console.log(err);
+  }
+  if (!tokenOwnerRecord) {
+    const ix: TransactionInstruction[] = [];
+
+    // unbond_stake requires that the token owner record must exist,
+    // so that it can verify that the owner is allowed to withdraw
+    await withCreateTokenOwnerRecord(
+      ix,
+      GOVERNANCE_PROGRAM_ID,
+      stakePool.stakePool.governanceRealm,
+      walletPubkey,
+      stakePool.stakePool.tokenMint,
+      walletPubkey
+    );
 
     allTxs.push({
       tx: new Transaction().add(...ix),
@@ -73,6 +89,8 @@ export const rescindAndUnstake = async (
       programId,
       tokenOwnerRecord.account.governingTokenOwner
     );
+
+    const proposals = await getParsedProposalsByGovernance(connection, programId, governance);
 
     for (const voteRecord of Object.values(voteRecords)) {
       let proposal = proposals[voteRecord.account.proposal.toString()];
