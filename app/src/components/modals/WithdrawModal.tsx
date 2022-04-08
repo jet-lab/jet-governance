@@ -5,6 +5,7 @@ import { withdrawUnbonded } from "../../actions/withdrawUnbonded";
 import { useProposalContext } from "../../contexts/proposal";
 import { isSignTransactionError } from "../../utils";
 import { UnbondingAccount } from "@jet-lab/jet-engine";
+import { useBlockExplorer } from "../../contexts/blockExplorer";
 
 enum Steps {
   Confirm = 0,
@@ -32,7 +33,7 @@ export const WithdrawModal = ({ onClose, unbondingAccount }: WithdrawModalProps)
       return setCurrent(Steps.NothingToWithdraw);
     }
     setLoading(true);
-    withdrawUnbonded(rpcContext, unbondingAcc, stakeAccount, stakePool)
+    withdrawUnbonded(rpcContext, unbondingAcc, stakeAccount, stakePool, useBlockExplorer)
       .then(() => {
         onClose();
       })

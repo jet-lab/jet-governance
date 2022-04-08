@@ -16,6 +16,7 @@ export async function postChatMessage(
   proposal: ProgramAccount<Proposal>,
   tokeOwnerRecord: PublicKey,
   body: ChatMessageBody,
+  explorerUrlMaker: Function,
   replyTo?: PublicKey
 ) {
   const signers: Keypair[] = [];
@@ -44,6 +45,7 @@ export async function postChatMessage(
     wallet,
     instructions,
     signers,
-    "Chat message posted"
+    "Chat message posted",
+    explorerUrlMaker
   );
 }

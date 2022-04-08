@@ -17,7 +17,8 @@ export const rescindAndUnstake = async (
   stakeAccount: StakeAccount,
   governance: ProgramAccount<Governance>,
   tokenOwnerRecord: ProgramAccount<TokenOwnerRecord>,
-  amount: BN
+  amount: BN,
+  explorerUrlMaker: Function
 ) => {
   const unbondingSeed = UnbondingAccount.randomSeed();
   const withdrawIxs: TransactionInstruction[] = [];
@@ -99,5 +100,5 @@ export const rescindAndUnstake = async (
     signers: []
   });
 
-  await sendAllTransactionsWithNotifications(provider, allTxs, "JET has begun unbonding");
+  await sendAllTransactionsWithNotifications(provider, allTxs, "JET has begun unbonding", explorerUrlMaker);
 };

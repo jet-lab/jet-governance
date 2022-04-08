@@ -9,7 +9,8 @@ export const claimAndStake = async (
   rewardsProgram: Program<RewardsIdl>,
   airdrop: Airdrop,
   stakePool: StakePool,
-  stakeAccount: StakeAccount
+  stakeAccount: StakeAccount,
+  explorerUrlMaker: Function
 ) => {
   let instructions: TransactionInstruction[] = [];
   let signers: Keypair[] = [];
@@ -21,6 +22,7 @@ export const claimAndStake = async (
     wallet,
     instructions,
     signers,
-    "JET claimed and staked"
+    "JET claimed and staked",
+    explorerUrlMaker
   );
 };

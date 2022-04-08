@@ -11,7 +11,8 @@ import { sendTransactionWithNotifications } from "../tools/transactions";
 export const flagInstructionError = async (
   { connection, wallet, programId, walletPubkey }: RpcContext,
   proposal: ProgramAccount<Proposal>,
-  proposalInstruction: PublicKey
+  proposalInstruction: PublicKey,
+  explorerUrlMaker: Function
 ) => {
   const governanceAuthority = walletPubkey;
 
@@ -41,6 +42,7 @@ export const flagInstructionError = async (
     wallet,
     instructions,
     signers,
-    "Instruction flagged as broken"
+    "Instruction flagged as broken",
+    explorerUrlMaker
   );
 };

@@ -9,7 +9,8 @@ export const restake = async (
   unbondingAccount: UnbondingAccount,
   stakeAccount: StakeAccount,
   stakePool: StakePool,
-  realm: ProgramAccount<Realm>
+  realm: ProgramAccount<Realm>,
+  explorerUrlMaker: Function
 ) => {
   const ix: TransactionInstruction[] = [];
   await UnbondingAccount.withCancelUnbond(
@@ -20,5 +21,5 @@ export const restake = async (
     walletPubkey
   );
 
-  await sendTransactionWithNotifications(connection, wallet, ix, [], "JET has been staked");
+  await sendTransactionWithNotifications(connection, wallet, ix, [], "JET has been staked", explorerUrlMaker);
 };

@@ -10,7 +10,8 @@ export const addStake = async (
   stakePool: StakePool,
   owner: PublicKey,
   amount: BN,
-  jetMint: JetMint | undefined
+  jetMint: JetMint | undefined,
+  explorerUrlMaker: Function
 ) => {
   let instructions: TransactionInstruction[] = [];
   let signers: Keypair[] = [];
@@ -34,6 +35,7 @@ export const addStake = async (
     wallet,
     instructions,
     signers,
-    notificationTitle
+    notificationTitle,
+    explorerUrlMaker
   );
 };

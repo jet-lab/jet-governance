@@ -16,6 +16,8 @@ import { useProposalContext } from "../../contexts";
 import { useCountdown, VoteOption, useRpcContext } from "../../hooks";
 import { getPubkeyIndex } from "../../models/PUBKEYS_INDEX";
 import { isSignTransactionError, JET_TOKEN_MINT, sharesToTokens, toTokens } from "../../utils";
+import { useBlockExplorer } from "../../contexts/blockExplorer";
+
 
 enum Steps {
   Confirm = 0,
@@ -51,6 +53,8 @@ export const VoteModal = ({
     programs,
     refresh
   } = useProposalContext();
+  const { getTxExplorerUrl } = useBlockExplorer();
+
 
   let voteText: string = "";
 
@@ -93,6 +97,7 @@ export const VoteModal = ({
         yesNoVote,
         programs.stake,
         stakePool,
+        getTxExplorerUrl,
         undefined,
         voteRecord ? voteRecord!.pubkey : undefined
       )

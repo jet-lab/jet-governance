@@ -7,6 +7,8 @@ import { addStake } from "../../actions/addStake";
 import { useProposalContext } from "../../contexts";
 import { useBN, useRpcContext } from "../../hooks";
 import { isSignTransactionError } from "../../utils";
+import { useBlockExplorer } from "../../contexts/blockExplorer";
+
 
 enum Steps {
   Confirm = 0,
@@ -29,6 +31,8 @@ export const StakeModal = ({
   const { stakePool, jetAccount, refresh } = useProposalContext();
   const rpcContext = useRpcContext();
   const stakeLamports = useBN(amount, stakePool?.collateralMint.decimals);
+  const { getTxExplorerUrl } = useBlockExplorer();
+
   // Handlers for staking info modal
 
   const handleSubmitTx = () => {
@@ -37,7 +41,7 @@ export const StakeModal = ({
     }
 
     setLoading(true);
-    addStake(rpcContext, stakePool, publicKey, stakeLamports, jetMint)
+    addStake(rpcContext, stakePool, publicKey, stakeLamports, jetMint, getTxExplorerUrl)
       .then(() => {
         onClose();
       })

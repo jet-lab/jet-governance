@@ -9,7 +9,8 @@ export const withdrawUnbonded = async (
   { connection, wallet }: RpcContext,
   unbondingAccounts: UnbondingAccount[],
   stakeAccount: StakeAccount,
-  stakePool: StakePool
+  stakePool: StakePool,
+  explorerUrlMaker: Function
 ) => {
   let ix: TransactionInstruction[] = [];
   const allTxs: SendTxRequest[] = [];
@@ -49,6 +50,6 @@ export const withdrawUnbonded = async (
     }
   }
   if (allTxs.length > 0) {
-    await sendAllTransactionsWithNotifications(provider, allTxs, "JET has been withdrawn");
+    await sendAllTransactionsWithNotifications(provider, allTxs, "JET has been withdrawn", explorerUrlMaker);
   }
 };

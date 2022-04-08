@@ -11,7 +11,8 @@ import { sendTransactionWithNotifications } from "../tools/transactions";
 export const finalizeVote = async (
   { connection, wallet, programId }: RpcContext,
   realm: PublicKey,
-  proposal: ProgramAccount<Proposal>
+  proposal: ProgramAccount<Proposal>,
+  explorerUrlMaker: Function
 ) => {
   const signers: Keypair[] = [];
   const instructions: TransactionInstruction[] = [];
@@ -36,6 +37,7 @@ export const finalizeVote = async (
     wallet,
     instructions,
     signers,
-    "Votes finalized"
+    "Votes finalized",
+    explorerUrlMaker
   );
 };

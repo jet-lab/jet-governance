@@ -6,6 +6,8 @@ import { rescindAndUnstake } from "../../actions/rescindAndUnstake";
 import { useProposalContext } from "../../contexts";
 import { useRpcContext } from "../../hooks";
 import { dateToString, isSignTransactionError } from "../../utils";
+import { useBlockExplorer } from "../../contexts/blockExplorer";
+
 
 enum Steps {
   Confirm = 0,
@@ -39,6 +41,8 @@ export const UnstakeModal = ({
 
   const [current, setCurrent] = useState(Steps.Confirm);
   const [loading, setLoading] = useState(false);
+  const { getTxExplorerUrl } = useBlockExplorer();
+
 
   const unrelinquishedVoteRecords = walletVoteRecords?.filter(
     voteRecord => !voteRecord.account.isRelinquished
@@ -74,7 +78,8 @@ export const UnstakeModal = ({
       stakeAccount,
       governance,
       tokenOwnerRecord,
-      unstakeAmount
+      unstakeAmount,
+      getTxExplorerUrl
     )
       .then(() => {
         setLoading(false);

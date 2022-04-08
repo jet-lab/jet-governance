@@ -7,6 +7,7 @@ import { claimAndStake } from "../../actions/claimAndStake";
 import { useRpcContext } from "../../hooks";
 import { useProposalContext } from "../../contexts";
 import { isSignTransactionError } from "../../utils";
+import { useBlockExplorer } from "../../contexts/blockExplorer";
 
 enum Steps {
   Confirm = 0,
@@ -27,6 +28,7 @@ export const ClaimModal = ({
   const [current, setCurrent] = useState<Steps>(Steps.Confirm);
   const [loading, setLoading] = useState(false);
   const { programs, stakePool, stakeAccount, realm, refresh } = useProposalContext();
+  const { getTxExplorerUrl } = useBlockExplorer();
 
   const handleOk = () => {
     if (!stakeAmount || !airdrop) {
@@ -35,7 +37,7 @@ export const ClaimModal = ({
 
     setLoading(true);
     if (!!programs && !!airdrop && !!stakePool && !!stakeAccount && !!realm) {
-      claimAndStake(rpcContext, programs.rewards, airdrop, stakePool, stakeAccount)
+      claimAndStake(rpcContext, programs.rewards, airdrop, stakePool, stakeAccount, getTxExplorerUrl)
         .then(() => {
           onClose();
         })
