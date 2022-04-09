@@ -7,6 +7,7 @@ import {
   ProgramAccount,
   RpcContext,
   TokenOwnerRecord,
+  VoteRecord,
   withCastVote,
   withCreateTokenOwnerRecord,
   withRelinquishVote
@@ -36,6 +37,7 @@ export const rescindAndUnstake = async (
     walletPubkey
   );
   let tokenOwnerRecord: ProgramAccount<TokenOwnerRecord> | undefined;
+  let voteRecords: ProgramAccount<VoteRecord>[] | undefined;
   try {
     tokenOwnerRecord = await getTokenOwnerRecordForRealm(
       connection,
@@ -43,6 +45,12 @@ export const rescindAndUnstake = async (
       stakePool.stakePool.governanceRealm,
       stakePool.stakePool.tokenMint,
       walletPubkey
+    );
+
+    voteRecords = await getUnrelinquishedVoteRecords(
+      connection,
+      programId,
+      tokenOwnerRecord.account.governingTokenOwner
     );
   } catch (err: any) {
     console.log(err);
@@ -63,14 +71,9 @@ export const rescindAndUnstake = async (
       tx: new Transaction().add(...ix),
       signers: []
     });
-  } else if (tokenOwnerRecord.account.unrelinquishedVotesCount > 0) {
-    const voteRecords = await getUnrelinquishedVoteRecords(
-      connection,
-      programId,
-      tokenOwnerRecord.account.governingTokenOwner
-    );
-    for (const voteRecord of Object.values(voteRecords)) {
-      let proposal = proposals[voteRecord.account.proposal.toString()];
+  } else if (tokenOwnerRecord.account.unrelinquishedVotesCount > 0 && voteRecords) {
+    for (const i in voteRecords) {
+      let proposal = proposals[voteRecords[i].account.proposal.toString()];
       if (!proposal) {
         continue;
       }
@@ -82,7 +85,7 @@ export const rescindAndUnstake = async (
         proposal.pubkey,
         tokenOwnerRecord.pubkey,
         proposal.account.governingTokenMint,
-        voteRecord.pubkey,
+        voteRecords[i].pubkey,
         tokenOwnerRecord.account.governingTokenOwner,
         walletPubkey
       );
@@ -110,26 +113,14 @@ export const rescindAndUnstake = async (
 
   // If there is still remaining JET and they have previously cast votes,
   // Re-cast those votes if proposals are still active
-  if (tokenOwnerRecord && !unstakeAll) {
-    const voteRecords = await getUnrelinquishedVoteRecords(
-      connection,
-      programId,
-      tokenOwnerRecord.account.governingTokenOwner
-    );
-    for (const voteRecord of Object.values(voteRecords)) {
-      let proposal = proposals[voteRecord.account.proposal.toString()];
+  if (voteRecords && tokenOwnerRecord && !unstakeAll) {
+    for (const i in voteRecords) {
+      let proposal = proposals[voteRecords[i].account.proposal.toString()];
       if (!proposal || proposal.account.hasVoteTimeEnded(governance.account)) {
         continue;
       }
-      if (voteRecord.account.vote) {
+      if (voteRecords[i].account.vote) {
         const recastIxs: TransactionInstruction[] = [];
-        await StakeAccount.withCreate(
-          recastIxs,
-          stakeProgram,
-          stakePool.addresses.stakePool,
-          walletPubkey,
-          walletPubkey
-        );
         await withCastVote(
           recastIxs,
           programId,
@@ -141,7 +132,7 @@ export const rescindAndUnstake = async (
           tokenOwnerRecord.pubkey,
           walletPubkey,
           proposal.account.governingTokenMint,
-          voteRecord.account.vote,
+          voteRecords[i].account.vote!,
           walletPubkey,
           stakeAccount.addresses.voterWeightRecord,
           stakePool.stakePool.maxVoterWeightRecord

@@ -24,7 +24,7 @@ export const addStake = async (
   jetMint: JetMint | undefined,
   governance: ProgramAccount<Governance>,
   stakeProgram: Program<StakeIdl>,
-  stakeAccount: StakeAccount
+  stakeAccount: StakeAccount | undefined
 ) => {
   const allTxs: SendTxRequest[] = [];
   const provider = new Provider(connection, wallet as any, { skipPreflight: true });
@@ -73,7 +73,7 @@ export const addStake = async (
     );
 
     allTxs.push({
-      tx: new Transaction().add(...instructions),
+      tx: new Transaction().add(...createStakerGovRecord),
       signers: []
     });
   } else if (tokenOwnerRecord.account.unrelinquishedVotesCount > 0) {
@@ -85,8 +85,8 @@ export const addStake = async (
       programId,
       tokenOwnerRecord.account.governingTokenOwner
     );
-    for (const voteRecord of Object.values(voteRecords)) {
-      let proposal = proposals[voteRecord.account.proposal.toString()];
+    for (const i in voteRecords) {
+      let proposal = proposals[voteRecords[i].account.proposal.toString()];
       if (!proposal) {
         continue;
       }
@@ -98,7 +98,7 @@ export const addStake = async (
         proposal.pubkey,
         tokenOwnerRecord.pubkey,
         proposal.account.governingTokenMint,
-        voteRecord.pubkey,
+        voteRecords[i].pubkey,
         tokenOwnerRecord.account.governingTokenOwner,
         walletPubkey
       );
@@ -108,20 +108,13 @@ export const addStake = async (
       });
     }
 
-    for (const voteRecord of Object.values(voteRecords)) {
-      let proposal = proposals[voteRecord.account.proposal.toString()];
+    for (const i in voteRecords) {
+      let proposal = proposals[voteRecords[i].account.proposal.toString()];
       if (!proposal || proposal.account.hasVoteTimeEnded(governance.account)) {
         continue;
       }
-      if (voteRecord.account.vote) {
+      if (voteRecords[i].account.vote && stakeAccount) {
         const recastIxs: TransactionInstruction[] = [];
-        await StakeAccount.withCreate(
-          recastIxs,
-          stakeProgram,
-          stakePool.addresses.stakePool,
-          walletPubkey,
-          walletPubkey
-        );
         await withCastVote(
           recastIxs,
           programId,
@@ -133,7 +126,7 @@ export const addStake = async (
           tokenOwnerRecord.pubkey,
           walletPubkey,
           proposal.account.governingTokenMint,
-          voteRecord.account.vote,
+          voteRecords[i].account.vote!,
           walletPubkey,
           stakeAccount.addresses.voterWeightRecord,
           stakePool.stakePool.maxVoterWeightRecord

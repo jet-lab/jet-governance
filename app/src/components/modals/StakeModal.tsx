@@ -32,15 +32,7 @@ export const StakeModal = ({
   // Handlers for staking info modal
 
   const handleSubmitTx = () => {
-    if (
-      !stakePool ||
-      !realm ||
-      !publicKey ||
-      !jetAccount ||
-      !governance ||
-      !programs ||
-      !stakeAccount
-    ) {
+    if (!stakePool || !realm || !publicKey || !jetAccount || !governance || !programs) {
       return;
     }
 

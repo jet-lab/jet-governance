@@ -70,14 +70,6 @@ export const castVote = async (
     });
   }
 
-  await StakeAccount.withCreate(
-    castVoteIx,
-    stakeProgram,
-    stakePool.addresses.stakePool,
-    walletPubkey,
-    walletPubkey
-  );
-
   await withCastVote(
     castVoteIx,
     programId,
