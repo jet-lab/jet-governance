@@ -3,10 +3,29 @@ use solana_program::pubkey;
 
 declare_id!("JPLockxtkngHkaQT5AuRYow3HyUv5qWzmhwsCPd653n");
 
+pub mod events;
 mod instructions;
+mod spl_addin;
 pub mod state;
 
+pub use instructions::PoolConfig;
 use instructions::*;
+
+pub mod seeds {
+    use super::constant;
+
+    #[constant]
+    pub const COLLATERAL_MINT: &[u8] = b"collateral-mint";
+
+    #[constant]
+    pub const MAX_VOTE_WEIGHT_RECORD: &[u8] = b"max-vote-weight-record";
+
+    #[constant]
+    pub const VAULT: &[u8] = b"vault";
+
+    #[constant]
+    pub const VOTER_WEIGHT_RECORD: &[u8] = b"voter-weight-record";
+}
 
 #[program]
 pub mod jet_staking {
@@ -58,16 +77,6 @@ pub mod jet_staking {
         instructions::withdraw_bonded_handler(ctx, amount)
     }
 
-    /// Mint voting tokens based on current stake
-    pub fn mint_votes(ctx: Context<MintVotes>, amount: Option<u64>) -> Result<()> {
-        instructions::mint_votes_handler(ctx, amount)
-    }
-
-    /// Burn outstanding burning tokens to unlock stake
-    pub fn burn_votes(ctx: Context<BurnVotes>, amount: Option<u64>) -> Result<()> {
-        instructions::burn_votes_handler(ctx, amount)
-    }
-
     /// Close out the stake account, return any rent
     pub fn close_stake_account(ctx: Context<CloseStakeAccount>) -> Result<()> {
         instructions::close_stake_account_handler(ctx)
@@ -83,12 +92,18 @@ mod error {
     #[derive(Eq, PartialEq)]
     pub enum ErrorCode {
         InsufficientStake = 7100,
-        VotesLocked,
-        CollateralLocked,
+        InvalidTokenOwnerRecord,
+        OutstandingVotes,
         NotYetUnbonded,
         StakeRemaining,
         InvalidAmount,
     }
+}
+
+pub mod spl_governance {
+    use super::declare_id;
+
+    declare_id!("JPGovTiAUgyqirerBbXXmfyt3SkHVEcpSAPjRCCSHVx");
 }
 
 #[derive(Copy, Clone)]

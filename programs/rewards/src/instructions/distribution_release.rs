@@ -1,7 +1,7 @@
 use anchor_lang::prelude::*;
-use anchor_spl::token::{self, Token, Transfer};
+use anchor_spl::token::{self, Token, TokenAccount, Transfer};
 
-use crate::state::*;
+use crate::{events, state::*};
 
 #[derive(Accounts)]
 pub struct DistributionRelease<'info> {
@@ -14,7 +14,7 @@ pub struct DistributionRelease<'info> {
     /// The account storing the tokens to be distributed
     /// CHECK:
     #[account(mut)]
-    pub vault: AccountInfo<'info>,
+    pub vault: Account<'info, TokenAccount>,
 
     /// The account to transfer the distributed tokens to
     /// CHECK:
@@ -50,6 +50,13 @@ pub fn distribution_release_handler(ctx: Context<DistributionRelease>) -> Result
             .with_signer(&[&distribution.signer_seeds()]),
         to_distribute,
     )?;
+
+    emit!(events::DistributionReleased {
+        distribution: distribution.key(),
+        amount_released: to_distribute,
+        total_distributed: distribution.distributed,
+        vault_balance: ctx.accounts.vault.amount,
+    });
 
     Ok(())
 }

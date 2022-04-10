@@ -1,10 +1,7 @@
 import { useWallet } from "@solana/wallet-adapter-react";
-import { useProposalContext } from "../contexts/proposal";
-import { UnbondingLog } from "../components/unbonding/UnbondingLog";
-import { useTransactionLogs } from "../contexts/transactionLogs";
 import { Divider } from "antd";
-import { Loader } from "../components/Loader";
-import { useBlockExplorer } from "../contexts/blockExplorer";
+import { Loader, UnbondingLog } from "../components";
+import { useBlockExplorer, useProposalContext, useTransactionLogs } from "../contexts";
 
 export const FlightLogView = () => {
   const { unbondingAccounts } = useProposalContext();
@@ -13,7 +10,7 @@ export const FlightLogView = () => {
   const { getTxExplorerUrl } = useBlockExplorer();
 
   return (
-    <div className="view-container justify-start" id="flight-logs-view">
+    <div className="view justify-start" id="flight-logs-view">
       <div className="neu-container centered" id="flight-log">
         <h1>Flight Logs</h1>
         <table>
@@ -21,7 +18,7 @@ export const FlightLogView = () => {
             <tr>
               <th>Date</th>
               <th>Status</th>
-              <th>Action</th>
+              <th className="action">Action</th>
               <th>Amount</th>
               <th>{/* Empty column for arrow */}</th>
             </tr>
@@ -44,7 +41,10 @@ export const FlightLogView = () => {
 
             {/* Staking actions and completed unstaking actions */}
             {logs.map(row => (
-              <tr onClick={() => window.open(getTxExplorerUrl(row.signature), "_blank")}>
+              <tr
+                key={row.signature}
+                onClick={() => window.open(getTxExplorerUrl(row.signature), "_blank")}
+              >
                 <td>{row.blockDate}</td>
                 <td>Complete</td>
                 <td className="action">{row.action}</td>

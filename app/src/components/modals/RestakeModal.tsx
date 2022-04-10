@@ -1,15 +1,14 @@
-import { PropsWithChildren, useState } from "react";
-import { Modal, ModalProps } from "antd";
-import { restake } from "../../actions/restake";
-import { useRpcContext } from "../../hooks/useRpcContext";
 import { UnbondingAccount } from "@jet-lab/jet-engine";
-import { fromLamports, isSignTransactionError } from "../../utils";
-import { useProposalContext } from "../../contexts/proposal";
+import { Modal, ModalProps } from "antd";
+import { PropsWithChildren, useState } from "react";
+import { restake } from "../../actions/restake";
+import { useProposalContext } from "../../contexts";
+import { useRpcContext } from "../../hooks";
+import { isSignTransactionError } from "../../utils";
 
 enum Steps {
   Confirm = 0,
-  Success = 1,
-  Error = 2
+  Error = 1
 }
 
 export const RestakeModal = ({
@@ -24,8 +23,6 @@ export const RestakeModal = ({
   const [loading, setLoading] = useState(false);
   const { stakePool, stakeAccount, jetMint, realm, refresh } = useProposalContext();
 
-  const stakeAmount = fromLamports(unbondingAccount?.tokens, jetMint);
-
   const handleOk = () => {
     if (!unbondingAccount || !stakePool || !stakeAccount || !realm) {
       return;
@@ -34,7 +31,7 @@ export const RestakeModal = ({
     setLoading(true);
     restake(rpcContext, unbondingAccount, stakeAccount, stakePool, realm)
       .then(() => {
-        setCurrent(Steps.Success);
+        onClose();
       })
       .catch(err => {
         if (isSignTransactionError(err)) {
@@ -67,22 +64,6 @@ export const RestakeModal = ({
         </p>
 
         <p>Votes that were rescinded when unstaking will not reactivate, and must be recast.</p>
-      </div>
-    )
-  };
-  steps[Steps.Success] = {
-    title: `All set!`,
-    okText: "Okay",
-    onOk: () => onClose(),
-    onCancel: () => onClose(),
-    closable: true,
-    cancelButtonProps: { style: { display: "none " } },
-    children: (
-      <div className="flex column">
-        <p>
-          You've restaked {Intl.NumberFormat("us-US").format(stakeAmount)} JET into JetGovern and
-          can begin voting on active proposals immediately.
-        </p>
       </div>
     )
   };

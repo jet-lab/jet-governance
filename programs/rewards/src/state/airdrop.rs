@@ -121,7 +121,7 @@ impl Airdrop {
         bytemuck::from_bytes_mut(&mut self.target_info)
     }
 
-    fn target_info(&self) -> &AirdropTargetInfo {
+    pub fn target_info(&self) -> &AirdropTargetInfo {
         bytemuck::from_bytes(&self.target_info)
     }
 }
@@ -192,7 +192,8 @@ impl std::fmt::Debug for Airdrop {
             .field("reward_vault", &self.reward_vault)
             .field("authority", &self.authority)
             .field("stake_pool", &self.stake_pool)
-            .field("short_desc", &self.short_desc)
+            .field("expire_at", &self.expire_at)
+            .field("flags", &self.flags)
             .finish()
     }
 }

@@ -1,11 +1,11 @@
 use anchor_lang::prelude::*;
-use anchor_spl::token::Token;
+use anchor_spl::token::{Token, TokenAccount};
 
 use jet_staking::cpi::accounts::AddStake;
 use jet_staking::program::JetStaking;
 
-use crate::state::*;
 use crate::ErrorCode;
+use crate::{events, state::*};
 
 #[derive(Accounts)]
 pub struct AirdropClaim<'info> {
@@ -18,7 +18,7 @@ pub struct AirdropClaim<'info> {
     /// The token account to claim the rewarded tokens from
     /// CHECK:
     #[account(mut)]
-    pub reward_vault: AccountInfo<'info>,
+    pub reward_vault: Account<'info, TokenAccount>,
 
     /// The address entitled to the airdrop, which must sign to claim
     pub recipient: Signer<'info>,
@@ -43,6 +43,16 @@ pub struct AirdropClaim<'info> {
     #[account(mut)]
     pub stake_account: AccountInfo<'info>,
 
+    /// The voter weight for the stake account
+    /// CHECK:
+    #[account(mut)]
+    pub voter_weight_record: AccountInfo<'info>,
+
+    /// The max voter weight
+    /// CHECK:
+    #[account(mut)]
+    pub max_voter_weight_record: AccountInfo<'info>,
+
     pub staking_program: Program<'info, JetStaking>,
     pub token_program: Program<'info, Token>,
 }
@@ -55,6 +65,8 @@ impl<'info> AirdropClaim<'info> {
                 stake_pool: self.stake_pool.to_account_info(),
                 stake_pool_vault: self.stake_pool_vault.to_account_info(),
                 stake_account: self.stake_account.to_account_info(),
+                voter_weight_record: self.voter_weight_record.to_account_info(),
+                max_voter_weight_record: self.max_voter_weight_record.to_account_info(),
                 payer: self.reward_vault.to_account_info(),
                 payer_token_account: self.reward_vault.to_account_info(),
                 token_program: self.token_program.to_account_info(),
@@ -80,6 +92,15 @@ pub fn airdrop_claim_handler(ctx: Context<AirdropClaim>) -> Result<()> {
             .with_signer(&[&airdrop.signer_seeds()]),
         Some(claimed_amount),
     )?;
+
+    emit!(events::AirdropClaimed {
+        airdrop: airdrop.address,
+        recipient: ctx.accounts.recipient.key(),
+        claimed_amount,
+        remaining_amount: airdrop.target_info().reward_total,
+
+        vault_balance: ctx.accounts.reward_vault.amount,
+    });
 
     Ok(())
 }

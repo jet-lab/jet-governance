@@ -1,8 +1,7 @@
 import { PublicKey } from "@solana/web3.js";
 import { useState, useEffect, useMemo } from "react";
-import { useProposalContext } from "../../contexts/proposal";
+import { useBlockExplorer, useProposalContext } from "../../contexts";
 import { shortenAddress, abbreviateNumber, fromLamports } from "../../utils";
-import { useBlockExplorer } from "../../contexts/blockExplorer";
 
 export const Stakeholders = ({
   type,
@@ -36,7 +35,7 @@ export const Stakeholders = ({
           {address}
         </a>
       </span>
-      <span className="amount">{abbreviateNumber(fromLamports(amount, jetMint), 2)} JET</span>
+      <span className="amount">{abbreviateNumber(fromLamports(amount, jetMint))} JET</span>
       <span className="vote">{vote}</span>
     </div>
   );

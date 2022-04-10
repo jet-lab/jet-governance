@@ -1,7 +1,7 @@
 use anchor_lang::prelude::*;
-use anchor_spl::token::Token;
+use anchor_spl::token::{Token, TokenAccount};
 
-use crate::state::*;
+use crate::{events, state::*};
 use jet_staking::cpi::accounts::AddStake;
 use jet_staking::program::JetStaking;
 
@@ -16,12 +16,22 @@ pub struct AwardRelease<'info> {
     /// The account storing the tokens to be distributed
     /// CHECK:
     #[account(mut)]
-    pub vault: AccountInfo<'info>,
+    pub vault: Account<'info, TokenAccount>,
 
     /// The account to transfer the distributed tokens to
     /// CHECK:
     #[account(mut)]
     pub stake_account: UncheckedAccount<'info>,
+
+    /// The voter weight for the stake account
+    /// CHECK:
+    #[account(mut)]
+    pub voter_weight_record: AccountInfo<'info>,
+
+    /// The max voter weight
+    /// CHECK:
+    #[account(mut)]
+    pub max_voter_weight_record: AccountInfo<'info>,
 
     /// The stake pool the account is part of
     /// CHECK:
@@ -45,6 +55,8 @@ impl<'info> AwardRelease<'info> {
                 stake_pool: self.stake_pool.to_account_info(),
                 stake_pool_vault: self.stake_pool_vault.to_account_info(),
                 stake_account: self.stake_account.to_account_info(),
+                voter_weight_record: self.voter_weight_record.to_account_info(),
+                max_voter_weight_record: self.max_voter_weight_record.to_account_info(),
                 payer: self.award.to_account_info(),
                 payer_token_account: self.vault.to_account_info(),
                 token_program: self.token_program.to_account_info(),
@@ -66,6 +78,14 @@ pub fn award_release_handler(ctx: Context<AwardRelease>) -> Result<()> {
             .with_signer(&[&award.signer_seeds()]),
         Some(to_distribute),
     )?;
+
+    emit!(events::AwardReleased {
+        award: award.key(),
+        amount_released: to_distribute,
+        total_released: award.distributed,
+
+        vault_balance: ctx.accounts.vault.amount,
+    });
 
     Ok(())
 }

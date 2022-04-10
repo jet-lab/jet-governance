@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useMemo, useState } from "react";
+import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import { PublicKey } from "@solana/web3.js";
 import { useLocation } from "react-router-dom";
 import { getProgramVersion, PROGRAM_VERSION } from "../models/registry/api";
@@ -12,9 +12,9 @@ export interface GovernanceContextState {
   programVersion: number;
 }
 
-export const GovernanceContext = React.createContext<GovernanceContextState | null>(null);
+export const GovernanceContext = createContext<GovernanceContextState | null>(null);
 
-export default function GovernanceProvider({ children = null as any }) {
+export function GovernanceProvider({ children = null as any }) {
   const connection = useConnection();
   const { env } = useConnectionConfig();
   const location = useLocation();

@@ -1,10 +1,5 @@
-import { Modal, ModalProps } from "antd";
-import { ReactNode, useEffect, useState } from "react";
-import { useCountdown, useOtherActiveProposals, VoteOption } from "../../hooks/proposalHooks";
-import { useRpcContext } from "../../hooks/useRpcContext";
 import { StakeBalance } from "@jet-lab/jet-engine";
-import { getPubkeyIndex } from "../../models/PUBKEYS_INDEX";
-import { isSignTransactionError, toTokens } from "../../utils";
+
 import {
   Governance,
   ProgramAccount,
@@ -14,15 +9,18 @@ import {
   YesNoVote,
   getTokenOwnerRecordAddress
 } from "@solana/spl-governance";
+import { Modal, ModalProps } from "antd";
+import { ReactNode, useEffect, useState } from "react";
 import { castVote } from "../../actions/castVote";
-import { useProposalContext } from "../../contexts/proposal";
-import { VoteOnOtherProposal } from "../proposal/VoteOnOtherProposal";
+import { useProposalContext } from "../../contexts";
+import { useCountdown, VoteOption, useRpcContext } from "../../hooks";
+import { getPubkeyIndex } from "../../models/PUBKEYS_INDEX";
+import { isSignTransactionError, JET_TOKEN_MINT, sharesToTokens, toTokens } from "../../utils";
 
 enum Steps {
   Confirm = 0,
-  VoteSuccess = 1,
-  NoVoteError = 2,
-  UnknownError = 3
+  NoVoteError = 1,
+  UnknownError = 2
 }
 
 export const VoteModal = ({
@@ -46,8 +44,14 @@ export const VoteModal = ({
   const { endDate } = useCountdown(proposal, governance);
   const rpcContext = useRpcContext();
   const { programId, walletPubkey } = useRpcContext();
-  const { stakePool, stakeBalance, jetMint, programs, refresh, proposalsByGovernance } =
-    useProposalContext();
+  const {
+    stakePool,
+    stakeAccount,
+    stakeBalance: { stakedJet },
+    jetMint,
+    programs,
+    refresh
+  } = useProposalContext();
 
   let voteText: string = "";
 
@@ -74,11 +78,11 @@ export const VoteModal = ({
       throw new Error("Not a yes or no vote.");
     }
 
-    if (programs && stakePool) {
+    if (programs && stakePool && stakeAccount) {
       const tokenOwnerRecordPubkey = await getTokenOwnerRecordAddress(
         programId,
         realm.pubkey,
-        stakePool.addresses.stakeVoteMint,
+        JET_TOKEN_MINT,
         walletPubkey
       );
 
@@ -90,11 +94,11 @@ export const VoteModal = ({
         yesNoVote,
         programs.stake,
         stakePool,
-        undefined,
-        voteRecord ? voteRecord!.pubkey : undefined
+        stakeAccount,
+        undefined
       )
         .then(() => {
-          setCurrent(Steps.VoteSuccess);
+          onClose();
         })
         .catch(err => {
           if (isSignTransactionError(err)) {
@@ -109,9 +113,6 @@ export const VoteModal = ({
         });
     }
   };
-
-  // Handlers for tx success all set modal
-  const otherActiveProposals = useOtherActiveProposals(proposalsByGovernance, proposal, governance);
 
   const steps: (ModalProps & { content: ReactNode })[] = [];
   steps[Steps.Confirm] = {
@@ -128,43 +129,13 @@ export const VoteModal = ({
           {getPubkeyIndex(proposal.pubkey.toBase58())}: {proposal.account.name}.
         </p>
         <p>
-          You have {toTokens(stakeBalance.stakedJet, jetMint)} JET staked, and will be able to
-          unstake these funds when voting ends on {endDate}.
+          You have {toTokens(sharesToTokens(stakedJet, stakePool).tokens, jetMint)} JET staked, and
+          will be able to unstake these funds when voting ends on {endDate}.
         </p>
       </div>
     ),
     closable: true,
     cancelButtonProps: undefined
-  };
-  steps[Steps.VoteSuccess] = {
-    title: `All set`,
-    okText: "Okay",
-    onOk: () => onClose(),
-    onCancel: () => onClose(),
-    content: (
-      <div className="flex column">
-        <p>
-          You've successfully voted <strong>{voteText}</strong> JUMP-
-          {getPubkeyIndex(proposal.pubkey.toBase58())}: {proposal.account.name}.
-        </p>
-        {otherActiveProposals && otherActiveProposals.length > 0 && (
-          <>
-            <h2 className="text-gradient" style={{ marginLeft: 0 }}>
-              Vote on other proposals:
-            </h2>
-            {otherActiveProposals.map(otherProposal => (
-              <VoteOnOtherProposal
-                proposal={otherProposal}
-                governance={governance}
-                onClose={onClose}
-              />
-            ))}
-          </>
-        )}
-      </div>
-    ),
-    closable: true,
-    cancelButtonProps: { style: { display: "none " } }
   };
   steps[Steps.NoVoteError] = {
     title: "Set a vote!",

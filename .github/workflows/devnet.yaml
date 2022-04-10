@@ -6,11 +6,12 @@ on:
     paths:
       - "programs/**/*.rs"
       - "programs/**/*.toml"
+      - "tests/**/*.ts"
   workflow_dispatch: {}
 
 env:
   ANCHOR_CLI_VERSION: 0.23.0
-  SOLANA_CLI_VERSION: 1.9.2
+  SOLANA_CLI_VERSION: 1.9.13
 
 defaults:
   run:

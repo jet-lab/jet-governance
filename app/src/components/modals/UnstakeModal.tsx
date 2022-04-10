@@ -1,17 +1,15 @@
-import { ReactNode, useState } from "react";
-import { Modal, ModalProps } from "antd";
-import { useProposalContext } from "../../contexts/proposal";
-import { rescindAndUnstake } from "../../actions/rescindAndUnstake";
-import { useRpcContext } from "../../hooks/useRpcContext";
-import { u64 } from "@solana/spl-token";
-import { dateToString } from "../../utils";
 import { bnToNumber } from "@jet-lab/jet-engine";
-import { isSignTransactionError } from "../../utils";
+import { Modal, ModalProps } from "antd";
+import BN from "bn.js";
+import { ReactNode, useState } from "react";
+import { rescindAndUnstake } from "../../actions/rescindAndUnstake";
+import { useProposalContext } from "../../contexts";
+import { useRpcContext } from "../../hooks";
+import { dateToString, isSignTransactionError } from "../../utils";
 
 enum Steps {
   Confirm = 0,
-  Success = 1,
-  Error = 2
+  Error = 1
 }
 
 export const UnstakeModal = ({
@@ -28,10 +26,10 @@ export const UnstakeModal = ({
 
     stakePool,
     stakeAccount,
-    voteMint,
+    jetMint,
 
+    realm,
     governance,
-    tokenOwnerRecord,
     walletVoteRecords,
 
     programs
@@ -59,29 +57,21 @@ export const UnstakeModal = ({
       !programs ||
       !stakePool ||
       !stakeAccount ||
+      !realm ||
       !governance ||
-      !tokenOwnerRecord ||
-      !voteMint
+      !jetMint
     ) {
       return;
     }
 
-    const unstakeAmount = new u64(amount * 10 ** voteMint.decimals);
+    const unstakeAmount = new BN(amount * 10 ** jetMint.decimals);
     setLoading(true);
-    rescindAndUnstake(
-      rpcContext,
-      programs.stake,
-      stakePool,
-      stakeAccount,
-      governance,
-      tokenOwnerRecord,
-      unstakeAmount
-    )
+    rescindAndUnstake(rpcContext, stakePool, stakeAccount, governance, unstakeAmount)
       .then(() => {
         setLoading(false);
         setDisplayUnbondDate();
-        setCurrent(Steps.Success);
         resetInput();
+        onClose();
       })
       .catch(err => {
         if (isSignTransactionError(err)) {
@@ -111,9 +101,13 @@ export const UnstakeModal = ({
       <div className="flex column">
         {unrelinquishedVoteRecords && unrelinquishedVoteRecords.length !== 0 && (
           <p>
-            You currently have votes cast on active proposals, which will be rescinded upon
-            unbonding. If you wish to keep your votes, wait until the voting period has ended before
-            unstaking.
+            You currently have votes cast on active proposals. When you unstake ANY amount of JET
+            tokens that have already voted, ALL of your active votes are rescinded. Even if you only
+            unstaked a portion of your staked JET,{" "}
+            <b>
+              please immediately revote on any active proposals with any remaining staked JET you
+              still have after this unstaking.
+            </b>
           </p>
         )}
         <p>
@@ -131,22 +125,6 @@ export const UnstakeModal = ({
             Logs page at any point during the unbonding period.
           </p>
         </div>
-      </div>
-    )
-  };
-  steps[Steps.Success] = {
-    title: `All set!`,
-    okText: "Okay",
-    onOk: () => onClose(),
-    onCancel: () => onClose(),
-    closable: true,
-    cancelButtonProps: { style: { display: "none" } },
-    content: (
-      <div className="flex column">
-        <p>
-          You've unstaked {amount && Intl.NumberFormat("us-US").format(amount)} JET from JetGovern.
-        </p>
-        <p>Your 29.5-day unbonding period will complete on {unbondDate}.</p>
       </div>
     )
   };

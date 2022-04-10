@@ -1,11 +1,18 @@
-import { useEffect, useMemo, useState } from "react";
-import { Link } from "react-router-dom";
-import { ResultProgressBar } from "../components/proposal/ResultProgressBar";
-import { Button, Divider, Typography } from "antd";
-import { ProposalCard } from "../components/ProposalCard";
-import { VoterList } from "../components/proposal/VoterList";
+import "./Proposal.less";
+import { ArrowLeftOutlined, DownloadOutlined, InfoCircleFilled } from "@ant-design/icons";
+import { bnToNumber, StakeBalance } from "@jet-lab/jet-engine";
+import { Governance, ProgramAccount, Proposal, ProposalState, Realm } from "@solana/spl-governance";
 import { useWallet } from "@solana/wallet-adapter-react";
-import { VoteModal } from "../components/modals/VoteModal";
+import { Button, Divider, Popover, Typography } from "antd";
+import { useEffect, useMemo, useState } from "react";
+import ReactMarkdown from "react-markdown";
+import { Link } from "react-router-dom";
+import { voteRecordCsvDownload } from "../actions/voteRecordCsvDownload";
+import { ProposalCard } from "../components";
+import { VoteModal } from "../components/modals";
+import { ResultProgressBar, VoterList } from "../components/proposal";
+import { LABELS } from "../constants";
+import { useBlockExplorer, useProposalContext } from "../contexts";
 import {
   getVoteCounts,
   getVoteType,
@@ -22,19 +29,10 @@ import {
   VoteOption,
   VoterDisplayData
 } from "../hooks";
-import { bnToIntLossy } from "../tools/units";
-import { LABELS } from "../constants";
-import ReactMarkdown from "react-markdown";
-import { voteRecordCsvDownload } from "../actions/voteRecordCsvDownload";
-import { ArrowLeftOutlined, DownloadOutlined } from "@ant-design/icons";
-import { getPubkeyIndex } from "../models/PUBKEYS_INDEX";
-import { useProposalContext } from "../contexts/proposal";
-import { StakeBalance } from "@jet-lab/jet-engine";
-import { Governance, ProgramAccount, Proposal, ProposalState, Realm } from "@solana/spl-governance";
 import { ReactComponent as ThumbsUp } from "../images/thumbs_up.svg";
 import { ReactComponent as ThumbsDown } from "../images/thumbs_down.svg";
-import "./Proposal.less";
-import { useBlockExplorer } from "../contexts/blockExplorer";
+import { getPubkeyIndex } from "../models/PUBKEYS_INDEX";
+import { sharesToTokens } from "../utils";
 
 export const ProposalView = () => {
   const proposalAddress = useKeyParam();
@@ -132,13 +130,14 @@ const InnerProposalView = ({
   };
 
   const [isVoteModalVisible, setIsVoteModalVisible] = useState(false);
+  const [popoverVisible, setPopoverVisible] = useState(false);
   const tokenOwnerRecord = useWalletTokenOwnerRecord(
     governance?.account.realm,
     proposal?.account.governingTokenMint
   );
   const voteRecord = useTokenOwnerVoteRecord(proposal?.pubkey, tokenOwnerRecord?.pubkey);
   const { connected } = useWallet();
-  const { jetMint } = useProposalContext();
+  const { jetMint, stakePool } = useProposalContext();
   const { getAccountExplorerUrl } = useBlockExplorer();
   const proposalAddress = useKeyParam();
   const { startDate, endDate } = useCountdown(proposal, governance);
@@ -182,7 +181,7 @@ const InnerProposalView = ({
 
   return (
     <Typography>
-      <div className="view-container column-grid" id="proposal-page">
+      <div className="view column-grid" id="proposal-page">
         <Title level={2} className="mobile-only">
           Proposal detail
         </Title>
@@ -230,8 +229,8 @@ const InnerProposalView = ({
               <Title>Vote Results</Title>
               <Text
                 onClick={() => {
-                  if (loaded && voterDisplayData) {
-                    voteRecordCsvDownload(proposal.pubkey, voterDisplayData, jetMint);
+                  if (loaded && voterDisplayData && stakePool) {
+                    voteRecordCsvDownload(proposal.pubkey, voterDisplayData, stakePool, jetMint);
                   }
                 }}
                 id="csv"
@@ -244,13 +243,13 @@ const InnerProposalView = ({
               <div className="results">
                 <ResultProgressBar
                   type="Approve"
-                  amount={bnToIntLossy(voteCounts?.yes)}
-                  total={bnToIntLossy(voteCounts?.total)}
+                  amount={bnToNumber(voteCounts?.yes)}
+                  total={bnToNumber(voteCounts?.total)}
                 />
                 <ResultProgressBar
                   type="Reject"
-                  amount={bnToIntLossy(voteCounts?.no)}
-                  total={bnToIntLossy(voteCounts?.total)}
+                  amount={bnToNumber(voteCounts?.no)}
+                  total={bnToNumber(voteCounts?.total)}
                 />
               </div>
 
@@ -265,11 +264,36 @@ const InnerProposalView = ({
                 <div className={`stakeholders`}>
                   <span className="voter title" />
                   <span className="address title">Wallet</span>
-                  <span className="amount title">Stake</span>
+                  <span className="amount title">Staked JET</span>
                   <span className="vote title">Vote</span>
                 </div>
                 <VoterList voteRecords={voterDisplayData} userVoteRecord={voteRecord} />
               </div>
+            </div>
+
+            <div>
+              <span>
+                Votes per JET{" "}
+                <Popover
+                  content={
+                    <div className="flex column">
+                      <p>
+                        Votes per JET is used to track the amount of voting power each account has.
+                        The downloadable CSV tracks both values.
+                      </p>
+                      <span className="link-btn" onClick={() => setPopoverVisible(false)}>
+                        Close
+                      </span>
+                    </div>
+                  }
+                  title="Votes per JET"
+                  visible={popoverVisible}
+                  trigger="click"
+                >
+                  <InfoCircleFilled onClick={() => setPopoverVisible(true)} />
+                </Popover>{" "}
+                = {bnToNumber(sharesToTokens(undefined, stakePool).conversion)}
+              </span>
             </div>
           </div>
         </div>
@@ -286,7 +310,7 @@ const InnerProposalView = ({
                 className={`vote-select vote-btn ${vote === VoteOption.Yes ? "selected" : ""}`}
                 type="primary"
               >
-                <span className="text-gradient">In favor</span>
+                <span className="gradient-text">In favor</span>
                 <ThumbsUp className="mobile-only" />
               </Button>
               <Button
@@ -297,7 +321,7 @@ const InnerProposalView = ({
                 className={`vote-select vote-btn ${vote === VoteOption.No ? "selected" : ""}`}
                 type="primary"
               >
-                <span className="text-gradient">Against</span>
+                <span className="gradient-text">Against</span>
                 <ThumbsDown className="mobile-only" />
               </Button>
               <Button

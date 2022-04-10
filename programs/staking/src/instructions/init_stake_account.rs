@@ -1,7 +1,10 @@
 use anchor_lang::prelude::*;
-
-use crate::state::*;
 use jet_auth::UserAuthentication;
+
+use crate::events::StakeAccountCreated;
+use crate::seeds;
+use crate::spl_addin::VoterWeightRecord;
+use crate::state::*;
 
 #[derive(Accounts)]
 pub struct InitStakeAccount<'info> {
@@ -30,6 +33,17 @@ pub struct InitStakeAccount<'info> {
     )]
     pub stake_account: Account<'info, StakeAccount>,
 
+    /// The voter weight record to be created for this stake
+    #[account(init,
+              seeds = [
+                  seeds::VOTER_WEIGHT_RECORD,
+                  stake_account.key().as_ref()
+              ],
+              bump,
+              payer = payer,
+              space = 8 + std::mem::size_of::<VoterWeightRecord>())]
+    pub voter_weight_record: Account<'info, VoterWeightRecord>,
+
     /// The address that will pay for the rent
     #[account(mut)]
     pub payer: Signer<'info>,
@@ -38,10 +52,24 @@ pub struct InitStakeAccount<'info> {
 }
 
 pub fn init_stake_account_handler(ctx: Context<InitStakeAccount>) -> Result<()> {
+    let pool = &ctx.accounts.stake_pool;
     let account = &mut ctx.accounts.stake_account;
+    let voter_weight = &mut ctx.accounts.voter_weight_record;
 
     account.owner = *ctx.accounts.owner.key;
-    account.stake_pool = ctx.accounts.stake_pool.key();
+    account.stake_pool = pool.key();
+    account.voter_weight_record = voter_weight.key();
+
+    voter_weight.realm = pool.governance_realm;
+    voter_weight.governing_token_mint = pool.token_mint;
+
+    account.update_voter_weight_record(voter_weight);
+
+    emit!(StakeAccountCreated {
+        stake_pool: ctx.accounts.stake_pool.key(),
+        stake_account: ctx.accounts.stake_account.key(),
+        owner: ctx.accounts.owner.key(),
+    });
 
     Ok(())
 }

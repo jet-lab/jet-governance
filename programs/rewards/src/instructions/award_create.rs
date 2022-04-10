@@ -3,7 +3,7 @@ use std::io::Write;
 use anchor_lang::prelude::*;
 use anchor_spl::token::{self, Token, TokenAccount, Transfer};
 
-use crate::state::*;
+use crate::{events, seeds, state::*};
 
 #[derive(AnchorSerialize, AnchorDeserialize)]
 pub struct AwardCreateParams {
@@ -34,7 +34,7 @@ pub struct AwardCreate<'info> {
         init,
         payer = payer_rent,
         seeds = [
-            b"award".as_ref(),
+            seeds::AWARD,
             params.stake_account.as_ref(),
             params.seed.as_bytes(),
         ],
@@ -47,7 +47,7 @@ pub struct AwardCreate<'info> {
     #[account(init,
               seeds = [
                   award.key().as_ref(),
-                  b"vault".as_ref()
+                  seeds::VAULT,
               ],
               bump,
               payer = payer_rent,
@@ -107,7 +107,16 @@ pub fn award_create_handler(ctx: Context<AwardCreate>, params: AwardCreateParams
     award.end_at = params.end_at;
     award.kind = DistributionKind::Linear;
 
+    let award = &ctx.accounts.award;
+
     token::transfer(ctx.accounts.transfer_context(), params.amount)?;
+
+    emit!(events::AwardCreated {
+        award: award.key(),
+        token_mint: ctx.accounts.token_mint.key(),
+        params,
+        distribution_kind: award.kind,
+    });
 
     Ok(())
 }

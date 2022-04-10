@@ -2,10 +2,8 @@ import "./Navbar.less";
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useWallet } from "@solana/wallet-adapter-react";
-import { useConnectWallet } from "../contexts/connectWallet";
-import { useDarkTheme } from "../contexts/darkTheme";
+import { useConnectWallet, useDarkTheme, useProposalContext } from "../contexts";
 import { Button, Switch } from "antd";
-import { useProposalContext } from "../contexts/proposal";
 import { shortenAddress } from "../utils";
 import { ReactComponent as AccountIcon } from "../images/account_icon.svg";
 import { ReactComponent as WalletIcon } from "../images/wallet_icon.svg";
@@ -18,12 +16,13 @@ export function Navbar() {
   const [drawerOpened, setDrawerOpened] = useState(false);
   const { claimsCount } = useProposalContext();
   const { darkTheme, toggleDarkTheme } = useDarkTheme();
+
   const navLinks = [
     { title: "Dashboard", route: "/" },
     {
       title: `Claims`,
       class: claimsCount > 0 ? "shimmer" : "",
-      badge: claimsCount,
+      badge: claimsCount > 0 ? claimsCount : "",
       route: "/claims"
     },
     {
@@ -56,20 +55,23 @@ export function Navbar() {
         </Link>
         <div className="nav-links flex-centered">
           {navLinks.map(link => (
-            <Link
-              to={link.route}
-              className={`nav-link ${pathname === link.route ? "active" : ""} ${link.class}`}
-              key={link.route}
-            >
-              {link.title}
+            <>
+              <Link
+                to={link.route}
+                className={`nav-link ${pathname === link.route ? "active" : ""} ${link.class}`}
+                style={link.badge ? { marginRight: 0 } : {}}
+                key={link.route}
+              >
+                {link.title}
+              </Link>
               {link.badge ? (
                 <span className="badge">
-                  <span className="text-gradient">{link.badge}</span>
+                  <span className="gradient-text">{link.badge}</span>
                 </span>
               ) : (
                 ""
               )}
-            </Link>
+            </>
           ))}
           <Button
             ghost

@@ -1,7 +1,6 @@
-import { useLocalStorageState } from "../utils/utils";
+import { setProgramIds, useLocalStorageState } from "../utils";
 import { clusterApiUrl, Connection } from "@solana/web3.js";
-import React, { useContext, useMemo } from "react";
-import { setProgramIds } from "../utils/ids";
+import { createContext, useContext, useMemo } from "react";
 
 export enum ENV {
   MainnetBeta = "mainnet-beta",
@@ -44,7 +43,7 @@ interface ConnectionConfig {
   inDevelopment: boolean;
 }
 
-const ConnectionContext = React.createContext<ConnectionConfig>({
+const ConnectionContext = createContext<ConnectionConfig>({
   endpoint: DEFAULT,
   setEndpoint: () => {},
   connection: new Connection(DEFAULT, "recent"),

@@ -1,10 +1,9 @@
-import { useCallback, useState } from "react";
-import { MintInfo } from "@solana/spl-token";
+import { bnToNumber, JetMint, StakePool } from "@jet-lab/jet-engine";
 import { PublicKey } from "@solana/web3.js";
-import BN from "bn.js";
-import { bnToNumber } from "@jet-lab/jet-engine";
-import { geoBannedCountries } from "../models/GEOBANNED_COUNTRIES";
 import { SelectProps } from "antd";
+import BN from "bn.js";
+import { useCallback, useState } from "react";
+import { geoBannedCountries } from "../models/GEOBANNED_COUNTRIES";
 
 export function useLocalStorageState(key: string, defaultState?: string) {
   const [state, setState] = useState(() => {
@@ -43,26 +42,47 @@ export function shortenAddress(address: PublicKey | string, chars = 4): string {
   return `${address.slice(0, chars)}...${address.slice(-chars)}`;
 }
 
-export function fromLamports(account?: number | BN, mint?: MintInfo, rate: number = 1.0): number {
-  if (!account || !mint) {
+export function fromLamports(amount: number | BN | undefined, mint: JetMint | undefined): number {
+  if (!amount || !mint) {
     return 0;
   }
-
-  const amount = Math.floor(typeof account === "number" ? account : bnToNumber(account));
-
-  const precision = Math.pow(10, mint.decimals || 0);
-  return (amount / precision) * rate;
+  const fromAmount = typeof amount === "number" ? new BN(amount) : amount;
+  return bnToNumber(fromAmount) / 10 ** mint.decimals;
 }
 
-export const toTokens = (amount: BN | number | undefined, mint?: MintInfo) => {
-  return fromLamports(amount, mint).toLocaleString(undefined, {
-    maximumFractionDigits: 0
+export const toTokens = (amount?: BN | number, mint?: JetMint) => {
+  const fromAmount = typeof amount === "number" ? new BN(amount) : amount;
+  const hasNoValue = fromAmount === new BN(0) || amount === 0;
+  if (hasNoValue) {
+    return "0";
+  }
+  return fromLamports(fromAmount, mint).toLocaleString(undefined, {
+    maximumFractionDigits: 1
   });
+};
+
+export const withPrecisionNumber = (amount: number, precision: number = 1): number => {
+  if (amount === 0) {
+    return 0;
+  }
+  const factor = Math.pow(10, precision);
+  return Math.floor(amount * factor) / factor;
+};
+
+export const toTokensPrecisionNumber = (
+  amount: BN,
+  mint: JetMint,
+  precision: number = 1
+): number => {
+  if (amount === new BN(0)) {
+    return 0;
+  }
+  return withPrecisionNumber(fromLamports(amount, mint), precision);
 };
 
 var SI_SYMBOL = ["", "k", "M", "G", "T", "P", "E"];
 
-export const abbreviateNumber = (number: number, precision: number) => {
+export const abbreviateNumber = (number: number) => {
   let tier = (Math.log10(number) / 3) | 0;
   let scaled = number;
   let suffix = SI_SYMBOL[tier];
@@ -71,7 +91,9 @@ export const abbreviateNumber = (number: number, precision: number) => {
     scaled = number / scale;
   }
 
-  return scaled.toFixed(precision) + suffix;
+  return number < 100000
+    ? new Intl.NumberFormat().format(Number(number.toFixed(2)))
+    : scaled.toFixed(2) + suffix;
 };
 
 export const formatUSD = new Intl.NumberFormat("en-US", {
@@ -97,7 +119,7 @@ export function sleep(ms: number): Promise<void> {
 
 // Get remaining days, hours and minutes
 export const getRemainingTime = (currentTime: number, endTime: number): string => {
-  if (endTime <= currentTime) return `Expired on ${dateToString(new Date(endTime))}`;
+  if (endTime <= currentTime) return `${dateFromUnixTimestamp(new BN(endTime / 1000))}`;
   let difference = Math.abs(endTime - currentTime) / 1000;
 
   const days = Math.floor(difference / 86400);
@@ -112,9 +134,9 @@ export const getRemainingTime = (currentTime: number, endTime: number): string =
   const seconds = Math.floor(difference % 60);
 
   if (days > 0) {
-    return `Ends in ${days} ${days === 1 ? "day" : "days"}`;
+    return `${days} ${days === 1 ? "day" : "days"}`;
   } else {
-    return `Ends in ${hours !== 0 ? `${hours.toLocaleString()}h` : ""} ${
+    return `${hours !== 0 ? `${hours.toLocaleString()}h` : ""} ${
       minutes !== 0 ? `${minutes.toLocaleString()}m` : ""
     } ${seconds.toLocaleString()}s`;
   }
@@ -152,6 +174,32 @@ export const dateToString = (date: Date) => {
   const year = date.getFullYear();
   const localTime = date.toLocaleTimeString();
   return `${day} ${months[month]} ${year}, ${localTime}`;
+};
+
+export const sharesToTokens = (
+  shares: BN | number | undefined,
+  stakePool: StakePool | undefined
+): { tokens: BN; conversion: BN } => {
+  let tokens = new BN(0);
+  let conversion = new BN(0);
+  if (
+    !stakePool ||
+    stakePool.stakePool.bonded.shares.eq(new BN(0)) ||
+    stakePool.stakePool.bonded.tokens.eq(new BN(0))
+  ) {
+    return { tokens, conversion };
+  }
+  conversion = stakePool.stakePool.bonded.shares.div(stakePool.stakePool.bonded.tokens);
+  if (!shares) {
+    return { tokens, conversion };
+  }
+
+  const shareAmount = typeof shares === "number" ? new BN(shares) : shares;
+
+  tokens = shareAmount
+    .mul(stakePool.stakePool.bonded.tokens)
+    .div(stakePool.stakePool.bonded.shares);
+  return { tokens, conversion };
 };
 
 // --------- Country Code Info ---------

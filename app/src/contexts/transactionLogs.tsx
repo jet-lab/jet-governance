@@ -5,7 +5,7 @@ import { useWallet } from "@solana/wallet-adapter-react";
 import bs58 from "bs58";
 import { dateFromUnixTimestamp, JET_TOKEN_MINT, shortenAddress } from "../utils";
 import { useRpcContext } from "../hooks";
-import { BN } from "@project-serum/anchor";
+import BN from "bn.js";
 
 // Transaction logs context
 export interface TransactionLog {
@@ -118,9 +118,13 @@ export function TransactionsProvider(props: { children: any }) {
                       blockDate: dateFromUnixTimestamp(new BN(log.blockTime)),
                       signature,
                       action: getActionType(progInst, pre.owner!),
-                      amount: `${Math.abs(
-                        pre.uiTokenAmount.uiAmount! - post.uiTokenAmount.uiAmount!
-                      ).toFixed(2)}`
+                      amount: `${new Intl.NumberFormat().format(
+                        Number(
+                          Math.abs(
+                            pre.uiTokenAmount.uiAmount! - post.uiTokenAmount.uiAmount!
+                          ).toFixed(1)
+                        )
+                      )}`
                     };
 
                     // If we found mint match, add tx to logs

@@ -1,11 +1,9 @@
-import { ProposalFilter, useProposalContext } from "../contexts/proposal";
-import { ProposalCard } from "../components/ProposalCard";
-import { YourInfo } from "../components/YourInfo";
-import { PastProposalCard } from "../components/MobilePastProposals";
-import { ReactComponent as Filter } from "../images/filter.svg";
-import { useEffect } from "react";
-import { Typography } from "antd";
 import "./Home.less";
+import { Typography } from "antd";
+import { useEffect } from "react";
+import { PastProposalCard, ProposalCard, YourInfo } from "../components";
+import { ProposalFilter, useProposalContext } from "../contexts";
+import { ReactComponent as Filter } from "../images/filter.svg";
 
 export const HomeView = () => {
   /* eslint-disable @typescript-eslint/no-unused-vars */
@@ -45,7 +43,7 @@ export const HomeView = () => {
   // }, [realm?.account.communityMint.toBase58()]);
 
   return (
-    <section className="home view-container content-body column-grid">
+    <section className="home view content-body column-grid">
       <YourInfo />
       <div className="show-proposals">
         <Typography>

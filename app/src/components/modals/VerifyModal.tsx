@@ -1,17 +1,16 @@
+import { Auth } from "@jet-lab/jet-engine";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { Modal, Input, ModalProps, Checkbox } from "antd";
-import { PropsWithChildren, useEffect, useState } from "react";
-import { useConnectWallet } from "../../contexts/connectWallet";
+import { CountryPhoneInput, CountryPhoneInputValue } from "antd-country-phone-input";
 import axios from "axios";
-import { useConnection, useConnectionConfig } from "../../contexts";
-import { Auth } from "@jet-lab/jet-engine/lib/auth/auth";
-import CountryPhoneInput, { CountryPhoneInputValue } from "antd-country-phone-input";
+import { PropsWithChildren, useEffect, useState } from "react";
 import { DocsLink } from "../docsLink";
+import { createUserAuth } from "../../actions/createUserAuth";
+import { useConnection, useConnectionConfig, useConnectWallet } from "../../contexts";
+import { useProvider, useRpcContext } from "../../hooks";
 import { ReactComponent as ArrowIcon } from "../../images/arrow_icon.svg";
 import { geoBannedCountries } from "../../models/GEOBANNED_COUNTRIES";
 import { filterSort } from "../../utils";
-import { createUserAuth } from "../../actions/createUserAuth";
-import { useProvider, useRpcContext } from "../../hooks";
 
 enum Steps {
   Welcome = 0,
@@ -271,7 +270,7 @@ export const VerifyModal = () => {
         setConfirmCodeLoading(false);
         if (res.status === 204) {
           // The verification was successful and transaction was confirmed.
-          setCurrent(Steps.AccessGranted1);
+          setCurrent(Steps.AgreeToTerms);
         } else if (res.status === 400) {
           // Payload validation failed.
           console.log("Payload validation failed");
@@ -407,7 +406,7 @@ export const VerifyModal = () => {
           JetGovern. For more info, see our{" "}
           <a
             href="https://www.jetprotocol.io/legal/terms-of-service"
-            className="text-gradient-btn"
+            className="gradient-text-btn"
             target="_blank"
             rel="noopener noreferrer"
           >
@@ -470,7 +469,7 @@ export const VerifyModal = () => {
         continue to browse proposals while disconnected.
       </p>
     ),
-    closable: true
+    closable: false
   };
   steps[Steps.AgreeToTerms] = {
     title: "Warning",
@@ -482,31 +481,45 @@ export const VerifyModal = () => {
     children: (
       <div className="flex column">
         <p>
-          You are about to enter Jet Govern. Do not proceed if you do not understand and accept the
-          Terms of Service, and potential for financial loss.
+          You are about to enter JetGovern. New technologies have risk. Do not proceed if you do not
+          understand and accept the terms and potential for financial loss.
         </p>
         <p>
-          <a
-            href="https://www.jetprotocol.io/legal/terms-of-service"
-            target="_blank"
-            className="padding-right text-gradient-btn"
-            rel="noopener noreferrer"
-          >
-            Terms of Service
-          </a>
-          <a
-            href="https://www.jetprotocol.io/legal/privacy-policy"
-            target="_blank"
-            className="padding-right text-gradient-btn"
-            rel="noopener noreferrer"
-          >
-            Privacy Policy
-          </a>
-        </p>
-        <p>
-          <Checkbox onChange={e => setDisclaimerChecked(e.target.checked)}>
-            I understand the Terms of Service, Privacy Policy, Cookie Policy and accept the risks.
-          </Checkbox>
+          <Checkbox
+            id="terms-privacy-check"
+            className="terms-privacy-check"
+            onChange={e => setDisclaimerChecked(e.target.checked)}
+          />
+          <label htmlFor="terms-privacy-check" className="terms-privacy-legend">
+            I understand the{" "}
+            <a
+              href="https://www.jetprotocol.io/legal/terms-of-service"
+              target="_blank"
+              className="link-btn"
+              rel="noopener noreferrer"
+            >
+              Terms of Service
+            </a>
+            ,{" "}
+            <a
+              href="https://www.jetprotocol.io/legal/privacy-policy"
+              target="_blank"
+              className="link-btn"
+              rel="noopener noreferrer"
+            >
+              Privacy Policy
+            </a>
+            , and{" "}
+            <a
+              href="https://www.jetprotocol.io/legal/cookie-policy"
+              target="_blank"
+              className="link-btn"
+              rel="noopener noreferrer"
+            >
+              Cookie Policy
+            </a>
+            . I am aware of and accept the risks of using new technology.
+          </label>
         </p>
       </div>
     ),
@@ -616,7 +629,7 @@ export const VerifyModal = () => {
           <a
             href="https://www.jetprotocol.io/legal/terms-of-service"
             target="_blank"
-            className="text-gradient-btn"
+            className="gradient-text-btn"
             rel="noreferrer"
           >
             Terms of Service

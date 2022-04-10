@@ -1,18 +1,16 @@
+import { Airdrop } from "@jet-lab/jet-engine";
+import { useWallet } from "@solana/wallet-adapter-react";
 import { Modal, ModalProps } from "antd";
 import { PropsWithChildren, useState } from "react";
-import { Link } from "react-router-dom";
-import { Airdrop } from "@jet-lab/jet-engine";
-import { useRpcContext } from "../../hooks/useRpcContext";
-import { useProposalContext } from "../../contexts/proposal";
-import { claimAndStake } from "../../actions/claimAndStake";
 import { DocsLink } from "../docsLink";
+import { claimAndStake } from "../../actions/claimAndStake";
+import { useRpcContext } from "../../hooks";
+import { useProposalContext } from "../../contexts";
 import { isSignTransactionError } from "../../utils";
-import { useWallet } from "@solana/wallet-adapter-react";
 
 enum Steps {
   Confirm = 0,
-  Success = 1,
-  Error = 2
+  Error = 1
 }
 
 export const ClaimModal = ({
@@ -36,18 +34,10 @@ export const ClaimModal = ({
     }
 
     setLoading(true);
-    if (!!programs && !!airdrop && !!stakePool && !!stakeAccount && !!publicKey && !!realm) {
-      claimAndStake(
-        rpcContext,
-        programs.rewards,
-        airdrop,
-        stakePool,
-        stakeAccount,
-        publicKey,
-        realm
-      )
+    if (!!programs && !!airdrop && !!stakePool && !!stakeAccount && !!realm) {
+      claimAndStake(rpcContext, programs.rewards, airdrop, stakePool, stakeAccount)
         .then(() => {
-          setCurrent(Steps.Success);
+          onClose();
         })
         .catch(err => {
           if (isSignTransactionError(err)) {
@@ -86,27 +76,6 @@ export const ClaimModal = ({
           You may unstake at anytime, but before the tokens can be withdrawn to your wallet, there
           is a 29.5-day unbonding period. Please <DocsLink>read the docs</DocsLink> for more
           information.
-        </p>
-      </div>
-    )
-  };
-
-  steps[Steps.Success] = {
-    title: "Congratulations and welcome aboard!",
-    okText: "Okay",
-    onOk: () => onClose(),
-    onCancel: () => onClose(),
-    closable: false,
-    cancelButtonProps: { style: { display: "none " } },
-    children: (
-      <div className="flex column">
-        <p>
-          You've claimed and staked <b>{stakeAmount} JET</b>.
-        </p>
-
-        <p>
-          Head on back to the <Link to="/">dashboard page</Link> to see your staked balance and vote
-          on active proposals!
         </p>
       </div>
     )

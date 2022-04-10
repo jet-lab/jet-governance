@@ -1,28 +1,28 @@
-import { ReactNode, useState } from "react";
-import { Modal, ModalProps } from "antd";
-import { useWallet } from "@solana/wallet-adapter-react";
-import { useProposalContext } from "../../contexts/proposal";
-import { addStake } from "../../actions/addStake";
-import { useRpcContext } from "../../hooks/useRpcContext";
-import { useBN } from "../../hooks";
 import { ProgramAccount, Realm } from "@solana/spl-governance";
+import { useWallet } from "@solana/wallet-adapter-react";
+import { Modal, ModalProps } from "antd";
+import { ReactNode, useState } from "react";
 import { DocsLink } from "../docsLink";
-import { isSignTransactionError } from "../../utils";
+import { addStake } from "../../actions/addStake";
+import { useProposalContext } from "../../contexts";
+import { useBN, useRpcContext } from "../../hooks";
+import { isSignTransactionError, withPrecisionNumber } from "../../utils";
 
 enum Steps {
   Confirm = 0,
-  Success = 1,
-  Error = 2
+  Error = 1
 }
 
 export const StakeModal = ({
   onClose,
   amount,
-  realm
+  realm,
+  precisionOnDisplayAmounts
 }: {
   onClose: () => void;
   amount: number | undefined;
   realm: ProgramAccount<Realm> | undefined;
+  precisionOnDisplayAmounts?: number | undefined;
 }) => {
   const { jetMint } = useProposalContext();
   const [current, setCurrent] = useState<Steps>(Steps.Confirm);
@@ -39,9 +39,9 @@ export const StakeModal = ({
     }
 
     setLoading(true);
-    addStake(rpcContext, stakePool, realm, publicKey, stakeLamports, jetMint)
+    addStake(rpcContext, stakePool, publicKey, stakeLamports, jetMint)
       .then(() => {
-        setCurrent(Steps.Success);
+        onClose();
       })
       .catch((err: any) => {
         if (isSignTransactionError(err)) {
@@ -59,9 +59,10 @@ export const StakeModal = ({
 
   const steps: (ModalProps & { content: ReactNode })[] = [];
   steps[Steps.Confirm] = {
-    title: `You are staking ${
-      amount && Intl.NumberFormat("us-US").format(amount)
-    } JET into the platform.`,
+    title: `You are staking ${withPrecisionNumber(
+      amount || 0,
+      precisionOnDisplayAmounts
+    )} JET into the platform.`,
     okText: "I understand",
     onOk: () => handleSubmitTx(),
     onCancel: () => onClose(),
@@ -78,20 +79,6 @@ export const StakeModal = ({
           information, please <DocsLink>read the docs</DocsLink>.
         </p>
       </div>
-    )
-  };
-  steps[Steps.Success] = {
-    title: `All set!`,
-    okText: "Okay",
-    onOk: () => onClose(),
-    onCancel: () => onClose(),
-    closable: true,
-    cancelButtonProps: { style: { display: "none" } },
-    content: (
-      <p>
-        You've staked {amount && Intl.NumberFormat("us-US").format(amount)} JET into JetGovern and
-        can begin using to vote on active proposals immediately.
-      </p>
     )
   };
   steps[Steps.Error] = {
