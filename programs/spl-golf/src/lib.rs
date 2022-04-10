@@ -6,20 +6,23 @@ declare_id!("jHdzmKjaVSf3XEMusqYRg3TeUTmxo5yohX1CRt8Y3SA");
 mod instructions;
 use instructions::*;
 
-
 #[program]
 pub mod jet_spl_golf {
     use super::*;
 
-    pub fn vote_many<'info>(ctx: Context<'_, '_, '_, 'info, VoteMany<'info>>, votes: Vec<GolfVote>) -> Result<()> {
+    pub fn vote_many<'info>(
+        ctx: Context<'_, '_, '_, 'info, VoteMany<'info>>,
+        votes: Vec<GolfVote>,
+    ) -> Result<()> {
         instructions::vote_many::handler(ctx, votes)
     }
 
-    pub fn relinquish_many<'info>(ctx: Context<'_, '_, '_, 'info, RelinquishMany<'info>>) -> Result<()> {
+    pub fn relinquish_many<'info>(
+        ctx: Context<'_, '_, '_, 'info, RelinquishMany<'info>>,
+    ) -> Result<()> {
         instructions::relinquish_many::handler(ctx)
     }
 }
-
 
 pub use error::ErrorCode;
 

@@ -3,7 +3,7 @@ use anchor_lang::solana_program::program::invoke;
 use itertools::Itertools;
 use spl_governance::state::vote_record::{Vote, VoteChoice};
 
-use crate::{SplGovernance, ErrorCode};
+use crate::{ErrorCode, SplGovernance};
 
 #[derive(Accounts)]
 pub struct VoteMany<'info> {
