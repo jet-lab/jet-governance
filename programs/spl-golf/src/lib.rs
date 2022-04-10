@@ -2,7 +2,6 @@ use anchor_lang::prelude::*;
 use solana_program::pubkey;
 use spl_governance::state::vote_record::Vote;
 
-
 declare_id!("jHdzmKjaVSf3XEMusqYRg3TeUTmxo5yohX1CRt8Y3SA");
 
 mod instructions;
