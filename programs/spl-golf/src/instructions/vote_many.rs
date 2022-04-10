@@ -10,20 +10,16 @@ pub struct VoteMany<'info> {
     /// The owner of the TokenOwnerRecord
     pub owner: Signer<'info>,
 
-    /// The governance realm to deposit votes into
     /// CHECK: by spl governance
     pub realm: UncheckedAccount<'info>,
 
-    /// The governance where the proposal is
     /// CHECK: by spl governance
     pub governance: UncheckedAccount<'info>,
 
-    /// The proposal to vote on
     /// CHECK: by spl governance
     #[account(mut)]
     pub proposal_owner_record: UncheckedAccount<'info>,
 
-    /// The Token Owner Record for the owner of this account
     /// CHECK: by spl governance
     #[account(mut)]
     pub voter_token_owner_record: UncheckedAccount<'info>,
@@ -107,6 +103,6 @@ pub fn handler<'info>(
         .zip(votes)
         .try_for_each(|((proposal, vote_record_address), vote)| {
             ctx.accounts
-                .cast_vote(proposal.clone(), vote_record_address.clone(), vote.into())
+                .cast_vote(proposal.clone(), vote_record_address.clone(), vote)
         })
 }

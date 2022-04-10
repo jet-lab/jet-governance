@@ -9,20 +9,16 @@ pub struct RelinquishMany<'info> {
     /// The owner of the TokenOwnerRecord
     pub owner: Signer<'info>,
 
-    /// The governance realm to deposit votes into
     /// CHECK: by spl governance
     pub realm: UncheckedAccount<'info>,
 
-    /// The governance where the proposal is
     /// CHECK: by spl governance
     pub governance: UncheckedAccount<'info>,
 
-    /// The proposal to vote on
     /// CHECK: by spl governance
     #[account(mut)]
     pub proposal_owner_record: UncheckedAccount<'info>,
 
-    /// The Token Owner Record for the owner of this account
     /// CHECK: by spl governance
     #[account(mut)]
     pub voter_token_owner_record: UncheckedAccount<'info>,
@@ -36,8 +32,8 @@ pub struct RelinquishMany<'info> {
     /// CHECK: by spl governance
     pub voter_weight_record: UncheckedAccount<'info>,
 
-    #[account(mut)]
     /// CHECK: by spl governance
+    #[account(mut)]
     pub beneficiary: UncheckedAccount<'info>,
 
     pub governance_program: Program<'info, SplGovernance>,
