@@ -1414,9 +1414,9 @@ dependencies = [
  "anchor-spl",
  "jet-proto-auth",
  "solana-program",
- "spl-governance",
+ "spl-governance 2.2.4",
  "spl-governance-addin-api",
- "spl-governance-tools",
+ "spl-governance-tools 0.1.2",
 ]
 
 [[package]]
@@ -1427,7 +1427,7 @@ dependencies = [
  "anchor-spl",
  "itertools",
  "solana-program",
- "spl-governance",
+ "spl-governance 2.1.4",
 ]
 
 [[package]]
@@ -3056,6 +3056,25 @@ dependencies = [
 
 [[package]]
 name = "spl-governance"
+version = "2.1.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "1fc31263f3feca631b33aca30658d644c43fb3108fde479e1b429290a707e76c"
+dependencies = [
+ "arrayref",
+ "bincode",
+ "borsh",
+ "num-derive",
+ "num-traits",
+ "serde",
+ "serde_derive",
+ "solana-program",
+ "spl-governance-tools 0.1.0",
+ "spl-token",
+ "thiserror",
+]
+
+[[package]]
+name = "spl-governance"
 version = "2.2.4"
 source = "git+https://github.com/jet-lab/solana-program-library?branch=temp-fix-spl-deps#d6233217901143afd7861d20c8e8743abf428ca0"
 dependencies = [
@@ -3068,7 +3087,7 @@ dependencies = [
  "serde_derive",
  "solana-program",
  "spl-governance-addin-api",
- "spl-governance-tools",
+ "spl-governance-tools 0.1.2",
  "spl-token",
  "thiserror",
 ]
@@ -3080,7 +3099,25 @@ source = "git+https://github.com/jet-lab/solana-program-library?branch=temp-fix-
 dependencies = [
  "borsh",
  "solana-program",
- "spl-governance-tools",
+ "spl-governance-tools 0.1.2",
+]
+
+[[package]]
+name = "spl-governance-tools"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "2e7983eeef811e31e39948ceca10fab09a5abad04f179f85f6e6eb552c19d528"
+dependencies = [
+ "arrayref",
+ "bincode",
+ "borsh",
+ "num-derive",
+ "num-traits",
+ "serde",
+ "serde_derive",
+ "solana-program",
+ "spl-token",
+ "thiserror",
 ]
 
 [[package]]
