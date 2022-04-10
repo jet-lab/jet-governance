@@ -97,7 +97,7 @@ pub fn handler<'c, 'info>(
         return err!(ErrorCode::ProposalsAndVotesMisaligned);
     }
     ctx.remaining_accounts
-        .into_iter()
+        .iter()
         .chunks(2)
         .into_iter()
         .map(|c| {
@@ -105,11 +105,10 @@ pub fn handler<'c, 'info>(
             (c[0], c[1])
         })
         .zip(votes)
-        .map(|((proposal, vote_record_address), vote)| {
+        .try_for_each(|((proposal, vote_record_address), vote)| {
             ctx.accounts
                 .cast_vote(proposal.clone(), vote_record_address.clone(), vote.into())
         })
-        .collect::<Result<()>>()
 }
 
 //// copied from spl governance:
@@ -137,18 +136,18 @@ pub enum GolfVote {
     Deny,
 }
 
-impl Into<VoteChoice> for &GolfVoteChoice {
-    fn into(self) -> VoteChoice {
+impl From<&GolfVoteChoice> for VoteChoice {
+    fn from(golf: &GolfVoteChoice) -> VoteChoice {
         VoteChoice {
-            rank: self.rank,
-            weight_percentage: self.weight_percentage,
+            rank: golf.rank,
+            weight_percentage: golf.weight_percentage,
         }
     }
 }
 
-impl Into<Vote> for GolfVote {
-    fn into(self) -> Vote {
-        match self {
+impl From<GolfVote> for Vote {
+    fn from(golf: GolfVote) -> Vote {
+        match golf {
             GolfVote::Approve(choices) => Vote::Approve(choices.iter().map(|c| c.into()).collect()),
             GolfVote::Deny => Vote::Deny,
         }

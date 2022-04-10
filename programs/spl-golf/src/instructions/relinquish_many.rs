@@ -84,16 +84,12 @@ pub fn handler<'c, 'info>(ctx: Context<'_, '_, 'c, 'info, RelinquishMany<'info>>
         return err!(ErrorCode::ProposalsAndVotesMisaligned);
     }
     ctx.remaining_accounts
-        .into_iter()
+        .iter()
         .chunks(2)
         .into_iter()
-        .map(|c| {
-            let c = c.collect::<Vec<_>>();
-            (c[0], c[1])
-        })
-        .map(|(proposal, vote_record_address)| {
+        .try_for_each(|mut c| {
+            let (proposal, vote_record_address) = (c.next().unwrap(), c.next().unwrap());
             ctx.accounts
                 .relinquish_vote(proposal.clone(), vote_record_address.clone())
         })
-        .collect::<Result<()>>()
 }
