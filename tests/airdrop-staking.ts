@@ -948,7 +948,7 @@ describe("airdrop-staking", () => {
           );
           let [recipientVoterWeight] = await PublicKey.findProgramAddress(
             [Buffer.from("voter-weight-record"), recipientStakeAccount.toBuffer()],
-            StakingProgram.programId,
+            StakingProgram.programId
           );
 
           await StakingProgram.rpc.initStakeAccount({

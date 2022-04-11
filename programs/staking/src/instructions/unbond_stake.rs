@@ -78,6 +78,10 @@ impl<'info> UnbondStake<'info> {
             return err!(ErrorCode::InvalidTokenOwnerRecord);
         }
 
+        if record.governing_token_mint != self.stake_pool.token_mint {
+            return err!(ErrorCode::InvalidTokenOwnerRecord);
+        }
+
         Ok(record)
     }
 }
