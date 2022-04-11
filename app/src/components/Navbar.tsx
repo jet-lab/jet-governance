@@ -98,7 +98,7 @@ export function Navbar() {
             src="img/jet/jet_govern_white.png"
             width="90%"
             height="auto"
-            alt="Jet Govern"
+            alt="JetGovern"
           />
         </Link>
         <div

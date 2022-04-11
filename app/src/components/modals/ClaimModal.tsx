@@ -69,7 +69,7 @@ export const ClaimModal = ({
           You are claiming <b>{stakeAmount} JET</b>.
         </p>
         <p>
-          Your tokens will be automatically staked into Jet Govern, rewards will begin accruing, and
+          Your tokens will be automatically staked into JetGovern, rewards will begin accruing, and
           you can vote on active proposals.
         </p>
         <p>
