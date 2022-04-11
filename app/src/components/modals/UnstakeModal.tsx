@@ -27,6 +27,7 @@ export const UnstakeModal = ({
     stakePool,
     stakeAccount,
     jetMint,
+    stakeBalance: { stakedJet },
 
     realm,
     governance,
@@ -59,14 +60,23 @@ export const UnstakeModal = ({
       !stakeAccount ||
       !realm ||
       !governance ||
-      !jetMint
+      !jetMint ||
+      !stakedJet
     ) {
       return;
     }
 
     const unstakeAmount = new BN(amount * 10 ** jetMint.decimals);
     setLoading(true);
-    rescindAndUnstake(rpcContext, stakePool, stakeAccount, governance, unstakeAmount)
+    rescindAndUnstake(
+      rpcContext,
+      stakePool,
+      stakeAccount,
+      governance,
+      unstakeAmount,
+      programs.stake,
+      unstakeAmount.eq(stakedJet)
+    )
       .then(() => {
         setLoading(false);
         setDisplayUnbondDate();
@@ -99,17 +109,6 @@ export const UnstakeModal = ({
     closable: true,
     content: (
       <div className="flex column">
-        {unrelinquishedVoteRecords && unrelinquishedVoteRecords.length !== 0 && (
-          <p>
-            You currently have votes cast on active proposals. When you unstake ANY amount of JET
-            tokens that have already voted, ALL of your active votes are rescinded. Even if you only
-            unstaked a portion of your staked JET,{" "}
-            <b>
-              please immediately revote on any active proposals with any remaining staked JET you
-              still have after this unstaking.
-            </b>
-          </p>
-        )}
         <p>
           Unstaked tokens have a 29.5-day unbonding period. During this period, you will not earn
           any rewards.

@@ -24,7 +24,7 @@ export const StakeModal = ({
   realm: ProgramAccount<Realm> | undefined;
   precisionOnDisplayAmounts?: number | undefined;
 }) => {
-  const { jetMint } = useProposalContext();
+  const { jetMint, governance, programs, stakeAccount } = useProposalContext();
   const [current, setCurrent] = useState<Steps>(Steps.Confirm);
   const [loading, setLoading] = useState(false);
   const { publicKey } = useWallet();
@@ -34,12 +34,21 @@ export const StakeModal = ({
   // Handlers for staking info modal
 
   const handleSubmitTx = () => {
-    if (!stakePool || !realm || !publicKey || !jetAccount) {
+    if (!stakePool || !realm || !publicKey || !jetAccount || !governance || !programs) {
       return;
     }
 
     setLoading(true);
-    addStake(rpcContext, stakePool, publicKey, stakeLamports, jetMint)
+    addStake(
+      rpcContext,
+      stakePool,
+      publicKey,
+      stakeLamports,
+      jetMint,
+      governance,
+      programs.stake,
+      stakeAccount
+    )
       .then(() => {
         onClose();
       })
