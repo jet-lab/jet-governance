@@ -10,6 +10,7 @@ import {
   COUNCIL_FAUCET_DEVNET,
   COUNCIL_TOKEN_MINT,
   fromLamports,
+  isMaxAvailable,
   JET_FAUCET_DEVNET,
   JET_TOKEN_MINT,
   sharesToTokens,
@@ -67,7 +68,9 @@ export const YourInfo = () => {
       return;
     }
     const balance = fromLamports(jetAccount.info.amount, jetMint);
-    const stakable = Math.min(inputAmount, balance);
+    const stakable = isMaxAvailable(balance, inputAmount)
+      ? balance
+      : Math.min(inputAmount, balance);
     setInputAmount(stakable);
     if (stakable === 0) {
       return;
@@ -82,7 +85,9 @@ export const YourInfo = () => {
       sharesToTokens(stakeAccount.voterWeightRecord.voterWeight, stakePool).tokens,
       jetMint
     );
-    const stakable = Math.min(inputAmount, balance);
+    const stakable = isMaxAvailable(balance, inputAmount)
+      ? balance
+      : Math.min(inputAmount, balance);
     setInputAmount(stakable);
     if (stakable === 0) {
       return;
@@ -270,7 +275,7 @@ export const YourInfo = () => {
                 if (isNaN(number) || number < 0) {
                   number = 0;
                 }
-                setInputAmount(Number(number.toFixed(1)));
+                setInputAmount(number);
               }}
               onBlur={setInputAmountInRange}
               submit={() => handleStake()}

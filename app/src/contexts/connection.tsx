@@ -32,7 +32,7 @@ export const ENDPOINTS = [
   }
 ];
 
-const NETWORK = process.env.REACT_APP_CLUSTER as ENV ?? ENDPOINTS[0].endpoint
+const NETWORK = (process.env.REACT_APP_CLUSTER as ENV) ?? ENDPOINTS[0].endpoint;
 const DEFAULT = ENDPOINTS.find(end => end.name === NETWORK)?.endpoint ?? ENDPOINTS[0].endpoint;
 
 interface ConnectionConfig {
