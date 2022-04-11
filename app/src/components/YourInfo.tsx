@@ -252,12 +252,12 @@ export const YourInfo = () => {
                       <InfoCircleFilled />
                     </Tooltip>
                   </Text>
-                  <Text>{fromLamports(unbondingQueue, jetMint)}</Text>
+                  <Text>{toTokens(unbondingQueue, jetMint)}</Text>
                 </div>
                 <div className="flex justify-between info-legend-item">
                   <Text className="gradient-text bold">Available for Withdrawal</Text>
                   <Text className="gradient-text bold">
-                    {fromLamports(unbondingComplete, jetMint)}
+                    {toTokens(unbondingComplete, jetMint)}
                   </Text>
                 </div>
               </>
@@ -272,7 +272,7 @@ export const YourInfo = () => {
                 if (isNaN(number) || number < 0) {
                   number = 0;
                 }
-                setInputAmount(number);
+                setInputAmount(Number(number.toFixed(1)));
               }}
               onBlur={setInputAmountInRange}
               submit={() => handleStake()}
