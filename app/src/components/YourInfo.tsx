@@ -12,6 +12,7 @@ import {
   COUNCIL_FAUCET_DEVNET,
   COUNCIL_TOKEN_MINT,
   fromLamports,
+  isMaxAvailable,
   JET_FAUCET_DEVNET,
   JET_TOKEN_MINT,
   sharesToTokens,
@@ -69,7 +70,9 @@ export const YourInfo = () => {
       return;
     }
     const balance = fromLamports(jetAccount.info.amount, jetMint);
-    const stakable = Math.min(inputAmount, balance);
+    const stakable = isMaxAvailable(balance, inputAmount)
+      ? balance
+      : Math.min(inputAmount, balance);
     setInputAmount(stakable);
     if (stakable === 0) {
       return;
@@ -84,7 +87,9 @@ export const YourInfo = () => {
       sharesToTokens(stakeAccount.voterWeightRecord.voterWeight, stakePool).tokens,
       jetMint
     );
-    const stakable = Math.min(inputAmount, balance);
+    const stakable = isMaxAvailable(balance, inputAmount)
+      ? balance
+      : Math.min(inputAmount, balance);
     setInputAmount(stakable);
     if (stakable === 0) {
       return;
@@ -263,13 +268,11 @@ export const YourInfo = () => {
                       <InfoCircleFilled />
                     </Tooltip>
                   </Text>
-                  <Text>{fromLamports(unbondingQueue, jetMint)}</Text>
+                  <Text>{toTokens(unbondingQueue, jetMint)}</Text>
                 </div>
                 <div className="flex justify-between info-legend-item">
                   <Text className="gradient-text bold">Available for Withdrawal</Text>
-                  <Text className="gradient-text bold">
-                    {fromLamports(unbondingComplete, jetMint)}
-                  </Text>
+                  <Text className="gradient-text bold">{toTokens(unbondingComplete, jetMint)}</Text>
                 </div>
               </>
             )}
@@ -283,7 +286,7 @@ export const YourInfo = () => {
                 if (isNaN(number) || number < 0) {
                   number = 0;
                 }
-                setInputAmount(number);
+                setInputAmount(Number(number.toFixed(1)));
               }}
               onBlur={setInputAmountInRange}
               submit={() => handleStake()}

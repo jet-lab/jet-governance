@@ -32,8 +32,8 @@ export const ENDPOINTS = [
   }
 ];
 
-const DEFAULT_NAME = (process.env.REACT_APP_CLUSTER as ENV) ?? ENDPOINTS[2].name;
-const DEFAULT = ENDPOINTS.find(end => end.name === DEFAULT_NAME)?.endpoint ?? ENDPOINTS[2].endpoint;
+const NETWORK = (process.env.REACT_APP_CLUSTER as ENV) ?? ENDPOINTS[0].endpoint;
+const DEFAULT = ENDPOINTS.find(end => end.name === NETWORK)?.endpoint ?? ENDPOINTS[0].endpoint;
 
 interface ConnectionConfig {
   connection: Connection;
@@ -47,7 +47,7 @@ const ConnectionContext = createContext<ConnectionConfig>({
   endpoint: DEFAULT,
   setEndpoint: () => {},
   connection: new Connection(DEFAULT, "recent"),
-  env: DEFAULT_NAME,
+  env: NETWORK,
   inDevelopment: false
 });
 
@@ -56,7 +56,7 @@ export function ConnectionProvider({ children = undefined as any }) {
 
   const connection = useMemo(() => new Connection(endpoint, "recent"), [endpoint]);
 
-  const env = ENDPOINTS.find(end => end.endpoint === endpoint)?.name || DEFAULT_NAME;
+  const env = ENDPOINTS.find(end => end.endpoint === endpoint)?.name || NETWORK;
 
   const inDevelopment = env === "devnet";
 

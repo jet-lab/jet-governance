@@ -193,7 +193,7 @@ export const LABELS = {
   WELCOME_TITLE_WITH_REWARDS: "Stake your JET to earn rewards and start voting today!",
 
   WELCOME_PARAGRAPH_WITH_REWARDS:
-    "Welcome to Jet Govern—the governance app for Jet Protocol. Here, you earn rewards and help\n" +
+    "Welcome to JetGovern—the governance app for Jet Protocol. Here, you earn rewards and help\n" +
     " pilot the direction of Jet Protocol by staking your JET into the app.",
 
   ACCESS_GRANTED_1_TITLE_WITH_REWARDS: "Stake JET to earn and vote!",
@@ -203,7 +203,7 @@ export const LABELS = {
 
   WELCOME_TITLE_NO_REWARDS: "Stake your JET to start voting today!",
   WELCOME_PARAGRAPH_NO_REWARDS:
-    "Welcome to Jet Govern—the governance app for Jet Protocol. Here, you help\n" +
+    "Welcome to JetGovern—the governance app for Jet Protocol. Here, you help\n" +
     "pilot the direction of Jet Protocol by staking your JET into the app.",
 
   ACCESS_GRANTED_1_TITLE_NO_REWARDS: "Stake JET to vote!",

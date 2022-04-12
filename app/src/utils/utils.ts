@@ -80,6 +80,10 @@ export const toTokensPrecisionNumber = (
   return withPrecisionNumber(fromLamports(amount, mint), precision);
 };
 
+export const isMaxAvailable = (avail: number, input: number): boolean => {
+  return Math.abs(avail - input) < 0.1;
+};
+
 var SI_SYMBOL = ["", "k", "M", "G", "T", "P", "E"];
 
 export const abbreviateNumber = (number: number) => {
