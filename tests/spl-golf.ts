@@ -91,7 +91,7 @@ describe("spl-golf", () => {
   const wallet = provider.wallet as NodeWallet;
   anchor.setProvider(provider);
 
-  const stakeSeed = "test";
+  const stakeSeed = "spl-golf";
   const staker = Keypair.generate();
   const airdropKey = Keypair.generate();
   const airdropRecipients = Array.from({ length: 60 })
