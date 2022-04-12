@@ -6,10 +6,13 @@ import { jetFaucet } from "../actions/jetFaucet";
 import { useConnectionConfig } from "../contexts";
 import { useProposalContext } from "../contexts/proposal";
 import { useWithdrawableCount, useWithdrawVotesAbility } from "../hooks";
+import { REWARDS_ENABLED } from "../constants";
+
 import {
   COUNCIL_FAUCET_DEVNET,
   COUNCIL_TOKEN_MINT,
   fromLamports,
+  isMaxAvailable,
   JET_FAUCET_DEVNET,
   JET_TOKEN_MINT,
   sharesToTokens,
@@ -67,7 +70,9 @@ export const YourInfo = () => {
       return;
     }
     const balance = fromLamports(jetAccount.info.amount, jetMint);
-    const stakable = Math.min(inputAmount, balance);
+    const stakable = isMaxAvailable(balance, inputAmount)
+      ? balance
+      : Math.min(inputAmount, balance);
     setInputAmount(stakable);
     if (stakable === 0) {
       return;
@@ -82,7 +87,9 @@ export const YourInfo = () => {
       sharesToTokens(stakeAccount.voterWeightRecord.voterWeight, stakePool).tokens,
       jetMint
     );
-    const stakable = Math.min(inputAmount, balance);
+    const stakable = isMaxAvailable(balance, inputAmount)
+      ? balance
+      : Math.min(inputAmount, balance);
     setInputAmount(stakable);
     if (stakable === 0) {
       return;
@@ -195,40 +202,49 @@ export const YourInfo = () => {
             </Tooltip>
           </Text>
           <StakedJetBalance stakedJet={stakedJetTokens.toString()} onClick={preFillWithStakedJet} />
-          <div className="wallet-overview flex justify-between column">
-            <div className="flex justify-between">
-              <Text className="staking-info current-staking-apr">
-                {connected ? `${rewards.apr ?? "-"}% Staking APR ` : `Current Staking APR `}
-                <Tooltip
-                  title="The displayed APR depends upon many factors, including the total number of JET staked in the module and the amount of protocol revenue flowing to depositors."
-                  overlayClassName="no-arrow"
-                >
-                  <InfoCircleFilled />
-                </Tooltip>
-              </Text>
-              <Text>
-                {connected ? (
-                  showRewards ? (
-                    <MinusOutlined style={{ marginRight: 0 }} onClick={handleRewardsToggle} />
+          {REWARDS_ENABLED ? (
+            <div className="wallet-overview flex justify-between column">
+              <div className="flex justify-between">
+                <Text className="staking-info current-staking-apr">
+                  {connected ? `${rewards.apr ?? "-"}% Staking APR ` : `Current Staking APR `}
+                  <Tooltip
+                    title="The displayed APR depends upon many factors, including the total number of JET staked in the module and the amount of protocol revenue flowing to depositors."
+                    overlayClassName="no-arrow"
+                  >
+                    <InfoCircleFilled />
+                  </Tooltip>
+                </Text>
+                <Text>
+                  {connected ? (
+                    showRewards ? (
+                      <MinusOutlined style={{ marginRight: 0 }} onClick={handleRewardsToggle} />
+                    ) : (
+                      <PlusOutlined style={{ marginRight: 0 }} onClick={handleRewardsToggle} />
+                    )
                   ) : (
-                    <PlusOutlined style={{ marginRight: 0 }} onClick={handleRewardsToggle} />
-                  )
-                ) : (
-                  `${rewards.apr ?? "-"}%`
-                )}
-              </Text>
-            </div>
-            <div className={connected ? "hidden" : undefined} id="show-more-apr">
-              <div className="flex justify-between cluster">
-                <Text className="cluster">Est. Daily Reward</Text>
-                <Text className="cluster">{rewards.estDailyReward}</Text>
+                    `${rewards.apr ?? "-"}%`
+                  )}
+                </Text>
               </div>
-              <div className="flex justify-between cluster">
-                <Text className="cluster">Est. Monthly Reward</Text>
-                <Text className="cluster">{rewards.estMonthlyReward}</Text>
+              <div className={connected ? "hidden" : undefined} id="show-more-apr">
+                <div className="flex justify-between cluster">
+                  <Text className="cluster">Est. Daily Reward</Text>
+                  <Text className="cluster">{rewards.estDailyReward}</Text>
+                </div>
+                <div className="flex justify-between cluster">
+                  <Text className="cluster">Est. Monthly Reward</Text>
+                  <Text className="cluster">{rewards.estMonthlyReward}</Text>
+                </div>
               </div>
             </div>
-          </div>
+          ) : (
+            <div className="wallet-overview flex justify-between column">
+              <div className="flex justify-between">
+                <Text className="staking-info current-staking-apr">Rewards Coming Soon</Text>
+              </div>
+            </div>
+          )}
+
           <Divider className="divider-info" />
           <div className="flex column">
             {connected && (
@@ -252,13 +268,11 @@ export const YourInfo = () => {
                       <InfoCircleFilled />
                     </Tooltip>
                   </Text>
-                  <Text>{fromLamports(unbondingQueue, jetMint)}</Text>
+                  <Text>{toTokens(unbondingQueue, jetMint)}</Text>
                 </div>
                 <div className="flex justify-between info-legend-item">
                   <Text className="gradient-text bold">Available for Withdrawal</Text>
-                  <Text className="gradient-text bold">
-                    {fromLamports(unbondingComplete, jetMint)}
-                  </Text>
+                  <Text className="gradient-text bold">{toTokens(unbondingComplete, jetMint)}</Text>
                 </div>
               </>
             )}
@@ -272,7 +286,7 @@ export const YourInfo = () => {
                 if (isNaN(number) || number < 0) {
                   number = 0;
                 }
-                setInputAmount(number);
+                setInputAmount(Number(number.toFixed(1)));
               }}
               onBlur={setInputAmountInRange}
               submit={() => handleStake()}

@@ -11,6 +11,7 @@ import { useProvider, useRpcContext } from "../../hooks";
 import { ReactComponent as ArrowIcon } from "../../images/arrow_icon.svg";
 import { geoBannedCountries } from "../../models/GEOBANNED_COUNTRIES";
 import { filterSort } from "../../utils";
+import { REWARDS_ENABLED, LABELS } from "../../constants";
 
 enum Steps {
   Welcome = 0,
@@ -23,7 +24,7 @@ enum Steps {
   AccessGranted2 = 7,
   UnknownError = 8,
   PhoneInvalid = 9,
-  VpnBlocked = 10,
+  OriginRestricted = 10,
   InvalidToken = 11,
   RegionNotSupported = 12
 }
@@ -213,12 +214,12 @@ export const VerifyModal = () => {
             "the ip of the requester has been detected as a threat or anonymized."
           ) {
             console.error("VPN blocked");
-            setCurrent(Steps.VpnBlocked);
+            setCurrent(Steps.OriginRestricted);
           } else if (
             err?.response?.data.error[0] ===
             "the ip of the requester has been detected as originating from a geo-banned region."
           ) {
-            console.error("You are attempting to access Jet Govern from an unavailable region.");
+            console.error("You are attempting to access JetGovern from an unavailable region.");
             setCurrent(Steps.AccessDenied);
           } else {
             setCurrent(Steps.UnknownError);
@@ -293,9 +294,9 @@ export const VerifyModal = () => {
             "the ip of the requester has been detected as a threat or anonymized."
           ) {
             console.error("VPN blocked");
-            setCurrent(Steps.VpnBlocked);
+            setCurrent(Steps.OriginRestricted);
           } else {
-            console.error("You are attempting to access Jet Govern from an unavailable region.");
+            console.error("You are attempting to access JetGovern from an unavailable region.");
             setCurrent(Steps.AccessDenied);
           }
         } else if (err.response.status === 500) {
@@ -333,8 +334,9 @@ export const VerifyModal = () => {
   };
 
   const steps: PropsWithChildren<ModalProps>[] = [];
+
   steps[Steps.Welcome] = {
-    title: "Stake your JET to earn rewards and start voting today!",
+    title: REWARDS_ENABLED ? LABELS.WELCOME_TITLE_WITH_REWARDS : LABELS.WELCOME_TITLE_NO_REWARDS,
     okText: "Okay",
     okButtonProps: {},
     onOk: () => setCurrent(Steps.ConnectWallet),
@@ -343,8 +345,9 @@ export const VerifyModal = () => {
     children: (
       <div className="flex column">
         <p>
-          Welcome to Jet Govern—the governance app for Jet Protocol. Here, you earn rewards and help
-          pilot the direction of Jet Protocol by staking your JET into the app.
+          {REWARDS_ENABLED
+            ? LABELS.WELCOME_PARAGRAPH_WITH_REWARDS
+            : LABELS.WELCOME_PARAGRAPH_NO_REWARDS}
         </p>
 
         <p>To start voting, connect your wallet and deposit some JET today!</p>
@@ -464,10 +467,17 @@ export const VerifyModal = () => {
     onCancel: () => handleDisconnect(),
     cancelButtonProps: { style: { display: "none " } },
     children: (
-      <p>
-        JetGovern is not available in your area. Your wallet will now be disconnected, but you may
-        continue to browse proposals while disconnected.
-      </p>
+      <div className="flex column">
+        <p>
+          JetGovern is not available in your area. Users from certain regions are not permitted to
+          stake or vote, but may still view proposals and voting results. Your wallet will now be
+          disconnected.
+        </p>
+        <p>
+          If you believe that you are receiving this message in error, you may be using a VPN.
+          Please turn off your VPN to complete SMS verification for your wallet.
+        </p>
+      </div>
     ),
     closable: false
   };
@@ -499,8 +509,8 @@ export const VerifyModal = () => {
               rel="noopener noreferrer"
             >
               Terms of Service
-            </a>
-            ,{" "}
+            </a>{" "}
+            and{" "}
             <a
               href="https://www.jetprotocol.io/legal/privacy-policy"
               target="_blank"
@@ -508,15 +518,6 @@ export const VerifyModal = () => {
               rel="noopener noreferrer"
             >
               Privacy Policy
-            </a>
-            , and{" "}
-            <a
-              href="https://www.jetprotocol.io/legal/cookie-policy"
-              target="_blank"
-              className="link-btn"
-              rel="noopener noreferrer"
-            >
-              Cookie Policy
             </a>
             . I am aware of and accept the risks of using new technology.
           </label>
@@ -526,9 +527,12 @@ export const VerifyModal = () => {
     closable: false
   };
   steps[Steps.AccessGranted1] = {
-    title: "Stake JET to earn and vote!",
+    title: REWARDS_ENABLED
+      ? LABELS.ACCESS_GRANTED_1_TITLE_WITH_REWARDS
+      : LABELS.ACCESS_GRANTED_1_TITLE_NO_REWARDS,
     okText: "Okay",
     onOk: () => setCurrent(Steps.AccessGranted2),
+    okButtonProps: { loading: false },
     onCancel: () => handleAccessGranted(),
     cancelButtonProps: { style: { display: "none " } },
     children: (
@@ -538,8 +542,9 @@ export const VerifyModal = () => {
           will not need to verify again.
         </p>
         <p>
-          To begin, make sure you have some JET tokens staked. Once they are staked, you will begin
-          earning rewards and may vote on active proposals (1 staked JET token = 1 vote).
+          {REWARDS_ENABLED
+            ? LABELS.ACCESS_GRANTED_1_PARAGRAPH_WITH_REWARDS
+            : LABELS.ACCESS_GRANTED_1_PARAGRAPH_NO_REWARDS}
         </p>
       </div>
     ),
@@ -549,12 +554,13 @@ export const VerifyModal = () => {
     title: "Unstaking from the module",
     okText: "Okay",
     onOk: () => handleAccessGranted(),
+    okButtonProps: { loading: false },
     onCancel: () => handleAccessGranted(),
     cancelButtonProps: { style: { display: "none " } },
     children: (
       <div className="flex column">
         <p>When unstaking from JetGovern, your tokens enter a 29.5-day unbonding period.</p>
-        <p>During the unbonding period, you will not earn any rewards.</p>
+        {REWARDS_ENABLED && <p>During the unbonding period, you will not earn any rewards.</p>}
         <p>
           Additionally, votes you have cast on any active proposals will be rescinded. This means
           that if you vote and then unstake before the voting is finished, your vote will not count.
@@ -587,18 +593,24 @@ export const VerifyModal = () => {
     children: <p>Please check the area code and try entering your phone number again.</p>,
     closable: true
   };
-  steps[Steps.VpnBlocked] = {
-    title: "VPN detected",
+  steps[Steps.OriginRestricted] = {
+    title: "Origin restricted",
     okText: "Okay",
     okButtonProps: undefined,
     cancelButtonProps: { style: { display: "none " } },
     onOk: () => setCurrent(Steps.ConfirmLocation),
     onCancel: () => handleDisconnect(),
     children: (
-      <p>
-        We have detected that you are using a VPN. Please turn off your VPN and try again to verify
-        your wallet.
-      </p>
+      <div className="flex column">
+        <p>
+          The IP address from which you are attempting to access JetGovern has been detected as a
+          threat or as coming from an anonymized source.
+        </p>
+        <p>
+          If you believe that you are receiving this message in error, you may be using a VPN.
+          Please turn off your VPN and try again to verify your wallet.
+        </p>
+      </div>
     ),
     closable: true
   };
@@ -621,10 +633,10 @@ export const VerifyModal = () => {
     children: (
       <div className="flex column">
         <p>
-          It looks like you may be trying to access Jet Govern from <b>{country}</b>.
+          It looks like you may be trying to access JetGovern from <b>{country}</b>.
         </p>
         <p>
-          Due to regulatory restrictions, Jet Govern is not available to residents of certain
+          Due to regulatory restrictions, JetGovern is not available to residents of certain
           countries. For more info, see the{"  "}
           <a
             href="https://www.jetprotocol.io/legal/terms-of-service"
