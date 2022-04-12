@@ -44,7 +44,7 @@ pub struct RelinquishMany<'info> {
     pub system_program: Program<'info, System>,
     pub rent: Sysvar<'info, Rent>,
     pub clock: Sysvar<'info, Clock>,
-    // remaining accounts: (mut proposal, mut proposal_owner_record, mut vote_record)
+    // remaining accounts: (mut proposal, mut vote_record)
 }
 
 impl<'info> RelinquishMany<'info> {
