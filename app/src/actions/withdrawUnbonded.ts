@@ -2,7 +2,7 @@ import { Provider } from "@project-serum/anchor";
 import { AssociatedToken, StakeAccount, StakePool, UnbondingAccount } from "@jet-lab/jet-engine";
 import { RpcContext } from "@solana/spl-governance";
 import { Transaction, TransactionInstruction } from "@solana/web3.js";
-import { sendAllTransactionsWithNotifications } from "../tools/transactions";
+import { sendAllTransactions } from "../tools/transactions";
 import { SendTxRequest } from "@project-serum/anchor/dist/cjs/provider";
 
 export const withdrawUnbonded = async (
@@ -10,7 +10,7 @@ export const withdrawUnbonded = async (
   unbondingAccounts: UnbondingAccount[],
   stakeAccount: StakeAccount,
   stakePool: StakePool
-) => {
+): Promise<string | undefined> => {
   let ix: TransactionInstruction[] = [];
   const allTxs: SendTxRequest[] = [];
   const provider = new Provider(connection, wallet as any, Provider.defaultOptions());
@@ -49,6 +49,6 @@ export const withdrawUnbonded = async (
     }
   }
   if (allTxs.length > 0) {
-    await sendAllTransactionsWithNotifications(provider, allTxs, "JET has been withdrawn");
+    return await sendAllTransactions(provider, allTxs);
   }
 };

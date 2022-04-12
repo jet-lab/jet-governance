@@ -6,6 +6,8 @@ import { rescindAndUnstake } from "../../actions/rescindAndUnstake";
 import { useProposalContext } from "../../contexts";
 import { useRpcContext } from "../../hooks";
 import { dateToString, isSignTransactionError } from "../../utils";
+import { useBlockExplorer } from "../../contexts/blockExplorer";
+import { notifyTransactionSuccess } from "../../tools/transactions";
 import { REWARDS_ENABLED } from "../../constants";
 import { DocsLink } from "../docsLink";
 
@@ -40,6 +42,7 @@ export const UnstakeModal = ({
 
   const [current, setCurrent] = useState(Steps.Confirm);
   const [loading, setLoading] = useState(false);
+  const { getTxExplorerUrl } = useBlockExplorer();
 
   const unrelinquishedVoteRecords = walletVoteRecords?.filter(
     voteRecord => !voteRecord.account.isRelinquished
@@ -69,7 +72,12 @@ export const UnstakeModal = ({
     const unstakeAmount = new BN(amount * 10 ** jetMint.decimals);
     setLoading(true);
     rescindAndUnstake(rpcContext, stakePool, stakeAccount, governance, unstakeAmount)
-      .then(() => {
+      .then(txnSig => {
+        notifyTransactionSuccess(
+          txnSig,
+          "Your JET has begun unbonding for 29.5 days",
+          getTxExplorerUrl
+        );
         setLoading(false);
         setDisplayUnbondDate();
         resetInput();

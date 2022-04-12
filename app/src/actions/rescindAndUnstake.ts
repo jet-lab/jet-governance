@@ -12,7 +12,7 @@ import {
 } from "@solana/spl-governance";
 import { Transaction, TransactionInstruction } from "@solana/web3.js";
 import { getParsedProposalsByGovernance, getUnrelinquishedVoteRecords } from "../hooks";
-import { sendAllTransactionsWithNotifications } from "../tools/transactions";
+import { sendAllTransactions } from "../tools/transactions";
 import { GOVERNANCE_PROGRAM_ID } from "../utils";
 
 export const rescindAndUnstake = async (
@@ -21,7 +21,7 @@ export const rescindAndUnstake = async (
   stakeAccount: StakeAccount,
   governance: ProgramAccount<Governance>,
   amount: BN
-) => {
+): Promise<string> => {
   const unbondingSeed = UnbondingAccount.randomSeed();
   const allTxs = [];
   const provider = new Provider(connection, wallet as any, { skipPreflight: true });
@@ -115,5 +115,5 @@ export const rescindAndUnstake = async (
     signers: []
   });
 
-  await sendAllTransactionsWithNotifications(provider, allTxs, "JET has begun unbonding");
+  return await sendAllTransactions(provider, allTxs);
 };
