@@ -633,6 +633,23 @@
         width: 275px;
       }
 
+      .rpc-info {
+        flex-wrap: wrap;
+        span {
+          margin: @spacing-xs;
+        }
+      }
+      .ping-indicator {
+        width: 8px;
+        height: 8px;
+        border-radius: 50px;
+        margin: -1px @spacing-xs 0 @spacing-xs;
+        opacity: @disabled-opacity;
+      }
+      .reset-rpc {
+        cursor: pointer;
+      }
+
       &.wallet {
         cursor: pointer;
 

@@ -117,7 +117,7 @@ export function ProposalProvider({ children = undefined as any }) {
   const { programId: governanceProgramId } = useRpcContext();
   const [proposalFilter, setProposalFilter] = useState<ProposalFilter>("active");
   const [pastProposalFilter, setPastProposalFilter] = useState<ProposalFilter>("all");
-  const provider = useProvider(connection, walletContext);
+  const provider = useProvider();
   const queryClient = useQueryClient();
 
   const { data: idl } = useQuery(["idl"], async () => {

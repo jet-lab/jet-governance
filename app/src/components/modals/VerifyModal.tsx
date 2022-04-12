@@ -35,8 +35,7 @@ export const VerifyModal = () => {
   const { connecting, setConnecting } = useConnectWallet();
   const rpcContext = useRpcContext();
 
-  const connection = useConnection();
-  const provider = useProvider(connection, wallet);
+  const provider = useProvider();
   const authProgram = Auth.useAuthProgram(provider);
   const { authAccount, loading: authAccountLoading } = Auth.useAuthAccount(authProgram, publicKey);
 

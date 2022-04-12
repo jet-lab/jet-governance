@@ -18,9 +18,8 @@ const ConnectWalletContext = createContext<ConnectWallet>({
 export const ConnectWalletProvider = (props: { children: any }) => {
   const [connecting, setConnecting] = useState(false);
 
-  const { connected, wallet, publicKey } = useWallet();
-  const connection = useConnection();
-  const provider = useProvider(connection, wallet);
+  const { connected, publicKey } = useWallet();
+  const provider = useProvider();
   const authProgram = Auth.useAuthProgram(provider);
   const { authAccount } = Auth.useAuthAccount(authProgram, publicKey);
   const authed = authAccount?.userAuthentication.allowed;

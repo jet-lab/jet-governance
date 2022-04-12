@@ -80,6 +80,18 @@ export const toTokensPrecisionNumber = (
   return withPrecisionNumber(fromLamports(amount, mint), precision);
 };
 
+// Check if a string is a valid URL
+export function isValidHttpUrl(input: string): boolean {
+  let url;
+  try {
+    url = new URL(input);
+  } catch (_) {
+    return false;
+  }
+
+  return url.protocol === "http:" || url.protocol === "https:";
+}
+
 var SI_SYMBOL = ["", "k", "M", "G", "T", "P", "E"];
 
 export const abbreviateNumber = (number: number) => {
