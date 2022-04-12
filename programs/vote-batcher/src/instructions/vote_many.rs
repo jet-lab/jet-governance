@@ -108,7 +108,7 @@ impl<'info> VoteMany<'info> {
 
 pub fn handler<'c, 'info>(
     ctx: Context<'_, '_, 'c, 'info, VoteMany<'info>>,
-    votes: Vec<GolfVote>,
+    votes: Vec<SimpleVote>,
 ) -> Result<()> {
     if ctx.remaining_accounts.len() % 3 != 0 || ctx.remaining_accounts.len() / 3 != votes.len() {
         return err!(ErrorCode::ProposalsAndVotesMisaligned);
@@ -135,19 +135,19 @@ pub fn handler<'c, 'info>(
 }
 
 #[derive(Debug, AnchorSerialize, AnchorDeserialize)]
-pub enum GolfVote {
+pub enum SimpleVote {
     Yes,
     No,
 }
 
-impl From<GolfVote> for Vote {
-    fn from(golf: GolfVote) -> Vote {
-        match golf {
-            GolfVote::Yes => Vote::Approve(vec![VoteChoice {
+impl From<SimpleVote> for Vote {
+    fn from(vote: SimpleVote) -> Vote {
+        match vote {
+            SimpleVote::Yes => Vote::Approve(vec![VoteChoice {
                 rank: 0,
                 weight_percentage: 100,
             }]),
-            GolfVote::No => Vote::Deny,
+            SimpleVote::No => Vote::Deny,
         }
     }
 }

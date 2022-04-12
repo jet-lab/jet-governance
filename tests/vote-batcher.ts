@@ -37,13 +37,13 @@ import { assert } from "chai";
 import { JetRewards } from "../target/types/jet_rewards";
 import { JetStaking } from "../target/types/jet_staking";
 import { JetAuth } from "../target/types/jet_auth";
-import { JetSplGolf } from "../target/types/jet_spl_golf";
+import { JetVoteBatcher } from "../target/types/jet_vote_batcher";
 
 const GOVERNANCE_ID = new PublicKey("JPGovTiAUgyqirerBbXXmfyt3SkHVEcpSAPjRCCSHVx");
 const RewardsProgram = anchor.workspace.JetRewards as Program<JetRewards>;
 const StakingProgram = anchor.workspace.JetStaking as Program<JetStaking>;
 const AuthProgram = anchor.workspace.JetAuth as Program<JetAuth>;
-const SplGolfProgram = anchor.workspace.JetSplGolf as Program<JetSplGolf>;
+const VoteBatcherProgram = anchor.workspace.JetVoteBatcher as Program<JetVoteBatcher>;
 
 const getErrorCode = (e: any): number => (e as anchor.AnchorError).error.errorCode.number;
 
@@ -85,13 +85,13 @@ async function deriveStakePoolAccounts(seed: string, realm: PublicKey): Promise<
   };
 }
 
-describe("spl-golf", () => {
+describe("vote-batcher", () => {
   // Configure the client to use the local cluster.
   const provider = anchor.Provider.env();
   const wallet = provider.wallet as NodeWallet;
   anchor.setProvider(provider);
 
-  const stakeSeed = "spl-golf";
+  const stakeSeed = "vote-batcher";
   const staker = Keypair.generate();
   const airdropKey = Keypair.generate();
   const airdropRecipients = Array.from({ length: 60 })
@@ -139,7 +139,7 @@ describe("spl-golf", () => {
     );
 
     [govRealm] = await PublicKey.findProgramAddress(
-      [Buffer.from("governance"), Buffer.from("spl-golf")],
+      [Buffer.from("governance"), Buffer.from("vote-batcher")],
       GOVERNANCE_ID
     );
     stakeAcc = await deriveStakePoolAccounts(stakeSeed, govRealm);
@@ -181,7 +181,7 @@ describe("spl-golf", () => {
       instructions,
       GOVERNANCE_ID,
       2,
-      "spl-golf",
+      "vote-batcher",
       wallet.payer.publicKey,
       testToken.publicKey,
       wallet.payer.publicKey,
@@ -293,7 +293,7 @@ describe("spl-golf", () => {
   //     instructions,
   //     GOVERNANCE_ID,
   //     2,
-  //     "spl-golf",
+  //     "vote-batcher",
   //     wallet.payer.publicKey,
   //     testToken.publicKey,
   //     wallet.payer.publicKey,
@@ -513,7 +513,7 @@ describe("spl-golf", () => {
       )
     )[0];
 
-    await SplGolfProgram.rpc.voteMany(votes, {
+    await VoteBatcherProgram.rpc.voteMany(votes, {
       accounts: {
         owner: staker.publicKey,
         realm: govRealm,
@@ -574,7 +574,7 @@ describe("spl-golf", () => {
       remainingAccounts.push({ pubkey: proposal, isSigner: false, isWritable: true });
       remainingAccounts.push({ pubkey: voteRecord, isSigner: false, isWritable: true });
     }
-    await SplGolfProgram.rpc.relinquishMany({
+    await VoteBatcherProgram.rpc.relinquishMany({
       accounts: {
         owner: staker.publicKey,
         realm: govRealm,

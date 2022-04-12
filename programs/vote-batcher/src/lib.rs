@@ -1,18 +1,18 @@
 use anchor_lang::prelude::*;
 use solana_program::pubkey;
 
-declare_id!("DMa3BQPNHdU63xD5DLM4AvU2hUc9UV9ySpmfqkm75QbL");
+declare_id!("EaK4h4qn9BDoA5taao5F5E3E3MK4HKzhV9EnVsqYr5oJ");
 
 mod instructions;
 use instructions::*;
 
 #[program]
-pub mod jet_spl_golf {
+pub mod jet_vote_batcher {
     use super::*;
 
     pub fn vote_many<'info>(
         ctx: Context<'_, '_, '_, 'info, VoteMany<'info>>,
-        votes: Vec<GolfVote>,
+        votes: Vec<SimpleVote>,
     ) -> Result<()> {
         instructions::vote_many::handler(ctx, votes)
     }

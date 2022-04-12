@@ -5,6 +5,7 @@ solana_version = "1.9.9"
 jet_auth = "JPALXR88jy2fG3miuu4n3o8Jef4K2Cgc3Uypr3Y8RNX"
 jet_rewards = "JET777rQuPU8BatFbhp6irc1NAbozxTheBqNo25eLQP"
 jet_staking = "JPLockxtkngHkaQT5AuRYow3HyUv5qWzmhwsCPd653n"
+jet_vote_batcher = "EaK4h4qn9BDoA5taao5F5E3E3MK4HKzhV9EnVsqYr5oJ"
 
 [registry]
 url = "https://anchor.projectserum.com"

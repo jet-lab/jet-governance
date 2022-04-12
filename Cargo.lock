@@ -1420,7 +1420,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "jet-spl-golf"
+name = "jet-vote-batcher"
 version = "1.0.0"
 dependencies = [
  "anchor-lang",
