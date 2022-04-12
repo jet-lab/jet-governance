@@ -42,6 +42,6 @@ pub struct SplGovernance;
 
 impl Id for SplGovernance {
     fn id() -> Pubkey {
-        pubkey!("JPGovTiAUgyqirerBbXXmfyt3SkHVEcpSAPjRCCSHVx")
+        pubkey!("JPGov2SBA6f7XSJF5R4Si5jEJekGiyrwP2m7gSEqLUs")
     }
 }
