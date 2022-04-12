@@ -1,6 +1,8 @@
 use anchor_lang::prelude::*;
 use anchor_lang::solana_program::program::invoke;
 use itertools::Itertools;
+use solana_program::{instruction::Instruction, system_program, sysvar};
+use spl_governance::instruction::GovernanceInstruction;
 
 use crate::{ErrorCode, SplGovernance};
 
@@ -17,10 +19,6 @@ pub struct RelinquishMany<'info> {
 
     /// CHECK: by spl governance
     #[account(mut)]
-    pub proposal_owner_record: UncheckedAccount<'info>,
-
-    /// CHECK: by spl governance
-    #[account(mut)]
     pub voter_token_owner_record: UncheckedAccount<'info>,
 
     /// CHECK: by spl governance
@@ -30,7 +28,13 @@ pub struct RelinquishMany<'info> {
     pub governing_token_mint: UncheckedAccount<'info>,
 
     /// CHECK: by spl governance
+    pub realm_config: UncheckedAccount<'info>,
+
+    /// CHECK: by spl governance
     pub voter_weight_record: UncheckedAccount<'info>,
+
+    /// CHECK: by spl governance
+    pub max_voter_weight_record: UncheckedAccount<'info>,
 
     /// CHECK: by spl governance
     #[account(mut)]
@@ -40,24 +44,30 @@ pub struct RelinquishMany<'info> {
     pub system_program: Program<'info, System>,
     pub rent: Sysvar<'info, Rent>,
     pub clock: Sysvar<'info, Clock>,
-    // remaining accounts: (mut proposal, mut vote record address)
+    // remaining accounts: (mut proposal, mut proposal_owner_record, mut vote_record)
 }
 
 impl<'info> RelinquishMany<'info> {
     fn relinquish_vote(
         &self,
         proposal: AccountInfo<'info>,
-        vote_record_address: AccountInfo<'info>,
+        vote_record: AccountInfo<'info>,
     ) -> Result<()> {
-        let ix = spl_governance::instruction::relinquish_vote(
-            &SplGovernance::id(),
-            self.governance.key,
-            proposal.key,
-            self.voter_token_owner_record.key,
-            self.governing_token_mint.key,
-            Some(*self.governance_authority.key),
-            Some(*self.beneficiary.key),
-        );
+        let ix = Instruction {
+            program_id: SplGovernance::id(),
+            accounts: vec![
+                AccountMeta::new_readonly(*self.governance.key, false),
+                AccountMeta::new(*proposal.key, false),
+                AccountMeta::new(*self.voter_token_owner_record.key, false),
+                AccountMeta::new(*vote_record.key, false),
+                AccountMeta::new_readonly(*self.governing_token_mint.key, false),
+                AccountMeta::new_readonly(*self.governance_authority.key, true),
+                AccountMeta::new(*self.beneficiary.key, false),
+            ],
+            data: GovernanceInstruction::RelinquishVote {}
+                .try_to_vec()
+                .unwrap(),
+        };
 
         invoke(
             &ix,
@@ -65,7 +75,7 @@ impl<'info> RelinquishMany<'info> {
                 self.governance.to_account_info(),
                 proposal,
                 self.voter_token_owner_record.to_account_info(),
-                vote_record_address,
+                vote_record,
                 self.governing_token_mint.to_account_info(),
                 self.governance_authority.to_account_info(),
                 self.beneficiary.to_account_info(),
@@ -84,8 +94,11 @@ pub fn handler<'c, 'info>(ctx: Context<'_, '_, 'c, 'info, RelinquishMany<'info>>
         .chunks(2)
         .into_iter()
         .try_for_each(|mut c| {
-            let (proposal, vote_record_address) = (c.next().unwrap(), c.next().unwrap());
-            ctx.accounts
-                .relinquish_vote(proposal.clone(), vote_record_address.clone())
+            let (proposal, vote_record_address) =
+                (c.next().unwrap(), c.next().unwrap());
+            ctx.accounts.relinquish_vote(
+                proposal.clone(),
+                vote_record_address.clone(),
+            )
         })
 }

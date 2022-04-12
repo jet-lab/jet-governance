@@ -54,16 +54,10 @@ impl<'info> VoteMany<'info> {
     fn cast_vote(
         &self,
         proposal: AccountInfo<'info>,
-        vote_record: AccountInfo<'info>,
         proposal_owner_record: AccountInfo<'info>,
+        vote_record: AccountInfo<'info>,
         vote: Vote,
     ) -> Result<()> {
-        // no clue why, but i get VoteAlreadyExists with vote_record.key instead of this function
-        let vote_record_address = get_vote_record_address(
-            &SplGovernance::id(),
-            proposal.key,
-            self.voter_token_owner_record.key,
-        );
         let ix = Instruction {
             program_id: SplGovernance::id(),
             accounts: vec![
@@ -73,7 +67,7 @@ impl<'info> VoteMany<'info> {
                 AccountMeta::new(*proposal_owner_record.key, false),
                 AccountMeta::new(*self.voter_token_owner_record.key, false),
                 AccountMeta::new_readonly(*self.governance_authority.key, true),
-                AccountMeta::new(vote_record_address, false),
+                AccountMeta::new(*vote_record.key, false),
                 AccountMeta::new_readonly(*self.governing_token_mint.key, false),
                 AccountMeta::new(*self.payer.key, true),
                 AccountMeta::new_readonly(system_program::id(), false),
@@ -92,7 +86,6 @@ impl<'info> VoteMany<'info> {
             &ix,
             &[
                 // self.governance_program.to_account_info(),
-                self.realm.to_account_info(),
                 self.realm.to_account_info(),
                 self.governance.to_account_info(),
                 proposal,
@@ -138,10 +131,6 @@ pub fn handler<'c, 'info>(
                     proposal.clone(),
                     proposal_owner_record.clone(),
                     vote_record_address.clone(),
-                    // Vote::Approve(vec![VoteChoice {
-                    //     rank: 1,
-                    //     weight_percentage: 100,
-                    // }]),
                     vote.into(),
                 )
             },

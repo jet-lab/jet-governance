@@ -85,33 +85,6 @@ async function deriveStakePoolAccounts(seed: string, realm: PublicKey): Promise<
   };
 }
 
-
-
-// export type GolfVote = { Approve: { choices: GolfVoteChoice[] } } | { deny: {} };
-
-// export type GolfVote = { Approve: { choices: GolfVoteChoice[] } } | { deny: {} };
-
-// export class GolfVoteChoice {
-//   constructor(public units: AmountUnits, public value: anchor.BN) {}
-
-//   static tokens(amount: number | u64): Amount {
-//     return new Amount({ tokens: {} }, new anchor.BN(amount));
-//   }
-
-//   static depositNotes(amount: number | u64): Amount {
-//     return new Amount({ depositNotes: {} }, new anchor.BN(amount));
-//   }
-
-//   static loanNotes(amount: number | u64): Amount {
-//     return new Amount({ loanNotes: {} }, new anchor.BN(amount));
-//   }
-// }
-
-
-
-
-
-
 describe("spl-golf", () => {
   // Configure the client to use the local cluster.
   const provider = anchor.Provider.env();
@@ -191,8 +164,7 @@ describe("spl-golf", () => {
     });
   });
 
-  const NUMBER_OF_PROPOSALS = 1;
-
+  const NUMBER_OF_PROPOSALS = 8;
 
   it("create realm old", async () => {
     let adminTokenAccount = await councilToken.getOrCreateAssociatedAccountInfo(wallet.publicKey);
@@ -302,10 +274,6 @@ describe("spl-golf", () => {
     }
   });
 
-
-
-
-
   // it("create realm and governance", async () => {
   //   let adminTokenAccount = await councilToken.getOrCreateAssociatedAccountInfo(wallet.publicKey);
   //   await councilToken.mintTo(
@@ -397,7 +365,7 @@ describe("spl-golf", () => {
   //       owner.publicKey,
   //       new anchor.BN(1_000_000)
   //     );
-      
+
   //     // let proposal = await withCreateProposal(
   //     //   instructions,
   //     //   GOVERNANCE_ID,
@@ -448,9 +416,6 @@ describe("spl-golf", () => {
   //     ]);
   //   }
   // });
-
-
-
 
   it("create staker auth", async () => {
     let bumpSeed: number;
@@ -523,115 +488,7 @@ describe("spl-golf", () => {
     ]);
   });
 
-  // it("create airdrop", async () => {
-  //   let bumpSeed: number;
-
-  //   [airdropVault, bumpSeed] = await PublicKey.findProgramAddress(
-  //     [airdropKey.publicKey.toBuffer(), Buffer.from("vault")],
-  //     RewardsProgram.programId
-  //   );
-
-  //   const params = {
-  //     expireAt: new anchor.BN(Date.now() / 1000 + 10),
-  //     stakePool: stakeAcc.stakePool,
-  //     shortDesc: "integ-test-airdrop",
-  //     longDesc: "integ-test-airdrop description",
-  //     flags: new anchor.BN(0)
-  //   };
-
-  //   await RewardsProgram.rpc.airdropCreate(params, {
-  //     accounts: {
-  //       airdrop: airdropKey.publicKey,
-  //       authority: wallet.publicKey,
-  //       rewardVault: airdropVault,
-  //       payer: wallet.publicKey,
-  //       tokenMint: testToken.publicKey,
-  //       tokenProgram: TOKEN_PROGRAM_ID,
-  //       systemProgram: SystemProgram.programId,
-  //       rent: SYSVAR_RENT_PUBKEY
-  //     },
-  //     signers: [airdropKey],
-  //     instructions: [await RewardsProgram.account.airdrop.createInstruction(airdropKey)]
-  //   });
-
-  //   await testToken.mintTo(airdropVault, wallet.publicKey, [], new u64(5_000_000_000));
-  // });
-
-  // it("add airdrop recipient", async () => {
-  //   const params = {
-  //     startIndex: new anchor.BN(0),
-  //     recipients: [
-  //       {
-  //         amount: new anchor.BN(4_200_000_000),
-  //         recipient: staker.publicKey
-  //       }
-  //     ]
-  //   };
-  //   await RewardsProgram.rpc.airdropAddRecipients(params, {
-  //     accounts: {
-  //       airdrop: airdropKey.publicKey,
-  //       authority: wallet.publicKey
-  //     }
-  //   });
-  // });
-
-  // it("user cannot claim from non-final airdrop", async () => {
-  //   try {
-  //     await RewardsProgram.rpc.airdropClaim({
-  //       accounts: {
-  //         airdrop: airdropKey.publicKey,
-  //         rewardVault: airdropVault,
-  //         recipient: staker.publicKey,
-  //         receiver: wallet.publicKey,
-  //         stakePool: stakeAcc.stakePool,
-  //         stakePoolVault: stakeAcc.stakePoolVault,
-  //         stakeAccount: stakerAccount,
-  //         voterWeightRecord: stakerVoterWeight,
-  //         maxVoterWeightRecord: stakeAcc.maxVoterWeightRecord,
-  //         stakingProgram: StakingProgram.programId,
-  //         tokenProgram: TOKEN_PROGRAM_ID
-  //       },
-  //       signers: [staker]
-  //     });
-
-  //     assert.ok(false);
-  //   } catch (e) {
-  //     assert.equal(getErrorCode(e), 7005);
-  //   }
-  // });
-
-  // it("finalize airdrop", async () => {
-  //   await RewardsProgram.rpc.airdropFinalize({
-  //     accounts: {
-  //       airdrop: airdropKey.publicKey,
-  //       rewardVault: airdropVault,
-  //       authority: wallet.publicKey
-  //     }
-  //   });
-  // });
-
-  // it("user claims airdrop", async () => {
-  //   await RewardsProgram.rpc.airdropClaim({
-  //     accounts: {
-  //       airdrop: airdropKey.publicKey,
-  //       rewardVault: airdropVault,
-  //       recipient: staker.publicKey,
-  //       receiver: wallet.publicKey,
-  //       stakePool: stakeAcc.stakePool,
-  //       stakePoolVault: stakeAcc.stakePoolVault,
-  //       stakeAccount: stakerAccount,
-  //       voterWeightRecord: stakerVoterWeight,
-  //       maxVoterWeightRecord: stakeAcc.maxVoterWeightRecord,
-  //       stakingProgram: StakingProgram.programId,
-  //       tokenProgram: TOKEN_PROGRAM_ID
-  //     },
-  //     signers: [staker]
-  //   });
-  // });
-
-  it("vote and rescind", async () => {
-    
-
+  it("vote and relinquish many - unbond only when no active votes", async () => {
     var remainingAccounts = [];
     var votes = []
     for (var proposal of govProposals) {
@@ -642,13 +499,13 @@ describe("spl-golf", () => {
       remainingAccounts.push({ pubkey: proposal, isSigner: false, isWritable: true });
       remainingAccounts.push({ pubkey: adminGovRecord, isSigner: false, isWritable: true });
       remainingAccounts.push({ pubkey: voteRecord, isSigner: false, isWritable: true });
-      votes.push({yes: {}});
+      votes.push({ yes: {} });
     }
     let realmConfig = (await PublicKey.findProgramAddress(
       [Buffer.from("realm-config"), govRealm.toBuffer()],
       GOVERNANCE_ID
     ))[0];
-    
+
     await SplGolfProgram.rpc.voteMany(
       votes,
       {
@@ -676,579 +533,90 @@ describe("spl-golf", () => {
       }
     );
 
-    // let instructions: TransactionInstruction[] = [];
-    // let voteRecord = await withCastVote(
-    //   instructions,
-    //   GOVERNANCE_ID,
-    //   2,
-    //   govRealm,
-    //   govInstance,
-    //   govProposals[0],
-    //   adminGovRecord,
-    //   stakerGovRecord,
-    //   staker.publicKey,
-    //   testToken.publicKey,
-    //   Vote.fromYesNoVote(YesNoVote.Yes),
-    //   wallet.payer.publicKey,
-    //   stakerVoterWeight,
-    //   stakeAcc.maxVoterWeightRecord
-    // );
+    try {
+      let unbondSeed = Buffer.alloc(4);
 
-    // await sendAndConfirmTransaction(provider.connection, new Transaction().add(...instructions), [
-    //   wallet.payer,
-    //   staker
-    // ]);
+      [stakerUnbond] = await PublicKey.findProgramAddress(
+        [stakerAccount.toBuffer(), unbondSeed],
+        StakingProgram.programId
+      );
 
-    // try {
-    //   let unbondSeed = Buffer.alloc(4);
-
-    //   [stakerUnbond] = await PublicKey.findProgramAddress(
-    //     [stakerAccount.toBuffer(), unbondSeed],
-    //     StakingProgram.programId
-    //   );
-
-    //   await StakingProgram.rpc.unbondStake(0, new u64(4_199_999_999), {
-    //     accounts: {
-    //       owner: staker.publicKey,
-    //       payer: wallet.publicKey,
-    //       stakeAccount: stakerAccount,
-    //       voterWeightRecord: stakerVoterWeight,
-    //       maxVoterWeightRecord: stakeAcc.maxVoterWeightRecord,
-    //       tokenOwnerRecord: stakerGovRecord,
-    //       stakePool: stakeAcc.stakePool,
-    //       stakePoolVault: stakeAcc.stakePoolVault,
-    //       unbondingAccount: stakerUnbond,
-    //       systemProgram: SystemProgram.programId
-    //     },
-    //     signers: [staker]
-    //   });
-
-    //   assert.ok(false);
-    // } catch (e) {
-    //   assert.equal(getErrorCode(e), 7102);
-    // }
-
-    // await SplGolfProgram.rpc.relinquishMany(
-    //   {
-    //     accounts: {
-    //       owner: staker.publicKey,
-    //       realm: govRealm,
-    //       governance: govInstance,
-    //       proposalOwnerRecord: adminGovRecord,
-    //       voterTokenOwnerRecord: stakerGovRecord,
-    //       governanceAuthority: staker.publicKey,
-    //       governingTokenMint: testToken.publicKey,
-    //       voterWeightRecord: stakeAcc.maxVoterWeightRecord,
-    //       beneficiary: wallet.payer.publicKey,
-    //       governanceProgram: GOVERNANCE_ID,
-    //       systemProgram: SystemProgram.programId,
-    //       rent: SYSVAR_RENT_PUBKEY,
-    //       clock: SYSVAR_CLOCK_PUBKEY,
-    //     },
-    //     remainingAccounts: remainingAccounts,
-    //     signers: [
-    //       staker,
-    //     ]
-    //   }
-    // );
-
-    // instructions = [];
-
-    // await withRelinquishVote(
-    //   instructions,
-    //   GOVERNANCE_ID,
-    //   govInstance,
-    //   govProposals[0],
-    //   stakerGovRecord,
-    //   testToken.publicKey,
-    //   voteRecord,
-    //   staker.publicKey,
-    //   wallet.publicKey
-    // );
-
-    // await sendAndConfirmTransaction(provider.connection, new Transaction().add(...instructions), [
-    //   wallet.payer,
-    //   staker
-    // ]);
-  });
-
-  // it("user unbonds stake", async () => {
-  //   let unbondSeed = Buffer.alloc(4);
-
-  //   [stakerUnbond] = await PublicKey.findProgramAddress(
-  //     [stakerAccount.toBuffer(), unbondSeed],
-  //     StakingProgram.programId
-  //   );
-
-  //   await StakingProgram.rpc.unbondStake(0, new u64(4_199_999_999), {
-  //     accounts: {
-  //       owner: staker.publicKey,
-  //       payer: wallet.publicKey,
-  //       stakeAccount: stakerAccount,
-  //       voterWeightRecord: stakerVoterWeight,
-  //       maxVoterWeightRecord: stakeAcc.maxVoterWeightRecord,
-  //       tokenOwnerRecord: stakerGovRecord,
-  //       stakePool: stakeAcc.stakePool,
-  //       stakePoolVault: stakeAcc.stakePoolVault,
-  //       unbondingAccount: stakerUnbond,
-  //       systemProgram: SystemProgram.programId
-  //     },
-  //     signers: [staker]
-  //   });
-  // });
-
-  // it("user cancels unbonding", async () => {
-  //   await StakingProgram.rpc.cancelUnbond({
-  //     accounts: {
-  //       owner: staker.publicKey,
-  //       stakeAccount: stakerAccount,
-  //       voterWeightRecord: stakerVoterWeight,
-  //       maxVoterWeightRecord: stakeAcc.maxVoterWeightRecord,
-  //       stakePool: stakeAcc.stakePool,
-  //       stakePoolVault: stakeAcc.stakePoolVault,
-  //       unbondingAccount: stakerUnbond,
-  //       receiver: wallet.publicKey
-  //     },
-  //     signers: [staker]
-  //   });
-  // });
-
-  // it("user unbonds again", async () => {
-  //   await StakingProgram.rpc.unbondStake(0, new u64(4_199_999_999), {
-  //     accounts: {
-  //       owner: staker.publicKey,
-  //       payer: wallet.publicKey,
-  //       stakeAccount: stakerAccount,
-  //       voterWeightRecord: stakerVoterWeight,
-  //       maxVoterWeightRecord: stakeAcc.maxVoterWeightRecord,
-  //       tokenOwnerRecord: stakerGovRecord,
-  //       stakePool: stakeAcc.stakePool,
-  //       stakePoolVault: stakeAcc.stakePoolVault,
-  //       unbondingAccount: stakerUnbond,
-  //       systemProgram: SystemProgram.programId
-  //     },
-  //     signers: [staker]
-  //   });
-  // });
-
-  // it("user withdraws unbonded stake", async () => {
-  //   const testAta = await testToken.getOrCreateAssociatedAccountInfo(staker.publicKey);
-
-  //   await StakingProgram.rpc.withdrawUnbonded({
-  //     accounts: {
-  //       owner: staker.publicKey,
-  //       closer: wallet.publicKey,
-  //       tokenReceiver: testAta.address,
-  //       stakeAccount: stakerAccount,
-  //       stakePool: stakeAcc.stakePool,
-  //       stakePoolVault: stakeAcc.stakePoolVault,
-  //       unbondingAccount: stakerUnbond,
-  //       tokenProgram: TOKEN_PROGRAM_ID
-  //     },
-  //     signers: [staker]
-  //   });
-
-  //   const updatedAta = await testToken.getOrCreateAssociatedAccountInfo(staker.publicKey);
-
-  //   assert.equal(updatedAta.amount.toNumber(), 4_199_999_999);
-  // });
-
-  // it("close airdrop", async () => {
-  //   await new Promise(resolve => setTimeout(resolve, 8_000));
-  //   const walletAta = await testToken.getOrCreateAssociatedAccountInfo(wallet.publicKey);
-
-  //   await RewardsProgram.rpc.airdropClose({
-  //     accounts: {
-  //       airdrop: airdropKey.publicKey,
-  //       rewardVault: airdropVault,
-  //       authority: wallet.publicKey,
-  //       receiver: wallet.publicKey,
-  //       tokenReceiver: walletAta.address,
-  //       tokenProgram: TOKEN_PROGRAM_ID
-  //     }
-  //   });
-
-  //   const updatedAta = await testToken.getOrCreateAssociatedAccountInfo(wallet.publicKey);
-
-  //   assert.equal(updatedAta.amount.toNumber(), 800_000_000);
-  // });
-
-  // it("user restakes", async () => {
-  //   const testAta = await testToken.getOrCreateAssociatedAccountInfo(staker.publicKey);
-
-  //   await StakingProgram.rpc.addStake(new u64(4_199_999_999), {
-  //     accounts: {
-  //       stakeAccount: stakerAccount,
-  //       voterWeightRecord: stakerVoterWeight,
-  //       maxVoterWeightRecord: stakeAcc.maxVoterWeightRecord,
-  //       stakePool: stakeAcc.stakePool,
-  //       stakePoolVault: stakeAcc.stakePoolVault,
-  //       payer: staker.publicKey,
-  //       payerTokenAccount: testAta.address,
-  //       tokenProgram: TOKEN_PROGRAM_ID
-  //     },
-  //     signers: [staker]
-  //   });
-
-  //   const updatedAta = await testToken.getOrCreateAssociatedAccountInfo(staker.publicKey);
-
-  //   assert.equal(updatedAta.amount.toNumber(), 0);
-  // });
-
-  // it("create reward distribution", async () => {
-  //   let bumpSeed: number;
-  //   let vaultBumpSeed: number;
-  //   let distSeed = "foo";
-
-  //   [distAccount, bumpSeed] = await PublicKey.findProgramAddress(
-  //     [Buffer.from("distribution"), Buffer.from(distSeed)],
-  //     RewardsProgram.programId
-  //   );
-
-  //   [distVault, vaultBumpSeed] = await PublicKey.findProgramAddress(
-  //     [distAccount.toBuffer(), Buffer.from("vault")],
-  //     RewardsProgram.programId
-  //   );
-
-  //   const fundingAta = await testToken.getOrCreateAssociatedAccountInfo(wallet.publicKey);
-  //   await testToken.mintTo(fundingAta.address, wallet.publicKey, [], 4_200_000_000);
-
-  //   await RewardsProgram.rpc.distributionCreate(
-  //     {
-  //       amount: new u64(5_000_000_000),
-  //       authority: wallet.publicKey,
-  //       seed: distSeed,
-  //       targetAccount: stakeAcc.stakePoolVault,
-  //       beginAt: new u64(0),
-  //       endAt: new u64(0)
-  //     },
-  //     {
-  //       accounts: {
-  //         distribution: distAccount,
-  //         vault: distVault,
-  //         payerRent: wallet.publicKey,
-  //         payerTokenAuthority: wallet.publicKey,
-  //         payerTokenAccount: fundingAta.address,
-  //         tokenMint: testToken.publicKey,
-  //         tokenProgram: TOKEN_PROGRAM_ID,
-  //         systemProgram: SystemProgram.programId,
-  //         rent: SYSVAR_RENT_PUBKEY
-  //       }
-  //     }
-  //   );
-  // });
-
-  // it("distribute reward", async () => {
-  //   await RewardsProgram.rpc.distributionRelease({
-  //     accounts: {
-  //       distribution: distAccount,
-  //       vault: distVault,
-  //       targetAccount: stakeAcc.stakePoolVault,
-  //       tokenProgram: TOKEN_PROGRAM_ID
-  //     }
-  //   });
-  // });
-
-  // it("create award", async () => {
-  //   let bumpSeed: number;
-  //   let vaultBumpSeed: number;
-  //   let distSeed = "foo-award";
-
-  //   [awardAccount, bumpSeed] = await PublicKey.findProgramAddress(
-  //     [Buffer.from("award"), stakerAccount.toBuffer(), Buffer.from(distSeed)],
-  //     RewardsProgram.programId
-  //   );
-
-  //   [awardVault, vaultBumpSeed] = await PublicKey.findProgramAddress(
-  //     [awardAccount.toBuffer(), Buffer.from("vault")],
-  //     RewardsProgram.programId
-  //   );
-
-  //   const fundingAta = await testToken.getOrCreateAssociatedAccountInfo(wallet.publicKey);
-  //   await testToken.mintTo(fundingAta.address, wallet.publicKey, [], 800_000_000);
-
-  //   await RewardsProgram.rpc.awardCreate(
-  //     {
-  //       amount: new u64(800_000_000),
-  //       authority: wallet.publicKey,
-  //       seed: distSeed,
-  //       stakeAccount: stakerAccount,
-  //       beginAt: new u64(0),
-  //       endAt: new u64(0)
-  //     },
-  //     {
-  //       accounts: {
-  //         award: awardAccount,
-  //         vault: awardVault,
-  //         payerRent: wallet.publicKey,
-  //         tokenSourceAuthority: wallet.publicKey,
-  //         tokenSource: fundingAta.address,
-  //         tokenMint: testToken.publicKey,
-  //         tokenProgram: TOKEN_PROGRAM_ID,
-  //         systemProgram: SystemProgram.programId,
-  //         rent: SYSVAR_RENT_PUBKEY
-  //       }
-  //     }
-  //   );
-  // });
-
-  // it("distribute award", async () => {
-  //   await RewardsProgram.rpc.awardRelease({
-  //     accounts: {
-  //       award: awardAccount,
-  //       vault: awardVault,
-  //       stakeAccount: stakerAccount,
-  //       voterWeightRecord: stakerVoterWeight,
-  //       maxVoterWeightRecord: stakeAcc.maxVoterWeightRecord,
-  //       stakePool: stakeAcc.stakePool,
-  //       stakePoolVault: stakeAcc.stakePoolVault,
-  //       stakingProgram: StakingProgram.programId,
-  //       tokenProgram: TOKEN_PROGRAM_ID
-  //     }
-  //   });
-
-  //   await RewardsProgram.rpc.awardClose({
-  //     accounts: {
-  //       award: awardAccount,
-  //       vault: awardVault,
-  //       authority: wallet.publicKey,
-  //       receiver: wallet.publicKey,
-  //       tokenProgram: TOKEN_PROGRAM_ID
-  //     }
-  //   });
-  // });
-
-  // it("create award to revoke", async () => {
-  //   let bumpSeed: number;
-  //   let vaultBumpSeed: number;
-  //   let distSeed = "revoke-award";
-
-  //   [awardAccount, bumpSeed] = await PublicKey.findProgramAddress(
-  //     [Buffer.from("award"), stakerAccount.toBuffer(), Buffer.from(distSeed)],
-  //     RewardsProgram.programId
-  //   );
-
-  //   [awardVault, vaultBumpSeed] = await PublicKey.findProgramAddress(
-  //     [awardAccount.toBuffer(), Buffer.from("vault")],
-  //     RewardsProgram.programId
-  //   );
-
-  //   const fundingAta = await testToken.getOrCreateAssociatedAccountInfo(wallet.publicKey);
-  //   await testToken.mintTo(fundingAta.address, wallet.publicKey, [], 800_000_000);
-
-  //   await RewardsProgram.rpc.awardCreate(
-  //     {
-  //       amount: new u64(800_000_000),
-  //       authority: wallet.publicKey,
-  //       seed: distSeed,
-  //       stakeAccount: stakerAccount,
-  //       beginAt: new u64(0),
-  //       endAt: new u64(0)
-  //     },
-  //     {
-  //       accounts: {
-  //         award: awardAccount,
-  //         vault: awardVault,
-  //         payerRent: wallet.publicKey,
-  //         tokenSourceAuthority: wallet.publicKey,
-  //         tokenSource: fundingAta.address,
-  //         tokenMint: testToken.publicKey,
-  //         tokenProgram: TOKEN_PROGRAM_ID,
-  //         systemProgram: SystemProgram.programId,
-  //         rent: SYSVAR_RENT_PUBKEY
-  //       }
-  //     }
-  //   );
-  // });
-
-  // it("revoke award", async () => {
-  //   const fundingAta = await testToken.getOrCreateAssociatedAccountInfo(wallet.publicKey);
-
-  //   await RewardsProgram.rpc.awardRevoke({
-  //     accounts: {
-  //       award: awardAccount,
-  //       vault: awardVault,
-  //       authority: wallet.publicKey,
-  //       receiver: wallet.publicKey,
-  //       tokenReceiver: fundingAta.address,
-  //       tokenProgram: TOKEN_PROGRAM_ID
-  //     }
-  //   });
-
-  //   const updatedAta = await testToken.getOrCreateAssociatedAccountInfo(wallet.publicKey);
-
-  //   assert.equal(updatedAta.amount.toNumber(), 800_000_000);
-  // });
-
-  // it("user cannot unbond with outstanding votes", async () => {
-  //   try {
-  //     let bumpSeed: number;
-  //     let unbondSeed = Buffer.alloc(4);
-
-  //     [stakerUnbond, bumpSeed] = await PublicKey.findProgramAddress(
-  //       [stakerAccount.toBuffer(), unbondSeed],
-  //       StakingProgram.programId
-  //     );
-
-  //     await StakingProgram.rpc.unbondStake(0, new u64(4_200_000_000), {
-  //       accounts: {
-  //         owner: staker.publicKey,
-  //         payer: wallet.publicKey,
-  //         stakeAccount: stakerAccount,
-  //         voterWeightRecord: stakerVoterWeight,
-  //         maxVoterWeightRecord: stakeAcc.maxVoterWeightRecord,
-  //         tokenOwnerRecord: stakerGovRecord,
-  //         stakePool: stakeAcc.stakePool,
-  //         stakePoolVault: stakeAcc.stakePoolVault,
-  //         unbondingAccount: stakerUnbond,
-  //         systemProgram: SystemProgram.programId
-  //       },
-  //       signers: [staker]
-  //     });
-
-  //     assert.ok(false);
-  //   } catch (e) {
-  //     // The error code is undefined because the program panics
-  //     assert.equal(e.code, undefined);
-  //   }
-  // });
-
-  /*
-  it("create mass airdrop", async () => {
-    let bumpSeed: number;
-
-    [airdropVault, bumpSeed] = await PublicKey.findProgramAddress(
-      [airdropKey.publicKey.toBuffer(), Buffer.from("vault")],
-      RewardsProgram.programId
-    );
-
-    const params = {
-      expireAt: new anchor.BN(Date.now() / 1000 + 1000),
-      stakePool: stakeAcc.stakePool,
-      shortDesc: "integ-test-airdrop",
-      longDesc: "some airdrop testing",
-      vaultBump: bumpSeed,
-      flags: new anchor.BN(0)
-    };
-
-    await RewardsProgram.rpc.airdropCreate(params, {
-      accounts: {
-        airdrop: airdropKey.publicKey,
-        authority: wallet.publicKey,
-        rewardVault: airdropVault,
-        payer: wallet.publicKey,
-        tokenMint: testToken.publicKey,
-        tokenProgram: TOKEN_PROGRAM_ID,
-        systemProgram: SystemProgram.programId,
-        rent: SYSVAR_RENT_PUBKEY
-      },
-      signers: [airdropKey],
-      instructions: [await RewardsProgram.account.airdrop.createInstruction(airdropKey)]
-    });
-
-    await testToken.mintTo(airdropVault, wallet.payer, [], new u64(600_000_000));
-
-    const chunkSize = 24;
-    const chunks = Math.floor(airdropRecipients.length / chunkSize);
-
-    for (let i = 0; i < airdropRecipients.length; i += chunkSize) {
-      let chunk = airdropRecipients.slice(i, i + chunkSize);
-
-      const addParams = {
-        startIndex: new anchor.BN(i),
-        recipients: chunk.map(k => {
-          return {
-            amount: new anchor.BN(10_000_000),
-            recipient: k.publicKey
-          };
-        })
-      };
-
-      await RewardsProgram.rpc.airdropAddRecipients(addParams, {
+      await StakingProgram.rpc.unbondStake(0, new u64(0), {
         accounts: {
-          airdrop: airdropKey.publicKey,
-          authority: wallet.publicKey
-        }
+          owner: staker.publicKey,
+          payer: wallet.publicKey,
+          stakeAccount: stakerAccount,
+          voterWeightRecord: stakerVoterWeight,
+          maxVoterWeightRecord: stakeAcc.maxVoterWeightRecord,
+          tokenOwnerRecord: stakerGovRecord,
+          stakePool: stakeAcc.stakePool,
+          stakePoolVault: stakeAcc.stakePoolVault,
+          unbondingAccount: stakerUnbond,
+          systemProgram: SystemProgram.programId
+        },
+        signers: [staker]
       });
+
+      assert.ok(false);
+    } catch (e) {
+      assert.equal(getErrorCode(e), 7102);
     }
 
-    await RewardsProgram.rpc.airdropFinalize({
-      accounts: {
-        airdrop: airdropKey.publicKey,
-        rewardVault: airdropVault,
-        authority: wallet.publicKey
+    var remainingAccounts = [];
+    for (var proposal of govProposals) {
+      let voteRecord = (await PublicKey.findProgramAddress(
+        [Buffer.from("governance"), proposal.toBuffer(), stakerGovRecord.toBuffer()],
+        GOVERNANCE_ID
+      ))[0];
+      remainingAccounts.push({ pubkey: proposal, isSigner: false, isWritable: true });
+      remainingAccounts.push({ pubkey: voteRecord, isSigner: false, isWritable: true });
+    }
+    await SplGolfProgram.rpc.relinquishMany(
+      {
+        accounts: {
+          owner: staker.publicKey,
+          realm: govRealm,
+          governance: govInstance,
+          voterTokenOwnerRecord: stakerGovRecord,
+          governanceAuthority: staker.publicKey,
+          governingTokenMint: testToken.publicKey,
+          realmConfig: realmConfig,
+          voterWeightRecord: stakerVoterWeight,
+          maxVoterWeightRecord: stakeAcc.maxVoterWeightRecord,
+          beneficiary: wallet.payer.publicKey,
+          governanceProgram: GOVERNANCE_ID,
+          systemProgram: SystemProgram.programId,
+          rent: SYSVAR_RENT_PUBKEY,
+          clock: SYSVAR_CLOCK_PUBKEY,
+        },
+        remainingAccounts: remainingAccounts,
+        signers: [
+          staker,
+        ]
       }
-    });
-  });
-
-  it("recipients claim from mass airdrop", async () => {
-    await Promise.all(
-      airdropRecipients.map(recipient =>
-        (async () => {
-          let [recipientAuth, authBumpSeed] = await PublicKey.findProgramAddress(
-            [recipient.publicKey.toBuffer()],
-            AuthProgram.programId
-          );
-
-          await AuthProgram.rpc.createUserAuth({
-            accounts: {
-              user: recipient.publicKey,
-              payer: wallet.publicKey,
-              auth: recipientAuth,
-              systemProgram: SystemProgram.programId
-            },
-            signers: [recipient]
-          });
-
-          await AuthProgram.rpc.authenticate({
-            accounts: {
-              authority: wallet.publicKey,
-              auth: recipientAuth
-            }
-          });
-
-          let [recipientStakeAccount, stakeBumpSeed] = await PublicKey.findProgramAddress(
-            [stakeAcc.stakePool.toBuffer(), recipient.publicKey.toBuffer()],
-            StakingProgram.programId
-          );
-          let [recipientVoterWeight, voteWeightSeed] = await PublicKey.findProgramAddress(
-            [Buffer.from("voter-weight-record"), recipientStakeAccount.toBuffer()],
-            StakeProgram.programId,
-          );
-
-          await StakingProgram.rpc.initStakeAccount({
-            accounts: {
-              owner: recipient.publicKey,
-              auth: recipientAuth,
-              stakePool: stakeAcc.stakePool,
-              stakeAccount: recipientStakeAccount,
-              voterWeightRecord: recipientVoterWeight,
-              payer: wallet.publicKey,
-              systemProgram: SystemProgram.programId
-            },
-            signers: [recipient]
-          });
-
-          await RewardsProgram.rpc.airdropClaim({
-            accounts: {
-              airdrop: airdropKey.publicKey,
-              rewardVault: airdropVault,
-              recipient: recipient.publicKey,
-              receiver: wallet.publicKey,
-              stakePool: stakeAcc.stakePool,
-              stakePoolVault: stakeAcc.stakePoolVault,
-              stakeAccount: recipientStakeAccount,
-              voterWeightRecord: recipientVoterWeight,
-              stakingProgram: StakingProgram.programId,
-              tokenProgram: TOKEN_PROGRAM_ID
-            },
-            signers: [recipient]
-          });
-        })()
-      )
     );
 
-    assert.equal(0, (await testToken.getAccountInfo(airdropVault)).amount.toNumber());
+    let unbondSeed = Buffer.alloc(4);
+
+    [stakerUnbond] = await PublicKey.findProgramAddress(
+      [stakerAccount.toBuffer(), unbondSeed],
+      StakingProgram.programId
+    );
+
+    await StakingProgram.rpc.unbondStake(0, new u64(0), {
+      accounts: {
+        owner: staker.publicKey,
+        payer: wallet.publicKey,
+        stakeAccount: stakerAccount,
+        voterWeightRecord: stakerVoterWeight,
+        maxVoterWeightRecord: stakeAcc.maxVoterWeightRecord,
+        tokenOwnerRecord: stakerGovRecord,
+        stakePool: stakeAcc.stakePool,
+        stakePoolVault: stakeAcc.stakePoolVault,
+        unbondingAccount: stakerUnbond,
+        systemProgram: SystemProgram.programId
+      },
+      signers: [staker]
+    });
   });
-  */
 });
