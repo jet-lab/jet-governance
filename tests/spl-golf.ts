@@ -55,8 +55,8 @@ interface StakePoolAccounts {
 }
 
 interface ProposalMetadata {
-  ownerRecord: PublicKey,
-  key: PublicKey,
+  ownerRecord: PublicKey;
+  key: PublicKey;
 }
 
 async function deriveStakePoolAccounts(seed: string, realm: PublicKey): Promise<StakePoolAccounts> {
@@ -260,7 +260,11 @@ describe("spl-golf", () => {
         adminGovRecord,
         adminGovRecord
       );
-      govVault = await getTokenHoldingAddress(GOVERNANCE_ID, govRealm, stakeAcc.maxVoterWeightRecord);
+      govVault = await getTokenHoldingAddress(
+        GOVERNANCE_ID,
+        govRealm,
+        stakeAcc.maxVoterWeightRecord
+      );
       stakerGovRecord = await getTokenOwnerRecordAddress(
         GOVERNANCE_ID,
         govRealm,
@@ -337,7 +341,6 @@ describe("spl-golf", () => {
   //     wallet.payer
   //   ]);
   // });
-
 
   // it("create proposals", async () => {
   //   for (let i = 0; i != NUMBER_OF_PROPOSALS; i++) {
@@ -490,48 +493,46 @@ describe("spl-golf", () => {
 
   it("vote and relinquish many - unbond only when no active votes", async () => {
     var remainingAccounts = [];
-    var votes = []
+    var votes = [];
     for (var proposal of govProposals) {
-      let voteRecord = (await PublicKey.findProgramAddress(
-        [Buffer.from("governance"), proposal.toBuffer(), stakerGovRecord.toBuffer()],
-        GOVERNANCE_ID
-      ))[0];
+      let voteRecord = (
+        await PublicKey.findProgramAddress(
+          [Buffer.from("governance"), proposal.toBuffer(), stakerGovRecord.toBuffer()],
+          GOVERNANCE_ID
+        )
+      )[0];
       remainingAccounts.push({ pubkey: proposal, isSigner: false, isWritable: true });
       remainingAccounts.push({ pubkey: adminGovRecord, isSigner: false, isWritable: true });
       remainingAccounts.push({ pubkey: voteRecord, isSigner: false, isWritable: true });
       votes.push({ yes: {} });
     }
-    let realmConfig = (await PublicKey.findProgramAddress(
-      [Buffer.from("realm-config"), govRealm.toBuffer()],
-      GOVERNANCE_ID
-    ))[0];
+    let realmConfig = (
+      await PublicKey.findProgramAddress(
+        [Buffer.from("realm-config"), govRealm.toBuffer()],
+        GOVERNANCE_ID
+      )
+    )[0];
 
-    await SplGolfProgram.rpc.voteMany(
-      votes,
-      {
-        accounts: {
-          owner: staker.publicKey,
-          realm: govRealm,
-          governance: govInstance,
-          voterTokenOwnerRecord: stakerGovRecord,
-          governanceAuthority: staker.publicKey,
-          governingTokenMint: testToken.publicKey,
-          realmConfig: realmConfig,
-          voterWeightRecord: stakerVoterWeight,
-          maxVoterWeightRecord: stakeAcc.maxVoterWeightRecord,
-          payer: wallet.payer.publicKey,
-          governanceProgram: GOVERNANCE_ID,
-          systemProgram: SystemProgram.programId,
-          rent: SYSVAR_RENT_PUBKEY,
-          clock: SYSVAR_CLOCK_PUBKEY,
-        },
-        remainingAccounts: remainingAccounts,
-        signers: [
-          staker,
-          wallet.payer,
-        ]
-      }
-    );
+    await SplGolfProgram.rpc.voteMany(votes, {
+      accounts: {
+        owner: staker.publicKey,
+        realm: govRealm,
+        governance: govInstance,
+        voterTokenOwnerRecord: stakerGovRecord,
+        governanceAuthority: staker.publicKey,
+        governingTokenMint: testToken.publicKey,
+        realmConfig: realmConfig,
+        voterWeightRecord: stakerVoterWeight,
+        maxVoterWeightRecord: stakeAcc.maxVoterWeightRecord,
+        payer: wallet.payer.publicKey,
+        governanceProgram: GOVERNANCE_ID,
+        systemProgram: SystemProgram.programId,
+        rent: SYSVAR_RENT_PUBKEY,
+        clock: SYSVAR_CLOCK_PUBKEY
+      },
+      remainingAccounts: remainingAccounts,
+      signers: [staker, wallet.payer]
+    });
 
     try {
       let unbondSeed = Buffer.alloc(4);
@@ -564,37 +565,35 @@ describe("spl-golf", () => {
 
     var remainingAccounts = [];
     for (var proposal of govProposals) {
-      let voteRecord = (await PublicKey.findProgramAddress(
-        [Buffer.from("governance"), proposal.toBuffer(), stakerGovRecord.toBuffer()],
-        GOVERNANCE_ID
-      ))[0];
+      let voteRecord = (
+        await PublicKey.findProgramAddress(
+          [Buffer.from("governance"), proposal.toBuffer(), stakerGovRecord.toBuffer()],
+          GOVERNANCE_ID
+        )
+      )[0];
       remainingAccounts.push({ pubkey: proposal, isSigner: false, isWritable: true });
       remainingAccounts.push({ pubkey: voteRecord, isSigner: false, isWritable: true });
     }
-    await SplGolfProgram.rpc.relinquishMany(
-      {
-        accounts: {
-          owner: staker.publicKey,
-          realm: govRealm,
-          governance: govInstance,
-          voterTokenOwnerRecord: stakerGovRecord,
-          governanceAuthority: staker.publicKey,
-          governingTokenMint: testToken.publicKey,
-          realmConfig: realmConfig,
-          voterWeightRecord: stakerVoterWeight,
-          maxVoterWeightRecord: stakeAcc.maxVoterWeightRecord,
-          beneficiary: wallet.payer.publicKey,
-          governanceProgram: GOVERNANCE_ID,
-          systemProgram: SystemProgram.programId,
-          rent: SYSVAR_RENT_PUBKEY,
-          clock: SYSVAR_CLOCK_PUBKEY,
-        },
-        remainingAccounts: remainingAccounts,
-        signers: [
-          staker,
-        ]
-      }
-    );
+    await SplGolfProgram.rpc.relinquishMany({
+      accounts: {
+        owner: staker.publicKey,
+        realm: govRealm,
+        governance: govInstance,
+        voterTokenOwnerRecord: stakerGovRecord,
+        governanceAuthority: staker.publicKey,
+        governingTokenMint: testToken.publicKey,
+        realmConfig: realmConfig,
+        voterWeightRecord: stakerVoterWeight,
+        maxVoterWeightRecord: stakeAcc.maxVoterWeightRecord,
+        beneficiary: wallet.payer.publicKey,
+        governanceProgram: GOVERNANCE_ID,
+        systemProgram: SystemProgram.programId,
+        rent: SYSVAR_RENT_PUBKEY,
+        clock: SYSVAR_CLOCK_PUBKEY
+      },
+      remainingAccounts: remainingAccounts,
+      signers: [staker]
+    });
 
     let unbondSeed = Buffer.alloc(4);
 
