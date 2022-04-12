@@ -70,24 +70,27 @@ export async function sendAllTransactions(
 }
 
 /**
- * Display notification modal to show successful transactions with a success message and a link to a block explorer(which one is determined in user settings)
- * @param successMessage
+ * Display a notification to show successful transactions with a message and a link to a block explorer (which one is determined in user settings)
+ * @param message
  * @param txnSignature
- * @param explorerUrlMaker
+ * @param explorerUrl
  */
 export function notifyTransactionSuccess(
   txnSignature: string | PublicKey,
-  successMessage: string,
-  explorerUrlMaker: Function
+  message: string,
+  explorerUrl: string
 ) {
-  const explorerUrl = explorerUrlMaker(txnSignature);
-
   notification.success({
-    message: `${successMessage} Successful!`,
+    message,
     description: (
       <div id="txnSuccess-modal">
         <div>
-          <a style={{ textDecoration: "underline" }} href={explorerUrl} target="_blank">
+          <a
+            style={{ textDecoration: "underline" }}
+            href={explorerUrl}
+            target="_blank"
+            rel="noreferrer"
+          >
             {shortenAddress(txnSignature, 8)}
           </a>{" "}
           <i className="fas fa-external-link-alt"></i>

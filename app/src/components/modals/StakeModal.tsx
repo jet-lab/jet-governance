@@ -26,7 +26,6 @@ export const StakeModal = ({
   realm: ProgramAccount<Realm> | undefined;
   precisionOnDisplayAmounts?: number | undefined;
 }) => {
-  const { jetMint } = useProposalContext();
   const [current, setCurrent] = useState<Steps>(Steps.Confirm);
   const [loading, setLoading] = useState(false);
   const { publicKey } = useWallet();
@@ -41,11 +40,11 @@ export const StakeModal = ({
     if (!stakePool || !realm || !publicKey || !jetAccount) {
       return;
     }
-    const successMsg = `${amount} JET staked Successfully`;
+    const successMsg = `${amount} JET has been staked!`;
     setLoading(true);
     addStake(rpcContext, stakePool, publicKey, stakeLamports)
       .then(txnSig => {
-        notifyTransactionSuccess(txnSig, successMsg, getTxExplorerUrl);
+        notifyTransactionSuccess(txnSig, successMsg, getTxExplorerUrl(txnSig));
         onClose();
       })
       .catch((err: any) => {

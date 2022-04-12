@@ -101,7 +101,7 @@ export const VoteModal = ({
         undefined
       )
         .then(txnSig => {
-          notifyTransactionSuccess(txnSig, "Vote cast", getTxExplorerUrl);
+          notifyTransactionSuccess(txnSig, "Vote has been cast!", getTxExplorerUrl(txnSig));
           onClose();
         })
         .catch(err => {
