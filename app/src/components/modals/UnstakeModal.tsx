@@ -6,6 +6,8 @@ import { rescindAndUnstake } from "../../actions/rescindAndUnstake";
 import { useProposalContext } from "../../contexts";
 import { useRpcContext } from "../../hooks";
 import { dateToString, isSignTransactionError } from "../../utils";
+import {REWARDS_ENABLED} from "../../constants";
+import {DocsLink} from "../docsLink";
 
 enum Steps {
   Confirm = 0,
@@ -101,29 +103,38 @@ export const UnstakeModal = ({
       <div className="flex column">
         {unrelinquishedVoteRecords && unrelinquishedVoteRecords.length !== 0 && (
           <p>
-            You currently have votes cast on active proposals. When you unstake ANY amount of JET
-            tokens that have already voted, ALL of your active votes are rescinded. Even if you only
-            unstaked a portion of your staked JET,{" "}
-            <b>
-              please immediately revote on any active proposals with any remaining staked JET you
-              still have after this unstaking.
-            </b>
+              Remember, when you unstake ANY amount of jet tokens,
+              <b>you lose ALL previously cast votes on currently active proposals.</b>
+              You will need to recast your votes on proposals with remaning JET after this unstaking
+              if you want your vote to count on those proposals.
           </p>
         )}
-        <p>
-          Unstaked tokens have a 29.5-day unbonding period. During this period, you will not earn
-          any rewards.
-        </p>
+          {REWARDS_ENABLED ? (
+              <p>
+                  Unstaked tokens have a 29.5-day unbonding period. During this period, you will not earn any rewards.
+              </p>
+          ):(
+              <p>
+                  Unstaked tokens have a 29.5-day unbonding period.
+              </p>
+          )}
         <p>
           Your flight log will reflect a status of unbonding until this period has completed. You
           can view detailed information about your token availability by visiting the Flight Logs
-          page.
+          page.  For more information, please visit our <DocsLink>docs</DocsLink>.
         </p>
         <div className="emphasis">
-          <p>
-            To continue voting and earning rewards with these tokens, you may restake on the Flight
-            Logs page at any point during the unbonding period.
-          </p>
+            {REWARDS_ENABLED ? (
+                <p>
+                    To continue voting and earning rewards with these tokens, you may restake on the Flight
+                    Logs page at any point during the unbonding period.
+                </p>
+                ):(
+                <p>
+                To continue voting with these tokens, you may restake on the Flight
+                Logs page at any point during the unbonding period.
+                </p>
+            )}
         </div>
       </div>
     )
