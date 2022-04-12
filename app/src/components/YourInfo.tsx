@@ -275,7 +275,7 @@ export const YourInfo = () => {
                 if (isNaN(number) || number < 0) {
                   number = 0;
                 }
-                setInputAmount(number);
+                setInputAmount(Number(number.toFixed(1)));
               }}
               onBlur={setInputAmountInRange}
               submit={() => handleStake()}
