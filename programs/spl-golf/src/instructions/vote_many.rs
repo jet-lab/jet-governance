@@ -4,7 +4,7 @@ use itertools::Itertools;
 use solana_program::{instruction::Instruction, system_program, sysvar};
 use spl_governance::{
     instruction::GovernanceInstruction,
-    state::vote_record::{get_vote_record_address, Vote, VoteChoice},
+    state::vote_record::{Vote, VoteChoice},
 };
 
 use crate::{ErrorCode, SplGovernance};

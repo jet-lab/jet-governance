@@ -1,7 +1,7 @@
 use anchor_lang::prelude::*;
 use anchor_lang::solana_program::program::invoke;
 use itertools::Itertools;
-use solana_program::{instruction::Instruction, system_program, sysvar};
+use solana_program::instruction::Instruction;
 use spl_governance::instruction::GovernanceInstruction;
 
 use crate::{ErrorCode, SplGovernance};
@@ -94,11 +94,8 @@ pub fn handler<'c, 'info>(ctx: Context<'_, '_, 'c, 'info, RelinquishMany<'info>>
         .chunks(2)
         .into_iter()
         .try_for_each(|mut c| {
-            let (proposal, vote_record_address) =
-                (c.next().unwrap(), c.next().unwrap());
-            ctx.accounts.relinquish_vote(
-                proposal.clone(),
-                vote_record_address.clone(),
-            )
+            let (proposal, vote_record_address) = (c.next().unwrap(), c.next().unwrap());
+            ctx.accounts
+                .relinquish_vote(proposal.clone(), vote_record_address.clone())
         })
 }
