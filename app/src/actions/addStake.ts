@@ -1,4 +1,4 @@
-import { AssociatedToken, JetMint, StakeAccount, StakePool } from "@jet-lab/jet-engine";
+import { AssociatedToken, StakeAccount, StakePool } from "@jet-lab/jet-engine";
 import { BN } from "@project-serum/anchor";
 import {
   getTokenOwnerRecordForRealm,

@@ -73,15 +73,13 @@ export async function sendAllTransactions(
  * Display a notification to show successful transactions with a message and a link to a block explorer (which one is determined in user settings)
  * @param message
  * @param txnSignature
- * @param explorerUrlMaker
+ * @param explorerUrl
  */
 export function notifyTransactionSuccess(
   txnSignature: string | PublicKey,
   message: string,
-  explorerUrlMaker: Function
+  explorerUrl: string
 ) {
-  const explorerUrl = explorerUrlMaker(txnSignature);
-
   notification.success({
     message,
     description: (

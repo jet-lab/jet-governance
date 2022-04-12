@@ -23,7 +23,7 @@ export const RestakeModal = ({
   const rpcContext = useRpcContext();
   const [current, setCurrent] = useState<Steps>(Steps.Confirm);
   const [loading, setLoading] = useState(false);
-  const { stakePool, stakeAccount, jetMint, realm, refresh } = useProposalContext();
+  const { stakePool, stakeAccount, realm, refresh } = useProposalContext();
   const { getTxExplorerUrl } = useBlockExplorer();
 
   const handleOk = () => {
@@ -34,7 +34,7 @@ export const RestakeModal = ({
     setLoading(true);
     restake(rpcContext, unbondingAccount, stakeAccount, stakePool, realm)
       .then(txnSig => {
-        notifyTransactionSuccess(txnSig, "JET has been restaked!", getTxExplorerUrl);
+        notifyTransactionSuccess(txnSig, "JET has been restaked!", getTxExplorerUrl(txnSig));
         onClose();
       })
       .catch(err => {

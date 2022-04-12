@@ -1,12 +1,11 @@
 import { ProposalFilter, useProposalContext } from "./../contexts";
-import { Airdrop, bnToNumber, StakePool, UnbondingAccount } from "@jet-lab/jet-engine";
+import { Airdrop, bnToNumber, UnbondingAccount } from "@jet-lab/jet-engine";
 import {
   Governance,
   ProgramAccount,
   Proposal,
   ProposalState,
   pubkeyFilter,
-  Realm,
   TokenOwnerRecord,
   VoteKind,
   VoteRecord

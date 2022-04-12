@@ -76,7 +76,7 @@ export const UnstakeModal = ({
         notifyTransactionSuccess(
           txnSig,
           "JET has begun unbonding for 29.5 days!",
-          getTxExplorerUrl
+          getTxExplorerUrl(txnSig)
         );
         setLoading(false);
         setDisplayUnbondDate();
