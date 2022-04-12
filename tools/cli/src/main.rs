@@ -3,6 +3,7 @@ use anchor_lang::{prelude::Pubkey, solana_program};
 use jet_rewards::instructions::AirdropAddRecipientsParams;
 use jet_rewards::state::Airdrop;
 use std::path::PathBuf;
+use std::str::FromStr;
 use structopt::StructOpt;
 pub mod utils;
 
@@ -65,60 +66,63 @@ fn run_create_airdrop_account_and_add_recipients(
     param_file_path: PathBuf,
     recipients_file_path: PathBuf,
 ) -> anyhow::Result<()> {
-    let airdrop_keypair = generate_keypair()?;
-    let airdrop_address = airdrop_keypair.pubkey();
+    // let airdrop_keypair = generate_keypair()?;
+    // let airdrop_address = airdrop_keypair.pubkey();
+    let airdrop_address = Pubkey::from_str("MyijtAcwgNyH5qeJdXxyfxKtKwSfHvGAZfy7dutke8X").unwrap();
     println!("airdrop address: {}", airdrop_address);
     let param_contents = read_file_path(param_file_path)?;
     let airdrop_create_result =
         json_to_create_airdrop_param(client, airdrop_address, param_contents)?;
 
-    let lamport = client
-        .rpc()
-        .get_minimum_balance_for_rent_exemption(AIRDROP_SPACE_LEN)?;
+    // let lamport = client
+    //     .rpc()
+    //     .get_minimum_balance_for_rent_exemption(AIRDROP_SPACE_LEN)?;
 
-    let create_airdrop = create_account(
-        &airdrop_create_result.payer,
-        &airdrop_address,
-        lamport,
-        AIRDROP_SPACE_LEN as u64,
-        &client.id(),
-    );
+    // let create_airdrop = create_account(
+    //     &airdrop_create_result.payer,
+    //     &airdrop_address,
+    //     lamport,
+    //     AIRDROP_SPACE_LEN as u64,
+    //     &client.id(),
+    // );
 
     // create ix
-    let params = jet_rewards::instructions::AirdropCreateParams {
-        expire_at: airdrop_create_result.create_params.expire_at,
-        stake_pool: airdrop_create_result.create_params.stake_pool,
-        short_desc: airdrop_create_result.create_params.short_desc,
-        long_desc: airdrop_create_result.create_params.long_desc,
-        flags: airdrop_create_result.create_params.flags,
-    };
+    // let params = jet_rewards::instructions::AirdropCreateParams {
+    //     expire_at: airdrop_create_result.create_params.expire_at,
+    //     stake_pool: airdrop_create_result.create_params.stake_pool,
+    //     short_desc: airdrop_create_result.create_params.short_desc,
+    //     long_desc: airdrop_create_result.create_params.long_desc,
+    //     flags: airdrop_create_result.create_params.flags,
+    // };
 
-    let airdrop_create_accounts = jet_rewards::accounts::AirdropCreate {
-        airdrop: airdrop_address,
-        authority: airdrop_create_result.authority,
-        reward_vault: airdrop_create_result.vault_pubkey,
-        payer: airdrop_create_result.payer,
-        token_mint: airdrop_create_result.token_mint,
-        token_program: anchor_spl::token::ID,
-        system_program: solana_program::system_program::ID,
-        rent: solana_program::sysvar::rent::ID,
-    };
+    // let airdrop_create_accounts = jet_rewards::accounts::AirdropCreate {
+    //     airdrop: airdrop_address,
+    //     authority: airdrop_create_result.authority,
+    //     reward_vault: airdrop_create_result.vault_pubkey,
+    //     payer: airdrop_create_result.payer,
+    //     token_mint: airdrop_create_result.token_mint,
+    //     token_program: anchor_spl::token::ID,
+    //     system_program: solana_program::system_program::ID,
+    //     rent: solana_program::sysvar::rent::ID,
+    // };
 
-    println!("create airdrop");
-    let sig = client
-        .request()
-        .instruction(create_airdrop)
-        .signer(&airdrop_keypair)
-        .accounts(airdrop_create_accounts)
-        .args(jet_rewards::instruction::AirdropCreate { params })
-        .send()?;
-    println!("confirmed: {:?}", sig);
+    // println!("create airdrop");
+    // let sig = client
+    //     .request()
+    //     .instruction(create_airdrop)
+    //     .signer(&airdrop_keypair)
+    //     .accounts(airdrop_create_accounts)
+    //     .args(jet_rewards::instruction::AirdropCreate { params })
+    //     .send()?;
+    // println!("confirmed: {:?}", sig);
 
     let recipient_contents = read_file_path(recipients_file_path)?;
     let recipients = json_to_recipient_list_structured_data(recipient_contents)?;
 
     // add recipients ix
-    let mut start_index = 0u64;
+    // let mut start_index = 0u64;
+    let airdrop = client.account::<Airdrop>(airdrop_address)?;
+    let mut start_index = airdrop.target_info().recipients_total;
     for chunk in recipients.chunks(25) {
         let params = AirdropAddRecipientsParams {
             start_index,
@@ -131,6 +135,7 @@ fn run_create_airdrop_account_and_add_recipients(
         };
 
         println!("add recipients to airdrop");
+        println!("start_index: {:?}", start_index);
         let sig = client
             .request()
             .accounts(accounts)

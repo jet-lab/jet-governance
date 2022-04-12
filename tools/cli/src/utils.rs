@@ -1,3 +1,4 @@
+use anchor_client::solana_sdk::commitment_config::CommitmentConfig;
 use anchor_client::solana_sdk::signature::{Keypair, Signer};
 use anchor_lang::prelude::Pubkey;
 use jet_rewards::instructions::{AirdropCreateParams, AirdropRecipientParam};
@@ -20,12 +21,13 @@ pub fn load_default_keypair() -> anyhow::Result<Keypair> {
 
 pub fn load_default_client() -> anyhow::Result<anchor_client::Program> {
     let keypair = load_default_keypair()?;
-    // let rpc = "https://api.mainnet-beta.solana.com".to_owned();
-    let rpc = "https://api.devnet.solana.com".to_owned();
+    // let rpc = "https://jetprotocol.genesysgo.net".to_owned();
+    let rpc = "https://jet-solana-0.bdnodes.net/?auth=e16B3lNLqiyoC5o88kVoeU9vlJumk44FMqi72gUlSuc".to_owned();
+    // let rpc = "https://api.devnet.solana.com".to_owned();
     // let rpc = "http://127.0.0.1:8899".to_owned();
     let wss = rpc.replace("https", "wss");
     let connection =
-        anchor_client::Client::new(anchor_client::Cluster::Custom(rpc, wss), Rc::new(keypair));
+        anchor_client::Client::new_with_options(anchor_client::Cluster::Custom(rpc, wss), Rc::new(keypair), CommitmentConfig::processed());
     let client = connection.program(jet_rewards::ID);
 
     Ok(client)
