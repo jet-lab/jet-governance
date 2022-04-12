@@ -47,9 +47,9 @@ export const getProposalFilters = (
   } else if (proposalFilter === "inactive") {
     return proposals.filter(p => p.account.isVoteFinalized() || p.account.isPreVotingState());
   } else if (proposalFilter === "passed") {
-    return proposals.filter(p => p.account.state === ProposalState.Succeeded);
+    return proposals.filter(p => useIsProposalPassed(p));
   } else if (proposalFilter === "rejected") {
-    return proposals.filter(p => p.account.state === ProposalState.Defeated);
+    return proposals.filter(p => !useIsProposalPassed(p) && !p.account.isPreVotingState());
   } else if (proposalFilter === "all") {
     return proposals;
   } else {
@@ -254,16 +254,6 @@ export function useVoterDisplayData(
         mapper(vr.account.governingTokenOwner, vr.account.getNoVoteWeight()!, VoteOption.No)
       );
 
-    // const abstainVoteData = voteRecords
-    //   .filter(vr => vr.info.getNoVoteWeight()?.gt(ZERO))
-    //   .map(vr =>
-    //     mapper(
-    //       vr.info.governingTokenOwner,
-    //       vr.info.getAbstainVoteWeight()!,
-    //       VoteType.Abstain,
-    //     ),
-    //   );
-
     const data = [...undecidedData, ...yesVoteData, ...noVoteData].sort((a, b) =>
       b.voteWeight.cmp(a.voteWeight)
     );
@@ -299,6 +289,12 @@ export function getVoteCounts(proposal: ProgramAccount<Proposal>) {
     ? 0
     : (bnToNumber(abstain.add(yes)) / bnToNumber(total)) * 100;
   return { yes, no, abstain, total, yesPercent: yesPercent, yesAbstainPercent };
+}
+
+// --------- Check if proposal has passed by simple majority ---------
+export function useIsProposalPassed(proposal: ProgramAccount<Proposal>): boolean {
+  const { yes, no } = getVoteCounts(proposal);
+  return yes.gt(no);
 }
 
 export const useWalletVoteRecords = () => {
