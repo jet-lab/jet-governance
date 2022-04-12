@@ -69,7 +69,9 @@ export function SettingsView(): JSX.Element {
             onChange={(value: string) => setRpcNodeInput(value.toString())}
             submit={checkRPC}
           />
-          <Divider />
+        </div>
+        <Divider />
+        <div className="flex align-start justify-center column setting wallet">
           <span className="setting-title bold-text">WALLET</span>
           {wallet && connected && publicKey ? (
             <div className="flex-centered">
