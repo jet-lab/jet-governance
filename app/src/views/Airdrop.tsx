@@ -55,7 +55,7 @@ export const AirdropView = () => {
           </u>{" "}
           and{" "}
           <a
-            href="https://docs.jetprotocol.io/jet-protocol/terms-and-definitions#jetgovern-definitions"
+            href="https://jet-association.gitbook.io/jet-association-1.0.0/terms-and-definitions"
             target="_blank"
             rel="noreferrer"
             className="gradient-text-btn"

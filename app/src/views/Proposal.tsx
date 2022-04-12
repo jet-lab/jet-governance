@@ -12,7 +12,7 @@ import { ProposalCard } from "../components";
 import { VoteModal } from "../components/modals";
 import { ResultProgressBar, VoterList } from "../components/proposal";
 import { LABELS } from "../constants";
-import { useBlockExplorer, useProposalContext } from "../contexts";
+import { useBlockExplorer, useConnectionConfig, useProposalContext } from "../contexts";
 import {
   getVoteCounts,
   getVoteType,
@@ -141,6 +141,7 @@ const InnerProposalView = ({
   const { getAccountExplorerUrl } = useBlockExplorer();
   const proposalAddress = useKeyParam();
   const { startDate, endDate } = useCountdown(proposal, governance);
+  const { inDevelopment } = useConnectionConfig();
 
   //if !loaded then use placeholder data
   const gistInfo = useLoadGist(proposal?.account.descriptionLink);
@@ -199,7 +200,8 @@ const InnerProposalView = ({
                 <ArrowLeftOutlined />
                 Active Proposals
               </Link>{" "}
-              / Jet Upward Momentum Proposal {addressStr ? getPubkeyIndex(addressStr) : "---"}
+              / Jet Upward Momentum Proposal{" "}
+              {addressStr ? getPubkeyIndex(addressStr, inDevelopment) : "---"}
             </Text>
 
             {/* Proposal Title */}

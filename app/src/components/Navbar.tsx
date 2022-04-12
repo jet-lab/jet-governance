@@ -41,7 +41,7 @@ export function Navbar() {
     },
     {
       title: "Glossary",
-      url: "https://docs.jetprotocol.io/jet-protocol/terms-and-definitions#jetgovern-definitions"
+      url: "https://jet-association.gitbook.io/jet-association-1.0.0/terms-and-definitions"
     }
   ];
   const accountLink = { title: "Account", route: "/your-info" };

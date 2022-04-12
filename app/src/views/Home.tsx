@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { PastProposalCard, ProposalCard, YourInfo } from "../components";
 import { ProposalFilter, useProposalContext } from "../contexts";
 import { ReactComponent as Filter } from "../images/filter.svg";
+import { getFirstTwoHundredPubkeys } from "../models/PUBKEYS_INDEX";
 
 export const HomeView = () => {
   /* eslint-disable @typescript-eslint/no-unused-vars */
@@ -37,10 +38,15 @@ export const HomeView = () => {
     toggleShowFilter();
   };
 
-  // useEffect(() => {
-  //   console.log(realm?.account.communityMint.toBase58(), realm?.account.config.councilMint?.toBase58(), realm?.pubkey.toBase58(), governance?.pubkey.toBase58())
-  //   getFirstTwoHundredPubkeys(realm?.account.communityMint);
-  // }, [realm?.account.communityMint.toBase58()]);
+  //useEffect(() => {
+  //  console.log(
+  //    realm?.account.communityMint.toBase58(),
+  //    realm?.account.config.councilMint?.toBase58(),
+  //    realm?.pubkey.toBase58(),
+  //    governance?.pubkey.toBase58()
+  //  );
+  //  getFirstTwoHundredPubkeys(realm?.account.communityMint);
+  //}, [realm?.account.communityMint.toBase58()]);
 
   return (
     <section className="home view content-body column-grid">

@@ -12,7 +12,7 @@ import {
 import { Modal, ModalProps } from "antd";
 import { ReactNode, useEffect, useState } from "react";
 import { castVote } from "../../actions/castVote";
-import { useProposalContext } from "../../contexts";
+import { useConnectionConfig, useProposalContext } from "../../contexts";
 import { useCountdown, VoteOption, useRpcContext } from "../../hooks";
 import { getPubkeyIndex } from "../../models/PUBKEYS_INDEX";
 import { notifyTransactionSuccess } from "../../tools/transactions";
@@ -55,6 +55,7 @@ export const VoteModal = ({
     refresh
   } = useProposalContext();
   const { getTxExplorerUrl } = useBlockExplorer();
+  const { inDevelopment } = useConnectionConfig();
 
   let voteText: string = "";
 
@@ -130,7 +131,7 @@ export const VoteModal = ({
       <div className="flex column">
         <p>
           You are about to vote <strong>{voteText}</strong> JUMP-
-          {getPubkeyIndex(proposal.pubkey.toBase58())}: {proposal.account.name}.
+          {getPubkeyIndex(proposal.pubkey.toBase58(), inDevelopment)}: {proposal.account.name}.
         </p>
         <p>
           You have {toTokens(sharesToTokens(stakedJet, stakePool).tokens, jetMint)} JET staked, and
