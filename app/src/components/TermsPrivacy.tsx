@@ -22,14 +22,13 @@ export function TermsPrivacy(): JSX.Element {
       >
         <span className="text-btn">Glossary</span>
       </a>
-        <a
-            href="https://github.com/jet-lab/jet-governance/tree/master/reports"
-            target="_blank"
-            rel="noopener noreferrer"
-        >
-            <span className="text-btn">Audit Report</span>
-        </a>
-
+      <a
+        href="https://github.com/jet-lab/jet-governance/tree/master/reports"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        <span className="text-btn">Audit Report</span>
+      </a>
     </div>
   );
 }
