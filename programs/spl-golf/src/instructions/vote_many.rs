@@ -85,11 +85,9 @@ impl<'info> VoteMany<'info> {
         invoke(
             &ix,
             &[
-                // self.governance_program.to_account_info(),
                 self.realm.to_account_info(),
                 self.governance.to_account_info(),
                 proposal,
-                // self.proposal_owner_record.to_account_info(),
                 proposal_owner_record,
                 self.voter_token_owner_record.to_account_info(),
                 self.governance_authority.to_account_info(),
@@ -126,7 +124,6 @@ pub fn handler<'c, 'info>(
         .zip(votes)
         .try_for_each(
             |((proposal, proposal_owner_record, vote_record_address), vote)| {
-                msg!("{:?}", vote);
                 ctx.accounts.cast_vote(
                     proposal.clone(),
                     proposal_owner_record.clone(),
