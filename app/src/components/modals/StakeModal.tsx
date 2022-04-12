@@ -6,7 +6,7 @@ import { DocsLink } from "../docsLink";
 import { addStake } from "../../actions/addStake";
 import { useProposalContext } from "../../contexts";
 import { useBN, useRpcContext } from "../../hooks";
-import { fromLamports, isSignTransactionError, withPrecisionNumber } from "../../utils";
+import { isSignTransactionError, withPrecisionNumber } from "../../utils";
 import { notifyTransactionSuccess } from "../../tools/transactions";
 import { useBlockExplorer } from "../../contexts/blockExplorer";
 
@@ -41,10 +41,9 @@ export const StakeModal = ({
     if (!stakePool || !realm || !publicKey || !jetAccount) {
       return;
     }
-    const successMsg = `${fromLamports(amount, jetMint)} JET staked`;
-
+    const successMsg = `${amount} JET staked Successfully`;
     setLoading(true);
-    addStake(rpcContext, stakePool, publicKey, stakeLamports, jetMint)
+    addStake(rpcContext, stakePool, publicKey, stakeLamports)
       .then(txnSig => {
         notifyTransactionSuccess(txnSig, successMsg, getTxExplorerUrl);
         onClose();

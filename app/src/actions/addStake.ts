@@ -9,14 +9,13 @@ import {
 } from "@solana/spl-governance";
 import { Keypair, PublicKey, TransactionInstruction } from "@solana/web3.js";
 import { sendTransaction } from "../tools/transactions";
-import { fromLamports, GOVERNANCE_PROGRAM_ID } from "../utils";
+import { GOVERNANCE_PROGRAM_ID } from "../utils";
 
 export const addStake = async (
   { connection, wallet }: RpcContext,
   stakePool: StakePool,
   owner: PublicKey,
   amount: BN,
-  jetMint: JetMint | undefined
 ): Promise<string> => {
   let instructions: TransactionInstruction[] = [];
   let signers: Keypair[] = [];
@@ -57,8 +56,6 @@ export const addStake = async (
       owner
     );
   }
-
-  // const notificationTitle = `${fromLamports(amount, jetMint)} JET staked`;
 
   return await sendTransaction(connection, wallet, instructions, signers);
 };

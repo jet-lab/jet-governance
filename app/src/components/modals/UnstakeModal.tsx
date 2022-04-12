@@ -73,7 +73,7 @@ export const UnstakeModal = ({
       .then(txnSig => {
         notifyTransactionSuccess(
           txnSig,
-          "Your $JET has begun unbonding for 29.5 days",
+          "Your JET has begun unbonding for 29.5 days",
           getTxExplorerUrl
         );
         setLoading(false);

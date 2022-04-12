@@ -38,7 +38,7 @@ export const WithdrawModal = ({ onClose, unbondingAccount }: WithdrawModalProps)
     withdrawUnbonded(rpcContext, unbondingAcc, stakeAccount, stakePool)
       .then(result => {
         if (result !== undefined) {
-          notifyTransactionSuccess(result, "Your $JET have been withdrawn.", getTxExplorerUrl);
+          notifyTransactionSuccess(result, "Your JET have been withdrawn", getTxExplorerUrl);
         }
         onClose();
       })
