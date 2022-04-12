@@ -103,7 +103,7 @@ mod error {
 pub mod spl_governance {
     use super::declare_id;
 
-    declare_id!("JPGovTiAUgyqirerBbXXmfyt3SkHVEcpSAPjRCCSHVx");
+    declare_id!("JPGov2SBA6f7XSJF5R4Si5jEJekGiyrwP2m7gSEqLUs");
 }
 
 #[derive(Copy, Clone)]
@@ -111,6 +111,6 @@ pub struct SplGovernance;
 
 impl Id for SplGovernance {
     fn id() -> Pubkey {
-        pubkey!("JPGovTiAUgyqirerBbXXmfyt3SkHVEcpSAPjRCCSHVx")
+        pubkey!("JPGov2SBA6f7XSJF5R4Si5jEJekGiyrwP2m7gSEqLUs")
     }
 }
