@@ -408,7 +408,7 @@ export const VerifyModal = () => {
           Due to regulatory restrictions, only users in authorized regions are able to access
           JetGovern. For more info, see our{" "}
           <a
-            href="https://www.jetprotocol.io/legal/terms-of-service"
+            href="https://jet-association.gitbook.io/jet-association-1.0.0/terms-of-service"
             className="gradient-text-btn"
             target="_blank"
             rel="noopener noreferrer"
@@ -503,7 +503,7 @@ export const VerifyModal = () => {
           <label htmlFor="terms-privacy-check" className="terms-privacy-legend">
             I understand the{" "}
             <a
-              href="https://www.jetprotocol.io/legal/terms-of-service"
+              href="https://jet-association.gitbook.io/jet-association-1.0.0/terms-of-service"
               target="_blank"
               className="link-btn"
               rel="noopener noreferrer"
@@ -512,7 +512,7 @@ export const VerifyModal = () => {
             </a>{" "}
             and{" "}
             <a
-              href="https://www.jetprotocol.io/legal/privacy-policy"
+              href="https://jet-association.gitbook.io/jet-association-1.0.0/privacy-policy"
               target="_blank"
               className="link-btn"
               rel="noopener noreferrer"
@@ -639,7 +639,7 @@ export const VerifyModal = () => {
           Due to regulatory restrictions, JetGovern is not available to residents of certain
           countries. For more info, see the{"  "}
           <a
-            href="https://www.jetprotocol.io/legal/terms-of-service"
+            href="https://jet-association.gitbook.io/jet-association-1.0.0/terms-of-service"
             target="_blank"
             className="gradient-text-btn"
             rel="noreferrer"

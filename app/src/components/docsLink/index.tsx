@@ -10,7 +10,7 @@ export const DocsLink = ({
   const classNames = noGradient ? className : "link-btn " + className;
   return (
     <a
-      href="https://docs.jetprotocol.io/jet-protocol/protocol/jet-staking"
+      href="https://jet-association.gitbook.io/jet-association-1.0.0/jet-staking"
       target="_blank"
       rel="noreferrer"
       className={classNames}
