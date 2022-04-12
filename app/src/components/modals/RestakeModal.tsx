@@ -5,6 +5,8 @@ import { restake } from "../../actions/restake";
 import { useProposalContext } from "../../contexts";
 import { useRpcContext } from "../../hooks";
 import { isSignTransactionError } from "../../utils";
+import { useBlockExplorer } from "../../contexts/blockExplorer";
+import { notifyTransactionSuccess } from '../../tools/transactions';
 
 enum Steps {
   Confirm = 0,
@@ -22,6 +24,7 @@ export const RestakeModal = ({
   const [current, setCurrent] = useState<Steps>(Steps.Confirm);
   const [loading, setLoading] = useState(false);
   const { stakePool, stakeAccount, jetMint, realm, refresh } = useProposalContext();
+  const { getTxExplorerUrl } = useBlockExplorer();
 
   const handleOk = () => {
     if (!unbondingAccount || !stakePool || !stakeAccount || !realm) {
@@ -30,7 +33,8 @@ export const RestakeModal = ({
 
     setLoading(true);
     restake(rpcContext, unbondingAccount, stakeAccount, stakePool, realm)
-      .then(() => {
+      .then((txnSig) => {
+        notifyTransactionSuccess(txnSig, 'Your $JET has been staked', getTxExplorerUrl)
         onClose();
       })
       .catch(err => {

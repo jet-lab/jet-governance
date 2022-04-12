@@ -6,13 +6,13 @@ import {
   withCancelProposal
 } from "@solana/spl-governance";
 import { Keypair, PublicKey, TransactionInstruction } from "@solana/web3.js";
-import { sendTransactionWithNotifications } from "../tools/transactions";
+import { sendTransaction } from "../tools/transactions";
 
 export const cancelProposal = async (
   { connection, wallet, programId, walletPubkey }: RpcContext,
   realmPk: PublicKey,
   proposal: ProgramAccount<Proposal> | undefined
-) => {
+): Promise<string> => {
   const instructions: TransactionInstruction[] = [];
   const signers: Keypair[] = [];
   const governanceAuthority = walletPubkey;
@@ -32,11 +32,10 @@ export const cancelProposal = async (
     governanceAuthority
   );
 
-  await sendTransactionWithNotifications(
+  return await sendTransaction(
     connection,
     wallet,
     instructions,
     signers,
-    "Proposal cancelled"
   );
 };

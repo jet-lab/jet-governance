@@ -1,38 +1,40 @@
 import { Provider } from "@project-serum/anchor";
 import { SendTxRequest } from "@project-serum/anchor/dist/cjs/provider";
 import { WalletSigner } from "@solana/spl-governance";
-import { TransactionInstruction, Connection, Transaction, Keypair } from "@solana/web3.js";
+import { TransactionInstruction, Connection, Transaction, Keypair, PublicKey } from "@solana/web3.js";
 import { notification } from "antd";
 import { sendTransaction2 } from "./sdk/core/connection";
 import {
   isTransactionTimeoutError,
   isSendTransactionError,
-  isSignTransactionError
+  isSignTransactionError,
+  shortenAddress
 } from "../utils";
 
-export async function sendTransactionWithNotifications(
+/**
+ * For sending a single transaction
+ * @param connection
+ * @param wallet
+ * @param instructions
+ * @param signers
+ * @returns transaction signature
+ */
+export async function sendTransaction(
   connection: Connection,
   wallet: WalletSigner,
   instructions: TransactionInstruction[],
   signers: Keypair[],
-  successMessage: string
-) {
+): Promise<string> {
   try {
     const transaction = new Transaction();
     transaction.add(...instructions);
-
-    await sendTransaction2({
+    //return txn signature
+    return await sendTransaction2({
       transaction,
       wallet,
       signers,
       connection
     });
-
-    notification.success({
-      message: "Success!",
-      description: successMessage,
-      placement: "bottomLeft"
-    });
   } catch (err) {
     notifyTransactionError(err);
     console.error(err);
@@ -40,20 +42,21 @@ export async function sendTransactionWithNotifications(
   }
 }
 
-// For sending multiple transactions
-export async function sendAllTransactionsWithNotifications(
+
+/**
+ * For sending multiple transactions
+ * @param provider
+ * @param transactions
+ * @returns transaction signature
+ */
+export async function sendAllTransactions(
   provider: Provider,
   transactions: SendTxRequest[],
-  successMessage: string
-) {
+): Promise<string> {
   try {
-    await provider.sendAll(transactions);
-
-    notification.success({
-      message: "Success!",
-      description: successMessage,
-      placement: "bottomLeft"
-    });
+    const txnResult = await provider.sendAll(transactions);
+    //return the last txn signature
+    return txnResult[txnResult.length - 1];
   } catch (err) {
     notifyTransactionError(err);
     console.error(err);
@@ -61,6 +64,41 @@ export async function sendAllTransactionsWithNotifications(
   }
 }
 
+
+/**
+ * Display notification modal to show successful transactions with a success message and a link to a block explorer(which one is determined in user settings)
+ * @param successMessage
+ * @param txnSignature
+ * @param explorerUrlMaker
+ */
+ export function notifyTransactionSuccess(
+  txnSignature: string | PublicKey,
+  successMessage: string,
+  explorerUrlMaker: Function
+) {
+  const explorerUrl = explorerUrlMaker(txnSignature);
+
+  notification.success({
+    message: `${successMessage} Successful!`,
+    description: (
+      <div id="txnSuccess-modal">
+        <div style={{ textDecoration: "underline" }}>
+          <a href={explorerUrl} target="_blank"></a>
+          {shortenAddress(txnSignature, 8)} <i className="fas fa-external-link-alt"></i>
+        </div>
+      </div>
+    ),
+    placement: "bottomLeft",
+    onClick: () => {
+      window.open(explorerUrl, "_blank");
+    }
+  });
+}
+
+/**
+ * Display transaction error modal
+ * @param err
+ */
 function notifyTransactionError(err: unknown) {
   if (isTransactionTimeoutError(err)) {
     notification.error({

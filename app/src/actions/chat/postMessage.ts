@@ -8,7 +8,7 @@ import {
   withPostChatMessage
 } from "@solana/spl-governance";
 import { PublicKey, Keypair, TransactionInstruction } from "@solana/web3.js";
-import { sendTransactionWithNotifications } from "../../tools/transactions";
+import { sendTransaction } from "../../tools/transactions";
 
 export async function postChatMessage(
   { connection, wallet, programId, walletPubkey }: RpcContext,
@@ -17,7 +17,7 @@ export async function postChatMessage(
   tokeOwnerRecord: PublicKey,
   body: ChatMessageBody,
   replyTo?: PublicKey
-) {
+): Promise<string> {
   const signers: Keypair[] = [];
   const instructions: TransactionInstruction[] = [];
 
@@ -39,11 +39,10 @@ export async function postChatMessage(
     body
   );
 
-  await sendTransactionWithNotifications(
+  return await sendTransaction(
     connection,
     wallet,
     instructions,
     signers,
-    "Chat message posted"
   );
 }

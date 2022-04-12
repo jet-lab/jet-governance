@@ -1,13 +1,13 @@
 import { ProgramAccount, Proposal, RpcContext, withRelinquishVote } from "@solana/spl-governance";
 import { Keypair, PublicKey, Transaction, TransactionInstruction } from "@solana/web3.js";
-import { sendTransactionWithNotifications } from "../tools/transactions";
+import { sendTransaction } from "../tools/transactions";
 
 export const relinquishVote = async (
   { connection, wallet, programId, walletPubkey }: RpcContext,
   proposal: ProgramAccount<Proposal>,
   tokenOwnerRecord: PublicKey,
   voteRecord: PublicKey
-) => {
+): Promise<string> => {
   const signers: Keypair[] = [];
   const instructions: TransactionInstruction[] = [];
 
@@ -29,11 +29,10 @@ export const relinquishVote = async (
   const transaction = new Transaction();
   transaction.add(...instructions);
 
-  await sendTransactionWithNotifications(
+  return await sendTransaction(
     connection,
     wallet,
     instructions,
     signers,
-    "Vote withdrawn"
   );
 };

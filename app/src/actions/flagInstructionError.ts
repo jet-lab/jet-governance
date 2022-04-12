@@ -6,13 +6,13 @@ import {
   withFlagTransactionError
 } from "@solana/spl-governance";
 import { Keypair, PublicKey, Transaction, TransactionInstruction } from "@solana/web3.js";
-import { sendTransactionWithNotifications } from "../tools/transactions";
+import { sendTransaction } from "../tools/transactions";
 
 export const flagInstructionError = async (
   { connection, wallet, programId, walletPubkey }: RpcContext,
   proposal: ProgramAccount<Proposal>,
   proposalInstruction: PublicKey
-) => {
+): Promise<string> => {
   const governanceAuthority = walletPubkey;
 
   const signers: Keypair[] = [];
@@ -36,11 +36,10 @@ export const flagInstructionError = async (
 
   transaction.add(...instructions);
 
-  await sendTransactionWithNotifications(
+  return await sendTransaction(
     connection,
     wallet,
     instructions,
     signers,
-    "Instruction flagged as broken"
   );
 };

@@ -8,7 +8,7 @@ import {
   withCreateTokenOwnerRecord
 } from "@solana/spl-governance";
 import { Keypair, PublicKey, TransactionInstruction } from "@solana/web3.js";
-import { sendTransactionWithNotifications } from "../tools/transactions";
+import { sendTransaction } from "../tools/transactions";
 import { fromLamports, GOVERNANCE_PROGRAM_ID } from "../utils";
 
 export const addStake = async (
@@ -17,7 +17,7 @@ export const addStake = async (
   owner: PublicKey,
   amount: BN,
   jetMint: JetMint | undefined
-) => {
+): Promise<string> => {
   let instructions: TransactionInstruction[] = [];
   let signers: Keypair[] = [];
 
@@ -58,13 +58,12 @@ export const addStake = async (
     );
   }
 
-  const notificationTitle = `${fromLamports(amount, jetMint)} JET staked`;
+  // const notificationTitle = `${fromLamports(amount, jetMint)} JET staked`;
 
-  await sendTransactionWithNotifications(
+  return await sendTransaction(
     connection,
     wallet,
     instructions,
     signers,
-    notificationTitle
   );
 };

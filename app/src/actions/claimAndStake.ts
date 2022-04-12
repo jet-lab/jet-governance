@@ -2,7 +2,7 @@ import { Airdrop, RewardsIdl, StakeAccount, StakePool } from "@jet-lab/jet-engin
 import { Program } from "@project-serum/anchor";
 import { RpcContext } from "@solana/spl-governance";
 import { Keypair, TransactionInstruction } from "@solana/web3.js";
-import { sendTransactionWithNotifications } from "../tools/transactions";
+import { sendTransaction } from "../tools/transactions";
 
 export const claimAndStake = async (
   { connection, wallet }: RpcContext,
@@ -10,17 +10,16 @@ export const claimAndStake = async (
   airdrop: Airdrop,
   stakePool: StakePool,
   stakeAccount: StakeAccount
-) => {
+): Promise<string> => {
   let instructions: TransactionInstruction[] = [];
   let signers: Keypair[] = [];
 
   await Airdrop.withClaim(instructions, rewardsProgram, airdrop, stakePool, stakeAccount);
 
-  await sendTransactionWithNotifications(
+  return await sendTransaction(
     connection,
     wallet,
     instructions,
-    signers,
-    "JET claimed and staked"
+    signers
   );
 };
