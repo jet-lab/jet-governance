@@ -849,7 +849,6 @@ describe("airdrop-staking", () => {
     }
   });
 
-  /*
   it("create mass airdrop", async () => {
     let bumpSeed: number;
 
@@ -943,13 +942,13 @@ describe("airdrop-staking", () => {
             }
           });
 
-          let [recipientStakeAccount, stakeBumpSeed] = await PublicKey.findProgramAddress(
+          let [recipientStakeAccount] = await PublicKey.findProgramAddress(
             [stakeAcc.stakePool.toBuffer(), recipient.publicKey.toBuffer()],
             StakingProgram.programId
           );
-          let [recipientVoterWeight, voteWeightSeed] = await PublicKey.findProgramAddress(
+          let [recipientVoterWeight] = await PublicKey.findProgramAddress(
             [Buffer.from("voter-weight-record"), recipientStakeAccount.toBuffer()],
-            StakeProgram.programId,
+            StakingProgram.programId
           );
 
           await StakingProgram.rpc.initStakeAccount({
@@ -975,6 +974,7 @@ describe("airdrop-staking", () => {
               stakePoolVault: stakeAcc.stakePoolVault,
               stakeAccount: recipientStakeAccount,
               voterWeightRecord: recipientVoterWeight,
+              maxVoterWeightRecord: stakeAcc.maxVoterWeightRecord,
               stakingProgram: StakingProgram.programId,
               tokenProgram: TOKEN_PROGRAM_ID
             },
@@ -986,5 +986,4 @@ describe("airdrop-staking", () => {
 
     assert.equal(0, (await testToken.getAccountInfo(airdropVault)).amount.toNumber());
   });
-  */
 });
