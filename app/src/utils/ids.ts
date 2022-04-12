@@ -6,7 +6,7 @@ export const COUNCIL_TOKEN_MINT = new PublicKey("GBZ2J49hpCLM8HDFav7gQ2zJNC3LCV2
 export const COUNCIL_FAUCET_DEVNET = new PublicKey("3AJLr1kbsC8btrizbYTWPCvfTfCJpK7JYHHpmZdy7sgM");
 export let JET_REALM = new PublicKey("Hi4hNCJZk1oPj8Kny3HcNqCP7VN451eTaENqr4fn92e2");
 export let JET_GOVERNANCE = new PublicKey("DnHEw3anUg5juANqeqbGCGsKaqq8ypZomaQysVn9iRCb");
-export const GOVERNANCE_PROGRAM_ID = new PublicKey("JPGovTiAUgyqirerBbXXmfyt3SkHVEcpSAPjRCCSHVx");
+export const GOVERNANCE_PROGRAM_ID = new PublicKey("JPGov2SBA6f7XSJF5R4Si5jEJekGiyrwP2m7gSEqLUs");
 export let BPF_UPGRADE_LOADER_ID = new PublicKey("BPFLoaderUpgradeab1e11111111111111111111111");
 
 export const setProgramIds = (envName: string) => {

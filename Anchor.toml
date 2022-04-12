@@ -14,7 +14,7 @@ cluster = "localnet"
 wallet = "~/.config/solana/id.json"
 
 [[test.genesis]]
-address = "JPGovTiAUgyqirerBbXXmfyt3SkHVEcpSAPjRCCSHVx"
+address = "JPGov2SBA6f7XSJF5R4Si5jEJekGiyrwP2m7gSEqLUs"
 program = "./deps/spl_governance.so"
 
 
