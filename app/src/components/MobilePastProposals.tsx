@@ -5,6 +5,7 @@ import { getProposalUrl } from "../tools/routeTools";
 import { getPubkeyIndex } from "../models/PUBKEYS_INDEX";
 import { ProgramAccount, Proposal, ProposalState } from "@solana/spl-governance";
 import { ReactComponent as ArrowRight } from "../images/arrow_right.svg";
+import { useConnectionConfig } from "../contexts";
 
 export const PastProposalCard = ({ proposal }: { proposal: ProgramAccount<Proposal> }) => {
   var headlineUrl = useMemo(
@@ -12,6 +13,7 @@ export const PastProposalCard = ({ proposal }: { proposal: ProgramAccount<Propos
     [proposal.pubkey, proposal.account.name]
   );
   const proposalStr = useMemo(() => proposal.pubkey.toString(), [proposal.pubkey]);
+  const { inDevelopment } = useConnectionConfig();
 
   let statusColor = "#949494";
   if (ProposalState[proposal.account.state] === "Draft") {
@@ -26,7 +28,7 @@ export const PastProposalCard = ({ proposal }: { proposal: ProgramAccount<Propos
     <Link to={headlineUrl}>
       <Card bordered={false} className={`past-proposal-card clickable`} style={{}}>
         <div>
-          <div className="header">JUMP-{getPubkeyIndex(proposalStr)} </div>
+          <div className="header">JUMP-{getPubkeyIndex(proposalStr, inDevelopment)} </div>
           <div className="details">
             <div style={{ background: statusColor }}>{ProposalState[proposal.account.state]}</div>
           </div>
