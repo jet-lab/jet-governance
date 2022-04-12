@@ -11,7 +11,7 @@ import { useProvider, useRpcContext } from "../../hooks";
 import { ReactComponent as ArrowIcon } from "../../images/arrow_icon.svg";
 import { geoBannedCountries } from "../../models/GEOBANNED_COUNTRIES";
 import { filterSort } from "../../utils";
-import {REWARDS_ENABLED, LABELS} from "../../constants";
+import { REWARDS_ENABLED, LABELS } from "../../constants";
 
 enum Steps {
   Welcome = 0,
@@ -345,7 +345,9 @@ export const VerifyModal = () => {
     children: (
       <div className="flex column">
         <p>
-            {REWARDS_ENABLED ? LABELS.WELCOME_PARAGRAPH_WITH_REWARDS : LABELS.WELCOME_PARAGRAPH_NO_REWARDS}
+          {REWARDS_ENABLED
+            ? LABELS.WELCOME_PARAGRAPH_WITH_REWARDS
+            : LABELS.WELCOME_PARAGRAPH_NO_REWARDS}
         </p>
 
         <p>To start voting, connect your wallet and deposit some JET today!</p>
@@ -500,8 +502,8 @@ export const VerifyModal = () => {
               rel="noopener noreferrer"
             >
               Terms of Service
-            </a>
-              {" "} and {" "}
+            </a>{" "}
+            and{" "}
             <a
               href="https://www.jetprotocol.io/legal/privacy-policy"
               target="_blank"
@@ -518,7 +520,9 @@ export const VerifyModal = () => {
     closable: false
   };
   steps[Steps.AccessGranted1] = {
-    title: REWARDS_ENABLED ? LABELS.ACCESS_GRANTED_1_TITLE_WITH_REWARDS : LABELS.ACCESS_GRANTED_1_TITLE_NO_REWARDS,
+    title: REWARDS_ENABLED
+      ? LABELS.ACCESS_GRANTED_1_TITLE_WITH_REWARDS
+      : LABELS.ACCESS_GRANTED_1_TITLE_NO_REWARDS,
     okText: "Okay",
     onOk: () => setCurrent(Steps.AccessGranted2),
     onCancel: () => handleAccessGranted(),
@@ -530,7 +534,9 @@ export const VerifyModal = () => {
           will not need to verify again.
         </p>
         <p>
-            {REWARDS_ENABLED ? LABELS.ACCESS_GRANTED_1_PARAGRAPH_WITH_REWARDS : LABELS.ACCESS_GRANTED_1_PARAGRAPH_NO_REWARDS}
+          {REWARDS_ENABLED
+            ? LABELS.ACCESS_GRANTED_1_PARAGRAPH_WITH_REWARDS
+            : LABELS.ACCESS_GRANTED_1_PARAGRAPH_NO_REWARDS}
         </p>
       </div>
     ),
@@ -544,11 +550,8 @@ export const VerifyModal = () => {
     cancelButtonProps: { style: { display: "none " } },
     children: (
       <div className="flex column">
-
         <p>When unstaking from JetGovern, your tokens enter a 29.5-day unbonding period.</p>
-          {REWARDS_ENABLED && (
-              <p>During the unbonding period, you will not earn any rewards.</p>
-          )}
+        {REWARDS_ENABLED && <p>During the unbonding period, you will not earn any rewards.</p>}
         <p>
           Additionally, votes you have cast on any active proposals will be rescinded. This means
           that if you vote and then unstake before the voting is finished, your vote will not count.
