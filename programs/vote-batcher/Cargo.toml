@@ -1,0 +1,23 @@
+[package]
+name = "jet-vote-batcher"
+version = "1.0.0"
+description = "Created with Anchor"
+edition = "2018"
+
+[lib]
+crate-type = ["cdylib", "lib"]
+name = "jet_vote_batcher"
+path = "src/lib.rs"
+
+[features]
+no-entrypoint = []
+no-idl = []
+cpi = ["no-entrypoint"]
+default = []
+
+[dependencies]
+anchor-lang = { git = "https://github.com/jet-lab/anchor", branch = "master" }
+anchor-spl = { git = "https://github.com/jet-lab/anchor", branch = "master" }
+solana-program = "1.8"
+spl-governance = { version = "2", features = ["no-entrypoint"] }
+itertools = "0.10.3"
