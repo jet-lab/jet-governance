@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { Connection } from "@solana/web3.js";
-import { useProvider, useRpcContext } from "../hooks";
-import { useConnection, useConnectionConfig } from "./connection";
+import { useProvider } from "../hooks";
+import { useConnectionConfig } from "./connection";
 
 // RPC node context
 interface RpcNode {

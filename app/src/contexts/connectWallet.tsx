@@ -2,7 +2,6 @@ import { Auth } from "@jet-lab/jet-engine";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { createContext, useContext, useState } from "react";
 import { VerifyModal } from "../components/modals";
-import { useConnection } from "../contexts";
 import { useProvider } from "../hooks";
 
 // Connecting wallet context

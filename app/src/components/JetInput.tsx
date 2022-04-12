@@ -1,5 +1,4 @@
 import { Input } from "antd";
-import { Loader } from "./Loader";
 import { ReactComponent as ArrowIcon } from "../images/arrow_icon.svg";
 
 export function JetInput(props: {

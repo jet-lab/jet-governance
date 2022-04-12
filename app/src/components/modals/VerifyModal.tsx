@@ -6,7 +6,7 @@ import axios from "axios";
 import { PropsWithChildren, useEffect, useState } from "react";
 import { DocsLink } from "../docsLink";
 import { createUserAuth } from "../../actions/createUserAuth";
-import { useConnection, useConnectionConfig, useConnectWallet } from "../../contexts";
+import { useConnectionConfig, useConnectWallet } from "../../contexts";
 import { useProvider, useRpcContext } from "../../hooks";
 import { ReactComponent as ArrowIcon } from "../../images/arrow_icon.svg";
 import { geoBannedCountries } from "../../models/GEOBANNED_COUNTRIES";

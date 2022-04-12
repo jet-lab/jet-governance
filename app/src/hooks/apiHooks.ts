@@ -172,7 +172,7 @@ export const useTokenOwnerVoteRecord = (
 // ----- Rpc Node -----
 
 const confirmOptions = {
-  skipPreflight: false,
+  skipPreflight: true,
   commitment: "recent",
   preflightCommitment: "recent"
 } as ConfirmOptions;
