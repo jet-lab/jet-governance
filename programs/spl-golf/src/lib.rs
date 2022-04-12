@@ -1,8 +1,7 @@
 use anchor_lang::prelude::*;
 use solana_program::pubkey;
-use spl_governance::state::vote_record::Vote;
 
-declare_id!("jHdzmKjaVSf3XEMusqYRg3TeUTmxo5yohX1CRt8Y3SA");
+declare_id!("DMa3BQPNHdU63xD5DLM4AvU2hUc9UV9ySpmfqkm75QbL");
 
 mod instructions;
 use instructions::*;
@@ -13,7 +12,7 @@ pub mod jet_spl_golf {
 
     pub fn vote_many<'info>(
         ctx: Context<'_, '_, '_, 'info, VoteMany<'info>>,
-        votes: Vec<Vote>,
+        votes: Vec<GolfVote>,
     ) -> Result<()> {
         instructions::vote_many::handler(ctx, votes)
     }

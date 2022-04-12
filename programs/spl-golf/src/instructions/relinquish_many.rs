@@ -40,7 +40,7 @@ pub struct RelinquishMany<'info> {
     pub system_program: Program<'info, System>,
     pub rent: Sysvar<'info, Rent>,
     pub clock: Sysvar<'info, Clock>,
-    // remaining accounts: [(mut proposal, mut vote record address)]
+    // remaining accounts: (mut proposal, mut vote record address)
 }
 
 impl<'info> RelinquishMany<'info> {
@@ -75,7 +75,7 @@ impl<'info> RelinquishMany<'info> {
     }
 }
 
-pub fn handler<'info>(ctx: Context<'_, '_, '_, 'info, RelinquishMany<'info>>) -> Result<()> {
+pub fn handler<'c, 'info>(ctx: Context<'_, '_, 'c, 'info, RelinquishMany<'info>>) -> Result<()> {
     if ctx.remaining_accounts.len() % 2 != 0 {
         return err!(ErrorCode::ProposalsAndVotesMisaligned);
     }
