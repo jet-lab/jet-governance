@@ -55,7 +55,7 @@ export const useBlockExplorer = () => {
   const { preferredExplorer, setPreferredExplorer } = useContext(BlockExplorerContext);
   const baseTxUrl = blockExplorers[preferredExplorer].urlTx;
   const baseAccountUrl = blockExplorers[preferredExplorer].urlAccount;
-  const clusterParam = process.env.REACT_APP_IDL === "devnet" ? "?cluster=devnet" : "";
+  const clusterParam = process.env.REACT_APP_CLUSTER === "devnet" ? "?cluster=devnet" : "";
   return {
     blockExplorers,
     preferredExplorer,

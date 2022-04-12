@@ -16,7 +16,7 @@ import {
 } from "@solana/spl-governance";
 import { PublicKey, Transaction, TransactionInstruction, Keypair } from "@solana/web3.js";
 import { getVoteRecord } from "../hooks";
-import { sendAllTransactionsWithNotifications } from "../tools/transactions";
+import { sendAllTransactions } from "../tools/transactions";
 import { GOVERNANCE_PROGRAM_ID } from "../utils";
 
 export const castVote = async (
@@ -29,7 +29,7 @@ export const castVote = async (
   stakePool: StakePool,
   stakeAccount: StakeAccount,
   message?: ChatMessageBody
-) => {
+): Promise<string> => {
   let relinquishVoteIx: TransactionInstruction[] = [];
   let signers: Keypair[] = [];
   let castVoteIx: TransactionInstruction[] = [];
@@ -118,5 +118,5 @@ export const castVote = async (
     signers
   });
 
-  await sendAllTransactionsWithNotifications(provider, allTxs, "Vote cast");
+  return await sendAllTransactions(provider, allTxs);
 };

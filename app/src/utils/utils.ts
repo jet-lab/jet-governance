@@ -80,6 +80,10 @@ export const toTokensPrecisionNumber = (
   return withPrecisionNumber(fromLamports(amount, mint), precision);
 };
 
+export const isMaxAvailable = (avail: number, input: number): boolean => {
+  return Math.abs(avail - input) < 0.1;
+};
+
 // Check if a string is a valid URL
 export function isValidHttpUrl(input: string): boolean {
   let url;

@@ -189,5 +189,25 @@ export const LABELS = {
 
   FINALIZE_VOTE: "Finalize Vote",
 
-  SET_REALM_AUTHORITY: "Set Realm Authority"
+  SET_REALM_AUTHORITY: "Set Realm Authority",
+  WELCOME_TITLE_WITH_REWARDS: "Stake your JET to earn rewards and start voting today!",
+
+  WELCOME_PARAGRAPH_WITH_REWARDS:
+    "Welcome to JetGovern—the governance app for Jet Protocol. Here, you earn rewards and help\n" +
+    " pilot the direction of Jet Protocol by staking your JET into the app.",
+
+  ACCESS_GRANTED_1_TITLE_WITH_REWARDS: "Stake JET to earn and vote!",
+  ACCESS_GRANTED_1_PARAGRAPH_WITH_REWARDS:
+    "To begin, make sure you have some JET tokens staked. Once they are staked, you will begin\n" +
+    "earning rewards and may vote on active proposals",
+
+  WELCOME_TITLE_NO_REWARDS: "Stake your JET to start voting today!",
+  WELCOME_PARAGRAPH_NO_REWARDS:
+    "Welcome to JetGovern—the governance app for Jet Protocol. Here, you help\n" +
+    "pilot the direction of Jet Protocol by staking your JET into the app.",
+
+  ACCESS_GRANTED_1_TITLE_NO_REWARDS: "Stake JET to vote!",
+  ACCESS_GRANTED_1_PARAGRAPH_NO_REWARDS:
+    "To begin, make sure you have some JET tokens staked. Once they are staked, you \n " +
+    "may vote on active proposals"
 };

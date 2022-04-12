@@ -2,7 +2,7 @@ import { AssociatedToken, StakeAccount, StakePool, UnbondingAccount } from "@jet
 import { Provider } from "@project-serum/anchor";
 import { ProgramAccount, Realm, RpcContext } from "@solana/spl-governance";
 import { TransactionInstruction } from "@solana/web3.js";
-import { sendTransactionWithNotifications } from "../tools/transactions";
+import { sendTransaction } from "../tools/transactions";
 
 export const restake = async (
   { connection, wallet, walletPubkey }: RpcContext,
@@ -10,7 +10,7 @@ export const restake = async (
   stakeAccount: StakeAccount,
   stakePool: StakePool,
   realm: ProgramAccount<Realm>
-) => {
+): Promise<string> => {
   const ix: TransactionInstruction[] = [];
   await UnbondingAccount.withCancelUnbond(
     ix,
@@ -20,5 +20,5 @@ export const restake = async (
     walletPubkey
   );
 
-  await sendTransactionWithNotifications(connection, wallet, ix, [], "JET has been staked");
+  return await sendTransaction(connection, wallet, ix, []);
 };

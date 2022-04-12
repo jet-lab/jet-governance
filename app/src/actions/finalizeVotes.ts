@@ -6,13 +6,13 @@ import {
   withFinalizeVote
 } from "@solana/spl-governance";
 import { Keypair, PublicKey, TransactionInstruction } from "@solana/web3.js";
-import { sendTransactionWithNotifications } from "../tools/transactions";
+import { sendTransaction } from "../tools/transactions";
 
 export const finalizeVote = async (
   { connection, wallet, programId }: RpcContext,
   realm: PublicKey,
   proposal: ProgramAccount<Proposal>
-) => {
+): Promise<string> => {
   const signers: Keypair[] = [];
   const instructions: TransactionInstruction[] = [];
 
@@ -31,11 +31,5 @@ export const finalizeVote = async (
     proposal.account.governingTokenMint
   );
 
-  await sendTransactionWithNotifications(
-    connection,
-    wallet,
-    instructions,
-    signers,
-    "Votes finalized"
-  );
+  return await sendTransaction(connection, wallet, instructions, signers);
 };

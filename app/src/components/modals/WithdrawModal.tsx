@@ -5,6 +5,8 @@ import { withdrawUnbonded } from "../../actions/withdrawUnbonded";
 import { useProposalContext } from "../../contexts/proposal";
 import { isSignTransactionError } from "../../utils";
 import { UnbondingAccount } from "@jet-lab/jet-engine";
+import { notifyTransactionSuccess } from "../../tools/transactions";
+import { useBlockExplorer } from "../../contexts/blockExplorer";
 
 enum Steps {
   Confirm = 0,
@@ -22,6 +24,7 @@ export const WithdrawModal = ({ onClose, unbondingAccount }: WithdrawModalProps)
   const [current, setCurrent] = useState<Steps>(Steps.Confirm);
   const [loading, setLoading] = useState(false);
   const { stakeAccount, unbondingAccounts, stakePool, refresh } = useProposalContext();
+  const { getTxExplorerUrl } = useBlockExplorer();
 
   const unbondingAcc = unbondingAccount ? [unbondingAccount] : unbondingAccounts;
   const handleOk = () => {
@@ -33,7 +36,10 @@ export const WithdrawModal = ({ onClose, unbondingAccount }: WithdrawModalProps)
     }
     setLoading(true);
     withdrawUnbonded(rpcContext, unbondingAcc, stakeAccount, stakePool)
-      .then(() => {
+      .then(result => {
+        if (result !== undefined) {
+          notifyTransactionSuccess(result, "Your JET have been withdrawn", getTxExplorerUrl);
+        }
         onClose();
       })
       .catch(err => {
