@@ -176,7 +176,7 @@ export function ProposalProvider({ children = undefined as any }) {
         JET_GOVERNANCE
       );
       // ----- Staking -----
-      const stakePool = await StakePool.load(programs.stake, "booyah3");
+      const stakePool = await StakePool.load(programs.stake, "jetgov");
 
       // ----- Governance -----
       const realm = await getGovernanceAccount(

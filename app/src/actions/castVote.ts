@@ -1,4 +1,4 @@
-import { StakeAccount, StakeIdl, StakePool } from "@jet-lab/jet-engine";
+import { StakeAccount, StakeClient, StakeIdl, StakePool } from "@jet-lab/jet-engine";
 import { Program, Provider } from "@project-serum/anchor";
 import {
   ChatMessageBody,
@@ -17,7 +17,6 @@ import {
 import { PublicKey, Transaction, TransactionInstruction, Keypair } from "@solana/web3.js";
 import { getVoteRecord } from "../hooks";
 import { sendAllTransactions } from "../tools/transactions";
-import { GOVERNANCE_PROGRAM_ID } from "../utils";
 
 export const castVote = async (
   { connection, wallet, programId, programVersion, walletPubkey }: RpcContext,
@@ -45,7 +44,7 @@ export const castVote = async (
   try {
     voteRecord = await getVoteRecord(
       connection,
-      GOVERNANCE_PROGRAM_ID,
+      StakeClient.GOVERNANCE_PROGRAM_ID,
       proposal.pubkey,
       tokenOwnerRecordPubkey
     );
