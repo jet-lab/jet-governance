@@ -11,6 +11,7 @@ import { useProvider, useRpcContext } from "../../hooks";
 import { ReactComponent as ArrowIcon } from "../../images/arrow_icon.svg";
 import { geoBannedCountries } from "../../models/GEOBANNED_COUNTRIES";
 import { filterSort } from "../../utils";
+import { REWARDS_ENABLED, LABELS } from "../../constants";
 
 enum Steps {
   Welcome = 0,
@@ -333,8 +334,9 @@ export const VerifyModal = () => {
   };
 
   const steps: PropsWithChildren<ModalProps>[] = [];
+
   steps[Steps.Welcome] = {
-    title: "Stake your JET to earn rewards and start voting today!",
+    title: REWARDS_ENABLED ? LABELS.WELCOME_TITLE_WITH_REWARDS : LABELS.WELCOME_TITLE_NO_REWARDS,
     okText: "Okay",
     okButtonProps: {},
     onOk: () => setCurrent(Steps.ConnectWallet),
@@ -343,8 +345,9 @@ export const VerifyModal = () => {
     children: (
       <div className="flex column">
         <p>
-          Welcome to Jet Govern—the governance app for Jet Protocol. Here, you earn rewards and help
-          pilot the direction of Jet Protocol by staking your JET into the app.
+          {REWARDS_ENABLED
+            ? LABELS.WELCOME_PARAGRAPH_WITH_REWARDS
+            : LABELS.WELCOME_PARAGRAPH_NO_REWARDS}
         </p>
 
         <p>To start voting, connect your wallet and deposit some JET today!</p>
@@ -499,8 +502,8 @@ export const VerifyModal = () => {
               rel="noopener noreferrer"
             >
               Terms of Service
-            </a>
-            ,{" "}
+            </a>{" "}
+            and{" "}
             <a
               href="https://www.jetprotocol.io/legal/privacy-policy"
               target="_blank"
@@ -508,15 +511,6 @@ export const VerifyModal = () => {
               rel="noopener noreferrer"
             >
               Privacy Policy
-            </a>
-            , and{" "}
-            <a
-              href="https://www.jetprotocol.io/legal/cookie-policy"
-              target="_blank"
-              className="link-btn"
-              rel="noopener noreferrer"
-            >
-              Cookie Policy
             </a>
             . I am aware of and accept the risks of using new technology.
           </label>
@@ -526,7 +520,9 @@ export const VerifyModal = () => {
     closable: false
   };
   steps[Steps.AccessGranted1] = {
-    title: "Stake JET to earn and vote!",
+    title: REWARDS_ENABLED
+      ? LABELS.ACCESS_GRANTED_1_TITLE_WITH_REWARDS
+      : LABELS.ACCESS_GRANTED_1_TITLE_NO_REWARDS,
     okText: "Okay",
     onOk: () => setCurrent(Steps.AccessGranted2),
     onCancel: () => handleAccessGranted(),
@@ -538,8 +534,9 @@ export const VerifyModal = () => {
           will not need to verify again.
         </p>
         <p>
-          To begin, make sure you have some JET tokens staked. Once they are staked, you will begin
-          earning rewards and may vote on active proposals (1 staked JET token = 1 vote).
+          {REWARDS_ENABLED
+            ? LABELS.ACCESS_GRANTED_1_PARAGRAPH_WITH_REWARDS
+            : LABELS.ACCESS_GRANTED_1_PARAGRAPH_NO_REWARDS}
         </p>
       </div>
     ),
@@ -554,7 +551,7 @@ export const VerifyModal = () => {
     children: (
       <div className="flex column">
         <p>When unstaking from JetGovern, your tokens enter a 29.5-day unbonding period.</p>
-        <p>During the unbonding period, you will not earn any rewards.</p>
+        {REWARDS_ENABLED && <p>During the unbonding period, you will not earn any rewards.</p>}
         <p>
           Additionally, votes you have cast on any active proposals will be rescinded. This means
           that if you vote and then unstake before the voting is finished, your vote will not count.
