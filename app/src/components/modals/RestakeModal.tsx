@@ -34,7 +34,7 @@ export const RestakeModal = ({
     setLoading(true);
     restake(rpcContext, unbondingAccount, stakeAccount, stakePool, realm)
       .then(txnSig => {
-        notifyTransactionSuccess(txnSig, "Your JET have been staked", getTxExplorerUrl);
+        notifyTransactionSuccess(txnSig, "JET has been restaked!", getTxExplorerUrl);
         onClose();
       })
       .catch(err => {

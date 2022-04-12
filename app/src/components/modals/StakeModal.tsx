@@ -41,7 +41,7 @@ export const StakeModal = ({
     if (!stakePool || !realm || !publicKey || !jetAccount) {
       return;
     }
-    const successMsg = `${amount} JET staked Successfully`;
+    const successMsg = `${amount} JET has been staked!`;
     setLoading(true);
     addStake(rpcContext, stakePool, publicKey, stakeLamports)
       .then(txnSig => {

@@ -40,7 +40,7 @@ export const ClaimModal = ({
     if (!!programs && !!airdrop && !!stakePool && !!stakeAccount && !!realm) {
       claimAndStake(rpcContext, programs.rewards, airdrop, stakePool, stakeAccount)
         .then(txnSig => {
-          notifyTransactionSuccess(txnSig, "JET claimed and staked", getTxExplorerUrl);
+          notifyTransactionSuccess(txnSig, "JET has been claimed and staked!", getTxExplorerUrl);
           onClose();
         })
         .catch(err => {
