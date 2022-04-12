@@ -33,7 +33,7 @@ export function SettingsView(): JSX.Element {
   return (
     <div className="view flex justify-center column">
       <div className="settings">
-        <div className="flex align-start justify-center column">
+        <div className="flex align-start justify-center column setting">
           <span className="setting-title bold-text">RPC NODE</span>
           <div
             className="rpc-info flex align-center justify-start"

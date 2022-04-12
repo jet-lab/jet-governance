@@ -693,6 +693,34 @@
     }
   }
 
+  // Jet Inputs
+  .jet-input {
+    input {
+      border-radius: @round-radius;
+      border-top-right-radius: 0px;
+      border-bottom-right-radius: 0px;
+      height: 55px;
+    }
+
+    .input-btn {
+      height: 55px;
+      margin-left: -5px;
+      background: @gradient;
+      border-top-right-radius: @round-radius;
+      border-bottom-right-radius: @round-radius;
+      padding: 0 @spacing-md;
+      cursor: pointer;
+      z-index: 10;
+      svg path {
+        fill: @white;
+      }
+
+      &:active {
+        opacity: @subtle-opacity;
+      }
+    }
+  }
+
   #rc_select_0_list + .rc-virtual-list {
     width: 100%;
   }

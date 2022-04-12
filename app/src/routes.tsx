@@ -17,6 +17,7 @@ import {
 } from "./contexts";
 import { geoBannedCountriesArr } from "./utils";
 import { AirdropView, FlightLogView, HomeView, ProposalView, SettingsView } from "./views";
+import { RpcNodeContextProvider } from "./contexts/rpcNode";
 
 const queryClient = new QueryClient();
 
@@ -38,23 +39,25 @@ export function Routes() {
                       areaFilter={area => !geoBannedCountriesArr.includes(area.name!)}
                     >
                       <ConnectWalletProvider>
-                        <ProposalProvider>
-                          <TransactionsProvider>
-                            <AppLayout>
-                              <Switch>
-                                <ScrollToTop>
-                                  <Route exact path="/" children={<HomeView />} />
-                                  <Route exact path="/your-info" children={<YourInfo />} />
-                                  <Route path={"/proposal/:key"} children={<ProposalView />} />
-                                  <Route exact path="/claims" children={<AirdropView />} />
-                                  <Route exact path="/flight-logs" children={<FlightLogView />} />
-                                  <Route exact path="/settings" children={<SettingsView />} />
-                                  <MobileMessage />
-                                </ScrollToTop>
-                              </Switch>
-                            </AppLayout>
-                          </TransactionsProvider>
-                        </ProposalProvider>
+                        <RpcNodeContextProvider>
+                          <ProposalProvider>
+                            <TransactionsProvider>
+                              <AppLayout>
+                                <Switch>
+                                  <ScrollToTop>
+                                    <Route exact path="/" children={<HomeView />} />
+                                    <Route exact path="/your-info" children={<YourInfo />} />
+                                    <Route path={"/proposal/:key"} children={<ProposalView />} />
+                                    <Route exact path="/claims" children={<AirdropView />} />
+                                    <Route exact path="/flight-logs" children={<FlightLogView />} />
+                                    <Route exact path="/settings" children={<SettingsView />} />
+                                    <MobileMessage />
+                                  </ScrollToTop>
+                                </Switch>
+                              </AppLayout>
+                            </TransactionsProvider>
+                          </ProposalProvider>
+                        </RpcNodeContextProvider>
                       </ConnectWalletProvider>
                     </ConfigProvider>
                   </WalletProvider>
