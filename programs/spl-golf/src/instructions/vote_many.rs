@@ -3,7 +3,7 @@ use anchor_lang::solana_program::program::invoke;
 use itertools::Itertools;
 use solana_program::{instruction::Instruction, system_program, sysvar};
 use spl_governance::{
-    instruction::{with_voter_weight_accounts, GovernanceInstruction},
+    instruction::GovernanceInstruction,
     state::vote_record::{get_vote_record_address, Vote, VoteChoice},
 };
 
@@ -146,7 +146,6 @@ pub fn handler<'c, 'info>(
                 )
             },
         )
-
 }
 
 #[derive(Debug, AnchorSerialize, AnchorDeserialize)]
