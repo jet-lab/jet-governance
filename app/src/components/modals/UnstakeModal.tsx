@@ -9,7 +9,6 @@ import { dateToString, isSignTransactionError } from "../../utils";
 import { useBlockExplorer } from "../../contexts/blockExplorer";
 import { notifyTransactionSuccess } from "../../tools/transactions";
 
-
 enum Steps {
   Confirm = 0,
   Error = 1
@@ -43,7 +42,6 @@ export const UnstakeModal = ({
   const [loading, setLoading] = useState(false);
   const { getTxExplorerUrl } = useBlockExplorer();
 
-
   const unrelinquishedVoteRecords = walletVoteRecords?.filter(
     voteRecord => !voteRecord.account.isRelinquished
   );
@@ -72,8 +70,12 @@ export const UnstakeModal = ({
     const unstakeAmount = new BN(amount * 10 ** jetMint.decimals);
     setLoading(true);
     rescindAndUnstake(rpcContext, stakePool, stakeAccount, governance, unstakeAmount)
-      .then((txnSig) => {
-        notifyTransactionSuccess(txnSig, "Your $JET has begun unbonding for 29.5 days", getTxExplorerUrl)
+      .then(txnSig => {
+        notifyTransactionSuccess(
+          txnSig,
+          "Your $JET has begun unbonding for 29.5 days",
+          getTxExplorerUrl
+        );
         setLoading(false);
         setDisplayUnbondDate();
         resetInput();

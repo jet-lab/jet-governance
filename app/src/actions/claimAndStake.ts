@@ -16,10 +16,5 @@ export const claimAndStake = async (
 
   await Airdrop.withClaim(instructions, rewardsProgram, airdrop, stakePool, stakeAccount);
 
-  return await sendTransaction(
-    connection,
-    wallet,
-    instructions,
-    signers
-  );
+  return await sendTransaction(connection, wallet, instructions, signers);
 };

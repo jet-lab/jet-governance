@@ -37,8 +37,6 @@ export const StakeModal = ({
 
   // Handlers for staking info modal
 
-
-
   const handleSubmitTx = () => {
     if (!stakePool || !realm || !publicKey || !jetAccount) {
       return;
@@ -47,7 +45,7 @@ export const StakeModal = ({
 
     setLoading(true);
     addStake(rpcContext, stakePool, publicKey, stakeLamports, jetMint)
-      .then((txnSig) => {
+      .then(txnSig => {
         notifyTransactionSuccess(txnSig, successMsg, getTxExplorerUrl);
         onClose();
       })

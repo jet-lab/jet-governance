@@ -29,10 +29,5 @@ export const relinquishVote = async (
   const transaction = new Transaction();
   transaction.add(...instructions);
 
-  return await sendTransaction(
-    connection,
-    wallet,
-    instructions,
-    signers,
-  );
+  return await sendTransaction(connection, wallet, instructions, signers);
 };

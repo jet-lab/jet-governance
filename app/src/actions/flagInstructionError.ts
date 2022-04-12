@@ -36,10 +36,5 @@ export const flagInstructionError = async (
 
   transaction.add(...instructions);
 
-  return await sendTransaction(
-    connection,
-    wallet,
-    instructions,
-    signers,
-  );
+  return await sendTransaction(connection, wallet, instructions, signers);
 };

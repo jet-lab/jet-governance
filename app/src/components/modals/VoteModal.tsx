@@ -56,7 +56,6 @@ export const VoteModal = ({
   } = useProposalContext();
   const { getTxExplorerUrl } = useBlockExplorer();
 
-
   let voteText: string = "";
 
   useEffect(() => {
@@ -101,8 +100,8 @@ export const VoteModal = ({
         stakeAccount,
         undefined
       )
-        .then((txnSig) => {
-          notifyTransactionSuccess(txnSig, "Vote cast", getTxExplorerUrl)
+        .then(txnSig => {
+          notifyTransactionSuccess(txnSig, "Vote cast", getTxExplorerUrl);
           onClose();
         })
         .catch(err => {

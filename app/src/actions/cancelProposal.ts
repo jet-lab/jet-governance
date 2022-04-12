@@ -32,10 +32,5 @@ export const cancelProposal = async (
     governanceAuthority
   );
 
-  return await sendTransaction(
-    connection,
-    wallet,
-    instructions,
-    signers,
-  );
+  return await sendTransaction(connection, wallet, instructions, signers);
 };

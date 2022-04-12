@@ -60,10 +60,5 @@ export const addStake = async (
 
   // const notificationTitle = `${fromLamports(amount, jetMint)} JET staked`;
 
-  return await sendTransaction(
-    connection,
-    wallet,
-    instructions,
-    signers,
-  );
+  return await sendTransaction(connection, wallet, instructions, signers);
 };

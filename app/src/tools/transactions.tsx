@@ -1,7 +1,13 @@
 import { Provider } from "@project-serum/anchor";
 import { SendTxRequest } from "@project-serum/anchor/dist/cjs/provider";
 import { WalletSigner } from "@solana/spl-governance";
-import { TransactionInstruction, Connection, Transaction, Keypair, PublicKey } from "@solana/web3.js";
+import {
+  TransactionInstruction,
+  Connection,
+  Transaction,
+  Keypair,
+  PublicKey
+} from "@solana/web3.js";
 import { notification } from "antd";
 import { sendTransaction2 } from "./sdk/core/connection";
 import {
@@ -23,7 +29,7 @@ export async function sendTransaction(
   connection: Connection,
   wallet: WalletSigner,
   instructions: TransactionInstruction[],
-  signers: Keypair[],
+  signers: Keypair[]
 ): Promise<string> {
   try {
     const transaction = new Transaction();
@@ -42,7 +48,6 @@ export async function sendTransaction(
   }
 }
 
-
 /**
  * For sending multiple transactions
  * @param provider
@@ -51,7 +56,7 @@ export async function sendTransaction(
  */
 export async function sendAllTransactions(
   provider: Provider,
-  transactions: SendTxRequest[],
+  transactions: SendTxRequest[]
 ): Promise<string> {
   try {
     const txnResult = await provider.sendAll(transactions);
@@ -64,14 +69,13 @@ export async function sendAllTransactions(
   }
 }
 
-
 /**
  * Display notification modal to show successful transactions with a success message and a link to a block explorer(which one is determined in user settings)
  * @param successMessage
  * @param txnSignature
  * @param explorerUrlMaker
  */
- export function notifyTransactionSuccess(
+export function notifyTransactionSuccess(
   txnSignature: string | PublicKey,
   successMessage: string,
   explorerUrlMaker: Function

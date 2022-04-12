@@ -31,10 +31,5 @@ export const finalizeVote = async (
     proposal.account.governingTokenMint
   );
 
-  return await sendTransaction(
-    connection,
-    wallet,
-    instructions,
-    signers,
-  );
+  return await sendTransaction(connection, wallet, instructions, signers);
 };
