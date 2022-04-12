@@ -1,4 +1,4 @@
-import { AssociatedToken, StakeAccount, StakePool } from "@jet-lab/jet-engine";
+import { AssociatedToken, StakeAccount, StakeClient, StakePool } from "@jet-lab/jet-engine";
 import { BN } from "@project-serum/anchor";
 import {
   getTokenOwnerRecordForRealm,
@@ -9,7 +9,6 @@ import {
 } from "@solana/spl-governance";
 import { Keypair, PublicKey, TransactionInstruction } from "@solana/web3.js";
 import { sendTransaction } from "../tools/transactions";
-import { GOVERNANCE_PROGRAM_ID } from "../utils";
 
 export const addStake = async (
   { connection, wallet }: RpcContext,
@@ -36,7 +35,7 @@ export const addStake = async (
   try {
     tokenOwnerRecord = await getTokenOwnerRecordForRealm(
       connection,
-      GOVERNANCE_PROGRAM_ID,
+      StakeClient.GOVERNANCE_PROGRAM_ID,
       stakePool.stakePool.governanceRealm,
       stakePool.stakePool.tokenMint,
       owner
@@ -49,7 +48,7 @@ export const addStake = async (
     // create one so that the owner can cast votes
     await withCreateTokenOwnerRecord(
       instructions,
-      GOVERNANCE_PROGRAM_ID,
+      StakeClient.GOVERNANCE_PROGRAM_ID,
       stakePool.stakePool.governanceRealm,
       owner,
       stakePool.stakePool.tokenMint,

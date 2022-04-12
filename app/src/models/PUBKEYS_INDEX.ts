@@ -1,6 +1,7 @@
+import { StakeClient } from "@jet-lab/jet-engine";
 import { GOVERNANCE_PROGRAM_SEED } from "@solana/spl-governance";
 import { PublicKey } from "@solana/web3.js";
-import { JET_GOVERNANCE, GOVERNANCE_PROGRAM_ID } from "../utils";
+import { JET_GOVERNANCE } from "../utils";
 
 export const getFirstTwoHundredPubkeys = async (communityMint: PublicKey | undefined) => {
   if (!communityMint) {
@@ -18,7 +19,7 @@ export const getFirstTwoHundredPubkeys = async (communityMint: PublicKey | undef
         communityMint.toBuffer(),
         proposalIndexBuffer
       ],
-      GOVERNANCE_PROGRAM_ID
+      StakeClient.GOVERNANCE_PROGRAM_ID
     );
     pubkeysIndex.push(proposalAddress.toString());
   }

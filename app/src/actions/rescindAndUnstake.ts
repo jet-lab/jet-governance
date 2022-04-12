@@ -1,4 +1,4 @@
-import { StakeAccount, StakePool, UnbondingAccount } from "@jet-lab/jet-engine";
+import { StakeAccount, StakeClient, StakePool, UnbondingAccount } from "@jet-lab/jet-engine";
 import { BN, Provider } from "@project-serum/anchor";
 import {
   getTokenOwnerRecordAddress,
@@ -13,7 +13,6 @@ import {
 import { Transaction, TransactionInstruction } from "@solana/web3.js";
 import { getParsedProposalsByGovernance, getUnrelinquishedVoteRecords } from "../hooks";
 import { sendAllTransactions } from "../tools/transactions";
-import { GOVERNANCE_PROGRAM_ID } from "../utils";
 
 export const rescindAndUnstake = async (
   { programId, wallet, walletPubkey, connection }: RpcContext,
@@ -28,7 +27,7 @@ export const rescindAndUnstake = async (
 
   // Load the token owner record
   const tokenOwnerRecordAddress = await getTokenOwnerRecordAddress(
-    GOVERNANCE_PROGRAM_ID,
+    StakeClient.GOVERNANCE_PROGRAM_ID,
     stakePool.stakePool.governanceRealm,
     stakePool.stakePool.tokenMint,
     walletPubkey
@@ -37,7 +36,7 @@ export const rescindAndUnstake = async (
   try {
     tokenOwnerRecord = await getTokenOwnerRecordForRealm(
       connection,
-      GOVERNANCE_PROGRAM_ID,
+      StakeClient.GOVERNANCE_PROGRAM_ID,
       stakePool.stakePool.governanceRealm,
       stakePool.stakePool.tokenMint,
       walletPubkey
@@ -52,7 +51,7 @@ export const rescindAndUnstake = async (
     // so that it can verify that the owner is allowed to withdraw
     await withCreateTokenOwnerRecord(
       ix,
-      GOVERNANCE_PROGRAM_ID,
+      StakeClient.GOVERNANCE_PROGRAM_ID,
       stakePool.stakePool.governanceRealm,
       walletPubkey,
       stakePool.stakePool.tokenMint,
