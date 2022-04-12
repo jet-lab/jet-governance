@@ -87,8 +87,9 @@ export function notifyTransactionSuccess(
     description: (
       <div id="txnSuccess-modal">
         <div>
-          <a style={{ textDecoration: "underline" }} href={explorerUrl} target="_blank">{shortenAddress(txnSignature, 8)}</a>
-          {' '}
+          <a style={{ textDecoration: "underline" }} href={explorerUrl} target="_blank">
+            {shortenAddress(txnSignature, 8)}
+          </a>{" "}
           <i className="fas fa-external-link-alt"></i>
         </div>
       </div>
@@ -111,21 +112,21 @@ function notifyTransactionError(err: unknown) {
       message: "Mayday!",
       description: "Transaction timed out.",
       placement: "bottomLeft",
-      bottom: 200,
+      bottom: 200
     });
   } else if (isSignTransactionError(err)) {
     notification.error({
       message: "Mayday!",
       description: "Transaction cancelled.",
       placement: "bottomLeft",
-      bottom: 200,
+      bottom: 200
     });
   } else if (isSendTransactionError(err)) {
     notification.error({
       message: "Mayday!",
       description: "Transaction failed.",
       placement: "bottomLeft",
-      bottom: 200,
+      bottom: 200
     });
   }
 }

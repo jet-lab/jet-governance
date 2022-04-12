@@ -15,7 +15,7 @@ export const addStake = async (
   { connection, wallet }: RpcContext,
   stakePool: StakePool,
   owner: PublicKey,
-  amount: BN,
+  amount: BN
 ): Promise<string> => {
   let instructions: TransactionInstruction[] = [];
   let signers: Keypair[] = [];
