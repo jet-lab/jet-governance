@@ -1,11 +1,12 @@
 import { ProposalFilter, useProposalContext } from "./../contexts";
-import { Airdrop, bnToNumber, UnbondingAccount } from "@jet-lab/jet-engine";
+import { Airdrop, bnToNumber, StakePool, UnbondingAccount } from "@jet-lab/jet-engine";
 import {
   Governance,
   ProgramAccount,
   Proposal,
   ProposalState,
   pubkeyFilter,
+  Realm,
   TokenOwnerRecord,
   VoteKind,
   VoteRecord
@@ -414,4 +415,25 @@ export function useWithdrawVotesAbility(
     tokenOwnerRecord?.account.outstandingProposalCount === 0 ||
     tokenOwnerRecord?.account.outstandingProposalCount === undefined
   );
+}
+
+export function useStakePoolAndRealmCompatible(
+  stakePool: StakePool | undefined,
+  realm: ProgramAccount<Realm> | undefined,
+  governance: ProgramAccount<Governance> | undefined
+) {
+  if (stakePool && realm) {
+    if (!stakePool.stakePool.governanceRealm.equals(realm.pubkey)) {
+      console.error(
+        `Realm ${realm.pubkey.toBase58()} is not compatible with stake pool ${stakePool.stakePool.governanceRealm.toBase58()}. Some features will not work.`
+      );
+    }
+  }
+  if (realm && governance) {
+    if (!realm.pubkey.equals(governance?.account.realm)) {
+      console.error(
+        `Realm ${realm.pubkey.toBase58()} is not compatible with governance ${governance.account.realm.toBase58()}. Some features will not work.`
+      );
+    }
+  }
 }

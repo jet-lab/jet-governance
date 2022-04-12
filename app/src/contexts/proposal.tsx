@@ -38,9 +38,10 @@ import {
   useClaimsCount,
   useProposalFilters,
   useProvider,
-  useRpcContext
+  useRpcContext,
+  useStakePoolAndRealmCompatible
 } from "../hooks";
-import { JET_REALM, JET_GOVERNANCE } from "../utils";
+import { JET_GOVERNANCE } from "../utils";
 
 export type ProposalFilter = "active" | "inactive" | "passed" | "rejected" | "all";
 
@@ -151,14 +152,8 @@ export function ProposalProvider({ children = undefined as any }) {
         dist.isActive(now)
       );
 
-      // ----- Governance -----
-      const realm = await getGovernanceAccount(connection, JET_REALM, Realm);
-      const governance = await getGovernanceAccount(connection, JET_GOVERNANCE, Governance);
-
       return {
-        distributions,
-        realm,
-        governance
+        distributions
       };
     },
     {
@@ -181,14 +176,22 @@ export function ProposalProvider({ children = undefined as any }) {
         JET_GOVERNANCE
       );
       // ----- Staking -----
-      const stakePool = await StakePool.load(programs.stake, StakePool.CANONICAL_SEED);
+      const stakePool = await StakePool.load(programs.stake, "booyah3");
+
+      // ----- Governance -----
+      const realm = await getGovernanceAccount(
+        connection,
+        stakePool.stakePool.governanceRealm,
+        Realm
+      );
+      const governance = await getGovernanceAccount(connection, JET_GOVERNANCE, Governance);
 
       // ----- Airdrops -----
       const airdrops = await Airdrop.loadAll(programs.rewards, stakePool.addresses.stakePool);
 
       // ----- Mints -----
       const jetMint = await AssociatedToken.loadMint(connection, stakePool.stakePool.tokenMint);
-      return { proposalsByGovernance, stakePool, airdrops, jetMint };
+      return { proposalsByGovernance, stakePool, realm, governance, airdrops, jetMint };
     },
     { enabled: !!programs }
   );
@@ -233,8 +236,8 @@ export function ProposalProvider({ children = undefined as any }) {
         tokenOwnerRecord = await getTokenOwnerRecordForRealm(
           connection,
           governanceProgramId,
-          JET_REALM,
-          realm.realm.account.communityMint,
+          stakePool.realm.pubkey,
+          stakePool.realm.account.communityMint,
           walletAddress
         );
       } catch {}
@@ -272,18 +275,20 @@ export function ProposalProvider({ children = undefined as any }) {
   const filteredProposalsByGovernance = useProposalFilters(
     stakePool?.proposalsByGovernance,
     proposalFilter,
-    realm?.governance.account
+    stakePool?.governance.account
   );
   const pastProposals = useProposalFilters(
     stakePool?.proposalsByGovernance,
     "inactive",
-    realm?.governance.account
+    stakePool?.governance.account
   );
   const filteredPastProposals = useProposalFilters(
     pastProposals,
     pastProposalFilter,
-    realm?.governance.account
+    stakePool?.governance.account
   );
+
+  useStakePoolAndRealmCompatible(stakePool?.stakePool, stakePool?.realm, stakePool?.governance);
 
   function refresh() {
     setTimeout(() => {
