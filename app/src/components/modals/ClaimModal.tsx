@@ -1,4 +1,5 @@
 import { Airdrop } from "@jet-lab/jet-engine";
+import { useWallet } from "@solana/wallet-adapter-react";
 import { Modal, ModalProps } from "antd";
 import { PropsWithChildren, useState } from "react";
 import { DocsLink } from "../docsLink";
@@ -26,8 +27,9 @@ export const ClaimModal = ({
   const rpcContext = useRpcContext();
   const [current, setCurrent] = useState<Steps>(Steps.Confirm);
   const [loading, setLoading] = useState(false);
-  const { programs, stakePool, stakeAccount, realm, refresh } = useProposalContext();
+  const { programs, stakePool, stakeAccount, refresh } = useProposalContext();
   const { getTxExplorerUrl } = useBlockExplorer();
+  const { publicKey } = useWallet();
 
   const handleOk = () => {
     if (!stakeAmount || !airdrop) {
@@ -35,8 +37,9 @@ export const ClaimModal = ({
     }
 
     setLoading(true);
-    if (!!programs && !!airdrop && !!stakePool && !!stakeAccount && !!realm) {
-      claimAndStake(rpcContext, programs.rewards, airdrop, stakePool, stakeAccount)
+
+    if (!!programs && !!airdrop && !!stakePool && !!stakeAccount && !!publicKey) {
+      claimAndStake(rpcContext, programs.rewards, airdrop, stakePool, stakeAccount, publicKey)
         .then(txnSig => {
           notifyTransactionSuccess(
             txnSig,
