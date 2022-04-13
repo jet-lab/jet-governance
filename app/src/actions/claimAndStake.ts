@@ -9,7 +9,7 @@ export const claimAndStake = async (
   rewardsProgram: Program<RewardsIdl>,
   airdrop: Airdrop,
   stakePool: StakePool,
-  stakeAccount: StakeAccount,
+  stakeAccount: StakeAccount | undefined,
   owner: PublicKey
 ): Promise<string> => {
   let instructions: TransactionInstruction[] = [];
@@ -24,7 +24,8 @@ export const claimAndStake = async (
       owner
     );
   }
-  await Airdrop.withClaim(instructions, rewardsProgram, airdrop, stakePool, stakeAccount);
+  !!stakeAccount &&
+    (await Airdrop.withClaim(instructions, rewardsProgram, airdrop, stakePool, stakeAccount));
 
   return await sendTransaction(connection, wallet, instructions, signers);
 };
