@@ -1,10 +1,17 @@
+use anchor_client::solana_client::rpc_client::RpcClient;
+use anchor_client::solana_client::rpc_config::RpcSendTransactionConfig;
 use anchor_client::solana_sdk::commitment_config::CommitmentConfig;
+use anchor_client::solana_sdk::instruction::Instruction;
 use anchor_client::solana_sdk::signature::{Keypair, Signer};
+use anchor_client::solana_sdk::transaction::Transaction;
 use anchor_lang::prelude::Pubkey;
+use anchor_lang::{InstructionData, ToAccountMetas};
+use anyhow::bail;
 use jet_rewards::instructions::{AirdropCreateParams, AirdropRecipientParam};
 use jet_rewards::state::Airdrop;
 use serde::{Deserialize, Serialize};
 use serde_json::Result;
+use std::collections::HashSet;
 use std::fs::File;
 use std::io::{Read, Write};
 use std::path::PathBuf;
@@ -22,12 +29,14 @@ pub fn load_default_keypair() -> anyhow::Result<Keypair> {
 pub fn load_default_client() -> anyhow::Result<anchor_client::Program> {
     let keypair = load_default_keypair()?;
     // let rpc = "https://jetprotocol.genesysgo.net".to_owned();
-    let rpc = "https://jet-solana-0.bdnodes.net/?auth=e16B3lNLqiyoC5o88kVoeU9vlJumk44FMqi72gUlSuc".to_owned();
-    // let rpc = "https://api.devnet.solana.com".to_owned();
+    let rpc = "https://api.devnet.solana.com".to_owned();
     // let rpc = "http://127.0.0.1:8899".to_owned();
     let wss = rpc.replace("https", "wss");
-    let connection =
-        anchor_client::Client::new_with_options(anchor_client::Cluster::Custom(rpc, wss), Rc::new(keypair), CommitmentConfig::processed());
+    let connection = anchor_client::Client::new_with_options(
+        anchor_client::Cluster::Custom(rpc, wss),
+        Rc::new(keypair),
+        CommitmentConfig::processed(),
+    );
     let client = connection.program(jet_rewards::ID);
 
     Ok(client)
@@ -179,4 +188,116 @@ pub fn json_to_create_airdrop_param(
     };
 
     Ok(result)
+}
+
+pub fn upload_airdrop_recipients(
+    rpc: &RpcClient,
+    program: &anchor_client::Program,
+    airdrop: &Pubkey,
+    authority: &Keypair,
+    recipients: &[AirdropRecipientParam],
+) -> anyhow::Result<()> {
+    let recipient_sorted = recipients
+        .windows(2)
+        .all(|w| w[0].recipient <= w[1].recipient);
+
+    if !recipient_sorted {
+        anyhow::bail!("recipients not sorted");
+    }
+
+    const CHUNK_SIZE: usize = 25;
+
+    let blockhash = rpc.get_latest_blockhash()?;
+    let airdrop_account = program.account::<Airdrop>(*airdrop)?;
+
+    let mut start_index = 0;
+    let transaction_set = recipients
+        .chunks(CHUNK_SIZE)
+        .map(|chunk| {
+            let params = jet_rewards::AirdropAddRecipientsParams {
+                start_index,
+                recipients: chunk.to_vec(),
+            };
+
+            start_index += chunk.len() as u64;
+
+            let accounts = jet_rewards::accounts::AirdropAddRecipients {
+                airdrop: *airdrop,
+                authority: authority.pubkey(),
+            };
+
+            let ix = Instruction {
+                accounts: accounts.to_account_metas(None),
+                program_id: jet_rewards::ID,
+                data: jet_rewards::instruction::AirdropAddRecipients { params }.data(),
+            };
+
+            Transaction::new_signed_with_payer(
+                &[ix],
+                Some(&authority.pubkey()),
+                &[authority],
+                blockhash,
+            )
+        })
+        .collect::<Vec<_>>();
+
+    let tx_start_index = airdrop_account.target_info().recipients_total as usize / CHUNK_SIZE;
+    let to_submit = &transaction_set[tx_start_index..];
+
+    println!("transactions to submit {}", to_submit.len());
+
+    let mut submissions = vec![];
+
+    for tx in to_submit {
+        submissions.push(rpc.send_transaction_with_config(
+            &tx,
+            RpcSendTransactionConfig {
+                skip_preflight: true,
+                ..Default::default()
+            },
+        )?);
+    }
+
+    println!("waiting for confirmations");
+
+    let mut done = HashSet::new();
+
+    'waiting: loop {
+        std::thread::sleep(std::time::Duration::from_millis(1000));
+
+        let mut committed = true;
+
+        let statuses = rpc.get_signature_statuses(&submissions)?;
+        for (i, status) in statuses.value.into_iter().enumerate() {
+            if status.is_none() {
+                continue 'waiting;
+            }
+
+            let status = status.unwrap();
+            let signature = &submissions[i];
+
+            if done.contains(signature) {
+                continue;
+            }
+
+            if !status.satisfies_commitment(CommitmentConfig::confirmed()) {
+                continue 'waiting;
+            }
+
+            if let Some(err) = status.err {
+                committed = false;
+
+                println!("tx failed (signature {}): {:?}", signature, err);
+            } else {
+                println!("successful tx {}", signature);
+            }
+
+            done.insert(signature);
+        }
+
+        match committed {
+            true => return Ok(()),
+            false => bail!("some transactions failed during submission"),
+        }
+    }
 }
