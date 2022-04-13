@@ -28,6 +28,10 @@ export const Available = ({ airdropInfo }: { airdropInfo: availAirdropsRender })
   const claimed = amount === 0;
   const expired = expireAt * 1000 < currentTime;
 
+  const replaceChars = (desc: string) => {
+    return desc.replace(/â/g, "'").replace(/â/g, "-").replace(/â/g, "'");
+  };
+
   return (
     <>
       {!expired && (
@@ -37,7 +41,7 @@ export const Available = ({ airdropInfo }: { airdropInfo: availAirdropsRender })
               {shortDesc} | {fromLamports(amount, jetMint)} JET
             </strong>
             <br />
-            {finalized ? longDesc : "You'll just have to wait to find out!"}
+            {finalized ? replaceChars(longDesc) : "You'll just have to wait to find out!"}
             <br />
             <span className="gray">
               {finalized ? `Ends in ${getRemainingTime(currentTime, expireAt * 1000)}` : "?"}
