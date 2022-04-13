@@ -38,7 +38,6 @@ export const ClaimModal = ({
 
     setLoading(true);
 
-
     if (!!programs && !!airdrop && !!stakePool && !!publicKey) {
       claimAndStake(rpcContext, programs.rewards, airdrop, stakePool, stakeAccount, publicKey)
         .then(txnSig => {
