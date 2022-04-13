@@ -3,6 +3,7 @@ use anchor_lang::{prelude::Pubkey, solana_program};
 use jet_rewards::instructions::AirdropAddRecipientsParams;
 use jet_rewards::state::Airdrop;
 use std::path::PathBuf;
+use std::str::FromStr;
 use structopt::StructOpt;
 pub mod utils;
 
@@ -65,9 +66,11 @@ fn run_create_airdrop_account_and_add_recipients(
     param_file_path: PathBuf,
     recipients_file_path: PathBuf,
 ) -> anyhow::Result<()> {
-    let airdrop_keypair = generate_keypair()?;
-    let airdrop_address = airdrop_keypair.pubkey();
+    // let airdrop_keypair = generate_keypair()?;
+    // let airdrop_address = airdrop_keypair.pubkey();
+    let airdrop_address = Pubkey::from_str("MyijtAcwgNyH5qeJdXxyfxKtKwSfHvGAZfy7dutke8X").unwrap();
     println!("airdrop address: {}", airdrop_address);
+
     let param_contents = read_file_path(param_file_path)?;
     let airdrop_create_result =
         json_to_create_airdrop_param(client, airdrop_address, param_contents)?;
@@ -84,7 +87,6 @@ fn run_create_airdrop_account_and_add_recipients(
         &client.id(),
     );
 
-    // create ix
     let params = jet_rewards::instructions::AirdropCreateParams {
         expire_at: airdrop_create_result.create_params.expire_at,
         stake_pool: airdrop_create_result.create_params.stake_pool,
@@ -104,44 +106,40 @@ fn run_create_airdrop_account_and_add_recipients(
         rent: solana_program::sysvar::rent::ID,
     };
 
-    println!("create airdrop");
-    let sig = client
-        .request()
-        .instruction(create_airdrop)
-        .signer(&airdrop_keypair)
-        .accounts(airdrop_create_accounts)
-        .args(jet_rewards::instruction::AirdropCreate { params })
-        .send()?;
-    println!("confirmed: {:?}", sig);
+    //println!("create airdrop");
+    //let sig = client
+    //    .request()
+    //    .instruction(create_airdrop)
+    //    .signer(&airdrop_keypair)
+    //    .accounts(airdrop_create_accounts)
+    //    .args(jet_rewards::instruction::AirdropCreate { params })
+    //    .send()?;
+    //println!("confirmed: {:?}", sig);
 
     let recipient_contents = read_file_path(recipients_file_path)?;
     let recipients = json_to_recipient_list_structured_data(recipient_contents)?;
+    let authority_key = load_default_keypair()?;
 
-    // add recipients ix
-    let mut start_index = 0u64;
-    for chunk in recipients.chunks(25) {
-        let params = AirdropAddRecipientsParams {
-            start_index,
-            recipients: chunk.to_vec(),
-        };
+    // upload all recipients
 
-        let accounts = jet_rewards::accounts::AirdropAddRecipients {
-            airdrop: airdrop_address,
-            authority: airdrop_create_result.authority,
-        };
+    loop {
+        match upload_airdrop_recipients(
+            &client.rpc(),
+            &client,
+            &airdrop_address,
+            &authority_key,
+            &recipients,
+        ) {
+            Ok(()) => {
+                println!("done!");
+                return Ok(());
+            }
 
-        println!("add recipients to airdrop");
-        let sig = client
-            .request()
-            .accounts(accounts)
-            .args(jet_rewards::instruction::AirdropAddRecipients { params })
-            .send()?;
-        println!("confirmed: {:?}", sig);
-
-        start_index += 25;
+            Err(e) => {
+                println!("failed because: {:?}", e);
+            }
+        }
     }
-
-    Ok(())
 }
 
 fn run_finalize_airdrop(

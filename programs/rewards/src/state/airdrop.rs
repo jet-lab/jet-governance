@@ -194,6 +194,8 @@ impl std::fmt::Debug for Airdrop {
             .field("stake_pool", &self.stake_pool)
             .field("expire_at", &self.expire_at)
             .field("flags", &self.flags)
+            .field("reward_total", &self.target_info().reward_total)
+            .field("recipients_total", &self.target_info().recipients_total)
             .finish()
     }
 }
