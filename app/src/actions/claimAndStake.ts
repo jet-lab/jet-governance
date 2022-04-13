@@ -24,8 +24,8 @@ export const claimAndStake = async (
       owner
     );
   }
-  !!stakeAccount &&
-    (await Airdrop.withClaim(instructions, rewardsProgram, airdrop, stakePool, stakeAccount));
+
+  await Airdrop.withClaim(instructions, rewardsProgram, airdrop, stakePool, owner);
 
   return await sendTransaction(connection, wallet, instructions, signers);
 };
