@@ -29,8 +29,8 @@ export const Available = ({ airdropInfo }: { airdropInfo: availAirdropsRender })
   const expired = expireAt * 1000 < currentTime;
 
   const replaceChars = (desc: string) => {
-    return desc.replace(/â/g, "'").replace(/â/g, "-").replace(/â/g, "'")
-  }
+    return desc.replace(/â/g, "'").replace(/â/g, "-").replace(/â/g, "'");
+  };
 
   return (
     <>
