@@ -27,7 +27,7 @@ export const Available = ({ airdropInfo }: { airdropInfo: availAirdropsRender })
 
   const claimed = amount === 0;
   const expired = expireAt * 1000 < currentTime;
-
+  const airdropAmount = fromLamports(amount, jetMint);
   const replaceChars = (desc: string) => {
     return desc.replace(/â/g, "'").replace(/â/g, "-").replace(/â/g, "'");
   };
@@ -38,7 +38,7 @@ export const Available = ({ airdropInfo }: { airdropInfo: availAirdropsRender })
         <div className={`flex avail-list ${finalized ? "" : "announced"}`} key={key}>
           <span className="avail-info">
             <strong>
-              {shortDesc} | {fromLamports(amount, jetMint)} JET
+              {shortDesc} {airdropAmount === 0 ? "" : ` | ${airdropAmount} JET`}
             </strong>
             <br />
             {finalized ? replaceChars(longDesc) : "You'll just have to wait to find out!"}
@@ -58,7 +58,7 @@ export const Available = ({ airdropInfo }: { airdropInfo: availAirdropsRender })
           </Button>
           {showModal && (
             <ClaimModal
-              stakeAmount={fromLamports(amount, jetMint)}
+              stakeAmount={airdropAmount}
               airdrop={airdrop}
               onClose={() => setShowModal(false)}
             />
