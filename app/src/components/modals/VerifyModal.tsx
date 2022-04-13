@@ -26,7 +26,8 @@ enum Steps {
   PhoneInvalid = 9,
   OriginRestricted = 10,
   InvalidToken = 11,
-  RegionNotSupported = 12
+  RegionNotSupported = 12,
+  LocationUndetected = 13
 }
 const API_KEY: string = process.env.REACT_APP_SMS_AUTH_API_KEY!;
 
@@ -71,11 +72,13 @@ export const VerifyModal = () => {
         });
 
         locale = await resp.json();
-        const countryCode = locale.location.country.code;
+        const countryCode = locale.location.country.code ?? undefined;
+        if (!countryCode) {
+          setCountry("unknown");
+        }
         geoBannedCountries.forEach(c => {
           if (c.code === countryCode) {
-            // If country is Ukraine, checks if first two digits
-            // of the postal code further match Crimean postal codes.
+            // If country is Ukraine, checks if in Crimea.
             if (countryCode !== "UA" || isCrimea(locale)) {
               setIsGeobanned(true);
               setCountry(c.country);
@@ -174,6 +177,10 @@ export const VerifyModal = () => {
   const handlePhoneVerify = async () => {
     if ((await createAuthAccount()) === false) {
       return;
+    }
+
+    if (country === "unknown") {
+      return setCurrent(Steps.LocationUndetected);
     }
 
     // auth/sms begin a new SMS verification session
@@ -661,6 +668,25 @@ export const VerifyModal = () => {
           Your wallet will now be disconnected, but you may continue to browse proposals while
           disconnected.
         </p>
+        <div className="emphasis">
+          <p>
+            If you think this might be incorrect, please ensure that your VPN is turned off for
+            verification purposes.
+          </p>
+        </div>
+      </div>
+    ),
+    closable: true
+  };
+  steps[Steps.LocationUndetected] = {
+    title: "Unable to detect location",
+    cancelText: "Disconnect",
+    okButtonProps: { style: { display: "none " } },
+    onOk: () => handleDisconnect(),
+    onCancel: () => handleDisconnect(),
+    children: (
+      <div className="flex column">
+        <p>We aren't able to detect your location.</p>
         <div className="emphasis">
           <p>
             If you think this might be incorrect, please ensure that your VPN is turned off for
