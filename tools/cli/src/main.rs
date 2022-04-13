@@ -68,7 +68,7 @@ fn run_create_airdrop_account_and_add_recipients(
 ) -> anyhow::Result<()> {
     // let airdrop_keypair = generate_keypair()?;
     // let airdrop_address = airdrop_keypair.pubkey();
-    let airdrop_address = Pubkey::from_str("5s1NhpSEwDair3oRZx6jv3HkFCUBi9wWmirqJoT3NNJA").unwrap();
+    let airdrop_address = Pubkey::from_str("MyijtAcwgNyH5qeJdXxyfxKtKwSfHvGAZfy7dutke8X").unwrap();
     println!("airdrop address: {}", airdrop_address);
 
     let param_contents = read_file_path(param_file_path)?;
@@ -123,19 +123,23 @@ fn run_create_airdrop_account_and_add_recipients(
     // upload all recipients
 
     loop {
-        match upload_airdrop_recipients(&client.rpc(), &client, &airdrop_address, &authority_key, &recipients) {
+        match upload_airdrop_recipients(
+            &client.rpc(),
+            &client,
+            &airdrop_address,
+            &authority_key,
+            &recipients,
+        ) {
             Ok(()) => {
                 println!("done!");
                 return Ok(());
-            },
+            }
 
             Err(e) => {
                 println!("failed because: {:?}", e);
             }
         }
     }
-
-    Ok(())
 }
 
 fn run_finalize_airdrop(

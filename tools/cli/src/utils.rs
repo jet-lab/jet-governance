@@ -6,12 +6,10 @@ use anchor_client::solana_sdk::signature::{Keypair, Signer};
 use anchor_client::solana_sdk::transaction::Transaction;
 use anchor_lang::prelude::Pubkey;
 use anchor_lang::{InstructionData, ToAccountMetas};
-use anyhow::bail;
 use jet_rewards::instructions::{AirdropCreateParams, AirdropRecipientParam};
 use jet_rewards::state::Airdrop;
 use serde::{Deserialize, Serialize};
 use serde_json::Result;
-use std::collections::HashSet;
 use std::fs::File;
 use std::io::{Read, Write};
 use std::path::PathBuf;
@@ -28,8 +26,8 @@ pub fn load_default_keypair() -> anyhow::Result<Keypair> {
 
 pub fn load_default_client() -> anyhow::Result<anchor_client::Program> {
     let keypair = load_default_keypair()?;
-    // let rpc = "https://jetprotocol.genesysgo.net".to_owned();
-    let rpc = "https://api.devnet.solana.com".to_owned();
+    let rpc = "https://jetprotocol.genesysgo.net".to_owned();
+    // let rpc = "https://api.devnet.solana.com".to_owned();
     // let rpc = "http://127.0.0.1:8899".to_owned();
     let wss = rpc.replace("https", "wss");
     let connection = anchor_client::Client::new_with_options(
