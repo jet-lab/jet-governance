@@ -249,8 +249,9 @@ pub fn upload_airdrop_recipients(
     let mut submissions = vec![];
 
     for tx in to_submit {
-        submissions.push(rpc.send_transaction_with_config(
+        submissions.push(rpc.send_and_confirm_transaction_with_spinner_and_config(
             &tx,
+            CommitmentConfig::processed(),
             RpcSendTransactionConfig {
                 skip_preflight: true,
                 ..Default::default()
@@ -258,46 +259,5 @@ pub fn upload_airdrop_recipients(
         )?);
     }
 
-    println!("waiting for confirmations");
-
-    let mut done = HashSet::new();
-
-    'waiting: loop {
-        std::thread::sleep(std::time::Duration::from_millis(1000));
-
-        let mut committed = true;
-
-        let statuses = rpc.get_signature_statuses(&submissions)?;
-        for (i, status) in statuses.value.into_iter().enumerate() {
-            if status.is_none() {
-                continue 'waiting;
-            }
-
-            let status = status.unwrap();
-            let signature = &submissions[i];
-
-            if done.contains(signature) {
-                continue;
-            }
-
-            if !status.satisfies_commitment(CommitmentConfig::confirmed()) {
-                continue 'waiting;
-            }
-
-            if let Some(err) = status.err {
-                committed = false;
-
-                println!("tx failed (signature {}): {:?}", signature, err);
-            } else {
-                println!("successful tx {}", signature);
-            }
-
-            done.insert(signature);
-        }
-
-        match committed {
-            true => return Ok(()),
-            false => bail!("some transactions failed during submission"),
-        }
-    }
+    Ok(())
 }
