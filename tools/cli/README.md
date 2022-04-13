@@ -55,7 +55,7 @@ Run `ctrl-c.` to kill the solana-test-validator process to stop the localnet
 
 ### Finalize airdrop
 
-    `rewards-cli finalize-airdrop <authority address> —airdrop <airdrop address>`
+    `rewards-cli finalize-airdrop <authority address> —-airdrop <airdrop address>`
 
 ### Close airdrop
 
