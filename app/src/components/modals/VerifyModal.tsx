@@ -409,7 +409,7 @@ export const VerifyModal = () => {
           JetGovern. For more info, see our{" "}
           <a
             href="https://jet-association.gitbook.io/jet-association-1.0.0/terms-of-service"
-            className="gradient-text-btn"
+            className="link-btn"
             target="_blank"
             rel="noopener noreferrer"
           >
@@ -424,9 +424,18 @@ export const VerifyModal = () => {
           </strong>
         </p>
         <p>
-          As this verification happens on-chain, you will need SOL for your verification
-          transaction.
+          If you are experiencing difficulties, please take a look at the{" "}
+          <a
+            href="https://jet-association.gitbook.io/jet-association-1.0.0/sms-verification-troubleshooting-guide"
+            className="link-btn"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            troubleshooting guide
+          </a>
+          .
         </p>
+        <p>This verification happens on-chain and you will need SOL for your transaction.</p>
         <CountryPhoneInput
           placeholder={"Phone number"}
           value={phoneNumber}
@@ -641,7 +650,7 @@ export const VerifyModal = () => {
           <a
             href="https://jet-association.gitbook.io/jet-association-1.0.0/terms-of-service"
             target="_blank"
-            className="gradient-text-btn"
+            className="link-btn"
             rel="noreferrer"
           >
             Terms of Service
