@@ -44,7 +44,7 @@ export const AirdropView = () => {
               href="https://medium.com/jetprotocol/jet-staking-and-the-jetdrop-two-more-steps-towards-jet-governance-84d8de26be4a"
               target="_blank"
               rel="noreferrer"
-              className="gradient-text-btn"
+              className="link-btn"
             >
               blog announcement
             </a>
@@ -54,14 +54,16 @@ export const AirdropView = () => {
             <DocsLink>docs</DocsLink>
           </u>{" "}
           and{" "}
-          <a
-            href="https://jet-association.gitbook.io/jet-association-1.0.0/terms-and-definitions"
-            target="_blank"
-            rel="noreferrer"
-            className="gradient-text-btn"
-          >
-            glossary
-          </a>
+          <u>
+            <a
+              href="https://jet-association.gitbook.io/jet-association-1.0.0/terms-and-definitions"
+              target="_blank"
+              rel="noreferrer"
+              className="link-btn"
+            >
+              glossary
+            </a>
+          </u>
           .
         </p>
         <Divider />
