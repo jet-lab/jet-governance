@@ -98,7 +98,6 @@ export function notifyTransactionSuccess(
       </div>
     ),
     placement: "bottomLeft",
-    bottom: 200,
     onClick: () => {
       window.open(explorerUrl, "_blank");
     }
@@ -114,22 +113,19 @@ function notifyTransactionError(err: unknown) {
     notification.error({
       message: "Mayday!",
       description: "Transaction timed out.",
-      placement: "bottomLeft",
-      bottom: 200
+      placement: "bottomLeft"
     });
   } else if (isSignTransactionError(err)) {
     notification.error({
       message: "Mayday!",
       description: "Transaction cancelled.",
-      placement: "bottomLeft",
-      bottom: 200
+      placement: "bottomLeft"
     });
   } else if (isSendTransactionError(err)) {
     notification.error({
       message: "Mayday!",
       description: "Transaction failed.",
-      placement: "bottomLeft",
-      bottom: 200
+      placement: "bottomLeft"
     });
   }
 }
