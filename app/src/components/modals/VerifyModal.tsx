@@ -208,7 +208,7 @@ export const VerifyModal = () => {
         }
       })
       .catch(err => {
-        console.error(JSON.stringify(err), err?.response?.body, err?.response?.data);
+        console.error(err?.response?.data);
         if (err.response.status === 400) {
           // Payload validation failed or provided phone number was not a valid mobile number.
           setCurrent(Steps.PhoneInvalid);
@@ -283,7 +283,7 @@ export const VerifyModal = () => {
         }
       })
       .catch(err => {
-        console.error(JSON.stringify(err), err?.response?.body, err?.response?.data);
+        console.error(err?.response?.data);
         setConfirmCodeLoading(false);
         if (err.response.status === 400) {
           // Payload validation failed or provided phone number was not a valid mobile number.
