@@ -198,7 +198,6 @@ export const VerifyModal = () => {
         }
       )
       .then(res => {
-        console.log(res.status, res.data);
         if (res.status === 201) {
           // Successfully sent SMS verification code
           setVerificationId(res.data.id);
@@ -210,7 +209,6 @@ export const VerifyModal = () => {
       })
       .catch(err => {
         console.error(JSON.stringify(err), err?.response?.body, err?.response?.data);
-        console.error("response status", err.response.status);
         if (err.response.status === 400) {
           // Payload validation failed or provided phone number was not a valid mobile number.
           setCurrent(Steps.PhoneInvalid);
@@ -220,13 +218,11 @@ export const VerifyModal = () => {
             err?.response?.data.error[0] ===
             "the ip of the requester has been detected as a threat or anonymized."
           ) {
-            console.error("VPN blocked");
             setCurrent(Steps.OriginRestricted);
           } else if (
             err?.response?.data.error[0] ===
             "the ip of the requester has been detected as originating from a geo-banned region."
           ) {
-            console.error("You are attempting to access JetGovern from an unavailable region.");
             setCurrent(Steps.AccessDenied);
           } else {
             setCurrent(Steps.UnknownError);
@@ -274,14 +270,12 @@ export const VerifyModal = () => {
         }
       )
       .then(res => {
-        console.log(res.status, res.data);
         setConfirmCodeLoading(false);
         if (res.status === 204) {
           // The verification was successful and transaction was confirmed.
           setCurrent(Steps.AgreeToTerms);
         } else if (res.status === 400) {
           // Payload validation failed.
-          console.log("Payload validation failed");
           setCurrent(Steps.AccessDenied);
         } else if (res.status === 500) {
           // Unknown or MessageBird API error.
@@ -300,10 +294,8 @@ export const VerifyModal = () => {
             err?.response?.data.error[0] ===
             "the ip of the requester has been detected as a threat or anonymized."
           ) {
-            console.error("VPN blocked");
             setCurrent(Steps.OriginRestricted);
           } else {
-            console.error("You are attempting to access JetGovern from an unavailable region.");
             setCurrent(Steps.AccessDenied);
           }
         } else if (err.response.status === 500) {
@@ -312,7 +304,6 @@ export const VerifyModal = () => {
             "api error(s): The token is invalid. (code: 10, parameter: token)"
           ) {
             // Token is invalid
-            console.error("Invalid token");
             setCurrent(Steps.InvalidToken);
           } else {
             // Unknown or MessageBird API error.
