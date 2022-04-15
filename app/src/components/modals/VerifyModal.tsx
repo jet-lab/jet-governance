@@ -46,6 +46,7 @@ export const VerifyModal = () => {
   const [isGeobanned, setIsGeobanned] = useState(false);
   const [disclaimerChecked, setDisclaimerChecked] = useState(false);
   const [country, setCountry] = useState("");
+  const [countrySymbol, setCountrySymbol] = useState("");
   // The ID of the SMS verification session with MessageBird.
   const [verificationId, setVerificationId] = useState<string>();
   // The verification token received from the SMS recipient.
@@ -75,6 +76,8 @@ export const VerifyModal = () => {
         const countryCode = locale.location.country.code ?? undefined;
         if (!countryCode) {
           setCountry("unknown");
+        } else {
+          setCountrySymbol(countryCode);
         }
         geoBannedCountries.forEach(c => {
           if (c.code === countryCode) {
@@ -186,13 +189,11 @@ export const VerifyModal = () => {
 
     axios
       .put(
-        "https://api.jetprotocol.io/v1/auth/sms",
+        "https://api.jetprotocol.io/v1/auth/sms/create",
         {
-          originator: "Governance",
           phoneNumber: `+${phoneNumber.code}${phoneNumber.phone}`,
           network: env,
-          publicKey: Auth.deriveUserAuthentication(publicKey),
-
+          publicKey: Auth.deriveUserAuthentication(publicKey)
         },
         {
           headers: {
@@ -205,9 +206,9 @@ export const VerifyModal = () => {
           // Successfully sent SMS verification code
           setVerificationId(res.data.id);
           setCurrent(Steps.EnterSMSCode);
-        }else if(res.status ===204){
+        } else if (res.status === 204) {
           setCurrent(Steps.AgreeToTerms);
-        }else {
+        } else {
           console.log("error", res);
           setCurrent(Steps.UnknownError);
         }
