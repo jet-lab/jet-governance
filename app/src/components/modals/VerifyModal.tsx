@@ -270,7 +270,7 @@ export const VerifyModal = () => {
           network: env,
           publicKey: Auth.deriveUserAuthentication(publicKey),
           token: code,
-          verificationId: verificationId
+          phoneNumber: `+${phoneNumber.code}${phoneNumber.phone}`
         },
         {
           headers: {
