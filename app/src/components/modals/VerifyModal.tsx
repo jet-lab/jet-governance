@@ -188,7 +188,6 @@ export const VerifyModal = () => {
       .put(
         "https://api.jetprotocol.io/v1/auth/sms/create",
         {
-          originator: "Governance",
           phoneNumber: `+${phoneNumber.code}${phoneNumber.phone}`
         },
         {
