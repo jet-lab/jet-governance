@@ -185,6 +185,12 @@ export const VerifyModal = () => {
     if (country === "unknown") {
       return setCurrent(Steps.LocationUndetected);
     }
+
+    if (!publicKey) {
+      setCurrent(Steps.UnknownError);
+      return;
+    }
+
     // auth/sms begin a new SMS verification session
 
     axios
