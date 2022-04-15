@@ -46,7 +46,6 @@ export const VerifyModal = () => {
   const [isGeobanned, setIsGeobanned] = useState(false);
   const [disclaimerChecked, setDisclaimerChecked] = useState(false);
   const [country, setCountry] = useState("");
-  const [countrySymbol, setCountrySymbol] = useState("");
   // The ID of the SMS verification session with MessageBird.
   const [verificationId, setVerificationId] = useState<string>();
   // The verification token received from the SMS recipient.
@@ -76,8 +75,6 @@ export const VerifyModal = () => {
         const countryCode = locale.location.country.code ?? undefined;
         if (!countryCode) {
           setCountry("unknown");
-        } else {
-          setCountrySymbol(countryCode);
         }
         geoBannedCountries.forEach(c => {
           if (c.code === countryCode) {
