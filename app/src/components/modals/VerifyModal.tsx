@@ -182,14 +182,17 @@ export const VerifyModal = () => {
     if (country === "unknown") {
       return setCurrent(Steps.LocationUndetected);
     }
-
     // auth/sms begin a new SMS verification session
+
     axios
       .put(
         "https://api.jetprotocol.io/v1/auth/sms",
         {
           originator: "Governance",
-          phoneNumber: `+${phoneNumber.code}${phoneNumber.phone}`
+          phoneNumber: `+${phoneNumber.code}${phoneNumber.phone}`,
+          network: env,
+          publicKey: Auth.deriveUserAuthentication(publicKey),
+
         },
         {
           headers: {
@@ -202,7 +205,9 @@ export const VerifyModal = () => {
           // Successfully sent SMS verification code
           setVerificationId(res.data.id);
           setCurrent(Steps.EnterSMSCode);
-        } else {
+        }else if(res.status ===204){
+          setCurrent(Steps.AgreeToTerms);
+        }else {
           console.log("error", res);
           setCurrent(Steps.UnknownError);
         }
