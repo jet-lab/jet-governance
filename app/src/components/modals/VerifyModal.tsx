@@ -186,7 +186,7 @@ export const VerifyModal = () => {
     // auth/sms begin a new SMS verification session
     axios
       .put(
-        "https://api.jetprotocol.io/v1/auth/sms",
+        "https://api.jetprotocol.io/v1/auth/sms/create",
         {
           originator: "Governance",
           phoneNumber: `+${phoneNumber.code}${phoneNumber.phone}`
@@ -261,7 +261,7 @@ export const VerifyModal = () => {
           network: env,
           publicKey: Auth.deriveUserAuthentication(publicKey),
           token: code,
-          verificationId: verificationId
+          verificationId: phoneNumber
         },
         {
           headers: {
