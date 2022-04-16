@@ -14,6 +14,7 @@ mod authority {
 }
 
 #[account]
+#[derive(Debug)]
 pub struct UserAuthentication {
     /// The relevant user address
     pub owner: Pubkey,
