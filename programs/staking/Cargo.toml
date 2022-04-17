@@ -14,6 +14,7 @@ no-entrypoint = []
 no-idl = []
 cpi = ["no-entrypoint"]
 default = []
+cli = ["no-entrypoint", "dep:serde"]
 
 [dependencies]
 anchor-lang = { git = "https://github.com/jet-lab/anchor", branch = "master" }
@@ -23,3 +24,4 @@ jet-proto-auth = { path = "../auth", features = ["cpi"] }
 spl-governance = { git = "https://github.com/jet-lab/solana-program-library", branch = "temp-fix-spl-deps", features = ["no-entrypoint"] }
 spl-governance-addin-api = { git = "https://github.com/jet-lab/solana-program-library", branch = "temp-fix-spl-deps" }
 spl-governance-tools = { git = "https://github.com/jet-lab/solana-program-library", branch = "temp-fix-spl-deps" }
+serde = { version = "1.0", features = ["derive"], optional = true }

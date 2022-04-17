@@ -1,4 +1,6 @@
 use anchor_lang::prelude::*;
+#[cfg(feature = "cli")]
+use serde::ser::{Serialize, SerializeStruct, Serializer};
 
 use jet_proto_proc_macros::assert_size;
 
@@ -126,6 +128,43 @@ impl Airdrop {
     }
 }
 
+impl std::fmt::Debug for Airdrop {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        f.debug_struct("Airdrop")
+            .field("address", &self.address)
+            .field("reward_vault", &self.reward_vault)
+            .field("authority", &self.authority)
+            .field("stake_pool", &self.stake_pool)
+            .field("expire_at", &self.expire_at)
+            .field("flags", &self.flags)
+            .finish()
+    }
+}
+
+#[cfg(feature = "cli")]
+impl Serialize for Airdrop {
+    fn serialize<S>(&self, serializer: S) -> std::result::Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
+        let mut s = serializer.serialize_struct("Airdrop", 7)?;
+        s.serialize_field("rewardsVault", &self.reward_vault)?;
+        s.serialize_field("authority", &self.authority)?;
+        s.serialize_field("expireAt", &self.expire_at)?;
+        s.serialize_field("stakePool", &self.stake_pool)?;
+        s.serialize_field("flags", &self.flags)?;
+        s.serialize_field(
+            "shortDescription",
+            &String::from_utf8(self.short_desc.to_vec()).unwrap(),
+        )?;
+        s.serialize_field(
+            "longDescription",
+            &String::from_utf8(self.long_desc.to_vec()).unwrap(),
+        )?;
+        s.end()
+    }
+}
+
 #[repr(C)]
 #[assert_size(400024)]
 #[derive(Clone, Copy)]
@@ -182,18 +221,5 @@ unsafe impl bytemuck::Zeroable for AirdropTargetInfo {}
 
 bitflags::bitflags! {
     pub struct AirdropFlags: u64 {
-    }
-}
-
-impl std::fmt::Debug for Airdrop {
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        f.debug_struct("Airdrop")
-            .field("address", &self.address)
-            .field("reward_vault", &self.reward_vault)
-            .field("authority", &self.authority)
-            .field("stake_pool", &self.stake_pool)
-            .field("expire_at", &self.expire_at)
-            .field("flags", &self.flags)
-            .finish()
     }
 }

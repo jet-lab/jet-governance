@@ -1,6 +1,7 @@
-use std::convert::TryInto;
-
 use anchor_lang::prelude::*;
+#[cfg(feature = "cli")]
+use serde::ser::{Serialize, SerializeStruct, Serializer};
+use std::convert::TryInto;
 
 use crate::spl_addin::{MaxVoterWeightRecord, VoterWeightAction, VoterWeightRecord};
 use crate::ErrorCode;
@@ -165,10 +166,36 @@ impl StakePool {
     }
 }
 
+#[cfg(feature = "cli")]
+impl Serialize for StakePool {
+    fn serialize<S>(&self, serializer: S) -> std::result::Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
+        let mut s = serializer.serialize_struct("StakePool", 10)?;
+        s.serialize_field("authority", &self.authority)?;
+        s.serialize_field("tokenMint", &self.token_mint)?;
+        s.serialize_field("stakePoolVault", &self.stake_pool_vault)?;
+        s.serialize_field("maxVoterWeightRecord", &self.max_voter_weight_record)?;
+        s.serialize_field("governanceRealm", &self.governance_realm)?;
+        s.serialize_field("stakeCollateralMint", &self.stake_collateral_mint)?;
+        s.serialize_field("unbondPeriod", &self.unbond_period)?;
+        s.serialize_field("vaultAmount", &self.vault_amount)?;
+        s.serialize_field("bonded", &self.bonded)?;
+        s.serialize_field("unbonding", &self.unbonding)?;
+        s.end()
+    }
+}
+
 /// Primitive that represents a pool of tokens with ownership of a portion
 /// of the pool represented by shares. Each SharedTokenPool has a distinct
 /// value for its own shares.
 #[derive(Default, Debug, Copy, Clone, AnchorSerialize, AnchorDeserialize)]
+#[cfg_attr(
+    feature = "cli",
+    derive(serde::Serialize),
+    serde(rename_all = "camelCase")
+)]
 pub struct SharedTokenPool {
     /// Number of tokens held by this pool
     tokens: u64,
@@ -356,6 +383,11 @@ impl FullAmount {
 
 #[account]
 #[derive(Default, Debug)]
+#[cfg_attr(
+    feature = "cli",
+    derive(serde::Serialize),
+    serde(rename_all = "camelCase")
+)]
 pub struct StakeAccount {
     /// The account that has ownership over this stake
     pub owner: Pubkey,
@@ -420,6 +452,11 @@ impl StakeAccount {
 
 #[account]
 #[derive(Default)]
+#[cfg_attr(
+    feature = "cli",
+    derive(serde::Serialize),
+    serde(rename_all = "camelCase")
+)]
 pub struct UnbondingAccount {
     /// The related account requesting to unstake
     pub stake_account: Pubkey,

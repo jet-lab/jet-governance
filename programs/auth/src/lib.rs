@@ -15,6 +15,11 @@ mod authority {
 
 #[account]
 #[derive(Debug)]
+#[cfg_attr(
+    feature = "cli",
+    derive(serde::Serialize),
+    serde(rename_all = "camelCase")
+)]
 pub struct UserAuthentication {
     /// The relevant user address
     pub owner: Pubkey,
