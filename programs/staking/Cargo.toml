@@ -14,7 +14,7 @@ no-entrypoint = []
 no-idl = []
 cpi = ["no-entrypoint"]
 default = []
-cli = ["no-entrypoint", "dep:serde"]
+cli = ["no-entrypoint", "serde"]
 
 [dependencies]
 anchor-lang = { git = "https://github.com/jet-lab/anchor", branch = "master" }

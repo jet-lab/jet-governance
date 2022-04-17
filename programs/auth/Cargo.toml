@@ -16,7 +16,7 @@ no-log-ix-name = []
 cpi = ["no-entrypoint"]
 default = []
 enforce-authority = []
-cli = ["no-entrypoint", "dep:serde"]
+cli = ["no-entrypoint", "serde"]
 
 [dependencies]
 anchor-lang = { git = "https://github.com/jet-lab/anchor", branch = "master" }
