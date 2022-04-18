@@ -155,11 +155,15 @@ impl Serialize for Airdrop {
         s.serialize_field("flags", &self.flags)?;
         s.serialize_field(
             "shortDescription",
-            &String::from_utf8(self.short_desc.to_vec()).unwrap(),
+            &String::from_utf8(self.short_desc.to_vec())
+                .unwrap()
+                .replace("\u{0}", ""),
         )?;
         s.serialize_field(
             "longDescription",
-            &String::from_utf8(self.long_desc.to_vec()).unwrap(),
+            &String::from_utf8(self.long_desc.to_vec())
+                .unwrap()
+                .replace("\u{0}", ""),
         )?;
         s.end()
     }
