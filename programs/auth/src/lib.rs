@@ -1,4 +1,6 @@
 use anchor_lang::prelude::*;
+#[cfg(feature = "cli")]
+use serde::ser::{Serialize, SerializeStruct, Serializer};
 
 mod events;
 use events::*;
@@ -15,11 +17,6 @@ mod authority {
 
 #[account]
 #[derive(Debug)]
-#[cfg_attr(
-    feature = "cli",
-    derive(serde::Serialize),
-    serde(rename_all = "camelCase")
-)]
 pub struct UserAuthentication {
     /// The relevant user address
     pub owner: Pubkey,
@@ -31,6 +28,20 @@ pub struct UserAuthentication {
     /// Whether or not the user is allowed to access the facilities
     /// requiring the authentication workflow.
     pub allowed: bool,
+}
+
+#[cfg(feature = "cli")]
+impl Serialize for UserAuthentication {
+    fn serialize<S>(&self, serializer: S) -> std::result::Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
+        let mut s = serializer.serialize_struct("UserAuthentication", 3)?;
+        s.serialize_field("owner", &self.owner.to_string())?;
+        s.serialize_field("complete", &self.complete)?;
+        s.serialize_field("allowed", &self.allowed)?;
+        s.end()
+    }
 }
 
 #[derive(Accounts)]

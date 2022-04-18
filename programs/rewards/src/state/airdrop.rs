@@ -148,10 +148,10 @@ impl Serialize for Airdrop {
         S: Serializer,
     {
         let mut s = serializer.serialize_struct("Airdrop", 7)?;
-        s.serialize_field("rewardsVault", &self.reward_vault)?;
-        s.serialize_field("authority", &self.authority)?;
+        s.serialize_field("rewardsVault", &self.reward_vault.to_string())?;
+        s.serialize_field("authority", &self.authority.to_string())?;
         s.serialize_field("expireAt", &self.expire_at)?;
-        s.serialize_field("stakePool", &self.stake_pool)?;
+        s.serialize_field("stakePool", &self.stake_pool.to_string())?;
         s.serialize_field("flags", &self.flags)?;
         s.serialize_field(
             "shortDescription",

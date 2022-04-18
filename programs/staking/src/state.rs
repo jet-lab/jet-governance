@@ -173,12 +173,18 @@ impl Serialize for StakePool {
         S: Serializer,
     {
         let mut s = serializer.serialize_struct("StakePool", 10)?;
-        s.serialize_field("authority", &self.authority)?;
-        s.serialize_field("tokenMint", &self.token_mint)?;
-        s.serialize_field("stakePoolVault", &self.stake_pool_vault)?;
-        s.serialize_field("maxVoterWeightRecord", &self.max_voter_weight_record)?;
-        s.serialize_field("governanceRealm", &self.governance_realm)?;
-        s.serialize_field("stakeCollateralMint", &self.stake_collateral_mint)?;
+        s.serialize_field("authority", &self.authority.to_string())?;
+        s.serialize_field("tokenMint", &self.token_mint.to_string())?;
+        s.serialize_field("stakePoolVault", &self.stake_pool_vault.to_string())?;
+        s.serialize_field(
+            "maxVoterWeightRecord",
+            &self.max_voter_weight_record.to_string(),
+        )?;
+        s.serialize_field("governanceRealm", &self.governance_realm.to_string())?;
+        s.serialize_field(
+            "stakeCollateralMint",
+            &self.stake_collateral_mint.to_string(),
+        )?;
         s.serialize_field("unbondPeriod", &self.unbond_period)?;
         s.serialize_field("vaultAmount", &self.vault_amount)?;
         s.serialize_field("bonded", &self.bonded)?;
@@ -383,11 +389,6 @@ impl FullAmount {
 
 #[account]
 #[derive(Default, Debug)]
-#[cfg_attr(
-    feature = "cli",
-    derive(serde::Serialize),
-    serde(rename_all = "camelCase")
-)]
 pub struct StakeAccount {
     /// The account that has ownership over this stake
     pub owner: Pubkey,
@@ -450,13 +451,24 @@ impl StakeAccount {
     }
 }
 
+#[cfg(feature = "cli")]
+impl Serialize for StakeAccount {
+    fn serialize<S>(&self, serializer: S) -> std::result::Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
+        let mut s = serializer.serialize_struct("StakeAccount", 5)?;
+        s.serialize_field("owner", &self.owner.to_string())?;
+        s.serialize_field("stakePool", &self.stake_pool.to_string())?;
+        s.serialize_field("voterWeightRecord", &self.voter_weight_record.to_string())?;
+        s.serialize_field("bondedShares", &self.bonded_shares)?;
+        s.serialize_field("unbondingShares", &self.unbonding_shares)?;
+        s.end()
+    }
+}
+
 #[account]
 #[derive(Default)]
-#[cfg_attr(
-    feature = "cli",
-    derive(serde::Serialize),
-    serde(rename_all = "camelCase")
-)]
 pub struct UnbondingAccount {
     /// The related account requesting to unstake
     pub stake_account: Pubkey,
@@ -467,6 +479,20 @@ pub struct UnbondingAccount {
 
     /// The time after which the staked amount can be withdrawn
     pub unbonded_at: i64,
+}
+
+#[cfg(feature = "cli")]
+impl Serialize for UnbondingAccount {
+    fn serialize<S>(&self, serializer: S) -> std::result::Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
+        let mut s = serializer.serialize_struct("UnbondingAccount", 3)?;
+        s.serialize_field("stakeAccount", &self.stake_account.to_string())?;
+        s.serialize_field("shares", &self.shares)?;
+        s.serialize_field("unbondedAt", &self.unbonded_at)?;
+        s.end()
+    }
 }
 
 #[cfg(test)]
