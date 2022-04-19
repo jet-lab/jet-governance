@@ -12,7 +12,7 @@ export enum ENV {
 export const ENDPOINTS = [
   {
     name: "mainnet-beta" as ENV,
-    endpoint: "https://jetprotocol.genesysgo.net/",
+    endpoint: "https://jetprot-main-0d7b.mainnet.rpcpool.com",
     ChainId: ENV.MainnetBeta
   },
   {
