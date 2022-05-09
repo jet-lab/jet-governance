@@ -1,5 +1,14 @@
 import { ProposalFilter, useProposalContext } from "./../contexts";
-import { Airdrop, bnToNumber, StakePool, UnbondingAccount } from "@jet-lab/jet-engine";
+import {
+  Airdrop,
+  bigIntToNumber,
+  bnToNumber,
+  Distribution,
+  DistributionYield,
+  StakeAccount,
+  StakePool,
+  UnbondingAccount
+} from "@jet-lab/jet-engine";
 import {
   Governance,
   ProgramAccount,
@@ -436,4 +445,45 @@ export function useStakePoolAndRealmCompatible(
       );
     }
   }
+}
+
+/**
+ * TODO:
+ *
+ * @static
+ * @param {(Distribution[] | undefined)} distributions
+ * @param {(StakePool | undefined)} stakePool
+ * @param {(StakeAccount | undefined)} stakeAccount
+ * @returns {(DistributionYield | undefined)}
+ * @memberof Distribution
+ */
+export function useEstimateCombinedYield(
+  distributions: Distribution[] | undefined,
+  stakePool: StakePool | undefined,
+  stakeAccount: StakeAccount | undefined
+): DistributionYield | undefined {
+  return useMemo(() => {
+    if (!distributions || !stakePool) {
+      return undefined;
+    }
+    let usersShares: number;
+    const totalShares = bnToNumber(stakePool.stakePool.bonded.shares);
+    const totalDeposits = bigIntToNumber(stakePool.vault.amount);
+    if (stakeAccount) {
+      usersShares = bnToNumber(stakeAccount.stakeAccount.bondedShares);
+    } else {
+      usersShares = 1;
+    }
+    const combinedYield = Distribution.estimateCombinedYield(
+      distributions,
+      totalDeposits,
+      totalShares,
+      usersShares
+    );
+    if (stakePool) {
+      return combinedYield;
+    }
+
+    return new DistributionYield(combinedYield.apr);
+  }, [distributions, stakePool, stakeAccount]);
 }
