@@ -26,6 +26,7 @@ import { useWallet } from "@solana/wallet-adapter-react";
 import { useHistory, useLocation } from "react-router";
 import "./YourInfo.less";
 import { StakedJetBalance } from "./Dashboard/StakedJetBalance";
+import { bigIntToBn } from "@jet-lab/jet-engine";
 
 export const YourInfo = () => {
   const [stakeModalVisible, setStakeModalVisible] = useState(false);
@@ -69,7 +70,7 @@ export const YourInfo = () => {
     if (!inputAmount || !jetAccount) {
       return;
     }
-    const balance = fromLamports(jetAccount.info.amount, jetMint);
+    const balance = fromLamports(bigIntToBn(jetAccount.info.amount), jetMint);
     const stakable = isMaxAvailable(balance, inputAmount)
       ? balance
       : Math.min(inputAmount, balance);
@@ -159,7 +160,7 @@ export const YourInfo = () => {
   const precisionOnAmounts = 1;
   const jetBalanceTokens =
     jetAccount && jetMint
-      ? toTokensPrecisionNumber(jetAccount.info.amount, jetMint, precisionOnAmounts)
+      ? toTokensPrecisionNumber(bigIntToBn(jetAccount.info.amount), jetMint, precisionOnAmounts)
       : 0;
   const preFillWithJetBalance = () => {
     setInputAmount(jetBalanceTokens);
