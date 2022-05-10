@@ -1,5 +1,4 @@
-import { StakePool } from "@jet-lab/jet-engine";
-import { Mint } from "@solana/spl-token";
+import { JetMint, StakePool } from "@jet-lab/jet-engine";
 import { PublicKey } from "@solana/web3.js";
 import { VoterDisplayData } from "../hooks";
 import { fromLamports, sharesToTokens } from "../utils";
@@ -9,7 +8,7 @@ export const voteRecordCsvDownload = (
   itemAddress: PublicKey,
   votes: VoterDisplayData[],
   stakePool: StakePool,
-  mint?: Mint
+  mint?: JetMint
 ) => {
   // define the heading for each row of the data
   var csv = "Public Key,Staked JET,Vote Weight,Vote\n";
