@@ -3,6 +3,7 @@ import {
   AssociatedToken,
   Distribution,
   DistributionYield,
+  JetMint,
   RewardsClient,
   RewardsIdl,
   StakeAccount,
@@ -35,14 +36,12 @@ import {
   useAirdropsByWallet,
   useAvailableAirdrop,
   useClaimsCount,
-  useEstimateCombinedYield,
   useProposalFilters,
   useProvider,
   useRpcContext,
   useStakePoolAndRealmCompatible
 } from "../hooks";
 import { JET_GOVERNANCE } from "../utils";
-import { Mint } from "@solana/spl-token";
 
 export type ProposalFilter = "active" | "inactive" | "passed" | "rejected" | "all";
 
@@ -68,7 +67,7 @@ interface ProposalContextState {
   availableAirdrop?: Airdrop[];
 
   jetAccount?: AssociatedToken;
-  jetMint?: Mint;
+  jetMint?: JetMint;
 
   realm?: ProgramAccount<Realm>;
   governance?: ProgramAccount<Governance>;
@@ -261,7 +260,7 @@ export function ProposalProvider({ children = undefined as any }) {
   const stakeBalance = StakeAccount.useBalance(wallet?.stakeAccount, stakePool?.stakePool);
 
   // ----- Staking Rewards -----
-  const stakingYield = useEstimateCombinedYield(
+  const stakingYield = Distribution.useEstimateCombinedYield(
     realm?.distributions,
     stakePool?.stakePool,
     wallet?.stakeAccount
