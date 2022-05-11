@@ -1,4 +1,5 @@
-import { bnToNumber, JetMint, StakePool } from "@jet-lab/jet-engine";
+import { bnToNumber, StakePool } from "@jet-lab/jet-engine";
+import { Mint } from "@solana/spl-token";
 import { PublicKey } from "@solana/web3.js";
 import { SelectProps } from "antd";
 import BN from "bn.js";
@@ -42,7 +43,7 @@ export function shortenAddress(address: PublicKey | string, chars = 4): string {
   return `${address.slice(0, chars)}...${address.slice(-chars)}`;
 }
 
-export function fromLamports(amount: number | BN | undefined, mint: JetMint | undefined): number {
+export function fromLamports(amount: number | BN | undefined, mint: Mint | undefined): number {
   if (!amount || !mint) {
     return 0;
   }
@@ -50,7 +51,7 @@ export function fromLamports(amount: number | BN | undefined, mint: JetMint | un
   return bnToNumber(fromAmount) / 10 ** mint.decimals;
 }
 
-export const toTokens = (amount?: BN | number, mint?: JetMint) => {
+export const toTokens = (amount?: BN | number, mint?: Mint) => {
   const fromAmount = typeof amount === "number" ? new BN(amount) : amount;
   const hasNoValue = fromAmount === new BN(0) || amount === 0;
   if (hasNoValue) {
@@ -69,11 +70,7 @@ export const withPrecisionNumber = (amount: number, precision: number = 1): numb
   return Math.floor(amount * factor) / factor;
 };
 
-export const toTokensPrecisionNumber = (
-  amount: BN,
-  mint: JetMint,
-  precision: number = 1
-): number => {
+export const toTokensPrecisionNumber = (amount: BN, mint: Mint, precision: number = 1): number => {
   if (amount === new BN(0)) {
     return 0;
   }
