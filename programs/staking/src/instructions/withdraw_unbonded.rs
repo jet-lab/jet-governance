@@ -74,7 +74,9 @@ pub fn withdraw_unbonded_handler(ctx: Context<WithdrawUnbonded>) -> Result<()> {
     let withdrawn_amount = stake_pool.withdraw_unbonded(stake_account, unbonding_account);
 
     unbonding_account.stake_account = Pubkey::default();
+
     let stake_pool = &ctx.accounts.stake_pool;
+    let unbonding_account = &ctx.accounts.unbonding_account;
 
     token::transfer(
         ctx.accounts
@@ -88,6 +90,7 @@ pub fn withdraw_unbonded_handler(ctx: Context<WithdrawUnbonded>) -> Result<()> {
     emit!(UnbondedWithdrawn {
         stake_pool: stake_pool.key(),
         stake_account: stake_account.key(),
+        unbonding_account: unbonding_account.key(),
         owner: ctx.accounts.owner.key(),
 
         withdrawn_amount,

@@ -76,6 +76,7 @@ pub struct UnbondCancelled {
 pub struct UnbondedWithdrawn {
     pub stake_pool: Pubkey,
     pub stake_account: Pubkey,
+    pub unbonding_account: Pubkey,
     pub owner: Pubkey,
 
     pub withdrawn_amount: FullAmount,
