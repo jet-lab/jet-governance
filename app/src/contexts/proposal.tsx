@@ -43,6 +43,7 @@ import {
 } from "../hooks";
 import { JET_GOVERNANCE } from "../utils";
 import { Mint } from "@solana/spl-token";
+import { PROPOSAL_BLACKLIST } from "../models/PROPOSAL_BLACKLIST";
 
 export type ProposalFilter = "active" | "inactive" | "passed" | "rejected" | "all";
 
@@ -171,11 +172,15 @@ export function ProposalProvider({ children = undefined as any }) {
       }
 
       // ----- Governance -----
-      const proposalsByGovernance = await getProposalsByGovernance(
+      let proposalsByGovernance = await getProposalsByGovernance(
         connection,
         governanceProgramId,
         JET_GOVERNANCE
       );
+      proposalsByGovernance = proposalsByGovernance.filter(
+        prop => !PROPOSAL_BLACKLIST.some(blacklisted => blacklisted.equals(prop.pubkey))
+      );
+
       // ----- Staking -----
       const stakePool = await StakePool.load(programs.stake, "jetgov");
 
