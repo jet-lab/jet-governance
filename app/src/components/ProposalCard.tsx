@@ -29,7 +29,7 @@ export const ProposalCard = ({
     <Link to={headlineUrl}>
       <Card bordered={false} className={`proposal-card clickable`} style={{}}>
         <div>
-          <div className="header">JUMP-{getPubkeyIndex(proposalStr, inDevelopment)} </div>
+          <div className="header">J-DAP-{getPubkeyIndex(proposalStr, inDevelopment)} </div>
           <h1>{proposal.account.name}</h1>
         </div>
         <div className="details">

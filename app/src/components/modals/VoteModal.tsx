@@ -130,7 +130,7 @@ export const VoteModal = ({
     content: (
       <div className="flex column">
         <p>
-          You are about to vote <strong>{voteText}</strong> JUMP-
+          You are about to vote <strong>{voteText}</strong> J-DAP-
           {getPubkeyIndex(proposal.pubkey.toBase58(), inDevelopment)}: {proposal.account.name}.
         </p>
         <p>

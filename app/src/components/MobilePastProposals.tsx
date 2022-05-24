@@ -28,7 +28,7 @@ export const PastProposalCard = ({ proposal }: { proposal: ProgramAccount<Propos
     <Link to={headlineUrl}>
       <Card bordered={false} className={`past-proposal-card clickable`} style={{}}>
         <div>
-          <div className="header">JUMP-{getPubkeyIndex(proposalStr, inDevelopment)} </div>
+          <div className="header">J-DAP-{getPubkeyIndex(proposalStr, inDevelopment)} </div>
           <div className="details">
             <div style={{ background: statusColor }}>{ProposalState[proposal.account.state]}</div>
           </div>
