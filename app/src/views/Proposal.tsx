@@ -200,7 +200,7 @@ const InnerProposalView = ({
                 <ArrowLeftOutlined />
                 Active Proposals
               </Link>{" "}
-              / Jet Upward Momentum Proposal{" "}
+              / Jet DAO Advancement Proposal{" "}
               {addressStr ? getPubkeyIndex(addressStr, inDevelopment) : "---"}
             </Text>
 
