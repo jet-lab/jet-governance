@@ -36,7 +36,7 @@ export const castVote = async (
 
   let governanceAuthority = walletPubkey;
   let payer = walletPubkey;
-  const provider = new Provider(connection, wallet as any, Provider.defaultOptions());
+  const provider = new Provider(connection, wallet as any, { skipPreflight: true });
 
   // Withdraw existing vote before casting new vote
   // Then sign both transactions at once

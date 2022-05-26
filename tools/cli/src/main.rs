@@ -56,7 +56,7 @@ enum RunCommand {
     /// Utility command to print to file
     PrintFile {
         //#[structopt(short, long)]
-    //print: bool,
+        //print: bool,
     },
 }
 
