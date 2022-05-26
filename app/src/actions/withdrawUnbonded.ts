@@ -13,7 +13,7 @@ export const withdrawUnbonded = async (
 ): Promise<string | undefined> => {
   let ix: TransactionInstruction[] = [];
   const allTxs: SendTxRequest[] = [];
-  const provider = new Provider(connection, wallet as any, Provider.defaultOptions());
+  const provider = new Provider(connection, wallet as any, { skipPreflight: true });
 
   const tokenReceiver = await AssociatedToken.withCreate(
     ix,
