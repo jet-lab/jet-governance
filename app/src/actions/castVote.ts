@@ -12,7 +12,10 @@ import {
   withCastVote,
   withPostChatMessage,
   withRelinquishVote,
-  YesNoVote
+  YesNoVote,
+  getTokenOwnerRecordForRealm,
+  TokenOwnerRecord,
+  withCreateTokenOwnerRecord
 } from "@solana/spl-governance";
 import { PublicKey, Transaction, TransactionInstruction, Keypair } from "@solana/web3.js";
 import { getVoteRecord } from "../hooks";
@@ -76,6 +79,31 @@ export const castVote = async (
     walletPubkey,
     walletPubkey
   );
+
+  let tokenOwnerRecord: ProgramAccount<TokenOwnerRecord> | undefined;
+  try {
+    tokenOwnerRecord = await getTokenOwnerRecordForRealm(
+      connection,
+      StakeClient.GOVERNANCE_PROGRAM_ID,
+      stakePool.stakePool.governanceRealm,
+      stakePool.stakePool.tokenMint,
+      walletPubkey
+    );
+  } catch (err: any) {
+    console.log(err);
+  }
+  if (!tokenOwnerRecord) {
+    // if there is no prior token owner record
+    // create one so that the owner can cast votes
+    await withCreateTokenOwnerRecord(
+      castVoteIx,
+      StakeClient.GOVERNANCE_PROGRAM_ID,
+      stakePool.stakePool.governanceRealm,
+      walletPubkey,
+      stakePool.stakePool.tokenMint,
+      walletPubkey
+    );
+  }
 
   await withCastVote(
     castVoteIx,
