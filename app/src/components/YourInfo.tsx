@@ -209,7 +209,7 @@ export const YourInfo = () => {
                 <Text className="staking-info current-staking-apr">
                   {connected ? `${rewards.apr ?? "-"}% Staking APR ` : `Current Staking APR `}
                   <Tooltip
-                    title="The displayed APR depends upon many factors, including the total number of JET staked in the module and the amount of protocol revenue flowing to depositors."
+                    title="The displayed APR depends upon many factors, including the total number of JET staked."
                     overlayClassName="no-arrow"
                   >
                     <InfoCircleFilled />
