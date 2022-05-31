@@ -8,7 +8,7 @@ import {
 import { bnToNumber, StakeBalance } from "@jet-lab/jet-engine";
 import { Governance, ProgramAccount, Proposal, ProposalState, Realm } from "@solana/spl-governance";
 import { useWallet } from "@solana/wallet-adapter-react";
-import { Button, Divider, Popover, Tooltip, Typography } from "antd";
+import { Button, Divider, Popover, Typography } from "antd";
 import { useEffect, useMemo, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import { Link } from "react-router-dom";
@@ -210,21 +210,7 @@ const InnerProposalView = ({
             </Text>
 
             {/* Proposal Title */}
-            <Title className="description-title">
-              {loaded ? proposal.account.name : "---"}
-              {/* Info about user's vote history */}
-              {voteRecord && vote !== VoteOption.Undecided && (
-                <Tooltip
-                  title={`You have voted ${
-                    vote === VoteOption.Yes ? "to approve" : "to reject"
-                  } this proposal.`}
-                  placement="topLeft"
-                  overlayClassName="no-arrow"
-                >
-                  <HistoryOutlined className="vote-history" />
-                </Tooltip>
-              )}
-            </Title>
+            <Title className="description-title">{loaded ? proposal.account.name : "---"}</Title>
 
             {/* Main Proposal Content */}
             {gistInfo && <RenderContent proposal={proposal} gistInfo={gistInfo} />}
@@ -292,6 +278,16 @@ const InnerProposalView = ({
               </div>
             </div>
 
+            {/* Info about user's vote history */}
+            {voteRecord && vote !== VoteOption.Undecided && (
+              <div>
+                <span>
+                  <HistoryOutlined className="no-pointer" /> You have voted to {
+                      vote === VoteOption.Yes ? "approve" : "reject"
+                    } this proposal.
+                </span>
+              </div>
+            )}
             <div>
               <span>
                 Votes per JET{" "}
@@ -352,7 +348,7 @@ const InnerProposalView = ({
                 type="primary"
                 onClick={() => handleVoteModal()}
               >
-                Vote
+                {voteRecord ? "Change Vote": "Vote"}
               </Button>
               {stakeBalance && loaded && isVoteModalVisible && (
                 <VoteModal
