@@ -282,9 +282,8 @@ const InnerProposalView = ({
             {voteRecord && vote !== VoteOption.Undecided && (
               <div>
                 <span>
-                  <HistoryOutlined className="no-pointer" /> You have voted to {
-                      vote === VoteOption.Yes ? "approve" : "reject"
-                    } this proposal.
+                  <HistoryOutlined className="no-pointer" /> You have voted to{" "}
+                  {vote === VoteOption.Yes ? "approve" : "reject"} this proposal.
                 </span>
               </div>
             )}
@@ -348,7 +347,7 @@ const InnerProposalView = ({
                 type="primary"
                 onClick={() => handleVoteModal()}
               >
-                {voteRecord ? "Change Vote": "Vote"}
+                {voteRecord ? "Change Vote" : "Vote"}
               </Button>
               {stakeBalance && loaded && isVoteModalVisible && (
                 <VoteModal
