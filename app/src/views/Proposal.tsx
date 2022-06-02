@@ -1,5 +1,10 @@
 import "./Proposal.less";
-import { ArrowLeftOutlined, DownloadOutlined, InfoCircleFilled } from "@ant-design/icons";
+import {
+  ArrowLeftOutlined,
+  DownloadOutlined,
+  InfoCircleFilled,
+  HistoryOutlined
+} from "@ant-design/icons";
 import { bnToNumber, StakeBalance } from "@jet-lab/jet-engine";
 import { Governance, ProgramAccount, Proposal, ProposalState, Realm } from "@solana/spl-governance";
 import { useWallet } from "@solana/wallet-adapter-react";
@@ -273,6 +278,15 @@ const InnerProposalView = ({
               </div>
             </div>
 
+            {/* Info about user's vote history */}
+            {voteRecord && vote !== VoteOption.Undecided && (
+              <div>
+                <span>
+                  <HistoryOutlined className="no-pointer" /> You have voted to{" "}
+                  {vote === VoteOption.Yes ? "approve" : "reject"} this proposal.
+                </span>
+              </div>
+            )}
             <div>
               <span>
                 Votes per JET{" "}
@@ -333,7 +347,7 @@ const InnerProposalView = ({
                 type="primary"
                 onClick={() => handleVoteModal()}
               >
-                Vote
+                {voteRecord ? "Change Vote" : "Vote"}
               </Button>
               {stakeBalance && loaded && isVoteModalVisible && (
                 <VoteModal
