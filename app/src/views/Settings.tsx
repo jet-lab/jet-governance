@@ -1,20 +1,77 @@
 import { useWallet } from "@solana/wallet-adapter-react";
 import { Button, Select, Switch, Divider } from "antd";
+import { useState } from "react";
+import { JetInput } from "../components/JetInput";
 import { useBlockExplorer, useConnectWallet, useDarkTheme } from "../contexts";
+import { useRpcNode } from "../contexts/rpcNode";
 import { ReactComponent as WalletIcon } from "../images/wallet_icon.svg";
-import { shortenAddress } from "../utils";
+import { isValidHttpUrl, shortenAddress } from "../utils";
 
 export function SettingsView(): JSX.Element {
   const { setConnecting } = useConnectWallet();
   const { darkTheme, toggleDarkTheme } = useDarkTheme();
   const { blockExplorers, preferredExplorer, changePreferredExplorer } = useBlockExplorer();
+  const { preferredNode, ping, updateRpcNode } = useRpcNode();
   const { connected, wallet, publicKey, disconnect } = useWallet();
   const { Option } = Select;
+
+  // RPC node input checking
+  const [rpcNodeInput, setRpcNodeInput] = useState<string>("");
+  const [rpcInputError, setRpcInputError] = useState<string>("");
+  function checkRPC() {
+    if (!rpcNodeInput || !isValidHttpUrl(rpcNodeInput)) {
+      setRpcNodeInput("");
+      setRpcInputError("No URL");
+      return;
+    }
+
+    setRpcInputError("");
+    setRpcNodeInput("");
+    updateRpcNode(rpcNodeInput);
+  }
 
   return (
     <div className="view flex justify-center column">
       <div className="settings">
-        <div className="setting wallet flex align-start justify-center column">
+        <div className="flex align-start justify-center column setting">
+          <span className="setting-title bold-text">RPC NODE</span>
+          <div
+            className="rpc-info flex align-center justify-start"
+            style={{ padding: "var(--spacing-xs) 0" }}
+          >
+            <span>{preferredNode ?? "Jet Default"}</span>
+            {ping > 0 && (
+              <>
+                <div
+                  className="ping-indicator"
+                  style={{
+                    background: ping < 1000 ? "var(--success)" : "var(--failure)"
+                  }}
+                ></div>
+                <span className={ping < 1000 ? "success-text" : "danger-text"}>({ping}ms)</span>
+              </>
+            )}
+            {preferredNode && (
+              <span
+                className="reset-rpc gradient-text semi-bold-text"
+                onClick={() => updateRpcNode()}
+              >
+                RESET
+              </span>
+            )}
+          </div>
+          <JetInput
+            type="text"
+            value={rpcNodeInput || ""}
+            error={rpcInputError}
+            placeholder="ex: https://api.devnet.solana.com/"
+            onClick={() => setRpcInputError("")}
+            onChange={(value: string) => setRpcNodeInput(value.toString())}
+            submit={checkRPC}
+          />
+        </div>
+        <Divider />
+        <div className="flex align-start justify-center column setting wallet">
           <span className="setting-title bold-text">WALLET</span>
           {wallet && connected && publicKey ? (
             <div className="flex-centered">

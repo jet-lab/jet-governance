@@ -13,8 +13,10 @@ import {
   VoteRecord
 } from "@solana/spl-governance";
 import { useWallet } from "@solana/wallet-adapter-react";
-import { Connection, PublicKey } from "@solana/web3.js";
+import { ConfirmOptions, Connection, PublicKey } from "@solana/web3.js";
 import { useMemo } from "react";
+import { useConnectionConfig } from "../contexts";
+import { useRpcNode } from "../contexts/rpcNode";
 import {
   useGovernanceAccountByPda,
   useGovernanceAccountByPubkey,
@@ -167,9 +169,30 @@ export const useTokenOwnerVoteRecord = (
   );
 };
 
-export function useProvider(connection: Connection | undefined, wallet: any) {
+// ----- Rpc Node -----
+
+const confirmOptions = {
+  skipPreflight: true,
+  commitment: "recent",
+  preflightCommitment: "recent"
+} as ConfirmOptions;
+
+export function useConfirmOptions() {
+  return confirmOptions;
+}
+
+export function useProvider() {
+  const { preferredNode } = useRpcNode();
+  const { endpoint } = useConnectionConfig();
+  const connection = useMemo(
+    () => new Connection(preferredNode ?? endpoint, "recent"),
+    [preferredNode, endpoint]
+  );
+  const wallet = useWallet();
+  const confirmOptions = useConfirmOptions();
+
   return useMemo(() => {
-    return new Provider(connection as Connection, wallet, { skipPreflight: true });
+    return new Provider(connection as Connection, wallet as any, confirmOptions);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [connection, wallet?.publicKey?.toBase58()]);
 }

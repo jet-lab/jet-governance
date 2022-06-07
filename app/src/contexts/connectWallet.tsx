@@ -2,7 +2,6 @@ import { Auth } from "@jet-lab/jet-engine";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { createContext, useContext, useState } from "react";
 import { VerifyModal } from "../components/modals";
-import { useConnection } from "../contexts";
 import { useProvider } from "../hooks";
 
 // Connecting wallet context
@@ -18,9 +17,8 @@ const ConnectWalletContext = createContext<ConnectWallet>({
 export const ConnectWalletProvider = (props: { children: any }) => {
   const [connecting, setConnecting] = useState(false);
 
-  const { connected, wallet, publicKey } = useWallet();
-  const connection = useConnection();
-  const provider = useProvider(connection, wallet);
+  const { connected, publicKey } = useWallet();
+  const provider = useProvider();
   const authProgram = Auth.useAuthProgram(provider);
   const { authAccount } = Auth.useAuthAccount(authProgram, publicKey);
   const authed = authAccount?.userAuthentication.allowed;

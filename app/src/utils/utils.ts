@@ -81,6 +81,18 @@ export const isMaxAvailable = (avail: number, input: number): boolean => {
   return Math.abs(avail - input) < 0.1;
 };
 
+// Check if a string is a valid URL
+export function isValidHttpUrl(input: string): boolean {
+  let url;
+  try {
+    url = new URL(input);
+  } catch (_) {
+    return false;
+  }
+
+  return url.protocol === "http:" || url.protocol === "https:";
+}
+
 var SI_SYMBOL = ["", "k", "M", "G", "T", "P", "E"];
 
 export const abbreviateNumber = (number: number) => {
