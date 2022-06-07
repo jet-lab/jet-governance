@@ -180,7 +180,7 @@ export function ProposalProvider({ children = undefined as any }) {
       proposalsByGovernance = proposalsByGovernance.filter(
         prop =>
           !PROPOSAL_BLACKLIST.some(blacklisted => blacklisted.equals(prop.pubkey)) &&
-          prop.account.governingTokenMint == JET_TOKEN_MINT
+          prop.account.governingTokenMint.equals(JET_TOKEN_MINT)
       );
 
       // ----- Staking -----
