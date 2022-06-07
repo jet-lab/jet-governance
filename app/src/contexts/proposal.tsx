@@ -41,7 +41,7 @@ import {
   useRpcContext,
   useStakePoolAndRealmCompatible
 } from "../hooks";
-import { JET_GOVERNANCE } from "../utils";
+import { JET_GOVERNANCE, JET_TOKEN_MINT } from "../utils";
 import { Mint } from "@solana/spl-token";
 import { PROPOSAL_BLACKLIST } from "../models/PROPOSAL_BLACKLIST";
 
@@ -178,7 +178,9 @@ export function ProposalProvider({ children = undefined as any }) {
         JET_GOVERNANCE
       );
       proposalsByGovernance = proposalsByGovernance.filter(
-        prop => !PROPOSAL_BLACKLIST.some(blacklisted => blacklisted.equals(prop.pubkey))
+        prop =>
+          !PROPOSAL_BLACKLIST.some(blacklisted => blacklisted.equals(prop.pubkey)) &&
+          prop.account.governingTokenMint == JET_TOKEN_MINT
       );
 
       // ----- Staking -----
