@@ -41,7 +41,7 @@
     "predeploy": "git pull --ff-only && yarn && yarn build",
     "deploy": "gh-pages -d ../../build/governance --repo https://github.com/solana-labs/oyster-gov",
     "deploy:ar": "arweave deploy-dir ../../build/governance --key-file ",
-    "fmt:fix": "prettier --write \"**/*.+(js|jsx|ts|tsx|json|css|md|less)\""
+    "fmt": "prettier --write \"**/*.+(js|jsx|ts|tsx|json|css|md|less)\""
   },
   "eslintConfig": {
     "extends": "react-app"
