@@ -1,4 +1,3 @@
-import "./Home.less";
 import { Typography } from "antd";
 import { useEffect } from "react";
 import { PastProposalCard, ProposalCard, YourInfo } from "../components";
