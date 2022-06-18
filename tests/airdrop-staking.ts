@@ -1,11 +1,9 @@
-import * as anchor from "@project-serum/anchor";
-import { Program } from "@project-serum/anchor";
+import { Program, AnchorError, AnchorProvider, setProvider } from "@project-serum/anchor";
 import NodeWallet from "@project-serum/anchor/dist/cjs/nodewallet";
 import {
   Keypair,
   PublicKey,
   sendAndConfirmTransaction,
-  StakeProgram,
   SystemProgram,
   SYSVAR_RENT_PUBKEY,
   Transaction,
@@ -41,7 +39,7 @@ const RewardsProgram = anchor.workspace.JetRewards as Program<JetRewards>;
 const StakingProgram = anchor.workspace.JetStaking as Program<JetStaking>;
 const AuthProgram = anchor.workspace.JetAuth as Program<JetAuth>;
 
-const getErrorCode = (e: any): number => (e as anchor.AnchorError).error.errorCode.number;
+const getErrorCode = (e: any): number => (e as AnchorError).error.errorCode.number;
 
 interface StakePoolAccounts {
   stakePool: PublicKey;
@@ -51,19 +49,19 @@ interface StakePoolAccounts {
 }
 
 async function deriveStakePoolAccounts(seed: string, realm: PublicKey): Promise<StakePoolAccounts> {
-  let [stakePool] = await PublicKey.findProgramAddress(
+  const [stakePool] = await PublicKey.findProgramAddress(
     [Buffer.from(seed)],
     StakingProgram.programId
   );
-  let [stakePoolVault] = await PublicKey.findProgramAddress(
+  const [stakePoolVault] = await PublicKey.findProgramAddress(
     [Buffer.from(seed), Buffer.from("vault")],
     StakingProgram.programId
   );
-  let [maxVoterWeightRecord] = await PublicKey.findProgramAddress(
+  const [maxVoterWeightRecord] = await PublicKey.findProgramAddress(
     [realm.toBuffer(), Buffer.from("max-vote-weight-record")],
     StakingProgram.programId
   );
-  let [stakeCollateralMint] = await PublicKey.findProgramAddress(
+  const [stakeCollateralMint] = await PublicKey.findProgramAddress(
     [Buffer.from(seed), Buffer.from("collateral-mint")],
     StakingProgram.programId
   );
@@ -78,9 +76,9 @@ async function deriveStakePoolAccounts(seed: string, realm: PublicKey): Promise<
 
 describe("airdrop-staking", () => {
   // Configure the client to use the local cluster.
-  const provider = anchor.AnchorProvider.env();
+  const provider = AnchorProvider.env();
   const wallet = provider.wallet as NodeWallet;
-  anchor.setProvider(provider);
+  setProvider(provider);
 
   const stakeSeed = "test";
   const staker = Keypair.generate();
@@ -155,7 +153,7 @@ describe("airdrop-staking", () => {
   });
 
   it("create governance realm", async () => {
-    let adminTokenAccount = await councilToken.getOrCreateAssociatedAccountInfo(wallet.publicKey);
+    const adminTokenAccount = await councilToken.getOrCreateAssociatedAccountInfo(wallet.publicKey);
     await councilToken.mintTo(
       adminTokenAccount.address,
       wallet.publicKey,
@@ -163,7 +161,7 @@ describe("airdrop-staking", () => {
       1_000_000
     );
 
-    let instructions: TransactionInstruction[] = [];
+    const instructions: TransactionInstruction[] = [];
 
     govRealm = await withCreateRealm(
       instructions,
@@ -313,7 +311,7 @@ describe("airdrop-staking", () => {
   });
 
   it("create staker governance account", async () => {
-    let instructions: TransactionInstruction[] = [];
+    const instructions: TransactionInstruction[] = [];
 
     stakerGovRecord = await withCreateTokenOwnerRecord(
       instructions,
@@ -437,7 +435,7 @@ describe("airdrop-staking", () => {
   it("user vote prevents unbonding", async () => {
     let instructions: TransactionInstruction[] = [];
 
-    let voteRecord = await withCastVote(
+    const voteRecord = await withCastVote(
       instructions,
       GOVERNANCE_ID,
       2,
@@ -460,7 +458,7 @@ describe("airdrop-staking", () => {
     ]);
 
     try {
-      let unbondSeed = Buffer.alloc(4);
+      const unbondSeed = Buffer.alloc(4);
 
       [stakerUnbond] = await PublicKey.findProgramAddress(
         [stakerAccount.toBuffer(), unbondSeed],
@@ -509,7 +507,7 @@ describe("airdrop-staking", () => {
   });
 
   it("user unbonds stake", async () => {
-    let unbondSeed = Buffer.alloc(4);
+    const unbondSeed = Buffer.alloc(4);
 
     [stakerUnbond] = await PublicKey.findProgramAddress(
       [stakerAccount.toBuffer(), unbondSeed],
@@ -634,7 +632,7 @@ describe("airdrop-staking", () => {
   it("create reward distribution", async () => {
     let bumpSeed: number;
     let vaultBumpSeed: number;
-    let distSeed = "foo";
+    const distSeed = "foo";
 
     [distAccount, bumpSeed] = await PublicKey.findProgramAddress(
       [Buffer.from("distribution"), Buffer.from(distSeed)],
