@@ -24,7 +24,6 @@ import { UnstakeModal } from "./modals/UnstakeModal";
 import { WithdrawModal } from "./modals/WithdrawModal";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { useHistory, useLocation } from "react-router";
-import "./YourInfo.less";
 import { StakedJetBalance } from "./Dashboard/StakedJetBalance";
 import { bigIntToBn } from "@jet-lab/jet-engine";
 
