@@ -1,4 +1,4 @@
-import { Provider } from "@project-serum/anchor";
+import { AnchorProvider } from "@project-serum/anchor";
 import {
   getRealmConfigAddress,
   getSignatoryRecordAddress,
@@ -169,7 +169,7 @@ export const useTokenOwnerVoteRecord = (
 
 export function useProvider(connection: Connection | undefined, wallet: any) {
   return useMemo(() => {
-    return new Provider(connection as Connection, wallet, { skipPreflight: true });
+    return new AnchorProvider(connection as Connection, wallet, { skipPreflight: true });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [connection, wallet?.publicKey?.toBase58()]);
 }

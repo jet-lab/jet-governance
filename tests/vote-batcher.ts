@@ -87,7 +87,7 @@ async function deriveStakePoolAccounts(seed: string, realm: PublicKey): Promise<
 
 describe("vote-batcher", () => {
   // Configure the client to use the local cluster.
-  const provider = anchor.Provider.env();
+  const provider = anchor.AnchorProvider.env();
   const wallet = provider.wallet as NodeWallet;
   anchor.setProvider(provider);
 
