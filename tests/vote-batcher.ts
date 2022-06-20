@@ -563,9 +563,8 @@ describe("vote-batcher", () => {
       assert.equal(getErrorCode(e), 7102);
     }
 
-    var remainingAccounts = [];
-    for (var proposal of govProposals) {
-      let voteRecord = (
+    for (const proposal of govProposals) {
+      const voteRecord = (
         await PublicKey.findProgramAddress(
           [Buffer.from("governance"), proposal.toBuffer(), stakerGovRecord.toBuffer()],
           GOVERNANCE_ID
@@ -595,7 +594,7 @@ describe("vote-batcher", () => {
       signers: [staker]
     });
 
-    let unbondSeed = Buffer.alloc(4);
+    const unbondSeed = Buffer.alloc(4);
 
     [stakerUnbond] = await PublicKey.findProgramAddress(
       [stakerAccount.toBuffer(), unbondSeed],

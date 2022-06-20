@@ -1,4 +1,4 @@
-import { Program, AnchorError, AnchorProvider, setProvider } from "@project-serum/anchor";
+import anchor, { Program, AnchorError, AnchorProvider, setProvider } from "@project-serum/anchor";
 import NodeWallet from "@project-serum/anchor/dist/cjs/nodewallet";
 import {
   Keypair,
@@ -686,7 +686,7 @@ describe("airdrop-staking", () => {
   it("create award", async () => {
     let bumpSeed: number;
     let vaultBumpSeed: number;
-    let distSeed = "foo-award";
+    const distSeed = "foo-award";
 
     [awardAccount, bumpSeed] = await PublicKey.findProgramAddress(
       [Buffer.from("award"), stakerAccount.toBuffer(), Buffer.from(distSeed)],
@@ -755,7 +755,7 @@ describe("airdrop-staking", () => {
   it("create award to revoke", async () => {
     let bumpSeed: number;
     let vaultBumpSeed: number;
-    let distSeed = "revoke-award";
+    const distSeed = "revoke-award";
 
     [awardAccount, bumpSeed] = await PublicKey.findProgramAddress(
       [Buffer.from("award"), stakerAccount.toBuffer(), Buffer.from(distSeed)],
@@ -817,7 +817,7 @@ describe("airdrop-staking", () => {
   it("user cannot unbond with outstanding votes", async () => {
     try {
       let bumpSeed: number;
-      let unbondSeed = Buffer.alloc(4);
+      const unbondSeed = Buffer.alloc(4);
 
       [stakerUnbond, bumpSeed] = await PublicKey.findProgramAddress(
         [stakerAccount.toBuffer(), unbondSeed],
@@ -885,7 +885,7 @@ describe("airdrop-staking", () => {
     const chunks = Math.floor(airdropRecipients.length / chunkSize);
 
     for (let i = 0; i < airdropRecipients.length; i += chunkSize) {
-      let chunk = airdropRecipients.slice(i, i + chunkSize);
+      const chunk = airdropRecipients.slice(i, i + chunkSize);
 
       const addParams = {
         startIndex: new anchor.BN(i),
@@ -918,7 +918,7 @@ describe("airdrop-staking", () => {
     await Promise.all(
       airdropRecipients.map(recipient =>
         (async () => {
-          let [recipientAuth, authBumpSeed] = await PublicKey.findProgramAddress(
+          const [recipientAuth, authBumpSeed] = await PublicKey.findProgramAddress(
             [recipient.publicKey.toBuffer()],
             AuthProgram.programId
           );
@@ -940,11 +940,11 @@ describe("airdrop-staking", () => {
             }
           });
 
-          let [recipientStakeAccount] = await PublicKey.findProgramAddress(
+          const [recipientStakeAccount] = await PublicKey.findProgramAddress(
             [stakeAcc.stakePool.toBuffer(), recipient.publicKey.toBuffer()],
             StakingProgram.programId
           );
-          let [recipientVoterWeight] = await PublicKey.findProgramAddress(
+          const [recipientVoterWeight] = await PublicKey.findProgramAddress(
             [Buffer.from("voter-weight-record"), recipientStakeAccount.toBuffer()],
             StakingProgram.programId
           );
