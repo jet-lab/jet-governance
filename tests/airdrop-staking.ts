@@ -1,9 +1,10 @@
-import anchor, {
+import {
   Program,
   AnchorError,
   Provider,
   setProvider,
-  workspace
+  workspace,
+  BN
 } from "@project-serum/anchor";
 import NodeWallet from "@project-serum/anchor/dist/cjs/nodewallet";
 import {
@@ -179,7 +180,7 @@ describe("airdrop-staking", () => {
       wallet.payer.publicKey,
       councilToken.publicKey,
       new MintMaxVoteWeightSource({ value: MintMaxVoteWeightSource.SUPPLY_FRACTION_BASE }),
-      new anchor.BN(1),
+      new BN(1),
       StakingProgram.programId,
       StakingProgram.programId
     );
@@ -194,7 +195,7 @@ describe("airdrop-staking", () => {
       wallet.publicKey,
       wallet.publicKey,
       wallet.payer.publicKey,
-      new anchor.BN(1_000_000)
+      new BN(1_000_000)
     );
 
     govInstance = await withCreateGovernance(
@@ -206,8 +207,8 @@ describe("airdrop-staking", () => {
       new GovernanceConfig({
         voteTipping: VoteTipping.Strict,
         maxVotingTime: 1_000_000_000,
-        minCommunityTokensToCreateProposal: new anchor.BN(1),
-        minCouncilTokensToCreateProposal: new anchor.BN(1),
+        minCommunityTokensToCreateProposal: new BN(1),
+        minCouncilTokensToCreateProposal: new BN(1),
         minInstructionHoldUpTime: 1,
         voteThresholdPercentage: new VoteThresholdPercentage({ value: 100 })
       }),
@@ -341,11 +342,11 @@ describe("airdrop-staking", () => {
     );
 
     const params = {
-      expireAt: new anchor.BN(Date.now() / 1000 + 10),
+      expireAt: new BN(Date.now() / 1000 + 10),
       stakePool: stakeAcc.stakePool,
       shortDesc: "integ-test-airdrop",
       longDesc: "integ-test-airdrop description",
-      flags: new anchor.BN(0)
+      flags: new BN(0)
     };
 
     await RewardsProgram.rpc.airdropCreate(params, {
@@ -368,10 +369,10 @@ describe("airdrop-staking", () => {
 
   it("add airdrop recipient", async () => {
     const params = {
-      startIndex: new anchor.BN(0),
+      startIndex: new BN(0),
       recipients: [
         {
-          amount: new anchor.BN(4_200_000_000),
+          amount: new BN(4_200_000_000),
           recipient: staker.publicKey
         }
       ]
@@ -862,12 +863,12 @@ describe("airdrop-staking", () => {
     );
 
     const params = {
-      expireAt: new anchor.BN(Date.now() / 1000 + 1000),
+      expireAt: new BN(Date.now() / 1000 + 1000),
       stakePool: stakeAcc.stakePool,
       shortDesc: "integ-test-airdrop",
       longDesc: "some airdrop testing",
       vaultBump: bumpSeed,
-      flags: new anchor.BN(0)
+      flags: new BN(0)
     };
 
     await RewardsProgram.rpc.airdropCreate(params, {
@@ -894,10 +895,10 @@ describe("airdrop-staking", () => {
       const chunk = airdropRecipients.slice(i, i + chunkSize);
 
       const addParams = {
-        startIndex: new anchor.BN(i),
+        startIndex: new BN(i),
         recipients: chunk.map(k => {
           return {
-            amount: new anchor.BN(10_000_000),
+            amount: new BN(10_000_000),
             recipient: k.publicKey
           };
         })
