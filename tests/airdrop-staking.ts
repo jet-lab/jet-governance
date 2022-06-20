@@ -1,4 +1,10 @@
-import anchor, { Program, AnchorError, AnchorProvider, setProvider } from "@project-serum/anchor";
+import anchor, {
+  Program,
+  AnchorError,
+  AnchorProvider,
+  setProvider,
+  workspace
+} from "@project-serum/anchor";
 import NodeWallet from "@project-serum/anchor/dist/cjs/nodewallet";
 import {
   Keypair,
@@ -35,9 +41,9 @@ import { JetStaking } from "../target/types/jet_staking";
 import { JetAuth } from "../target/types/jet_auth";
 
 const GOVERNANCE_ID = new PublicKey("JPGov2SBA6f7XSJF5R4Si5jEJekGiyrwP2m7gSEqLUs");
-const RewardsProgram = anchor.workspace.JetRewards as Program<JetRewards>;
-const StakingProgram = anchor.workspace.JetStaking as Program<JetStaking>;
-const AuthProgram = anchor.workspace.JetAuth as Program<JetAuth>;
+const RewardsProgram = workspace.JetRewards as Program<JetRewards>;
+const StakingProgram = workspace.JetStaking as Program<JetStaking>;
+const AuthProgram = workspace.JetAuth as Program<JetAuth>;
 
 const getErrorCode = (e: any): number => (e as AnchorError).error.errorCode.number;
 
