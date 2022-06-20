@@ -14,7 +14,7 @@ npm run start
 
 `npm run build` to compile app to the /build directory
 
-`localhost:3000` in browser
+`localhost:3000` in browser.
 
 ## Troubleshooting
 
