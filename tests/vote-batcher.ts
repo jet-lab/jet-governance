@@ -157,7 +157,7 @@ describe("vote-batcher", () => {
     });
   });
 
-  const NUMBER_OF_PROPOSALS = 8;
+  const NUMBER_OF_PROPOSALS = 3;
 
   it("create realm old", async () => {
     const adminTokenAccount = await councilToken.getOrCreateAssociatedAccountInfo(wallet.publicKey);
@@ -485,7 +485,7 @@ describe("vote-batcher", () => {
   });
 
   it("vote and relinquish many - unbond only when no active votes", async () => {
-    const remainingAccounts = [];
+    var remainingAccounts = [];
     const votes = [];
     for (const proposal of govProposals) {
       const voteRecord = (
@@ -556,6 +556,7 @@ describe("vote-batcher", () => {
       assert.equal(getErrorCode(e), 7102);
     }
 
+    remainingAccounts = [];
     for (const proposal of govProposals) {
       const voteRecord = (
         await PublicKey.findProgramAddress(
