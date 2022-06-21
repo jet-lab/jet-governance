@@ -1,3 +1,4 @@
+import "../App.less";
 import { Layout } from "antd";
 import React from "react";
 import { Navbar } from "./Navbar";
