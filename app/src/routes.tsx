@@ -1,5 +1,5 @@
 import { ConfigProvider } from "antd-country-phone-input";
-import en from "world_countries_lists/data/countries/en/world.json";
+import en from "world_countries_lists/data/en/world.json";
 import { ErrorBoundary } from "react-error-boundary";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { HashRouter, Route, Switch } from "react-router-dom";

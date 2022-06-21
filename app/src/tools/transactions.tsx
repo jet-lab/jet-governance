@@ -1,12 +1,12 @@
-import { AnchorProvider } from "@project-serum/anchor";
+import { Provider } from "@project-serum/anchor";
+import { SendTxRequest } from "@project-serum/anchor/dist/cjs/provider";
 import { WalletSigner } from "@solana/spl-governance";
 import {
   TransactionInstruction,
   Connection,
   Transaction,
   Keypair,
-  PublicKey,
-  Signer
+  PublicKey
 } from "@solana/web3.js";
 import { notification } from "antd";
 import { sendTransaction2 } from "./sdk/core/connection";
@@ -55,8 +55,8 @@ export async function sendTransaction(
  * @returns transaction signature
  */
 export async function sendAllTransactions(
-  provider: AnchorProvider,
-  transactions: { tx: Transaction; signers?: Signer[] }[]
+  provider: Provider,
+  transactions: SendTxRequest[]
 ): Promise<string> {
   try {
     const txnResult = await provider.sendAll(transactions);
