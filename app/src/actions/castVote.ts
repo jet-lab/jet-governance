@@ -1,5 +1,5 @@
 import { StakeAccount, StakeClient, StakeIdl, StakePool } from "@jet-lab/jet-engine";
-import { Program, Provider } from "@project-serum/anchor";
+import { Program, AnchorProvider } from "@project-serum/anchor";
 import {
   ChatMessageBody,
   GOVERNANCE_CHAT_PROGRAM_ID,
@@ -39,7 +39,7 @@ export const castVote = async (
 
   let governanceAuthority = walletPubkey;
   let payer = walletPubkey;
-  const provider = new Provider(connection, wallet as any, { skipPreflight: true });
+  const provider = new AnchorProvider(connection, wallet as any, { skipPreflight: true });
 
   // Withdraw existing vote before casting new vote
   // Then sign both transactions at once

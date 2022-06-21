@@ -1,4 +1,3 @@
-import "./Proposal.less";
 import {
   ArrowLeftOutlined,
   DownloadOutlined,
