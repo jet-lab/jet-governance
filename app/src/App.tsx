@@ -1,4 +1,3 @@
-import "./App.less";
 import { Routes } from "./routes";
 
 function App() {
