@@ -111,11 +111,6 @@ pub fn handler<'c, 'info>(
     votes: Vec<SimpleVote>,
 ) -> Result<()> {
     if ctx.remaining_accounts.len() % 3 != 0 || ctx.remaining_accounts.len() / 3 != votes.len() {
-        msg!(
-            "expected three times as many remaining accounts as votes, but got: {} acounts and {} votes",
-            ctx.remaining_accounts.len(),
-            votes.len()
-        );
         return err!(ErrorCode::ProposalsAndVotesMisaligned);
     }
     ctx.remaining_accounts

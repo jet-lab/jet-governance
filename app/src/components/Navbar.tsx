@@ -1,3 +1,4 @@
+import "./Navbar.less";
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useWallet } from "@solana/wallet-adapter-react";

@@ -1,9 +1,11 @@
-import { Program, workspace, Provider, BN, setProvider, AnchorError } from "@project-serum/anchor";
+import * as anchor from "@project-serum/anchor";
+import { Program } from "@project-serum/anchor";
 import NodeWallet from "@project-serum/anchor/dist/cjs/nodewallet";
 import {
   Keypair,
   PublicKey,
   sendAndConfirmTransaction,
+  StakeProgram,
   SystemProgram,
   SYSVAR_RENT_PUBKEY,
   SYSVAR_CLOCK_PUBKEY,
@@ -15,6 +17,7 @@ import {
   withCreateRealm,
   withCreateTokenOwnerRecord,
   withCreateProposal,
+  withCastVote,
   withCreateGovernance,
   withDepositGoverningTokens,
   MintMaxVoteWeightSource,
@@ -24,7 +27,11 @@ import {
   VoteThresholdPercentage,
   VoteType,
   GovernanceConfig,
-  withSignOffProposal
+  Vote,
+  YesNoVote,
+  withSignOffProposal,
+  withRelinquishVote,
+  Proposal
 } from "@solana/spl-governance";
 import { assert } from "chai";
 import { JetRewards } from "../target/types/jet_rewards";
@@ -33,12 +40,12 @@ import { JetAuth } from "../target/types/jet_auth";
 import { JetVoteBatcher } from "../target/types/jet_vote_batcher";
 
 const GOVERNANCE_ID = new PublicKey("JPGov2SBA6f7XSJF5R4Si5jEJekGiyrwP2m7gSEqLUs");
-const RewardsProgram = workspace.JetRewards as Program<JetRewards>;
-const StakingProgram = workspace.JetStaking as Program<JetStaking>;
-const AuthProgram = workspace.JetAuth as Program<JetAuth>;
-const VoteBatcherProgram = workspace.JetVoteBatcher as Program<JetVoteBatcher>;
+const RewardsProgram = anchor.workspace.JetRewards as Program<JetRewards>;
+const StakingProgram = anchor.workspace.JetStaking as Program<JetStaking>;
+const AuthProgram = anchor.workspace.JetAuth as Program<JetAuth>;
+const VoteBatcherProgram = anchor.workspace.JetVoteBatcher as Program<JetVoteBatcher>;
 
-const getErrorCode = (e: any): number => (e as AnchorError).error.errorCode.number;
+const getErrorCode = (e: any): number => (e as anchor.AnchorError).error.errorCode.number;
 
 interface StakePoolAccounts {
   stakePool: PublicKey;
@@ -53,19 +60,19 @@ interface ProposalMetadata {
 }
 
 async function deriveStakePoolAccounts(seed: string, realm: PublicKey): Promise<StakePoolAccounts> {
-  const [stakePool] = await PublicKey.findProgramAddress(
+  let [stakePool] = await PublicKey.findProgramAddress(
     [Buffer.from(seed)],
     StakingProgram.programId
   );
-  const [stakePoolVault] = await PublicKey.findProgramAddress(
+  let [stakePoolVault] = await PublicKey.findProgramAddress(
     [Buffer.from(seed), Buffer.from("vault")],
     StakingProgram.programId
   );
-  const [maxVoterWeightRecord] = await PublicKey.findProgramAddress(
+  let [maxVoterWeightRecord] = await PublicKey.findProgramAddress(
     [realm.toBuffer(), Buffer.from("max-vote-weight-record")],
     StakingProgram.programId
   );
-  const [stakeCollateralMint] = await PublicKey.findProgramAddress(
+  let [stakeCollateralMint] = await PublicKey.findProgramAddress(
     [Buffer.from(seed), Buffer.from("collateral-mint")],
     StakingProgram.programId
   );
@@ -80,9 +87,9 @@ async function deriveStakePoolAccounts(seed: string, realm: PublicKey): Promise<
 
 describe("vote-batcher", () => {
   // Configure the client to use the local cluster.
-  const provider = Provider.env();
+  const provider = anchor.Provider.env();
   const wallet = provider.wallet as NodeWallet;
-  setProvider(provider);
+  anchor.setProvider(provider);
 
   const stakeSeed = "vote-batcher";
   const staker = Keypair.generate();
@@ -107,8 +114,8 @@ describe("vote-batcher", () => {
   let awardVault: PublicKey;
   let govRealm: PublicKey;
   let govInstance: PublicKey;
-  const govProposals: PublicKey[] = [];
-  const proposals: ProposalMetadata[] = [];
+  let govProposals: PublicKey[] = [];
+  let proposals: ProposalMetadata[] = [];
   let govVault: PublicKey;
   let adminGovRecord: PublicKey;
   let stakerGovRecord: PublicKey;
@@ -157,10 +164,10 @@ describe("vote-batcher", () => {
     });
   });
 
-  const NUMBER_OF_PROPOSALS = 3;
+  const NUMBER_OF_PROPOSALS = 8;
 
   it("create realm old", async () => {
-    const adminTokenAccount = await councilToken.getOrCreateAssociatedAccountInfo(wallet.publicKey);
+    let adminTokenAccount = await councilToken.getOrCreateAssociatedAccountInfo(wallet.publicKey);
     await councilToken.mintTo(
       adminTokenAccount.address,
       wallet.publicKey,
@@ -168,7 +175,7 @@ describe("vote-batcher", () => {
       1_000_000
     );
 
-    const instructions: TransactionInstruction[] = [];
+    let instructions: TransactionInstruction[] = [];
 
     govRealm = await withCreateRealm(
       instructions,
@@ -180,7 +187,7 @@ describe("vote-batcher", () => {
       wallet.payer.publicKey,
       councilToken.publicKey,
       new MintMaxVoteWeightSource({ value: MintMaxVoteWeightSource.SUPPLY_FRACTION_BASE }),
-      new BN(1),
+      new anchor.BN(1),
       StakingProgram.programId,
       StakingProgram.programId
     );
@@ -195,7 +202,7 @@ describe("vote-batcher", () => {
       wallet.publicKey,
       wallet.publicKey,
       wallet.payer.publicKey,
-      new BN(1_000_000)
+      new anchor.BN(1_000_000)
     );
 
     govInstance = await withCreateGovernance(
@@ -207,8 +214,8 @@ describe("vote-batcher", () => {
       new GovernanceConfig({
         voteTipping: VoteTipping.Strict,
         maxVotingTime: 1_000_000_000,
-        minCommunityTokensToCreateProposal: new BN(1),
-        minCouncilTokensToCreateProposal: new BN(1),
+        minCommunityTokensToCreateProposal: new anchor.BN(1),
+        minCouncilTokensToCreateProposal: new anchor.BN(1),
         minInstructionHoldUpTime: 1,
         voteThresholdPercentage: new VoteThresholdPercentage({ value: 100 })
       }),
@@ -222,8 +229,8 @@ describe("vote-batcher", () => {
     ]);
 
     for (let i = 0; i != NUMBER_OF_PROPOSALS; i++) {
-      const instructions: TransactionInstruction[] = [];
-      const proposal = await withCreateProposal(
+      let instructions: TransactionInstruction[] = [];
+      let proposal = await withCreateProposal(
         instructions,
         GOVERNANCE_ID,
         2,
@@ -292,7 +299,7 @@ describe("vote-batcher", () => {
   //     wallet.payer.publicKey,
   //     councilToken.publicKey,
   //     new MintMaxVoteWeightSource({ value: MintMaxVoteWeightSource.SUPPLY_FRACTION_BASE }),
-  //     new BN(1),
+  //     new anchor.BN(1),
   //     StakingProgram.programId,
   //     StakingProgram.programId
   //   );
@@ -307,7 +314,7 @@ describe("vote-batcher", () => {
   //     wallet.publicKey,
   //     wallet.publicKey,
   //     wallet.payer.publicKey,
-  //     new BN(1_000_000)
+  //     new anchor.BN(1_000_000)
   //   );
 
   //   govInstance = await withCreateGovernance(
@@ -319,8 +326,8 @@ describe("vote-batcher", () => {
   //     new GovernanceConfig({
   //       voteTipping: VoteTipping.Strict,
   //       maxVotingTime: 1_000_000_000,
-  //       minCommunityTokensToCreateProposal: new BN(1),
-  //       minCouncilTokensToCreateProposal: new BN(1),
+  //       minCommunityTokensToCreateProposal: new anchor.BN(1),
+  //       minCouncilTokensToCreateProposal: new anchor.BN(1),
   //       minInstructionHoldUpTime: 1,
   //       voteThresholdPercentage: new VoteThresholdPercentage({ value: 100 })
   //     }),
@@ -359,7 +366,7 @@ describe("vote-batcher", () => {
   //       owner.publicKey,
   //       owner.publicKey,
   //       owner.publicKey,
-  //       new BN(1_000_000)
+  //       new anchor.BN(1_000_000)
   //     );
 
   //     // let proposal = await withCreateProposal(
@@ -469,7 +476,7 @@ describe("vote-batcher", () => {
   });
 
   it("create staker governance account", async () => {
-    const instructions: TransactionInstruction[] = [];
+    let instructions: TransactionInstruction[] = [];
 
     stakerGovRecord = await withCreateTokenOwnerRecord(
       instructions,
@@ -486,9 +493,9 @@ describe("vote-batcher", () => {
 
   it("vote and relinquish many - unbond only when no active votes", async () => {
     var remainingAccounts = [];
-    const votes = [];
-    for (const proposal of govProposals) {
-      const voteRecord = (
+    var votes = [];
+    for (var proposal of govProposals) {
+      let voteRecord = (
         await PublicKey.findProgramAddress(
           [Buffer.from("governance"), proposal.toBuffer(), stakerGovRecord.toBuffer()],
           GOVERNANCE_ID
@@ -499,7 +506,7 @@ describe("vote-batcher", () => {
       remainingAccounts.push({ pubkey: voteRecord, isSigner: false, isWritable: true });
       votes.push({ yes: {} });
     }
-    const realmConfig = (
+    let realmConfig = (
       await PublicKey.findProgramAddress(
         [Buffer.from("realm-config"), govRealm.toBuffer()],
         GOVERNANCE_ID
@@ -528,7 +535,7 @@ describe("vote-batcher", () => {
     });
 
     try {
-      const unbondSeed = Buffer.alloc(4);
+      let unbondSeed = Buffer.alloc(4);
 
       [stakerUnbond] = await PublicKey.findProgramAddress(
         [stakerAccount.toBuffer(), unbondSeed],
@@ -556,9 +563,9 @@ describe("vote-batcher", () => {
       assert.equal(getErrorCode(e), 7102);
     }
 
-    remainingAccounts = [];
-    for (const proposal of govProposals) {
-      const voteRecord = (
+    var remainingAccounts = [];
+    for (var proposal of govProposals) {
+      let voteRecord = (
         await PublicKey.findProgramAddress(
           [Buffer.from("governance"), proposal.toBuffer(), stakerGovRecord.toBuffer()],
           GOVERNANCE_ID
@@ -588,7 +595,7 @@ describe("vote-batcher", () => {
       signers: [staker]
     });
 
-    const unbondSeed = Buffer.alloc(4);
+    let unbondSeed = Buffer.alloc(4);
 
     [stakerUnbond] = await PublicKey.findProgramAddress(
       [stakerAccount.toBuffer(), unbondSeed],

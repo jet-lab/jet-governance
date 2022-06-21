@@ -24,6 +24,7 @@ import { UnstakeModal } from "./modals/UnstakeModal";
 import { WithdrawModal } from "./modals/WithdrawModal";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { useHistory, useLocation } from "react-router";
+import "./YourInfo.less";
 import { StakedJetBalance } from "./Dashboard/StakedJetBalance";
 import { bigIntToBn } from "@jet-lab/jet-engine";
 
@@ -43,7 +44,6 @@ export const YourInfo = () => {
     unbondingTotal: { unbondingQueue, unbondingComplete },
     unbondingAccounts,
     stakeBalance: { stakedJet },
-    provider,
     jetAccount,
     jetMint,
     stakingYield,
@@ -106,8 +106,8 @@ export const YourInfo = () => {
    */
   const getJetAirdrop = async () => {
     try {
-      if (programs && provider) {
-        await jetFaucet(provider, JET_FAUCET_DEVNET, JET_TOKEN_MINT, "Devnet JET");
+      if (programs) {
+        await jetFaucet(programs.stake.provider, JET_FAUCET_DEVNET, JET_TOKEN_MINT, "Devnet JET");
       }
     } catch {
     } finally {
@@ -120,9 +120,9 @@ export const YourInfo = () => {
    */
   const getCouncilAirdrop = async () => {
     try {
-      if (programs && provider) {
+      if (programs) {
         await jetFaucet(
-          provider,
+          programs.stake.provider,
           COUNCIL_FAUCET_DEVNET,
           COUNCIL_TOKEN_MINT,
           "Devnet Council token"

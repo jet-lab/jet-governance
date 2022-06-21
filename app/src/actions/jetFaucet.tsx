@@ -1,10 +1,10 @@
 import { TokenFaucet } from "@jet-lab/jet-engine";
-import { AnchorProvider } from "@project-serum/anchor";
+import { Provider } from "@project-serum/anchor";
 import { PublicKey } from "@solana/web3.js";
 import { notification } from "antd";
 
 export const jetFaucet = async (
-  provider: AnchorProvider,
+  provider: Provider,
   faucet: PublicKey,
   mint: PublicKey,
   tokenDesc: string
