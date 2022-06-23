@@ -24,7 +24,8 @@
     "react-query": "^3.34.16",
     "react-router": "5.2.0",
     "react-router-dom": "5.2.0",
-    "superstruct": "^0.15.2"
+    "superstruct": "^0.15.2",
+    "world_countries_lists": "^2.6.0"
   },
   "scripts": {
     "start": "craco start --verbose",
