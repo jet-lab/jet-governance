@@ -377,21 +377,21 @@ export const VerifyModal = () => {
         <div className="wallets flex-centered column">
           {wallets.map(w => (
             <div
-              key={w.name}
+              key={w.adapter.name}
               className={`wallet flex align-center justify-between
-                ${wallet?.name === w.name ? "active" : ""}`}
+                ${wallet?.adapter.name === w.adapter.name ? "active" : ""}`}
               onClick={() => {
-                select(w.name);
+                select(w.adapter.name);
               }}
             >
               <div className="flex-centered">
                 <img
-                  src={`img/wallets/${w.name.toLowerCase()}.png`}
+                  src={`img/wallets/${w.adapter.name.toLowerCase()}.png`}
                   width="30px"
                   height="auto"
-                  alt={`${w.name} Logo`}
+                  alt={`${w.adapter.name} Logo`}
                 />
-                <p className="center-text">{w.name}</p>
+                <p className="center-text">{w.adapter.name}</p>
               </div>
               <ArrowIcon width="25px" />
             </div>
