@@ -43,11 +43,11 @@ export function TransactionsProvider(props: { children: any }) {
 
   // Returns the correct action type string
   // For staking from airdrop or wallet
-  const getActionType = (action: string, wallet: string): string => {
+  const getActionType = (action: string): string => {
     let actionType;
     switch (action) {
       case "stake":
-        actionType = `Staked from wallet ${shortenAddress(wallet, 4)}`;
+        actionType = `Staked from wallet ${shortenAddress(publicKey!.toString(), 4)}`;
         break;
       case "unbond_stake":
         actionType = "Unstaked";
@@ -117,7 +117,7 @@ export function TransactionsProvider(props: { children: any }) {
                       log,
                       blockDate: dateFromUnixTimestamp(new BN(log.blockTime)),
                       signature,
-                      action: getActionType(progInst, pre.owner!),
+                      action: getActionType(progInst),
                       amount: `${new Intl.NumberFormat().format(
                         Number(
                           Math.abs(
