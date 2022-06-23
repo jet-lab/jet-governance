@@ -101,10 +101,13 @@ export function useCountdown(
   );
   const endDate = useMemo(() => {
     const deadline = proposal && governance ? getVotingDeadline(proposal, governance) : undefined;
+    // return deadline ? dateToString(new Date(deadline.toNumber() * 1000)) : undefined;
+    // TODO: Change to getting actual date from program once bug in Solana gov program is fixed.
+
     const votingTime = governance?.account.config.maxVotingTime;
     const deadlineFromStartDate =
-      proposal && proposal.account.votingAt
-        ? dateToString(new Date((bnToNumber(proposal.account.votingAt) + bnToNumber(votingTime)) * 1000))
+      proposal && proposal.account.votingAt && votingTime
+        ? dateToString(new Date((bnToNumber(proposal.account.votingAt) + votingTime) * 1000))
         : undefined;
 
     return deadlineFromStartDate;
