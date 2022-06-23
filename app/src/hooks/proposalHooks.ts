@@ -57,9 +57,9 @@ export const getProposalFilters = (
   } else if (proposalFilter === "inactive") {
     return proposals.filter(p => p.account.isVoteFinalized() || p.account.isPreVotingState());
   } else if (proposalFilter === "passed") {
-    return proposals.filter(p => useIsProposalPassed(p));
+    return proposals.filter(p => p.account.state === ProposalState.Succeeded);
   } else if (proposalFilter === "rejected") {
-    return proposals.filter(p => !useIsProposalPassed(p) && !p.account.isPreVotingState());
+    return proposals.filter(p => p.account.state === ProposalState.Defeated);
   } else if (proposalFilter === "all") {
     return proposals;
   } else {
@@ -308,12 +308,6 @@ export function getVoteCounts(proposal: ProgramAccount<Proposal>) {
     ? 0
     : (bnToNumber(abstain.add(yes)) / bnToNumber(total)) * 100;
   return { yes, no, abstain, total, yesPercent: yesPercent, yesAbstainPercent };
-}
-
-// --------- Check if proposal has passed by simple majority ---------
-export function useIsProposalPassed(proposal: ProgramAccount<Proposal>): boolean {
-  const { yes, no } = getVoteCounts(proposal);
-  return yes.gt(no);
 }
 
 export const useWalletVoteRecords = () => {
