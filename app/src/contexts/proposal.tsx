@@ -13,7 +13,7 @@ import {
   UnbondingAccount,
   UnbondingAmount
 } from "@jet-lab/jet-engine";
-import { BN, Program } from "@project-serum/anchor";
+import { AnchorProvider, BN, Program } from "@project-serum/anchor";
 import {
   getGovernanceAccount,
   getProposalsByGovernance,
@@ -60,6 +60,7 @@ interface ProposalContextState {
   unbondingAccounts?: UnbondingAccount[];
   unbondingTotal: UnbondingAmount;
   stakeBalance: StakeBalance;
+  provider?: AnchorProvider;
 
   distributions?: Distribution[];
   stakingYield?: DistributionYield;
@@ -315,6 +316,7 @@ export function ProposalProvider({ children = undefined as any }) {
         refresh,
         walletFetched,
 
+        provider,
         stakingYield,
 
         unbondingTotal,

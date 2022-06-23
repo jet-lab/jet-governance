@@ -1,9 +1,8 @@
-import { Provider } from "@project-serum/anchor";
+import { AnchorProvider } from "@project-serum/anchor";
 import { AssociatedToken, StakeAccount, StakePool, UnbondingAccount } from "@jet-lab/jet-engine";
 import { RpcContext } from "@solana/spl-governance";
-import { Transaction, TransactionInstruction } from "@solana/web3.js";
+import { Signer, Transaction, TransactionInstruction } from "@solana/web3.js";
 import { sendAllTransactions } from "../tools/transactions";
-import { SendTxRequest } from "@project-serum/anchor/dist/cjs/provider";
 
 export const withdrawUnbonded = async (
   { connection, wallet }: RpcContext,
@@ -12,8 +11,11 @@ export const withdrawUnbonded = async (
   stakePool: StakePool
 ): Promise<string | undefined> => {
   let ix: TransactionInstruction[] = [];
-  const allTxs: SendTxRequest[] = [];
-  const provider = new Provider(connection, wallet as any, { skipPreflight: true });
+  const allTxs: {
+    tx: Transaction;
+    signers: Signer[];
+  }[] = [];
+  const provider = new AnchorProvider(connection, wallet as any, { skipPreflight: true });
 
   const tokenReceiver = await AssociatedToken.withCreate(
     ix,

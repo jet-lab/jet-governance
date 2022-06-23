@@ -20,3 +20,4 @@ yarn-error.log
 
 # Used by rewards-cli
 /tools/cli/*.json
+build

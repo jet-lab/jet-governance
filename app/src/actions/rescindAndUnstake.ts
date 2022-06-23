@@ -1,5 +1,5 @@
 import { StakeAccount, StakeClient, StakePool, UnbondingAccount } from "@jet-lab/jet-engine";
-import { BN, Provider } from "@project-serum/anchor";
+import { BN, AnchorProvider } from "@project-serum/anchor";
 import {
   getTokenOwnerRecordAddress,
   getTokenOwnerRecordForRealm,
@@ -23,7 +23,7 @@ export const rescindAndUnstake = async (
 ): Promise<string> => {
   const unbondingSeed = UnbondingAccount.randomSeed();
   const allTxs = [];
-  const provider = new Provider(connection, wallet as any, { skipPreflight: true });
+  const provider = new AnchorProvider(connection, wallet as any, { skipPreflight: true });
 
   // Load the token owner record
   const tokenOwnerRecordAddress = await getTokenOwnerRecordAddress(

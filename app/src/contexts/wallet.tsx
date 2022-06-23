@@ -1,11 +1,16 @@
 import { WalletAdapterNetwork, WalletError } from "@solana/wallet-adapter-base";
 import { WalletProvider as BaseWalletProvider } from "@solana/wallet-adapter-react";
 import {
-  getPhantomWallet,
-  getSolflareWallet,
-  getSolletWallet,
-  getSolongWallet,
-  getMathWallet
+  PhantomWalletAdapter,
+  SolflareWalletAdapter,
+  SolletWalletAdapter,
+  SolongWalletAdapter,
+  MathWalletAdapter
+  // getPhantomWallet,
+  // getSolflareWallet,
+  // getSolletWallet,
+  // getSolongWallet,
+  // getMathWallet
 } from "@solana/wallet-adapter-wallets";
 import { useCallback, useMemo } from "react";
 import { useConnectionConfig } from "./connection";
@@ -28,11 +33,11 @@ export const WalletProvider = ({ children }: { children: any }) => {
 
   const wallets = useMemo(
     () => [
-      getPhantomWallet(),
-      getSolflareWallet(),
-      getSolongWallet(),
-      getMathWallet(),
-      getSolletWallet({ network })
+      new PhantomWalletAdapter(),
+      new SolflareWalletAdapter(),
+      new SolletWalletAdapter(),
+      new SolongWalletAdapter(),
+      new MathWalletAdapter()
     ],
     // eslint-disable-next-line react-hooks/exhaustive-deps
     []

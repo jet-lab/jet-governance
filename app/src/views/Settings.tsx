@@ -21,8 +21,8 @@ export function SettingsView(): JSX.Element {
               <img
                 width="20px"
                 height="auto"
-                src={`img/wallets/${wallet.name.replace(" ", "_").toLowerCase()}.png`}
-                alt={`${wallet.name} Logo`}
+                src={`img/wallets/${wallet.adapter.name.replace(" ", "_").toLowerCase()}.png`}
+                alt={`${wallet.adapter.name} Logo`}
               />
               <span className="wallet-address">{shortenAddress(publicKey.toString(), 4)}</span>
               <Button ghost size="small" onClick={() => disconnect()}>

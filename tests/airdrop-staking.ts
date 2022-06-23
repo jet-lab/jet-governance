@@ -1,11 +1,9 @@
-import * as anchor from "@project-serum/anchor";
-import { Program } from "@project-serum/anchor";
+import { Program, AnchorError, Provider, setProvider, workspace, BN } from "@project-serum/anchor";
 import NodeWallet from "@project-serum/anchor/dist/cjs/nodewallet";
 import {
   Keypair,
   PublicKey,
   sendAndConfirmTransaction,
-  StakeProgram,
   SystemProgram,
   SYSVAR_RENT_PUBKEY,
   Transaction,
@@ -37,11 +35,11 @@ import { JetStaking } from "../target/types/jet_staking";
 import { JetAuth } from "../target/types/jet_auth";
 
 const GOVERNANCE_ID = new PublicKey("JPGov2SBA6f7XSJF5R4Si5jEJekGiyrwP2m7gSEqLUs");
-const RewardsProgram = anchor.workspace.JetRewards as Program<JetRewards>;
-const StakingProgram = anchor.workspace.JetStaking as Program<JetStaking>;
-const AuthProgram = anchor.workspace.JetAuth as Program<JetAuth>;
+const RewardsProgram = workspace.JetRewards as Program<JetRewards>;
+const StakingProgram = workspace.JetStaking as Program<JetStaking>;
+const AuthProgram = workspace.JetAuth as Program<JetAuth>;
 
-const getErrorCode = (e: any): number => (e as anchor.AnchorError).error.errorCode.number;
+const getErrorCode = (e: any): number => (e as AnchorError).error.errorCode.number;
 
 interface StakePoolAccounts {
   stakePool: PublicKey;
@@ -51,19 +49,19 @@ interface StakePoolAccounts {
 }
 
 async function deriveStakePoolAccounts(seed: string, realm: PublicKey): Promise<StakePoolAccounts> {
-  let [stakePool] = await PublicKey.findProgramAddress(
+  const [stakePool] = await PublicKey.findProgramAddress(
     [Buffer.from(seed)],
     StakingProgram.programId
   );
-  let [stakePoolVault] = await PublicKey.findProgramAddress(
+  const [stakePoolVault] = await PublicKey.findProgramAddress(
     [Buffer.from(seed), Buffer.from("vault")],
     StakingProgram.programId
   );
-  let [maxVoterWeightRecord] = await PublicKey.findProgramAddress(
+  const [maxVoterWeightRecord] = await PublicKey.findProgramAddress(
     [realm.toBuffer(), Buffer.from("max-vote-weight-record")],
     StakingProgram.programId
   );
-  let [stakeCollateralMint] = await PublicKey.findProgramAddress(
+  const [stakeCollateralMint] = await PublicKey.findProgramAddress(
     [Buffer.from(seed), Buffer.from("collateral-mint")],
     StakingProgram.programId
   );
@@ -78,9 +76,9 @@ async function deriveStakePoolAccounts(seed: string, realm: PublicKey): Promise<
 
 describe("airdrop-staking", () => {
   // Configure the client to use the local cluster.
-  const provider = anchor.Provider.env();
+  const provider = Provider.env();
   const wallet = provider.wallet as NodeWallet;
-  anchor.setProvider(provider);
+  setProvider(provider);
 
   const stakeSeed = "test";
   const staker = Keypair.generate();
@@ -155,7 +153,7 @@ describe("airdrop-staking", () => {
   });
 
   it("create governance realm", async () => {
-    let adminTokenAccount = await councilToken.getOrCreateAssociatedAccountInfo(wallet.publicKey);
+    const adminTokenAccount = await councilToken.getOrCreateAssociatedAccountInfo(wallet.publicKey);
     await councilToken.mintTo(
       adminTokenAccount.address,
       wallet.publicKey,
@@ -163,7 +161,7 @@ describe("airdrop-staking", () => {
       1_000_000
     );
 
-    let instructions: TransactionInstruction[] = [];
+    const instructions: TransactionInstruction[] = [];
 
     govRealm = await withCreateRealm(
       instructions,
@@ -175,7 +173,7 @@ describe("airdrop-staking", () => {
       wallet.payer.publicKey,
       councilToken.publicKey,
       new MintMaxVoteWeightSource({ value: MintMaxVoteWeightSource.SUPPLY_FRACTION_BASE }),
-      new anchor.BN(1),
+      new BN(1),
       StakingProgram.programId,
       StakingProgram.programId
     );
@@ -190,7 +188,7 @@ describe("airdrop-staking", () => {
       wallet.publicKey,
       wallet.publicKey,
       wallet.payer.publicKey,
-      new anchor.BN(1_000_000)
+      new BN(1_000_000)
     );
 
     govInstance = await withCreateGovernance(
@@ -202,8 +200,8 @@ describe("airdrop-staking", () => {
       new GovernanceConfig({
         voteTipping: VoteTipping.Strict,
         maxVotingTime: 1_000_000_000,
-        minCommunityTokensToCreateProposal: new anchor.BN(1),
-        minCouncilTokensToCreateProposal: new anchor.BN(1),
+        minCommunityTokensToCreateProposal: new BN(1),
+        minCouncilTokensToCreateProposal: new BN(1),
         minInstructionHoldUpTime: 1,
         voteThresholdPercentage: new VoteThresholdPercentage({ value: 100 })
       }),
@@ -313,7 +311,7 @@ describe("airdrop-staking", () => {
   });
 
   it("create staker governance account", async () => {
-    let instructions: TransactionInstruction[] = [];
+    const instructions: TransactionInstruction[] = [];
 
     stakerGovRecord = await withCreateTokenOwnerRecord(
       instructions,
@@ -337,11 +335,11 @@ describe("airdrop-staking", () => {
     );
 
     const params = {
-      expireAt: new anchor.BN(Date.now() / 1000 + 10),
+      expireAt: new BN(Date.now() / 1000 + 10),
       stakePool: stakeAcc.stakePool,
       shortDesc: "integ-test-airdrop",
       longDesc: "integ-test-airdrop description",
-      flags: new anchor.BN(0)
+      flags: new BN(0)
     };
 
     await RewardsProgram.rpc.airdropCreate(params, {
@@ -364,10 +362,10 @@ describe("airdrop-staking", () => {
 
   it("add airdrop recipient", async () => {
     const params = {
-      startIndex: new anchor.BN(0),
+      startIndex: new BN(0),
       recipients: [
         {
-          amount: new anchor.BN(4_200_000_000),
+          amount: new BN(4_200_000_000),
           recipient: staker.publicKey
         }
       ]
@@ -437,7 +435,7 @@ describe("airdrop-staking", () => {
   it("user vote prevents unbonding", async () => {
     let instructions: TransactionInstruction[] = [];
 
-    let voteRecord = await withCastVote(
+    const voteRecord = await withCastVote(
       instructions,
       GOVERNANCE_ID,
       2,
@@ -460,7 +458,7 @@ describe("airdrop-staking", () => {
     ]);
 
     try {
-      let unbondSeed = Buffer.alloc(4);
+      const unbondSeed = Buffer.alloc(4);
 
       [stakerUnbond] = await PublicKey.findProgramAddress(
         [stakerAccount.toBuffer(), unbondSeed],
@@ -509,7 +507,7 @@ describe("airdrop-staking", () => {
   });
 
   it("user unbonds stake", async () => {
-    let unbondSeed = Buffer.alloc(4);
+    const unbondSeed = Buffer.alloc(4);
 
     [stakerUnbond] = await PublicKey.findProgramAddress(
       [stakerAccount.toBuffer(), unbondSeed],
@@ -634,7 +632,7 @@ describe("airdrop-staking", () => {
   it("create reward distribution", async () => {
     let bumpSeed: number;
     let vaultBumpSeed: number;
-    let distSeed = "foo";
+    const distSeed = "foo";
 
     [distAccount, bumpSeed] = await PublicKey.findProgramAddress(
       [Buffer.from("distribution"), Buffer.from(distSeed)],
@@ -688,7 +686,7 @@ describe("airdrop-staking", () => {
   it("create award", async () => {
     let bumpSeed: number;
     let vaultBumpSeed: number;
-    let distSeed = "foo-award";
+    const distSeed = "foo-award";
 
     [awardAccount, bumpSeed] = await PublicKey.findProgramAddress(
       [Buffer.from("award"), stakerAccount.toBuffer(), Buffer.from(distSeed)],
@@ -757,7 +755,7 @@ describe("airdrop-staking", () => {
   it("create award to revoke", async () => {
     let bumpSeed: number;
     let vaultBumpSeed: number;
-    let distSeed = "revoke-award";
+    const distSeed = "revoke-award";
 
     [awardAccount, bumpSeed] = await PublicKey.findProgramAddress(
       [Buffer.from("award"), stakerAccount.toBuffer(), Buffer.from(distSeed)],
@@ -819,7 +817,7 @@ describe("airdrop-staking", () => {
   it("user cannot unbond with outstanding votes", async () => {
     try {
       let bumpSeed: number;
-      let unbondSeed = Buffer.alloc(4);
+      const unbondSeed = Buffer.alloc(4);
 
       [stakerUnbond, bumpSeed] = await PublicKey.findProgramAddress(
         [stakerAccount.toBuffer(), unbondSeed],
@@ -858,12 +856,12 @@ describe("airdrop-staking", () => {
     );
 
     const params = {
-      expireAt: new anchor.BN(Date.now() / 1000 + 1000),
+      expireAt: new BN(Date.now() / 1000 + 1000),
       stakePool: stakeAcc.stakePool,
       shortDesc: "integ-test-airdrop",
       longDesc: "some airdrop testing",
       vaultBump: bumpSeed,
-      flags: new anchor.BN(0)
+      flags: new BN(0)
     };
 
     await RewardsProgram.rpc.airdropCreate(params, {
@@ -887,13 +885,13 @@ describe("airdrop-staking", () => {
     const chunks = Math.floor(airdropRecipients.length / chunkSize);
 
     for (let i = 0; i < airdropRecipients.length; i += chunkSize) {
-      let chunk = airdropRecipients.slice(i, i + chunkSize);
+      const chunk = airdropRecipients.slice(i, i + chunkSize);
 
       const addParams = {
-        startIndex: new anchor.BN(i),
+        startIndex: new BN(i),
         recipients: chunk.map(k => {
           return {
-            amount: new anchor.BN(10_000_000),
+            amount: new BN(10_000_000),
             recipient: k.publicKey
           };
         })
@@ -920,7 +918,7 @@ describe("airdrop-staking", () => {
     await Promise.all(
       airdropRecipients.map(recipient =>
         (async () => {
-          let [recipientAuth, authBumpSeed] = await PublicKey.findProgramAddress(
+          const [recipientAuth, authBumpSeed] = await PublicKey.findProgramAddress(
             [recipient.publicKey.toBuffer()],
             AuthProgram.programId
           );
@@ -942,11 +940,11 @@ describe("airdrop-staking", () => {
             }
           });
 
-          let [recipientStakeAccount] = await PublicKey.findProgramAddress(
+          const [recipientStakeAccount] = await PublicKey.findProgramAddress(
             [stakeAcc.stakePool.toBuffer(), recipient.publicKey.toBuffer()],
             StakingProgram.programId
           );
-          let [recipientVoterWeight] = await PublicKey.findProgramAddress(
+          const [recipientVoterWeight] = await PublicKey.findProgramAddress(
             [Buffer.from("voter-weight-record"), recipientStakeAccount.toBuffer()],
             StakingProgram.programId
           );
