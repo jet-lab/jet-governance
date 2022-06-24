@@ -47,7 +47,9 @@ export function TransactionsProvider(props: { children: any }) {
     let actionType;
     switch (action) {
       case "stake":
-        actionType = `Staked from wallet ${shortenAddress(publicKey!.toString(), 4)}`;
+        actionType = `Staked from wallet ${
+          publicKey ? shortenAddress(publicKey.toString(), 4) : ""
+        }`;
         break;
       case "unbond_stake":
         actionType = "Unstaked";
