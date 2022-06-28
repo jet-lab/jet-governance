@@ -3,6 +3,7 @@ import { useWallet } from "@solana/wallet-adapter-react";
 import { Modal, Input, ModalProps, Checkbox } from "antd";
 import { CountryPhoneInput, CountryPhoneInputValue } from "antd-country-phone-input";
 import axios from "axios";
+import LogRocket from "logrocket";
 import { PropsWithChildren, useEffect, useState } from "react";
 import { DocsLink } from "../docsLink";
 import { createUserAuth } from "../../actions/createUserAuth";
@@ -33,7 +34,7 @@ const API_KEY: string = process.env.REACT_APP_SMS_AUTH_API_KEY!;
 
 export const VerifyModal = () => {
   const [current, setCurrent] = useState<Steps>(Steps.Welcome);
-  const { wallets, select, disconnect, disconnecting, wallet, publicKey } = useWallet();
+  const { wallets, connected, select, disconnect, disconnecting, wallet, publicKey } = useWallet();
   const { connecting, setConnecting } = useConnectWallet();
   const rpcContext = useRpcContext();
 
@@ -58,6 +59,14 @@ export const VerifyModal = () => {
       localStorage.setItem(`authConfirmed:${publicKey.toBase58()}`, JSON.stringify(confirmed));
     }
   }
+
+  useEffect(() => {
+    const project = process.env.REACT_APP_LOGROCKET_PROJECT;
+    if (connected && publicKey && project) {
+      LogRocket.init(project);
+      LogRocket.identify(publicKey.toBase58());
+    }
+  }, [connected, publicKey]);
 
   useEffect(() => {
     // Get user's IP to determine location/geobanning

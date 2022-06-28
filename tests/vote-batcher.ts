@@ -1,4 +1,11 @@
-import { Program, workspace, Provider, BN, setProvider, AnchorError } from "@project-serum/anchor";
+import {
+  Program,
+  workspace,
+  AnchorProvider,
+  BN,
+  setProvider,
+  AnchorError
+} from "@project-serum/anchor";
 import NodeWallet from "@project-serum/anchor/dist/cjs/nodewallet";
 import {
   Keypair,
@@ -80,7 +87,7 @@ async function deriveStakePoolAccounts(seed: string, realm: PublicKey): Promise<
 
 describe("vote-batcher", () => {
   // Configure the client to use the local cluster.
-  const provider = Provider.env();
+  const provider = AnchorProvider.env();
   const wallet = provider.wallet as NodeWallet;
   setProvider(provider);
 
