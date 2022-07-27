@@ -7,7 +7,7 @@ import LogRocket from "logrocket";
 import { PropsWithChildren, useEffect, useState } from "react";
 import { DocsLink } from "../docsLink";
 import { createUserAuth } from "../../actions/createUserAuth";
-import { useConnection, useConnectionConfig, useConnectWallet } from "../../contexts";
+import { useConnection, useConnectionConfig, useConnectWallet, useDarkTheme } from "../../contexts";
 import { useProvider, useRpcContext } from "../../hooks";
 import { ReactComponent as ArrowIcon } from "../../images/arrow_icon.svg";
 import { geoBannedCountries } from "../../models/GEOBANNED_COUNTRIES";
@@ -33,6 +33,7 @@ enum Steps {
 const API_KEY: string = process.env.REACT_APP_SMS_AUTH_API_KEY!;
 
 export const VerifyModal = () => {
+  const { darkTheme } = useDarkTheme();
   const [current, setCurrent] = useState<Steps>(Steps.Welcome);
   const { wallets, connected, select, disconnect, disconnecting, wallet, publicKey } = useWallet();
   const { connecting, setConnecting } = useConnectWallet();
@@ -395,7 +396,9 @@ export const VerifyModal = () => {
             >
               <div className="flex-centered">
                 <img
-                  src={`img/wallets/${w.adapter.name.toLowerCase()}.png`}
+                  src={`img/wallets/${w.adapter.name.toLowerCase()}${
+                    w.adapter.name === "MathWallet" ? (darkTheme ? "_white" : "_black") : ""
+                  }.png`}
                   width="30px"
                   height="auto"
                   alt={`${w.adapter.name} Logo`}
