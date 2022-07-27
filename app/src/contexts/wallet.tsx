@@ -5,7 +5,8 @@ import {
   SolflareWalletAdapter,
   SolletWalletAdapter,
   SolongWalletAdapter,
-  MathWalletAdapter
+  MathWalletAdapter,
+  BraveWalletAdapter
   // getPhantomWallet,
   // getSolflareWallet,
   // getSolletWallet,
@@ -34,6 +35,7 @@ export const WalletProvider = ({ children }: { children: any }) => {
   const wallets = useMemo(
     () => [
       new PhantomWalletAdapter(),
+      new BraveWalletAdapter(),
       new SolflareWalletAdapter(),
       new SolletWalletAdapter(),
       new SolongWalletAdapter(),
