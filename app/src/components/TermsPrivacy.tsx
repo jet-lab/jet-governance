@@ -2,21 +2,21 @@ export function TermsPrivacy(): JSX.Element {
   return (
     <div className="terms-privacy only-show-desktop flex-centered">
       <a
-        href="https://jet-association.gitbook.io/jet-association-1.0.0/terms-of-service"
+        href="https://docs.jetdao.fi/legal/terms-of-service"
         target="_blank"
         rel="noopener noreferrer"
       >
         <span className="text-btn">Terms of Service</span>
       </a>
       <a
-        href="https://jet-association.gitbook.io/jet-association-1.0.0/privacy-policy"
+        href="https://docs.jetdao.fi/legal/privacy-policy"
         target="_blank"
         rel="noopener noreferrer"
       >
         <span className="text-btn">Privacy Policy</span>
       </a>
       <a
-        href="https://jet-association.gitbook.io/jet-association-1.0.0/terms-and-definitions"
+        href="https://docs.jetdao.fi/getting-started/terms-and-definitions"
         target="_blank"
         rel="noopener noreferrer"
       >
