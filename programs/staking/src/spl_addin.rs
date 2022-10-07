@@ -1,7 +1,7 @@
 use anchor_lang::prelude::*;
 
 /// The governance action VoterWeight is evaluated for
-#[derive(Clone, Debug, PartialEq, AnchorDeserialize, AnchorSerialize)]
+#[derive(Clone, Debug, PartialEq, Eq, AnchorDeserialize, AnchorSerialize)]
 pub enum VoterWeightAction {
     /// Cast vote for a proposal. Target: Proposal
     CastVote,
@@ -23,7 +23,7 @@ pub enum VoterWeightAction {
 /// VoterWeightRecord account
 /// The account is used as an api interface to provide voting power to the governance program from external addin contracts
 #[account]
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Eq)]
 pub struct VoterWeightRecord {
     /// The Realm the VoterWeightRecord belongs to
     pub realm: Pubkey,
@@ -66,7 +66,7 @@ pub struct VoterWeightRecord {
 /// MaxVoterWeightRecord account
 /// The account is used as an api interface to provide max voting power to the governance program from external addin contracts
 #[account]
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Eq)]
 pub struct MaxVoterWeightRecord {
     /// The Realm the MaxVoterWeightRecord belongs to
     pub realm: Pubkey,
