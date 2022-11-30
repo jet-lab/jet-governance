@@ -38,6 +38,12 @@ import { ReactComponent as ThumbsDown } from "../images/thumbs_down.svg";
 import { getPubkeyIndex } from "../models/PUBKEYS_INDEX";
 import { sharesToTokens } from "../utils";
 
+function getRealmsProposalUrl(proposalAddress: string) {
+  /** Realm name according to the realms.today config. */
+  const friendlyRealmName = "JET";
+  return `https://app.realms.today/dao/${friendlyRealmName}/proposal/${proposalAddress}`;
+}
+
 export const ProposalView = () => {
   const proposalAddress = useKeyParam();
   const proposal = useProposal(proposalAddress);
@@ -142,7 +148,6 @@ const InnerProposalView = ({
   const voteRecord = useTokenOwnerVoteRecord(proposal?.pubkey, tokenOwnerRecord?.pubkey);
   const { connected } = useWallet();
   const { jetMint, stakePool } = useProposalContext();
-  const { getAccountExplorerUrl } = useBlockExplorer();
   const proposalAddress = useKeyParam();
   const { startDate, endDate } = useCountdown(proposal, governance);
   const { inDevelopment } = useConnectionConfig();
@@ -218,7 +223,7 @@ const InnerProposalView = ({
             <div className="neu-inset details">
               <Text>Proposal ID</Text>
               <Text>
-                <a href={getAccountExplorerUrl(addressStr)} target="_blank" rel="noreferrer">
+                <a href={getRealmsProposalUrl(addressStr)} target="_blank" rel="noreferrer">
                   {loaded ? addressStr : "---"}
                 </a>
               </Text>

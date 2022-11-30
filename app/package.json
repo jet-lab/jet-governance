@@ -31,7 +31,7 @@
   },
   "scripts": {
     "start": "craco start --verbose",
-    "start:lending": "craco start --verbose",
+    "start:legacy": "NODE_OPTIONS=--openssl-legacy-provider craco start --verbose",
     "build": "craco build",
     "test": "craco test",
     "eject": "react-scripts eject",
