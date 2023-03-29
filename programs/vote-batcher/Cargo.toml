@@ -12,6 +12,7 @@ path = "src/lib.rs"
 [features]
 no-entrypoint = []
 no-idl = []
+testing = []
 cpi = ["no-entrypoint"]
 default = []
 

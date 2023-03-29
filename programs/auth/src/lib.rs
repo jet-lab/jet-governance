@@ -1,3 +1,5 @@
+#![allow(clippy::result_large_err)]
+
 use anchor_lang::prelude::*;
 #[cfg(feature = "cli")]
 use serde::ser::{Serialize, SerializeStruct, Serializer};
@@ -47,7 +49,7 @@ impl Serialize for UserAuthentication {
 #[derive(Accounts)]
 pub struct CreateUserAuthentication<'info> {
     /// The user address to be authenticated
-    user: Signer<'info>,
+    user: AccountInfo<'info>,
 
     /// The address paying any rent costs
     #[account(mut)]
@@ -73,13 +75,8 @@ pub struct Authenticate<'info> {
     auth: Account<'info, UserAuthentication>,
 
     /// The authority that can authenticate users
-    #[cfg_attr(feature = "enforce-authority", account(address = authority::ID))]
-    #[cfg(feature = "enforce-authority")]
+    #[cfg_attr(not(feature = "testing"), account(address = authority::ID))]
     authority: Signer<'info>,
-
-    /// CHECK: only allowed if the enforce-authority feature is disabled
-    #[cfg(not(feature = "enforce-authority"))]
-    authority: UncheckedAccount<'info>,
 }
 
 #[program]

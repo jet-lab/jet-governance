@@ -340,7 +340,7 @@ impl FullAmount {
         assert!((share_amount > 0 && token_amount > 0) || (share_amount == 0 && token_amount == 0));
 
         let share_amount = share_amount as u64;
-        let token_amount = token_amount as u64;
+        let token_amount = token_amount;
 
         Self {
             token_amount,

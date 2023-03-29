@@ -15,7 +15,7 @@ no-idl = []
 no-log-ix-name = []
 cpi = ["no-entrypoint"]
 default = []
-enforce-authority = []
+testing = []
 cli = ["no-entrypoint", "serde"]
 
 [dependencies]
