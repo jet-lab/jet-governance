@@ -276,7 +276,7 @@ describe("airdrop-staking", () => {
         payer: wallet.publicKey,
         auth: stakerAuth,
         systemProgram: SystemProgram.programId
-      },
+      }
     });
   });
 
