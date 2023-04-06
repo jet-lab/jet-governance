@@ -3,7 +3,6 @@ import { WalletProvider as BaseWalletProvider } from "@solana/wallet-adapter-rea
 import {
   PhantomWalletAdapter,
   SolflareWalletAdapter,
-  SolletWalletAdapter,
   SolongWalletAdapter,
   MathWalletAdapter
   // getPhantomWallet,
@@ -35,7 +34,6 @@ export const WalletProvider = ({ children }: { children: any }) => {
     () => [
       new PhantomWalletAdapter(),
       new SolflareWalletAdapter(),
-      new SolletWalletAdapter(),
       new SolongWalletAdapter(),
       new MathWalletAdapter()
     ],
