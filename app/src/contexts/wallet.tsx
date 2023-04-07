@@ -4,7 +4,8 @@ import {
   PhantomWalletAdapter,
   SolflareWalletAdapter,
   SolongWalletAdapter,
-  MathWalletAdapter
+  MathWalletAdapter,
+  BackpackWalletAdapter
   // getPhantomWallet,
   // getSolflareWallet,
   // getSolletWallet,
@@ -34,8 +35,9 @@ export const WalletProvider = ({ children }: { children: any }) => {
     () => [
       new PhantomWalletAdapter(),
       new SolflareWalletAdapter(),
+      new BackpackWalletAdapter(),
       new SolongWalletAdapter(),
-      new MathWalletAdapter()
+      new MathWalletAdapter(),
     ],
     // eslint-disable-next-line react-hooks/exhaustive-deps
     []
