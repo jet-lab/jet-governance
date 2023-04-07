@@ -2,12 +2,13 @@ use anchor_lang::prelude::*;
 use anchor_spl::token::{self, CloseAccount, Token, TokenAccount, Transfer};
 
 use crate::ErrorCode;
-use crate::{events, state::*, GOVERNOR_ID};
+use crate::{events, state::*};
 
 #[derive(Accounts)]
 pub struct AirdropClose<'info> {
     /// The airdrop to claim from
     #[account(mut,
+              has_one = authority,
               has_one = reward_vault,
               close = receiver)]
     pub airdrop: AccountLoader<'info, Airdrop>,
@@ -16,7 +17,6 @@ pub struct AirdropClose<'info> {
     pub reward_vault: Account<'info, TokenAccount>,
 
     /// The authority to make changes to the airdrop, which must sign
-    #[cfg_attr(not(feature = "testing"), account(address = GOVERNOR_ID))]
     pub authority: Signer<'info>,
 
     /// The account to received the rent recovered

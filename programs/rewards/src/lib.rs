@@ -1,7 +1,6 @@
 #![allow(clippy::result_large_err)]
 
 use anchor_lang::prelude::*;
-use anchor_lang::solana_program::pubkey;
 
 declare_id!("JET777rQuPU8BatFbhp6irc1NAbozxTheBqNo25eLQP");
 
@@ -10,8 +9,6 @@ pub mod instructions;
 pub mod state;
 
 pub use instructions::*;
-
-pub const GOVERNOR_ID: Pubkey = pubkey!("7R6FjP2HfXAgKQjURC4tCBrUmRQLCgEUeX2berrfU4ox");
 
 pub mod seeds {
     use super::constant;

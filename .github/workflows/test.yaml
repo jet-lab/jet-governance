@@ -140,4 +140,4 @@ jobs:
           key: solana-${{ runner.os }}-${{ env.NODE_VERSION }}-${{ hashFiles('**/package-lock.json') }}
 
       - name: Run Anchor Test
-        run: npm ci && anchor test --skip-lint
+        run: npm ci && anchor test --skip-lint -- --features testing

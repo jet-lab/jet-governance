@@ -1607,7 +1607,6 @@ dependencies = [
  "jet-proto-proc-macros",
  "jet-proto-staking",
  "serde",
- "solana-program",
  "static_assertions",
 ]
 
