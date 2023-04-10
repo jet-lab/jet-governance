@@ -33,9 +33,7 @@ export const WalletProvider = ({ children }: { children: any }) => {
 
   const wallets = useMemo(
     () => [
-      // new PhantomWalletAdapter(),
       new SolflareWalletAdapter(),
-      // new BackpackWalletAdapter(),
       new SolongWalletAdapter(),
       new MathWalletAdapter(),
     ],
