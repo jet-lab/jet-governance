@@ -17,8 +17,8 @@ cpi = ["no-entrypoint"]
 default = []
 
 [dependencies]
-anchor-lang = { git = "https://github.com/jet-lab/anchor", branch = "master" }
-anchor-spl = { git = "https://github.com/jet-lab/anchor", branch = "master" }
-solana-program = "1.8"
+anchor-lang = "0.26"
+anchor-spl = "0.26"
+solana-program = "1.9"
 spl-governance = { version = "2", features = ["no-entrypoint"] }
 itertools = "0.10.3"

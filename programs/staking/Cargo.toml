@@ -18,9 +18,9 @@ testing = []
 cli = ["no-entrypoint", "serde"]
 
 [dependencies]
-anchor-lang = { git = "https://github.com/jet-lab/anchor", branch = "master" }
-anchor-spl = { git = "https://github.com/jet-lab/anchor", branch = "master" }
-solana-program = "1.8"
+anchor-lang = "0.26"
+anchor-spl = "0.26"
+solana-program = "1.9"
 jet-proto-auth = { path = "../auth", features = ["cpi"] }
 spl-governance = { git = "https://github.com/jet-lab/solana-program-library", branch = "temp-fix-spl-deps", features = ["no-entrypoint"] }
 spl-governance-addin-api = { git = "https://github.com/jet-lab/solana-program-library", branch = "temp-fix-spl-deps" }
