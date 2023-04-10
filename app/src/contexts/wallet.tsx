@@ -32,11 +32,7 @@ export const WalletProvider = ({ children }: { children: any }) => {
   }, [env]);
 
   const wallets = useMemo(
-    () => [
-      new SolflareWalletAdapter(),
-      new SolongWalletAdapter(),
-      new MathWalletAdapter(),
-    ],
+    () => [new SolflareWalletAdapter(), new SolongWalletAdapter(), new MathWalletAdapter()],
     // eslint-disable-next-line react-hooks/exhaustive-deps
     []
   );
