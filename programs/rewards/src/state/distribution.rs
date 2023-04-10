@@ -56,15 +56,10 @@ impl std::ops::DerefMut for Distribution {
     }
 }
 
-#[derive(AnchorDeserialize, AnchorSerialize, Clone, Copy)]
+#[derive(Default, AnchorDeserialize, AnchorSerialize, Clone, Copy)]
 pub enum DistributionKind {
+    #[default]
     Linear,
-}
-
-impl Default for DistributionKind {
-    fn default() -> Self {
-        DistributionKind::Linear
-    }
 }
 
 #[derive(AnchorDeserialize, AnchorSerialize, Clone, Default)]

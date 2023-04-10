@@ -434,8 +434,7 @@ describe("vote-batcher", () => {
         payer: wallet.publicKey,
         auth: stakerAuth,
         systemProgram: SystemProgram.programId
-      },
-      signers: [staker]
+      }
     });
   });
 

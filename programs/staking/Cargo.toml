@@ -14,6 +14,7 @@ no-entrypoint = []
 no-idl = []
 cpi = ["no-entrypoint"]
 default = []
+testing = []
 cli = ["no-entrypoint", "serde"]
 
 [dependencies]

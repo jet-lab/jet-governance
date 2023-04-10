@@ -106,8 +106,8 @@ impl<'info> VoteMany<'info> {
     }
 }
 
-pub fn handler<'c, 'info>(
-    ctx: Context<'_, '_, 'c, 'info, VoteMany<'info>>,
+pub fn handler<'info>(
+    ctx: Context<'_, '_, '_, 'info, VoteMany<'info>>,
     votes: Vec<SimpleVote>,
 ) -> Result<()> {
     if ctx.remaining_accounts.len() % 3 != 0 || ctx.remaining_accounts.len() / 3 != votes.len() {

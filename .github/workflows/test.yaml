@@ -13,7 +13,7 @@ defaults:
 env:
   ANCHOR_CLI_VERSION: 0.23.0
   NODE_VERSION: 17.7.1
-  SOLANA_CLI_VERSION: 1.9.13
+  SOLANA_CLI_VERSION: 1.14.17
 
 jobs:
   typescript:
@@ -140,4 +140,4 @@ jobs:
           key: solana-${{ runner.os }}-${{ env.NODE_VERSION }}-${{ hashFiles('**/package-lock.json') }}
 
       - name: Run Anchor Test
-        run: npm ci && anchor test
+        run: npm ci && anchor test --skip-lint -- --features testing

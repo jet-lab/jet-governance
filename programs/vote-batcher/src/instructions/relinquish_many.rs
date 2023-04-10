@@ -85,7 +85,7 @@ impl<'info> RelinquishMany<'info> {
     }
 }
 
-pub fn handler<'c, 'info>(ctx: Context<'_, '_, 'c, 'info, RelinquishMany<'info>>) -> Result<()> {
+pub fn handler<'info>(ctx: Context<'_, '_, '_, 'info, RelinquishMany<'info>>) -> Result<()> {
     if ctx.remaining_accounts.len() % 2 != 0 {
         msg!(
             "expected an even number of remaining accounts, but got {}",

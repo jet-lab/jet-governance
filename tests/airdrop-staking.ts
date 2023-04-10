@@ -276,8 +276,7 @@ describe("airdrop-staking", () => {
         payer: wallet.publicKey,
         auth: stakerAuth,
         systemProgram: SystemProgram.programId
-      },
-      signers: [staker]
+      }
     });
   });
 
@@ -936,8 +935,7 @@ describe("airdrop-staking", () => {
               payer: wallet.publicKey,
               auth: recipientAuth,
               systemProgram: SystemProgram.programId
-            },
-            signers: [recipient]
+            }
           });
 
           await AuthProgram.rpc.authenticate({
