@@ -1,11 +1,9 @@
 import { WalletAdapterNetwork, WalletError } from "@solana/wallet-adapter-base";
 import { WalletProvider as BaseWalletProvider } from "@solana/wallet-adapter-react";
 import {
-  PhantomWalletAdapter,
   SolflareWalletAdapter,
   SolongWalletAdapter,
   MathWalletAdapter,
-  BackpackWalletAdapter
   // getPhantomWallet,
   // getSolflareWallet,
   // getSolletWallet,
