@@ -28,22 +28,25 @@ export const ResultProgressBar = ({
   }, [type]);
 
   const percent = total === 0 ? 0 : (amount / total) * 100;
-  // If there is an overflow in btToNumber, the app crashes.
-  // It is better to not show an accurate progress bar than for the app to crash.
-  // It seems only the nay votes don't get shown in this case.
-  let jetTokens = 0;
-  try {
-    jetTokens = bnToNumber(sharesToTokens(amount, stakePool).tokens);
-  } catch (error) {
-    console.error(error);
+
+  // The sum of shares could be greater than 2^53, in which case BN will throw an error
+  // because the number is unsafe. Given that we are only using this number for displaying
+  // an abbreviated value, we don't need to show the exact value.
+  // Thus we divide the number by some divisor to make it safe, then mul by the same divisor
+  // when rendering.
+  let divisor = 1;
+  if (amount > 0x20000000000000) {
+    divisor = 1_000_000;
+    amount = amount / divisor;
   }
+  const jetTokens = sharesToTokens(amount, stakePool).tokens;
 
   return (
     <span>
       <strong>
         {percent.toFixed(0)}% {vote.toUpperCase()}
       </strong>
-      <span className="amount">{abbreviateNumber(fromLamports(jetTokens, jetMint))} JET</span>
+      <span className="amount">{abbreviateNumber(fromLamports(jetTokens, jetMint) * divisor)} JET</span>
       <Progress size="small" percent={percent} showInfo={false} strokeColor={color} />
     </span>
   );
