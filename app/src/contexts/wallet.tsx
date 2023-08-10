@@ -1,10 +1,9 @@
 import { WalletAdapterNetwork, WalletError } from "@solana/wallet-adapter-base";
 import { WalletProvider as BaseWalletProvider } from "@solana/wallet-adapter-react";
 import {
-  PhantomWalletAdapter,
   SolflareWalletAdapter,
   SolongWalletAdapter,
-  MathWalletAdapter
+  MathWalletAdapter,
   // getPhantomWallet,
   // getSolflareWallet,
   // getSolletWallet,
@@ -31,12 +30,7 @@ export const WalletProvider = ({ children }: { children: any }) => {
   }, [env]);
 
   const wallets = useMemo(
-    () => [
-      new PhantomWalletAdapter(),
-      new SolflareWalletAdapter(),
-      new SolongWalletAdapter(),
-      new MathWalletAdapter()
-    ],
+    () => [new SolflareWalletAdapter(), new SolongWalletAdapter(), new MathWalletAdapter()],
     // eslint-disable-next-line react-hooks/exhaustive-deps
     []
   );
