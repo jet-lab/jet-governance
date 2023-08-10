@@ -28,7 +28,15 @@ export const ResultProgressBar = ({
   }, [type]);
 
   const percent = total === 0 ? 0 : (amount / total) * 100;
-  const jetTokens = bnToNumber(sharesToTokens(amount, stakePool).tokens);
+  // If there is an overflow in btToNumber, the app crashes.
+  // It is better to not show an accurate progress bar than for the app to crash.
+  // It seems only the nay votes don't get shown in this case.
+  let jetTokens = 0;
+  try {
+    jetTokens = bnToNumber(sharesToTokens(amount, stakePool).tokens);
+  } catch (error) {
+    console.error(error);
+  }
 
   return (
     <span>
